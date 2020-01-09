@@ -1,0 +1,2 @@
+# If you want to include something that is excluded by your .gitignore file, you can create an empty .npmignore file to override it.
+# We need this to keep the generated dist folder in the published package
