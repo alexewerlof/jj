@@ -15,6 +15,11 @@ Modern browsers are pretty awesome out of the box and get you pretty far without
 
 # Install
 
+One of the main points of using this library is to avoid compiling your code.
+You can directly import it from UNPKG at https://unpkg.com/browse/jj/dist/jj.js
+
+But if you prefer to install it via NPM:
+
 ```
 npm i jj
 ```
@@ -30,7 +35,10 @@ npm i jj
 ```
 
 ```javascript
+// If you installed via NPM
 import { ready, html } from '/node_modules/jj/dist/jj.js'
+// Is you want to directly use it via UNPKG
+import { ready, html } from 'https://unpkg.com/browse/jj/dist/jj.js'
 
 ready(() => {
     html.div('Hello world!').appendToBody()
