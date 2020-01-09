@@ -4,6 +4,7 @@
   "description": "Make HTML and CSS in Just Javascript!",
   "module": "index.js",
   "scripts": {
+    "postversion": "git push --tags",
     "prepublishOnly": "npm run build",
     "build": "rollup --config"
   },
