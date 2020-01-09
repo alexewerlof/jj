@@ -1,0 +1,27 @@
+{
+  "name": "jj",
+  "version": "0.0.2",
+  "description": "Make HTML and CSS in Just Javascript!",
+  "module": "index.js",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "rollup --config"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": {
+    "name": "Alex Ewerlöf",
+    "email": "hanifbbz@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "rollup": "^1.29.0",
+    "rollup-plugin-gzip": "^2.2.0",
+    "rollup-plugin-terser": "^5.1.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/userpixel/jj"
+  },
+  "homepage": "https://www.npmjs.com/package/jj"
+}
