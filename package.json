@@ -1,6 +1,6 @@
 {
   "name": "jj",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Make HTML and CSS in Just Javascript!",
   "module": "index.js",
   "scripts": {
