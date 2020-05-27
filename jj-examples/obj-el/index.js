@@ -1,51 +1,46 @@
 import { tagName, children, event } from "../../sym.js";
 
-const root = [
-    {
-        [tagName]: 'h1',
-        [children]: 'This is cool, right?'
-    },
-    {
-        [tagName]: 'div',
-        [children]: [
-            'this is awesome',
-            {
-                [tagName]: 'input',
-                value: 'Alex',
-                id: 'name-input'
-            },
-            {
-                [tagName]: 'button',
-                [children]: 'Hello!',
-                [event]: {
-                    click() {
-                        const name = document.getElementById('name-input').value
-                        alert(`Hello ${name}!`)
-                    }
-                }
-            },
-        ],
-    }
-]
-
-function fnEvents(obj) {
-    const ret = { [event]: {} }
-    for (let propName in obj) {
-        const propVal = obj[propName]
-        if (typeof propVal === 'function') {
-            ret[event][propName] = propVal
-        } else {
-            ret[propName] = propVal
-        }
-    }
-    return ret
+const root = {
+    h1: 'This is cool, right?',
+    div: [
+        'this is awesome',
+        {
+            [tagName]: 'input',
+            value: 'Alex',
+            id: 'name-input'
+        },
+        {
+            [tagName]: 'button',
+            [children]: 'Hello!',
+            click(evt) {
+                const name = evt.target.previousElementSibling.value
+                alert(`Hello ${name}!`)
+            }
+        },
+    ],
+    hr: null,
+    p: 'Yes this is a paragraph'
 }
 
-function keykeykey(tagNameValue, otherProps) {
+function normalizeKeyVal(tagNameValue, otherProps) {
+    if (otherProps === undefined || otherProps === null) {
+        return { [tagName]: tagNameValue }
+    }
+    if (typeof otherProps === 'string' || Array.isArray(otherProps)) {
+        otherProps = { [children]: otherProps }
+    }
     return {
         [tagName]: tagNameValue,
         ...otherProps
     }
+}
+
+function normalizeKeyValObj(obj) {
+    const ret = []
+    for (let tagName in obj) {
+        ret.push(normalizeKeyVal(tagName, obj[tagName]))
+    }
+    return ret
 }
 
 function toArr(a) {
@@ -87,11 +82,16 @@ function objToEl(obj) {
                 el.appendChild(frag(toArr(obj[children])))
                 break
             default:
-                el[prop] = obj[prop]
+                const propVal = obj[prop]
+                if (typeof propVal === 'function') {
+                    el.addEventListener(prop, propVal)
+                } else {
+                    el[prop] = propVal
+                }
         }
     }
     
     return el
 }
 
-document.body.appendChild(objToEl(root))
+document.body.appendChild(objToEl(normalizeKeyValObj(root)))
