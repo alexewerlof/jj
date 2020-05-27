@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>What if we counted on base 3</title>
+</head>
+<body>
+    <h1>Base 3?</h1>
+    <p>
+        What if instead of base 10, we counted on base 3?
+        There are basically 3 digits in base 3:
+        <code>0</code>,
+        <code>1</code> and
+        <code>2</code>.
+        Here's a small table:
+    </p>
+    <table id="dec-base3"></table>
+    <p>
+        There's nothing special about the numbers
+        <code>0</code>,
+        <code>1</code> and
+        <code>2</code>.
+        In fact, we can use any other symbol to present them:
+        <ul>
+            <li><code>ᛜ</code> instead of <code>0</code></li>
+            <li><code>ᛁ</code> instead of <code>1</code></li>
+            <li><code>ᚷ</code> instead of <code>2</code></li>
+        </ul>
+        So insted of writing <code class="dec-to-ter">24</code> (<code>24</code> in decimal)
+        we can write <code class="dec-to-ter to-runic">24</code>.
+        So here's the first 100 numbers in the ternary system:
+    </p>
+    <table id="first100">
+    </table>
+    <p>
+        When you do that, something is evident:
+        Multiplying any number by 3 is as simple as adding a <code class="to-runic">0</code> in front of it:
+    </p>
+    <p>
+        For example the decimal math for
+        <code>3 × 10 = 30</code>
+        becomes
+        <code class="dec-to-ter">3</code> ×
+        <code class="dec-to-ter">10</code> =
+        <code class="dec-to-ter">30</code>
+        or
+        <code class="dec-to-ter to-runic">3</code> ×
+        <code class="dec-to-ter to-runic">10</code> =
+        <code class="dec-to-ter to-runic">30</code>.
+    </p>
+    <script src="index.js" type="module"></script>
+</body>
+</html>

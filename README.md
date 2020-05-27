@@ -36,7 +36,7 @@ npm i jj
 
 ```javascript
 // If you installed via NPM
-import { ready, html } from '/node_modules/jj/dist/jj.js'
+import { ready, html } from '../jj.js'
 // Is you want to directly use it via UNPKG
 import { ready, html } from 'https://unpkg.com/jj/dist/jj.js'
 

@@ -1,0 +1,23 @@
+html, body {
+    font-family: "SF Pro", "Arial", sans-serif;
+    font-size: 17px;
+    background-color: #f1f1f1;
+    color: #614e4e;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    padding: 1em;
+    max-width: 980px;
+    padding: 1em;
+    margin: 0 auto;
+    background-color: white;
+}
+
+footer {
+    background-color: #525252;
+    color: #c1c1c1;
+    padding: 2em;
+    font-size: 0.8em;
+}

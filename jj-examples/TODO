@@ -1,0 +1,9 @@
+TODO:
+
+* Tricky sitation: the history pushState() updates the URL but the routers don't get called. We have a workaround but it's not beautiful.
+* I think I'm calling toValue() 2 times unnecessarily
+* We minify to body{color:red;} but that semicolon can be dropped too
+* When running an event, check if the element is still attached in the document `if(document.body.contains(yourElement)) {`
+* Provide a way to cancel the animation loop thingie
+* In the docs, mention that we rely on a js runtime environment behaviour of keeping the order of the properties
+* Make a demo and document event delegation: https://stackoverflow.com/questions/12824549/should-all-jquery-events-be-bound-to-document

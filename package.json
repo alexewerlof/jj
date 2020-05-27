@@ -6,7 +6,8 @@
   "scripts": {
     "postversion": "git push --tags",
     "prepublishOnly": "npm run build",
-    "build": "rollup --config"
+    "build": "rollup --config",
+    "start": "http-server"
   },
   "type": "module",
   "keywords": [],
@@ -16,6 +17,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "http-server": "^0.12.3",
     "rollup": "^1.29.0",
     "rollup-plugin-gzip": "^2.2.0",
     "rollup-plugin-terser": "^5.1.3"

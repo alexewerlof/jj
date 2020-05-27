@@ -12,6 +12,7 @@ const jaTag = Symbol('jaTag')
 
 const STYLE = 'style'
 const HIDDEN = 'hidden'
+const DISABLED = 'disabled'
 const MOUSE = 'mouse'
 
 class Node {
@@ -432,6 +433,54 @@ class Tag extends Node {
     }    
     //#endregion visibility
 
+    //#region disabled
+    disable(isDisabled = true) {
+        return isDisabled ? this.setProp(DISABLED, DISABLED) : this.rmProps(DISABLED)
+    }
+    
+    enable(isEnabled = true) {
+        return this.disable(!!isEnabled)
+    }    
+    //#endregion disabled
+
+    //#region input elements
+    focus() {
+        this.el.focus()
+        return this
+    }
+
+    getVal() {
+        if (this.el instanceof HTMLSelectElement) {
+            return this.hasProps('multiple') ? Array.from(this.el.selectedOptions) : this.el.value
+        }
+        if (this.el instanceof HTMLTextAreaElement) {
+            return this.getProp('value')
+        }
+        if (this.el instanceof HTMLInputElement) {
+            let type = this.hasProp('type')
+            if (!type) {
+                type = 'text'
+            } else {
+                type = type.toLowerCase()
+            }
+            switch(this.getProp('type')) {
+                case 'radio':
+                case 'checkbox':
+                    return this.hasProp('checked')
+                default:
+                    // text, number, search, password, tel, url, week, month, time, date, datetime-local, email, color
+                    if (this.hasProp('value')) {
+                        return this.getProp('value')
+                    }
+                    // Currently type=hidden, button, reset, submit, file, image, range, etc. are not supported
+                    throw new TypeError(`Unsupported value type ${this.el}`)
+            }
+        }
+        throw new TypeError(`This is not an input element ${this.el}`)
+    }
+    //#endregion input elements
+
+
     //#region query
     closest(selector) {
         return this.el.closest(selector) || undefined
@@ -663,12 +712,11 @@ class StyleTag {
     }
 
     disable(isDisabled = true) {
-        this.root.el.disabled = isDisabled
-        return this
+        return this.root.disable(isDisabled)
     }
 
     enable(isEnabled = true) {
-        return this.disable(!isEnabled)
+        return this.root.enable(isEnabled)
     }
 
     title(tagTitle) {
@@ -699,9 +747,9 @@ class StyleTag {
     }
 
     update() {
-        const content = this.toString()
-        // Only if successful, empty it
-        this.root.setText(content)
+        const cssString = this.toString()
+        // Only if successful, reset its content to the CSS
+        this.root.setText(cssString)
         return this
     }
 }
