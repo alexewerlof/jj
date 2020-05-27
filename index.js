@@ -13,7 +13,7 @@ export function ready(fn) {
     if (readyState === 'complete' || readyState === 'loaded' || readyState === 'interactive') {
         fn()
     } else {
-        function onReady() {
+        const onReady = () => {
             win.off(DOMContentLoaded, onReady)
             fn()
         }
