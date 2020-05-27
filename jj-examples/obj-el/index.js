@@ -6,8 +6,12 @@ const root = {
         'this is awesome',
         {
             [tagName]: 'input',
+            className: 'some-input',
             value: 'Alex',
-            id: 'name-input'
+            id: 'name-input',
+            change() {
+                console.log('yes')
+            }
         },
         {
             [tagName]: 'button',
@@ -19,7 +23,7 @@ const root = {
         },
     ],
     hr: null,
-    p: 'Yes this is a paragraph'
+    p: 'Yes this is a paragraph for you ${name}'
 }
 
 function normalizeKeyVal(tagNameValue, otherProps) {

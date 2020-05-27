@@ -87,8 +87,12 @@ class Node {
     }
     
     setChildren(...children) {
-        this.empty().addChildren(...children)
-        return this
+        return this.empty().addChildren(...children)
+    }
+
+    mapChildren(arr, mapFn) {
+        const children = arr.map(mapFn)
+        return this.empty().setChildren(children)
     }
 
     getChildren() {

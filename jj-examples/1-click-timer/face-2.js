@@ -46,7 +46,7 @@ class Face {
           fill: config.col.sec,
         },
         [svg.g]: {
-          comment: "The 1 indicators",
+          [comment]: "The 1 indicators",
           //     range(0, 60, 1, (gTag, i) => {
           //     if (i % 5 === 0) {
           //         return

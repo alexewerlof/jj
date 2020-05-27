@@ -30,7 +30,7 @@ export class Gear {
 				'xmlns:xlink': 'http://www.w3.org/1999/xlink'
 			})
 			.style({
-				position: 'relative',
+				position: 'absolute',
 				top: vh(3),
 				left: vw(10),
 				maxHeight: vh(20),

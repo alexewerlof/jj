@@ -121,27 +121,25 @@ function dots() {
 
 class Clock {
     constructor(vm) {
-        const state = toState(vm)
         this.root = frag().children(
-            this.h1 = new SevSeg(state.h1),
-            this.h2 = new SevSeg(state.h2),
+            this.h1 = new SevSeg(vm.h1),
+            this.h2 = new SevSeg(vm.h2),
             new dots(),
-            this.m1 = new SevSeg(state.m1),
-            this.m2 = new SevSeg(state.m2),
+            this.m1 = new SevSeg(vm.m1),
+            this.m2 = new SevSeg(vm.m2),
             new dots(),
-            this.s1 = new SevSeg(state.s1),
-            this.s2 = new SevSeg(state.s2),
+            this.s1 = new SevSeg(vm.s1),
+            this.s2 = new SevSeg(vm.s2),
         )
     }
 
     update(vm) {
-        const state = toState(vm)
-        this.h1.update(state.h1)
-        this.h2.update(state.h2)
-        this.m1.update(state.m1)
-        this.m2.update(state.m2)
-        this.s1.update(state.s1)
-        this.s2.update(state.s2)
+        this.h1.update(vm.h1)
+        this.h2.update(vm.h2)
+        this.m1.update(vm.m1)
+        this.m2.update(vm.m2)
+        this.s1.update(vm.s1)
+        this.s2.update(vm.s2)
     }
 }
 
@@ -165,12 +163,14 @@ ready(() => {
         }
     }).appendToHead()
 
-    const clock1 = new Clock(new Date)
-    const clock2 = new Clock(new Date)
+    let vm = toState(new Date)
+    const clock1 = new Clock(vm)
+    const clock2 = new Clock(vm)
     html(document.body).append(clock1, html.br(), clock2)
 
     setInterval(() => {
-        clock1.update(new Date)
-        clock2.update(new Date)
+        vm = toState(new Date)
+        clock1.update(vm)
+        clock2.update(vm)
     }, 500)
 })
