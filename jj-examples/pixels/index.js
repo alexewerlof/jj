@@ -31,32 +31,44 @@ function getImageArray(imageId) {
     return result
 }
 
-css(
-    sel().class('pixel').css({
+const config = {
+    pixelDimension: '1px',
+}
+
+css({
+    '.pixel': {
         display: 'inline-block',
-        willChange: 'background-color',
-        transition: ['background-color', '500ms'],
-        [sel('&').pClass('hover')]: {
+        width: config.pixelDimension,
+        height: config.pixelDimension,
+        '&:hover': {
             backgroundColor: 'white !important'
         }
-    })
-).appendToHead()
+    }
+}).appendToHead()
 
 ready(() => {
     const matrix = getImageArray('the-image')
     const { height, width } = matrix
-    const table = html('table').style({
-        fontSize: 0,
-        borderSpacing: 0,
-        cursor: 'crosshair'
+    html('h1').text(`${height}x${width}=${height * width} pixels`).appendToBody()
+    html('div').style({
+        display: 'gid',
+        cursor: 'none',
+        fontSize: '0px'
     })
-    for(let y = 0; y < height; y++) {
-        const row = html('tr').appendTo(table)
-        for(let x = 0; x < width; x++) {
-            html('td').class('pixel').title(`${x}, ${y} = ${matrix[x][y]}`).style({
-                backgroundColor: matrix[x][y]
-            }).appendTo(row)
-        }
-    }
-    table.appendToBody()
+    .appendToBody()
+    .range(height, (container, y) => {
+        window.requestAnimationFrame(() => {
+            html('div')
+            .appendTo(container)
+            .range(width, (row, x) => {
+                html('span')
+                    .class('pixel')
+                    .title(`${x}, ${y} = ${matrix[x][y]}`)
+                    .style({
+                        backgroundColor: matrix[x][y]
+                    })
+                    .appendTo(row)
+            })
+        })
+    })
 })
