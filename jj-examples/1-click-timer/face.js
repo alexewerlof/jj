@@ -1,4 +1,4 @@
-import { html, svg, frag, vh, vw, px } from '../jj.js'
+import { svg } from '../jj.js'
 
 import { config } from './config.js'
 
@@ -10,8 +10,8 @@ class Face {
                 'xmlns:xlink': 'http://www.w3.org/1999/xlink'
             })
             .style({
-                maxHeight: vh(100),
-                maxWidth: vw(100),
+                maxHeight: '100vh',
+                maxWidth: '100vw',
             })
             .children(
                 svg('circle')
@@ -55,7 +55,7 @@ class Face {
                                     transform: `rotate(${(i-0.6) * 6} 50 50)`,
                                 })
                                 .style({
-                                    fontSize: px(5),
+                                    fontSize: '5px',
                                     fill: config.col.prim,
                                 })
                                 .text(i === 0 ? '60' : i),
@@ -120,7 +120,7 @@ class Face {
                                     startOffset: 64.3,
                                 })
                                 .style({
-                                    fontSize: px(3),
+                                    fontSize: '3px',
                                     alignmentBaseline:'top',
                                 })
                                 .text('Made in Sweden')

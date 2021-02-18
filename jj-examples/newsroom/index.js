@@ -1,7 +1,7 @@
-import { html, frag, queryId, rnd, css, sel } from '../jj.js'
+import { html, frag, queryId, css, sel } from '../jj.js'
 import { dna } from './dna.js'
 
-const adClass = rnd('adClass')
+const adClass = 'adClass'
 
 css(
     sel().class(adClass).css({

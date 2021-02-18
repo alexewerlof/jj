@@ -1,15 +1,15 @@
 export const INDENT = '    '
 export const NEWLINE = '\n'
 
-export function isArr(x) {
+export function isArr<T = any>(x: unknown): x is T[] {
     return Array.isArray(x)
 }
 
-export function arrFrom(x) {
-    return Array.from(x)
+export function arrFrom<T>(x): T[] {
+    return Array.from<T>(x)
 }
 
-export function toArray(a) {
+export function toArray<T>(a: T | T[]): T[] {
     return isArr(a) ? a : [a]
 }
 
@@ -29,35 +29,35 @@ export function nl(indentation) {
     return indentation < 0 ? '' : NEWLINE
 }
 
-export function mapKeyVal(obj, fn) {
+export function mapKeyVal<T>(obj: Record<string, T>, fn: (key: string, val: T, obj: Record<string, T>) => any) {
     return Object.entries(obj).map(([k, v]) => fn(k, v, obj))
 }
 
-export function isObj(a) {
+export function isObj(a: unknown): a is Record<string, any> {
     return a && typeof a === 'object'
 }
 
-export function isStr(a, minLength = 0) {
+export function isStr(a: unknown, minLength = 0): a is string {
     return typeof a === 'string' && a.length >= minLength
 }
 
-export function isNum(a) {
+export function isNum(a: unknown): a is number {
     return typeof a === 'number' && Number.isFinite(a)
 }
 
-export function isFn(a) {
+export function isFn(a: unknown) {
     return typeof a === 'function'
 }
 
-export function isBool(a) {
+export function isBool(a: unknown): a is boolean {
     return typeof a === 'boolean'
 }
 
-export function isDef(a) {
+export function isDef(a: unknown): boolean {
     return a !== undefined
 }
 
-export function camel2kebab(str) {
+export function camel2kebab(str: string): string {
     return str.replace(/([A-Z])/g, ch => '-' + ch.toLowerCase())
 }
 
@@ -127,27 +127,3 @@ export function runOnce(fn, ...args) {
     }
 }
 
-export const doc = {
-    el(tagName, ns) {
-        return isStr(ns) ? document.createElementNS(ns, tagName) : document.createElement(tagName)
-    },
-    frag() {
-        return document.createDocumentFragment()
-    },
-    text(...strArr) {
-        return document.createTextNode(String(strArr.flat().join('')))
-    },
-    comm(...strArr) {
-        return document.createComment(String(strArr.flat().join('')))
-    },
-    get body() {
-        return document.body
-    },
-    get head() {
-        return document.body.head
-    },
-}
-
-export function isComponent(obj) {
-    return isObj(obj) && isObj(obj.root)
-}

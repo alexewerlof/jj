@@ -1,11 +1,10 @@
 import { mapKeyVal, camel2kebab, nl, ind, isObj, isNum, isStr, isArr, qut } from './util.js'
-import { isDim } from './unit.js'
 
-function isAtRule(selectorTxt) {
+function isAtRule(selectorTxt: string): boolean {
     return selectorTxt.trimLeft().startsWith('@')
 }
 
-function toValue(val) {
+function toValue(val: string | number | any[]): string {
     if (isStr(val)) {
         if (val.trim() === '') {
             return qut(val)
@@ -15,18 +14,18 @@ function toValue(val) {
     if (isNum(val)) {
         return String(val)
     }
-    if (isDim(val)) {
-        return String(val)
-    } else if (isArr(val)) {
+    if (isArr(val)) {
         return val.join(' ')
     }
+    throw new TypeError(`Invalid value type: ${val} (${typeof val})`)
 }
 
-function extractRules(selectorTxt, bodyObj) {
+function extractRules(selectorTxt: string, bodyObj: object) {
     const baseRule = new SimpleRule(selectorTxt)
     const ownProps = baseRule.bodyObj
-    const nestedRules = [baseRule]
-    mapKeyVal(bodyObj, (key, val) => {
+    const nestedRules: BaseRule[] = [baseRule]
+
+    mapKeyVal<any>(bodyObj, (key, val) => {
         const v = toValue(val)
         if (v !== undefined) {
             ownProps[key] = v
@@ -41,26 +40,29 @@ function extractRules(selectorTxt, bodyObj) {
             nestedRules.push(new NestedRule(nestedSelectorTxt, val))
         }
     })
+
     return nestedRules
 }
 
-function propVal(indentation, prop, val) {
-    const colon = indentation < 0 ? ':' : ': '
+function propVal(indentation: number, prop: string, val: any): string {
     return camel2kebab(prop)
-        + colon
+        + ( indentation < 0 ? ':' : ': ')
         + toValue(val)
         + ';'
 }
 
-class SimpleRule {
-    constructor(selectorTxt, bodyObj = {}) {
-        this.selectorTxt = selectorTxt
-        this.bodyObj = bodyObj
+abstract class BaseRule {
+    constructor(public selectorTxt: string, public bodyObj = {}) {
     }
 
-    get isEmpty() {
+    protected get isEmpty() {
         return Object.keys(this.bodyObj).length === 0
     }
+
+    abstract toString(indentation?: number): string;
+}
+
+class SimpleRule extends BaseRule {
 
     toString(indentation = 0) {
         if (this.isEmpty) {
@@ -82,11 +84,7 @@ class SimpleRule {
     }
 }
 
-class NestedRule {
-    constructor(selectorTxt, bodyObj) {
-        this.selectorTxt = selectorTxt
-        this.bodyObj = bodyObj
-    }
+class NestedRule extends BaseRule {
 
     toString(indentation = 0) {
         if (isObj(this.bodyObj)) {
@@ -102,21 +100,16 @@ class NestedRule {
     }
 }
 
-class WrapperRule {
-    constructor(selectorTxt, ruleSet) {
-        this.selectorTxt = selectorTxt
-        this.ruleSet = ruleSet
-    }
-
+class WrapperRule extends BaseRule {
     toString(indentation = 0) {
         let ret = ind(indentation) + this.selectorTxt
-        if (isObj(this.ruleSet)) {
+        if (isObj(this.bodyObj)) {
             const childIndentation = indentation >= 0 ? indentation + 1 : -1
             if (indentation >= 0) {
                 ret += ' '
             }
             ret += '{' + nl(indentation)
-            ret += objToRulesArr(this.ruleSet)
+            ret += objToRulesArr(this.bodyObj)
                 .map(rule => rule.toString(childIndentation))
                 .join(nl(indentation))
             ret += nl(indentation)
@@ -136,7 +129,7 @@ export function objToRulesArr(obj) {
             throw new TypeError(`Invalid style descriptor: ${obj}`)
         }
     }
-    return mapKeyVal(obj, (selectorTxt, bodyObj) => {
+    return mapKeyVal(obj, (selectorTxt: string, bodyObj: {}) => {
         if (isAtRule(selectorTxt)) {
             return new WrapperRule(selectorTxt, bodyObj)
         }

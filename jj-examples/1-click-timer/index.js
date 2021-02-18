@@ -1,4 +1,4 @@
-import { ready, html, svg, css, frag, doc } from '../jj.js'
+import { ready, html, css } from '../jj.js'
 import { config } from './config.js'
 import { face } from './face.js'
 import { settings } from './settings.js'
@@ -12,7 +12,7 @@ const appStyle = css({
     body: {
         fontFamily: config.font.family,
         backgroundColor: config.col.prim,
-        color: config.col.sec
+        color: config.col.prim
     },
 })
 
@@ -20,12 +20,15 @@ ready(() => {
     appStyle.appendToHead()
     document.title = config.name
     const gear = new Gear(true)
+    const { pathname } = new URL(window.location.href)
     html('div')
-        .route(/settings/, (parent) => {
+        .if(pathname.endsWith('/settings/'), (parent) => {
+            console.log('On settings page')
             parent.setChild(settings)
         })
-        .route(/\//, (parent) => {
+        .if(pathname.endsWith('/'), (parent) => {
+            console.log('On main page')
             parent.setChild(face, gear)
         })
-        .addTo(doc.body)
+        .appendTo(document.body)
 })

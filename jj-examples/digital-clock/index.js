@@ -1,6 +1,6 @@
-import { rnd, ready, html, css, sel } from '../jj.js'
+import { ready, html, css, sel } from '../jj.js'
 
-const CLOCK_CLASS = rnd('clock-face')
+const CLOCK_CLASS = 'clock-face'
 
 function leftpad2(n) {
     return n < 10 ? `0${n}` : String(n)

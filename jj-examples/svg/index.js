@@ -1,4 +1,4 @@
-import { frag, html, svg, ready, query, rnd, css, sel, vh, vw } from '../jj.js'
+import { frag, html, svg, ready, query, css, sel, vh, vw } from '../jj.js'
 import { Motor } from './Motor.js'
 
 const color1 = 'orange'
@@ -33,7 +33,7 @@ ready(() => {
         html('meta').name('theme-color').content(color1),
     ).appendTo(document.head)
 
-    const bodyClass = rnd('c')
+    const bodyClass = 'c'
 
     const bgStyle = {
         willChange: 'background-color',

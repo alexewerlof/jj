@@ -1,0 +1,2 @@
+- separate the core logic (generate html and css from obj) from the sugar layer
+- sync sync everywhere! This is not performant

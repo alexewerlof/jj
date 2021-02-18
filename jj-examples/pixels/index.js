@@ -1,4 +1,4 @@
-import { ready, queryId, html, css, sel } from '../jj.js'
+import { ready, queryId, html, css } from '../jj.js'
 
 function hex(n) {
     const x = n.toString(16)

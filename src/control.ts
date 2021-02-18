@@ -28,14 +28,14 @@ export const control = {
      * @remark if inside the function you need to refer to the tag (exposed as `this`), just remember
      * to use a classic function instead of an arrow function
      */
-    if(condition, fn, ...extraParams) {
+    if(condition: any, fn, ...extraParams) {
         if (condition) {
             return this.run(fn, ...extraParams)
         }
         return this
     },
 
-    forEach(arr, fn, ...extraParams) {
+    forEach(arr: any, fn, ...extraParams) {
         arr.forEach(item => {
             this.run(fn, item, ...extraParams)
         })
@@ -43,7 +43,7 @@ export const control = {
         return this
     },
 
-    times(n, fn, ...extraParams) {
+    times(n: number, fn, ...extraParams) {
         return this.range(1, n + 1, 1, fn, ...extraParams)
     },
 
