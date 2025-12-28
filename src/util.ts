@@ -1,5 +1,7 @@
 import { Wfrag } from './Wfrag.js'
 import { Welem } from './Welem.js'
+import { isStr } from 'jty'
+import { Wnode } from './Wnode.js'
 
 /** Used to Give the UI a moment to update */
 export function nextAnimationFrame(): Promise<number> {
@@ -14,6 +16,23 @@ export function off(target: EventTarget, eventName: string, handler: EventListen
     target.removeEventListener(eventName, handler)
 }
 
+export function unwrapNodeStr(item: unknown): Node | string {
+    if (isStr(item)) {
+        return item
+    }
+    if (item instanceof Node) {
+        return item
+    }
+    if (item instanceof Wnode) {
+        return item.ref
+    }
+    throw new TypeError(`Expected a Node or string. Got ${item} (${typeof item})`)
+}
+
+export function unwrapNodeStrs(items: unknown[]): (Node | string)[] {
+    return items.map(unwrapNodeStr)
+}
+
 function unwrap(obj: unknown): Node | HTMLElement | DocumentFragment {
     if (typeof obj === 'string') {
         return document.createTextNode(obj)
@@ -25,10 +44,10 @@ function unwrap(obj: unknown): Node | HTMLElement | DocumentFragment {
         return obj
     }
     if (obj instanceof Welem) {
-        return obj.elem
+        return obj.ref
     }
     if (obj instanceof Wfrag) {
-        return obj.frag
+        return obj.ref
     }
     throw new TypeError(`Only Frag or DocumentFragment can be unwrapped. Got ${obj} (${typeof obj})`)
 }

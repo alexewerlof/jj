@@ -9,7 +9,7 @@ const chatThread = Welem.byId('chat-thread')
 promptInput.on('keydown', (event) => {
     if (event.key === 'Enter' && !event.ctrlKey && !event.isComposing) {
         event.preventDefault()
-        chatForm.el.requestSubmit()
+        chatForm.ref.requestSubmit()
     }
 })
 
@@ -20,7 +20,7 @@ chatForm.on('submit', (event) => {
     const userChatMessage = Welem.from(new ChatMessage('user', content))
     userChatMessage.setAttr('role', 'user')
     userChatMessage.setAttr('content', content)
-    // userChatMessage.el.content = content
+    // userChatMessage.ref.content = content
 
     console.log(userChatMessage.el)
     chatThread.append(userChatMessage)

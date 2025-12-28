@@ -1,33 +1,36 @@
 import { isA } from 'jty'
 import { Wfrag } from './Wfrag.js'
 
-export class Wshad {
-    #shad!: ShadowRoot
-
+export class Wshad extends Wfrag {
     constructor(shadow: ShadowRoot) {
-        this.shad = shadow
+        if (!isA(shadow, ShadowRoot)) {
+            throw new TypeError(`Expected a ShadowRoot. Got ${shadow} (${typeof shadow})`)
+        }
+        super(shadow)
     }
 
-    get shad(): ShadowRoot {
-        return this.#shad
+    get ref() {
+        return super.ref as ShadowRoot
     }
 
-    set shad(value: ShadowRoot) {
+    set ref(value) {
         if (!isA(value, ShadowRoot)) {
             throw new TypeError(`Expected a ShadowRoot. Got ${value} (${typeof value})`)
         }
-        this.#shad = value
+        super.ref = value
     }
 
     getHtml() {
-        return this.shad.innerHTML
+        return this.ref.innerHTML
     }
 
     setHtml(value: string) {
-        this.shad.innerHTML = value
+        this.ref.innerHTML = value
+        return this
     }
 
     addStyleSheets(...styleSheets: CSSStyleSheet[]) {
-        this.shad.adoptedStyleSheets.push(...styleSheets)
+        this.ref.adoptedStyleSheets.push(...styleSheets)
+        return this
     }
 }

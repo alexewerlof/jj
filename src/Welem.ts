@@ -1,18 +1,24 @@
 import { Wfrag } from './Wfrag.js'
-import { off, on, unwrapAll, wrap, wrapAll } from './util.js'
+import { Wnode } from './Wnode.js'
+import { off, on, unwrapAll, unwrapNodeStrs, wrap, wrapAll } from './util.js'
 
 /**
- * Represents a wrapped HTMLElement
+ * Represents a wrapped Element
  */
-export class Welem {
-    #elem!: HTMLElement
-
-    constructor(ref: string | HTMLElement) {
-        this.elem = typeof ref === 'string' ? document.createElement(ref) : ref
+export class Welem extends Wnode {
+    constructor(ref: Element) {
+        if (!(ref instanceof Element)) {
+            throw new TypeError(`Expected a Element. Got: ${ref} (${typeof ref})`)
+        }
+        super(ref)
     }
 
-    static from(htmlElement: HTMLElement): Welem {
-        return new Welem(htmlElement)
+    static from(Element: Element): Welem {
+        return new Welem(Element)
+    }
+
+    static fromIter(iterable: Iterable<Element>): Welem[] {
+        return Array.from(iterable, Welem.from)
     }
 
     static fromTag(tagName: string): Welem {
@@ -37,69 +43,39 @@ export class Welem {
         return wrapAll(document.querySelectorAll(selector))
     }
 
-    get elem(): HTMLElement {
-        return this.#elem
+    get ref(): Element {
+        return super.ref as Element
     }
 
-    set elem(value: HTMLElement) {
-        if (!(value instanceof HTMLElement)) {
-            throw new TypeError(`Expected an string or HTMLElement. Got: ${value} (${typeof value})`)
+    set ref(value: Element) {
+        if (!(value instanceof Element)) {
+            throw new TypeError(`Expected a Element. Got: ${value} (${typeof value})`)
         }
-        this.#elem = value
+        super.ref = value
     }
 
     byClass(className: string): (Welem | Wfrag | Text)[] {
-        return wrapAll(this.elem.getElementsByClassName(className))
+        return wrapAll(this.ref.getElementsByClassName(className))
     }
 
     query(selector: string): Welem | Wfrag | Text {
-        return wrap(this.elem.querySelector(selector))
+        return wrap(this.ref.querySelector(selector))
     }
 
     queryAll(selector: string): (Welem | Wfrag | Text)[] {
-        return wrapAll(this.elem.querySelectorAll(selector))
+        return wrapAll(this.ref.querySelectorAll(selector))
     }
 
     clone(deep?: boolean): Welem {
-        return new Welem(this.elem.cloneNode(deep) as HTMLElement)
-    }
-
-    getValue(): string {
-        return (this.elem as HTMLInputElement).value
-    }
-
-    setValue(value: string): this {
-        ;(this.elem as HTMLInputElement).value = value
-        return this
-    }
-
-    getData(name: string): string | undefined {
-        return this.elem.dataset[name]
-    }
-
-    setData(name: string, value: string): this {
-        this.elem.dataset[name] = value
-        return this
-    }
-
-    setDataObj(obj: Record<string, string>): this {
-        for (const [name, value] of Object.entries(obj)) {
-            this.setData(name, value)
-        }
-        return this
-    }
-
-    rmData(name: string): this {
-        delete this.elem.dataset[name]
-        return this
+        return new Welem(this.ref.cloneNode(deep) as Element)
     }
 
     getAria(name: string): string | null {
-        return this.elem.getAttribute(`aria-${name}`)
+        return this.ref.getAttribute(`aria-${name}`)
     }
 
     setAria(name: string, value: string): this {
-        this.elem.setAttribute(`aria-${name}`, value)
+        this.ref.setAttribute(`aria-${name}`, value)
         return this
     }
 
@@ -111,16 +87,16 @@ export class Welem {
     }
 
     rmAria(name: string): this {
-        this.elem.removeAttribute(`aria-${name}`)
+        this.ref.removeAttribute(`aria-${name}`)
         return this
     }
 
     getAttr(name: string): string | null {
-        return this.elem.getAttribute(name)
+        return this.ref.getAttribute(name)
     }
 
     setAttr(name: string, value: string): this {
-        this.elem.setAttribute(name, value)
+        this.ref.setAttribute(name, value)
         return this
     }
 
@@ -133,23 +109,23 @@ export class Welem {
 
     rmAttrs(...names: string[]): this {
         for (const name of names) {
-            this.elem.removeAttribute(name)
+            this.ref.removeAttribute(name)
         }
         return this
     }
 
     addClass(...classNames: string[]): this {
-        this.elem.classList.add(...classNames)
+        this.ref.classList.add(...classNames)
         return this
     }
 
     rmClass(...classNames: string[]): this {
-        this.elem.classList.remove(...classNames)
+        this.ref.classList.remove(...classNames)
         return this
     }
 
     on(eventName: string, handler: EventListenerOrEventListenerObject): this {
-        on(this.elem, eventName, handler)
+        on(this.ref, eventName, handler)
         return this
     }
 
@@ -158,7 +134,7 @@ export class Welem {
     }
 
     off(eventName: string, handler: EventListenerOrEventListenerObject): this {
-        off(this.elem, eventName, handler)
+        off(this.ref, eventName, handler)
         return this
     }
 
@@ -179,27 +155,12 @@ export class Welem {
     }
 
     rm(): this {
-        this.elem.remove()
-        return this
-    }
-
-    focus(): this {
-        this.elem.focus()
-        return this
-    }
-
-    click(): this {
-        this.elem.click()
-        return this
-    }
-
-    empty(): this {
-        this.elem.innerText = ''
+        this.ref.remove()
         return this
     }
 
     append(...children: unknown[]): this {
-        this.elem.append(...unwrapAll(children))
+        this.ref.append(...unwrapNodeStrs(children))
         return this
     }
 
@@ -208,7 +169,7 @@ export class Welem {
     }
 
     prepend(...children: unknown[]): this {
-        this.elem.prepend(...unwrapAll(children))
+        this.ref.prepend(...unwrapNodeStrs(children))
         return this
     }
 
@@ -224,26 +185,17 @@ export class Welem {
         return this.setAttr('title', title)
     }
 
-    getText(): string {
-        return this.elem.innerText
-    }
-
-    setText(text: string): this {
-        this.elem.innerText = text
-        return this
-    }
-
     getHtml(): string {
-        return this.elem.innerHTML
+        return this.ref.innerHTML
     }
 
     setHtml(html: string): this {
-        this.elem.innerHTML = html
+        this.ref.innerHTML = html
         return this
     }
 
     setShadow(mode: ShadowRootMode = 'open', html?: string, ...styleSheets: CSSStyleSheet[]): this {
-        const shadowRoot = this.elem.shadowRoot ?? this.elem.attachShadow({ mode })
+        const shadowRoot = this.ref.shadowRoot ?? this.ref.attachShadow({ mode })
         if (html) {
             shadowRoot.innerHTML = html
         }
@@ -254,7 +206,7 @@ export class Welem {
     }
 
     getShadow(): Wfrag {
-        if (!this.elem.shadowRoot) throw new Error('No shadow root')
-        return new Wfrag(this.elem.shadowRoot)
+        if (!this.ref.shadowRoot) throw new Error('No shadow root')
+        return new Wfrag(this.ref.shadowRoot)
     }
 }

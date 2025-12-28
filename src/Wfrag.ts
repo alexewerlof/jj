@@ -1,49 +1,52 @@
-import { unwrapAll, wrap, wrapAll } from './util.js'
+import { isA } from 'jty'
+import { Wnode } from './Wnode.js'
 import { Welem } from './Welem.js'
+import { unwrapNodeStrs } from './util.js'
 
-export class Wfrag {
-    _frag!: DocumentFragment
-
-    constructor(ref?: DocumentFragment) {
-        this.frag = ref instanceof DocumentFragment ? ref : document.createDocumentFragment()
-    }
-
-    get frag(): DocumentFragment {
-        return this._frag
-    }
-
-    set frag(value: DocumentFragment) {
-        if (!(value instanceof DocumentFragment)) {
-            throw new TypeError(`Expected a DocumentFragment. Got ${value} (${typeof value})`)
+export class Wfrag extends Wnode {
+    constructor(ref: DocumentFragment) {
+        if (!isA(ref, DocumentFragment)) {
+            throw new TypeError(`Expected a DocumentFragment. Got ${ref} (${typeof ref})`)
         }
-        this._frag = value
+        super(ref)
     }
 
-    byId(id: string): Welem | Wfrag | Text {
-        const el = this.frag.getElementById(id)
+    get ref(): DocumentFragment {
+        return super.ref as DocumentFragment
+    }
+
+    set ref(val: DocumentFragment) {
+        if (!isA(val, DocumentFragment)) {
+            throw new TypeError(`Expected a DocumentFragment. Got ${val} (${typeof val})`)
+        }
+        super.ref = val
+    }
+
+    byId(id: string): Welem {
+        const el = this.ref.getElementById(id)
         if (!el) throw new TypeError(`Element with id ${id} not found`)
         return Welem.from(el)
     }
 
-    byClass(className: string): (Welem | Wfrag | Text)[] {
-        return wrapAll((this.frag as any).getElementsByClassName(className))
+    query(selector: string): Welem | null {
+        const result = this.ref.querySelector(selector)
+        if (!result) {
+            return result
+        }
+        return Welem.from(result)
     }
 
-    query(selector: string): Welem | Wfrag | Text {
-        return wrap(this.frag.querySelector(selector))
-    }
-
-    queryAll(selector: string): (Welem | Wfrag | Text)[] {
-        return wrapAll(this.frag.querySelectorAll(selector))
+    queryAll(selector: string): Welem[] {
+        return Welem.fromIter(this.ref.querySelectorAll(selector))
     }
 
     empty(): this {
-        this.frag.replaceChildren()
+        this.ref.replaceChildren()
         return this
     }
 
     append(...children: unknown[]): this {
-        this.frag.append(...unwrapAll(children))
+        this.ref.append(...unwrapNodeStrs(children))
         return this
     }
 
@@ -52,7 +55,7 @@ export class Wfrag {
     }
 
     prepend(...children: unknown[]): this {
-        this.frag.prepend(...unwrapAll(children))
+        this.ref.prepend(...unwrapNodeStrs(children))
         return this
     }
 

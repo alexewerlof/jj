@@ -25,7 +25,7 @@ class ComponentFile {
      */
     protected addLinkPre(as: 'fetch' | 'style', rel: 'prefetch' | 'preload') {
         const link = Welem.fromTag('link').setAttr('rel', rel).setAttr('href', this.href).setAttr('as', as)
-        document.head.append(link.elem)
+        document.head.append(link.ref)
         return this
     }
 }
