@@ -1,28 +1,57 @@
 {
-  "name": "jj",
-  "version": "0.1.1",
-  "description": "Make HTML and CSS in Just Javascript!",
-  "module": "index.js",
-  "scripts": {
-    "postversion": "git push --tags",
-    "prepublishOnly": "npm run build",
-    "build": "rollup --config"
-  },
-  "type": "module",
-  "keywords": [],
-  "author": {
-    "name": "Alex Ewerlöf",
-    "email": "hanifbbz@gmail.com"
-  },
-  "license": "MIT",
-  "devDependencies": {
-    "rollup": "^1.29.0",
-    "rollup-plugin-gzip": "^2.2.0",
-    "rollup-plugin-terser": "^5.1.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/userpixel/jj"
-  },
-  "homepage": "https://www.npmjs.com/package/jj"
+    "name": "jj",
+    "version": "1.0.0",
+    "description": "A minimal DOM manipulation library with web components",
+    "keywords": [
+        "javascript",
+        "language",
+        "DOM",
+        "typescript",
+        "imperative programming"
+    ],
+    "type": "module",
+    "main": "./lib/index.js",
+    "unpkg": "./lib/bundle.js",
+    "exports": {
+        "types": "./lib/index.d.ts",
+        "import": "./lib/index.js"
+    },
+    "directories": {
+        "lib": "lib",
+        "doc": "doc",
+        "test": "test"
+    },
+    "files": [
+        "lib"
+    ],
+    "scripts": {
+        "doc": "typedoc src/index.ts",
+        "build": "tsc",
+        "bundle": "esbuild src/index.ts --bundle --outfile=lib/bundle.js --format=esm",
+        "typecheck": "tsc --noEmit",
+        "fmt": "prettier --write .",
+        "test": "npm run typecheck && node --import tsx --test",
+        "test:watch": "npm run typecheck && node --import tsx --test --watch",
+        "test:coverage": "npm run typecheck && node --import tsx --test --experimental-test-coverage",
+        "preversion": "npm run fmt && npm t",
+        "prepublishOnly": "npm run build && npm run bundle",
+        "postversion": "git push && git push --tags"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/alexewerlof/jj.git"
+    },
+    "author": "Alex Ewerlöf",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/node": "^24.7.2",
+        "esbuild": "^0.27.2",
+        "prettier": "^3.6.2",
+        "tsx": "^4.20.6",
+        "typedoc": "^0.28.14",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "jty": "^4.0.0"
+    }
 }

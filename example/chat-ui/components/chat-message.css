@@ -1,0 +1,10 @@
+p {
+    color: red;
+}
+
+article {
+    border: 1px solid blue;
+    border-radius: 5px;
+    background-color: antiquewhite;
+    padding: 5px;
+}
