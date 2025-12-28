@@ -5,7 +5,7 @@ const files = new ComponentFiles(
     new StyleFile(import.meta.resolve('./chat-thread.css')),
 )
 
-export class ChatThread extends HTMLElement{
+export class ChatThread extends HTMLElement {
     #shadow = null
 
     constructor() {

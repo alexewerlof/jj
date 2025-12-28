@@ -1,4 +1,4 @@
-import { ChatMessage} from './components/chat-message.js'
+import { ChatMessage } from './components/chat-message.js'
 import { ChatThread } from './components/chat-thread.js'
 import { Welem } from '../../lib/bundle.js'
 
