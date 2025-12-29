@@ -1,7 +1,7 @@
 import { hasOwnProp, isA } from 'jty'
-import { Welem } from './Welem.js'
+import { WE } from './WE.js'
 
-export class Whelem extends Welem {
+export class WHE extends WE {
     constructor(ref: HTMLElement) {
         if (!isA(ref, HTMLElement)) {
             throw new TypeError(`Expected a HTMLElement. Got ${ref} (${typeof ref})`)

@@ -1,7 +1,7 @@
 import { isA } from 'jty'
-import { Wfrag } from './Wfrag.js'
+import { WF } from './WF.js'
 
-export class Wshad extends Wfrag {
+export class WS extends WF {
     constructor(shadow: ShadowRoot) {
         if (!isA(shadow, ShadowRoot)) {
             throw new TypeError(`Expected a ShadowRoot. Got ${shadow} (${typeof shadow})`)

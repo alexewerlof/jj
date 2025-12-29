@@ -1,10 +1,10 @@
 import { ChatMessage } from './components/chat-message.js'
 import { ChatThread } from './components/chat-thread.js'
-import { Welem } from '../../lib/bundle.js'
+import { WHE } from '../../lib/bundle.js'
 
-const promptInput = Welem.byId('prompt-input')
-const chatForm = Welem.byId('chat-form')
-const chatThread = Welem.byId('chat-thread')
+const promptInput = WHE.byId('prompt-input')
+const chatForm = WHE.byId('chat-form')
+const chatThread = WHE.byId('chat-thread')
 
 promptInput.on('keydown', (event) => {
     if (event.key === 'Enter' && !event.ctrlKey && !event.isComposing) {
@@ -17,7 +17,7 @@ chatForm.on('submit', (event) => {
     event.preventDefault()
     const content = promptInput.getValue()
     console.log('Handling submission:', content)
-    const userChatMessage = Welem.from(new ChatMessage('user', content))
+    const userChatMessage = WHE.from(new ChatMessage('user', content))
     userChatMessage.setAttr('role', 'user')
     userChatMessage.setAttr('content', content)
     // userChatMessage.ref.content = content

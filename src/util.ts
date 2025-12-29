@@ -1,7 +1,7 @@
-import { Wfrag } from './Wfrag.js'
-import { Welem } from './Welem.js'
-import { isStr } from 'jty'
-import { Wnode } from './Wnode.js'
+import { WF } from './WF.js'
+import { WE } from './WE.js'
+import { isObj, isStr } from 'jty'
+import { WN } from './WN.js'
 
 /** Used to Give the UI a moment to update */
 export function nextAnimationFrame(): Promise<number> {
@@ -23,7 +23,7 @@ export function unwrapNodeStr(item: unknown): Node | string {
     if (item instanceof Node) {
         return item
     }
-    if (item instanceof Wnode) {
+    if (item instanceof WN) {
         return item.ref
     }
     throw new TypeError(`Expected a Node or string. Got ${item} (${typeof item})`)
@@ -43,35 +43,35 @@ function unwrap(obj: unknown): Node | HTMLElement | DocumentFragment {
     if (obj instanceof Text || obj instanceof HTMLElement || obj instanceof DocumentFragment) {
         return obj
     }
-    if (obj instanceof Welem) {
+    if (obj instanceof WE) {
         return obj.ref
     }
-    if (obj instanceof Wfrag) {
+    if (obj instanceof WF) {
         return obj.ref
     }
     throw new TypeError(`Only Frag or DocumentFragment can be unwrapped. Got ${obj} (${typeof obj})`)
 }
 
-export function wrap(obj: unknown): Welem | Wfrag | Text {
+export function wrap(obj: unknown): WE | WF | Text {
     if (typeof obj === 'string') {
         return document.createTextNode(obj)
     }
-    if (!obj || typeof obj !== 'object') {
+    if (!isObj(obj)) {
         throw new TypeError(`Expected an object. Got ${obj} (${typeof obj})`)
     }
     if (obj instanceof HTMLElement) {
-        return new Welem(obj)
+        return new WE(obj)
     }
     if (obj instanceof DocumentFragment) {
-        return new Wfrag(obj)
+        return new WF(obj)
     }
-    if (obj instanceof Welem || obj instanceof Wfrag) {
+    if (obj instanceof WE || obj instanceof WF) {
         return obj
     }
     throw new TypeError(`Only Frag or DocumentFragment can be wrapped. Got ${obj} (${typeof obj})`)
 }
 
-export function wrapAll(iterable: Iterable<unknown>): (Welem | Wfrag | Text)[] {
+export function wrapAll(iterable: Iterable<unknown>): (WE | WF | Text)[] {
     return Array.from(iterable, wrap)
 }
 

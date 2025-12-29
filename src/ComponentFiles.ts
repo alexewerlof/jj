@@ -1,6 +1,6 @@
 import { isA, isStr } from 'jty'
-import { Wfrag } from './Wfrag.js'
-import { Welem } from './Welem.js'
+import { WF } from './WF.js'
+import { WHE } from './WHE.js'
 
 async function fetchText(url: string, mimeSubtype: string): Promise<string> {
     const response = await fetch(url, { headers: { Accept: `text/${mimeSubtype}` } })
@@ -24,7 +24,7 @@ class ComponentFile {
      * The difference lies in the priority of loading the resource to the browser cache where preload has higher prio.
      */
     protected addLinkPre(as: 'fetch' | 'style', rel: 'prefetch' | 'preload') {
-        const link = Welem.fromTag('link').setAttr('rel', rel).setAttr('href', this.href).setAttr('as', as)
+        const link = WHE.fromTag('link').setAttr('rel', rel).setAttr('href', this.href).setAttr('as', as)
         document.head.append(link.ref)
         return this
     }
@@ -104,14 +104,14 @@ export class ComponentFiles {
         this.#styles = styles
     }
 
-    async initShadow(el: HTMLElement, mode: ShadowRootMode): Promise<Wfrag> {
+    async initShadow(el: HTMLElement, mode: ShadowRootMode): Promise<WF> {
         // Prevent FOUC
         const [template, ...styleSheets] = await Promise.all([
             this.#template.promise,
             ...this.#styles.map((style) => style.promise),
         ])
-        Welem.from(el).setShadow(mode, template, ...styleSheets)
+        WHE.from(el).setShadow(mode, template, ...styleSheets)
         if (!el.shadowRoot) throw new Error('Shadow root not created!')
-        return new Wfrag(el.shadowRoot)
+        return new WF(el.shadowRoot)
     }
 }

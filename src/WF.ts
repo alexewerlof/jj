@@ -1,9 +1,9 @@
 import { isA } from 'jty'
-import { Wnode } from './Wnode.js'
-import { Welem } from './Welem.js'
+import { WN } from './WN.js'
+import { WE } from './WE.js'
 import { unwrapNodeStrs } from './util.js'
 
-export class Wfrag extends Wnode {
+export class WF extends WN {
     constructor(ref: DocumentFragment) {
         if (!isA(ref, DocumentFragment)) {
             throw new TypeError(`Expected a DocumentFragment. Got ${ref} (${typeof ref})`)
@@ -22,22 +22,46 @@ export class Wfrag extends Wnode {
         super.ref = val
     }
 
-    byId(id: string): Welem {
-        const el = this.ref.getElementById(id)
-        if (!el) throw new TypeError(`Element with id ${id} not found`)
-        return Welem.from(el)
+    static wrap(x: DocumentFragment | WF): WF {
+        if (isA(x, WF)) {
+            return x
+        }
+        if (isA(x, DocumentFragment)) {
+            return new WF(x)
+        }
+        throw new TypeError(`Expected a WF or DocumentFragment. Got ${x} (${typeof x})`)
     }
 
-    query(selector: string): Welem | null {
+    static unwrap(x: WF | DocumentFragment): DocumentFragment {
+        if (isA(x, WF)) {
+            return x.ref
+        }
+        if (isA(x, DocumentFragment)) {
+            return x
+        }
+        throw new TypeError(`Expected a WF or DocumentFragment. Got ${x} (${typeof x})`)
+    }
+
+    static from(fragment: DocumentFragment): WF {
+        return new WF(fragment)
+    }
+
+    byId(id: string): WE {
+        const el = this.ref.getElementById(id)
+        if (!el) throw new TypeError(`Element with id ${id} not found`)
+        return WE.from(el)
+    }
+
+    query(selector: string): WE | null {
         const result = this.ref.querySelector(selector)
         if (!result) {
             return result
         }
-        return Welem.from(result)
+        return WE.from(result)
     }
 
-    queryAll(selector: string): Welem[] {
-        return Welem.fromIter(this.ref.querySelectorAll(selector))
+    queryAll(selector: string): WE[] {
+        return WE.fromIter(this.ref.querySelectorAll(selector))
     }
 
     empty(): this {

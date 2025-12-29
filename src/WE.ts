@@ -1,11 +1,12 @@
-import { Wfrag } from './Wfrag.js'
-import { Wnode } from './Wnode.js'
+import { isA } from 'jty'
+import { WF } from './WF.js'
+import { WN } from './WN.js'
 import { off, on, unwrapAll, unwrapNodeStrs, wrap, wrapAll } from './util.js'
 
 /**
  * Represents a wrapped Element
  */
-export class Welem extends Wnode {
+export class WE extends WN {
     constructor(ref: Element) {
         if (!(ref instanceof Element)) {
             throw new TypeError(`Expected a Element. Got: ${ref} (${typeof ref})`)
@@ -13,33 +14,53 @@ export class Welem extends Wnode {
         super(ref)
     }
 
-    static from(Element: Element): Welem {
-        return new Welem(Element)
+    static wrap(x: Element | WE): WE {
+        if (isA(x, WE)) {
+            return x
+        }
+        if (isA(x, Element)) {
+            return new WE(x)
+        }
+        throw new TypeError(`Expected a WE or Element. Got: ${x} (${typeof x})`)
     }
 
-    static fromIter(iterable: Iterable<Element>): Welem[] {
-        return Array.from(iterable, Welem.from)
+    static unwrap(x: WE | Element): Element {
+        if (isA(x, WE)) {
+            return x.ref
+        }
+        if (isA(x, Element)) {
+            return x
+        }
+        throw new TypeError(`Expected a WE or Element. Got: ${x} (${typeof x})`)
     }
 
-    static fromTag(tagName: string): Welem {
-        return new Welem(document.createElement(tagName))
+    static from(Element: Element): WE {
+        return new WE(Element)
     }
 
-    static byId(id: string): Welem | Wfrag | Text {
+    static fromIter(iterable: Iterable<Element>): WE[] {
+        return Array.from(iterable, WE.from)
+    }
+
+    static fromTag(tagName: string): WE {
+        return new WE(document.createElement(tagName))
+    }
+
+    static byId(id: string): WE | WF | Text {
         const el = document.getElementById(id)
         if (!el) throw new TypeError(`Element with id ${id} not found`)
         return wrap(el)
     }
 
-    static byClass(className: string): (Welem | Wfrag | Text)[] {
+    static byClass(className: string): (WE | WF | Text)[] {
         return wrapAll(document.getElementsByClassName(className))
     }
 
-    static query(selector: string): Welem | Wfrag | Text {
+    static query(selector: string): WE | WF | Text {
         return wrap(document.querySelector(selector))
     }
 
-    static queryAll(selector: string): (Welem | Wfrag | Text)[] {
+    static queryAll(selector: string): (WE | WF | Text)[] {
         return wrapAll(document.querySelectorAll(selector))
     }
 
@@ -54,20 +75,20 @@ export class Welem extends Wnode {
         super.ref = value
     }
 
-    byClass(className: string): (Welem | Wfrag | Text)[] {
+    byClass(className: string): (WE | WF | Text)[] {
         return wrapAll(this.ref.getElementsByClassName(className))
     }
 
-    query(selector: string): Welem | Wfrag | Text {
+    query(selector: string): WE | WF | Text {
         return wrap(this.ref.querySelector(selector))
     }
 
-    queryAll(selector: string): (Welem | Wfrag | Text)[] {
+    queryAll(selector: string): (WE | WF | Text)[] {
         return wrapAll(this.ref.querySelectorAll(selector))
     }
 
-    clone(deep?: boolean): Welem {
-        return new Welem(this.ref.cloneNode(deep) as Element)
+    clone(deep?: boolean): WE {
+        return new WE(this.ref.cloneNode(deep) as Element)
     }
 
     getAria(name: string): string | null {
@@ -205,8 +226,8 @@ export class Welem extends Wnode {
         return this
     }
 
-    getShadow(): Wfrag {
+    getShadow(): WF {
         if (!this.ref.shadowRoot) throw new Error('No shadow root')
-        return new Wfrag(this.ref.shadowRoot)
+        return new WF(this.ref.shadowRoot)
     }
 }

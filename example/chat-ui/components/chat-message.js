@@ -1,6 +1,6 @@
 import { ComponentFiles, ensureComponent, keb2cam, StyleFile, TemplateFile } from '../../../lib/bundle.js'
 
-const files = new ComponentFiles(
+const shadowMaster = new ComponentFiles(
     new TemplateFile(import.meta.resolve('./chat-message.html')),
     new StyleFile(import.meta.resolve('./chat-message.css')),
 )
@@ -39,7 +39,7 @@ export class ChatMessage extends HTMLElement {
 
     async connectedCallback() {
         // Welem.from(this).setShadow('open', ...await ChatMessage.#files.getTemplateAndSheet())
-        this.#shadow = await files.initShadow(this, 'open')
+        this.#shadow = await shadowMaster.initShadow(this, 'open')
         this.#render()
         console.debug('ChatMessage connectedCallback', this)
     }
