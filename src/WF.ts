@@ -1,48 +1,29 @@
 import { isA } from 'jty'
 import { WN } from './WN.js'
 import { WE } from './WE.js'
-import { unwrapNodeStrs } from './util.js'
 
-export class WF extends WN {
-    constructor(ref: DocumentFragment) {
+/**
+ * Wraps a DocumentFragment (which is a descendant of Node)
+ */
+export class WF<T extends DocumentFragment = DocumentFragment> extends WN<T> {
+    constructor(ref: T) {
         if (!isA(ref, DocumentFragment)) {
             throw new TypeError(`Expected a DocumentFragment. Got ${ref} (${typeof ref})`)
         }
         super(ref)
     }
 
-    get ref(): DocumentFragment {
-        return super.ref as DocumentFragment
-    }
-
-    set ref(val: DocumentFragment) {
+    set ref(val: T) {
         if (!isA(val, DocumentFragment)) {
             throw new TypeError(`Expected a DocumentFragment. Got ${val} (${typeof val})`)
         }
         super.ref = val
     }
 
-    static wrap(x: DocumentFragment | WF): WF {
-        if (isA(x, WF)) {
-            return x
-        }
-        if (isA(x, DocumentFragment)) {
-            return new WF(x)
-        }
-        throw new TypeError(`Expected a WF or DocumentFragment. Got ${x} (${typeof x})`)
-    }
-
-    static unwrap(x: WF | DocumentFragment): DocumentFragment {
-        if (isA(x, WF)) {
-            return x.ref
-        }
-        if (isA(x, DocumentFragment)) {
-            return x
-        }
-        throw new TypeError(`Expected a WF or DocumentFragment. Got ${x} (${typeof x})`)
-    }
-
     static from(fragment: DocumentFragment): WF {
+        if (!isA(fragment, DocumentFragment)) {
+            throw new TypeError(`Expected a DocumentFragment. Got ${fragment} (${typeof fragment})`)
+        }
         return new WF(fragment)
     }
 
@@ -54,10 +35,7 @@ export class WF extends WN {
 
     query(selector: string): WE | null {
         const result = this.ref.querySelector(selector)
-        if (!result) {
-            return result
-        }
-        return WE.from(result)
+        return result === null ? result : WE.from(result)
     }
 
     queryAll(selector: string): WE[] {
@@ -67,23 +45,5 @@ export class WF extends WN {
     empty(): this {
         this.ref.replaceChildren()
         return this
-    }
-
-    append(...children: unknown[]): this {
-        this.ref.append(...unwrapNodeStrs(children))
-        return this
-    }
-
-    mapAppend<T>(array: T[], mapFn: (item: T) => unknown): this {
-        return this.append(...array.map(mapFn))
-    }
-
-    prepend(...children: unknown[]): this {
-        this.ref.prepend(...unwrapNodeStrs(children))
-        return this
-    }
-
-    mapPrepend<T>(array: T[], mapFn: (item: T) => unknown): this {
-        return this.prepend(...array.map(mapFn))
     }
 }

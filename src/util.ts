@@ -1,7 +1,10 @@
 import { WF } from './WF.js'
 import { WE } from './WE.js'
-import { isObj, isStr } from 'jty'
+import { isA, isObj, isStr } from 'jty'
 import { WN } from './WN.js'
+import { WHE } from './WHE.js'
+import { WS } from './WS.js'
+import { WT } from './WT.js'
 
 /** Used to Give the UI a moment to update */
 export function nextAnimationFrame(): Promise<number> {
@@ -16,66 +19,72 @@ export function off(target: EventTarget, eventName: string, handler: EventListen
     target.removeEventListener(eventName, handler)
 }
 
-export function unwrapNodeStr(item: unknown): Node | string {
-    if (isStr(item)) {
-        return item
+export type Wrappable = WN | Node | string
+export type Wrapped = WHE | WE | WF | WF | WS | WT | WN
+
+/**
+ * @returns the most granual Wrapped subclass.
+ */
+export function wrap(raw: Wrappable): Wrapped {
+    if (isStr(raw)) {
+        return new WT(raw)
     }
-    if (item instanceof Node) {
-        return item
+    if (!isObj(raw)) {
+        throw new TypeError(`Expected an object to wrap. Got ${raw} (${typeof raw})`)
     }
-    if (item instanceof WN) {
-        return item.ref
+    if (isA(raw, WN)) {
+        return raw
     }
-    throw new TypeError(`Expected a Node or string. Got ${item} (${typeof item})`)
+    if (isA(raw, HTMLElement)) {
+        return new WHE(raw)
+    }
+    if (isA(raw, Element)) {
+        return new WE(raw)
+    }
+    if (isA(raw, ShadowRoot)) {
+        return new WS(raw)
+    }
+    if (isA(raw, DocumentFragment)) {
+        return new WF(raw)
+    }
+    if (isA(raw, Text)) {
+        return new WT(raw)
+    }
+    if (isA(raw, Node)) {
+        return new WN(raw)
+    }
+    throw new TypeError(`Only Frag or DocumentFragment can be wrapped. Got ${raw} (${typeof raw})`)
 }
 
-export function unwrapNodeStrs(items: unknown[]): (Node | string)[] {
-    return items.map(unwrapNodeStr)
+export function wrapAll(iterable: Iterable<Wrappable>): Wrapped[] {
+    return Array.from(iterable, wrap)
 }
 
-function unwrap(obj: unknown): Node | HTMLElement | DocumentFragment {
-    if (typeof obj === 'string') {
-        return document.createTextNode(obj)
-    }
-    if (!obj || typeof obj !== 'object') {
-        throw new TypeError(`Expected an object. Got ${obj} (${typeof obj})`)
-    }
-    if (obj instanceof Text || obj instanceof HTMLElement || obj instanceof DocumentFragment) {
-        return obj
-    }
-    if (obj instanceof WE) {
-        return obj.ref
-    }
-    if (obj instanceof WF) {
-        return obj.ref
-    }
-    throw new TypeError(`Only Frag or DocumentFragment can be unwrapped. Got ${obj} (${typeof obj})`)
-}
+export type Unwrapped = HTMLElement | Element | ShadowRoot | DocumentFragment | Text | Node
 
-export function wrap(obj: unknown): WE | WF | Text {
-    if (typeof obj === 'string') {
+/**
+ * @returns the original DOM node wrapped in the appropriate class
+ */
+export function unwrap(obj: Wrappable): Unwrapped {
+    if (isStr(obj)) {
         return document.createTextNode(obj)
     }
     if (!isObj(obj)) {
         throw new TypeError(`Expected an object. Got ${obj} (${typeof obj})`)
     }
-    if (obj instanceof HTMLElement) {
-        return new WE(obj)
-    }
-    if (obj instanceof DocumentFragment) {
-        return new WF(obj)
-    }
-    if (obj instanceof WE || obj instanceof WF) {
+    if (obj instanceof Node) {
         return obj
     }
-    throw new TypeError(`Only Frag or DocumentFragment can be wrapped. Got ${obj} (${typeof obj})`)
+    if (obj instanceof WN) {
+        return obj.ref
+    }
+    throw new TypeError(`Could not unwrap ${obj} (${typeof obj})`)
 }
 
-export function wrapAll(iterable: Iterable<unknown>): (WE | WF | Text)[] {
-    return Array.from(iterable, wrap)
-}
-
-export function unwrapAll(iterable: Iterable<unknown>): (Node | HTMLElement | DocumentFragment)[] {
+/**
+ * unwraps an iteratable object (e.g. an array of HTMLCollection)
+ */
+export function unwrapAll(iterable: Iterable<Wrappable>): Unwrapped[] {
     return Array.from(iterable, unwrap)
 }
 

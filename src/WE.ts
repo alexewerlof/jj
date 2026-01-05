@@ -1,119 +1,69 @@
 import { isA } from 'jty'
 import { WF } from './WF.js'
 import { WN } from './WN.js'
-import { off, on, unwrapAll, unwrapNodeStrs, wrap, wrapAll } from './util.js'
+import { off, on, wrap, wrapAll, Wrapped } from './util.js'
 
 /**
- * Represents a wrapped Element
+ * Wraps a DOM Element (which is a descendant of Node)
  */
-export class WE extends WN {
-    constructor(ref: Element) {
-        if (!(ref instanceof Element)) {
-            throw new TypeError(`Expected a Element. Got: ${ref} (${typeof ref})`)
-        }
-        super(ref)
+export class WE<T extends Element = Element> extends WN<T> {
+    static byClass(className: string): WE[] {
+        return Array.from(document.getElementsByClassName(className), WE.from)
     }
 
-    static wrap(x: Element | WE): WE {
-        if (isA(x, WE)) {
-            return x
+    static from(element: Element): WE {
+        if (!isA(element, Element)) {
+            throw new TypeError(`Expected a WE or Element. Got: ${element} (${typeof element})`)
         }
-        if (isA(x, Element)) {
-            return new WE(x)
-        }
-        throw new TypeError(`Expected a WE or Element. Got: ${x} (${typeof x})`)
-    }
-
-    static unwrap(x: WE | Element): Element {
-        if (isA(x, WE)) {
-            return x.ref
-        }
-        if (isA(x, Element)) {
-            return x
-        }
-        throw new TypeError(`Expected a WE or Element. Got: ${x} (${typeof x})`)
-    }
-
-    static from(Element: Element): WE {
-        return new WE(Element)
+        return new WE(element)
     }
 
     static fromIter(iterable: Iterable<Element>): WE[] {
         return Array.from(iterable, WE.from)
     }
 
-    static fromTag(tagName: string): WE {
-        return new WE(document.createElement(tagName))
+    static query(selector: string): Wrapped | null {
+        const queryResult = document.querySelector(selector)
+        return queryResult === null ? null : wrap(queryResult)
     }
 
-    static byId(id: string): WE | WF | Text {
-        const el = document.getElementById(id)
-        if (!el) throw new TypeError(`Element with id ${id} not found`)
-        return wrap(el)
-    }
-
-    static byClass(className: string): (WE | WF | Text)[] {
-        return wrapAll(document.getElementsByClassName(className))
-    }
-
-    static query(selector: string): WE | WF | Text {
-        return wrap(document.querySelector(selector))
-    }
-
-    static queryAll(selector: string): (WE | WF | Text)[] {
+    static queryAll(selector: string): Wrapped[] {
         return wrapAll(document.querySelectorAll(selector))
     }
 
-    get ref(): Element {
-        return super.ref as Element
+    constructor(ref: T) {
+        if (!isA(ref, Element)) {
+            throw new TypeError(`Expected a Element. Got: ${ref} (${typeof ref})`)
+        }
+        super(ref)
     }
 
-    set ref(value: Element) {
+    set ref(value: T) {
         if (!(value instanceof Element)) {
             throw new TypeError(`Expected a Element. Got: ${value} (${typeof value})`)
         }
         super.ref = value
     }
 
-    byClass(className: string): (WE | WF | Text)[] {
-        return wrapAll(this.ref.getElementsByClassName(className))
+    byClass(className: string): WE[] {
+        return Array.from(this.ref.getElementsByClassName(className), WE.from)
     }
 
-    query(selector: string): WE | WF | Text {
-        return wrap(this.ref.querySelector(selector))
+    query(selector: string): Wrapped | null {
+        const queryResult = this.ref.querySelector(selector)
+        return queryResult ? WE.from(queryResult) : null
     }
 
-    queryAll(selector: string): (WE | WF | Text)[] {
-        return wrapAll(this.ref.querySelectorAll(selector))
-    }
-
-    clone(deep?: boolean): WE {
-        return new WE(this.ref.cloneNode(deep) as Element)
-    }
-
-    getAria(name: string): string | null {
-        return this.ref.getAttribute(`aria-${name}`)
-    }
-
-    setAria(name: string, value: string): this {
-        this.ref.setAttribute(`aria-${name}`, value)
-        return this
-    }
-
-    setAriaObj(obj: Record<string, string>): this {
-        for (const [name, value] of Object.entries(obj)) {
-            this.setAria(name, value)
-        }
-        return this
-    }
-
-    rmAria(name: string): this {
-        this.ref.removeAttribute(`aria-${name}`)
-        return this
+    queryAll(selector: string): Wrapped[] {
+        return Array.from(this.ref.querySelectorAll(selector), WE.from)
     }
 
     getAttr(name: string): string | null {
         return this.ref.getAttribute(name)
+    }
+
+    hasAttr(name: string): boolean {
+        return this.ref.hasAttribute(name)
     }
 
     setAttr(name: string, value: string): this {
@@ -121,11 +71,15 @@ export class WE extends WN {
         return this
     }
 
-    setAttrObj(obj: Record<string, string>): this {
+    setAttrs(obj: Record<string, string>): this {
         for (const [name, value] of Object.entries(obj)) {
             this.setAttr(name, value)
         }
         return this
+    }
+
+    rmAttr(name: string) {
+        return this.rmAttrs(name)
     }
 
     rmAttrs(...names: string[]): this {
@@ -135,13 +89,44 @@ export class WE extends WN {
         return this
     }
 
+    getAria(name: string): string | null {
+        return this.ref.getAttribute(`aria-${name}`)
+    }
+
+    hasAria(name: string): boolean {
+        return this.ref.hasAttribute(`aria-${name}`)
+    }
+
+    setAria(name: string, value: string): this {
+        this.ref.setAttribute(`aria-${name}`, value)
+        return this
+    }
+
+    rmAria(name: string): this {
+        this.ref.removeAttribute(`aria-${name}`)
+        return this
+    }
+
     addClass(...classNames: string[]): this {
         this.ref.classList.add(...classNames)
         return this
     }
 
-    rmClass(...classNames: string[]): this {
+    rmClasses(...classNames: string[]): this {
         this.ref.classList.remove(...classNames)
+        return this
+    }
+
+    rmClass(className: string) {
+        return this.rmClasses(className)
+    }
+
+    hasClass(className: string): boolean {
+        return this.ref.classList.contains(className)
+    }
+
+    toggleClass(className: string): this {
+        this.ref.classList.toggle(className)
         return this
     }
 
@@ -180,24 +165,6 @@ export class WE extends WN {
         return this
     }
 
-    append(...children: unknown[]): this {
-        this.ref.append(...unwrapNodeStrs(children))
-        return this
-    }
-
-    mapAppend<T>(array: T[], mapFn: (item: T) => unknown): this {
-        return this.append(...array.map(mapFn))
-    }
-
-    prepend(...children: unknown[]): this {
-        this.ref.prepend(...unwrapNodeStrs(children))
-        return this
-    }
-
-    mapPrepend<T>(array: T[], mapFn: (item: T) => unknown): this {
-        return this.prepend(...array.map(mapFn))
-    }
-
     getTitle(): string | null {
         return this.getAttr('title')
     }
@@ -215,6 +182,11 @@ export class WE extends WN {
         return this
     }
 
+    /**
+     * @remarks
+     * **Note:** You can't attach a shadow root to every type of element. There are some that can't have a
+     * shadow DOM for security reasons (for example `<a>`).
+     */
     setShadow(mode: ShadowRootMode = 'open', html?: string, ...styleSheets: CSSStyleSheet[]): this {
         const shadowRoot = this.ref.shadowRoot ?? this.ref.attachShadow({ mode })
         if (html) {

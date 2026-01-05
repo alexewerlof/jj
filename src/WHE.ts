@@ -1,19 +1,37 @@
-import { hasOwnProp, isA } from 'jty'
+import { hasOwnProp, isA, isStr } from 'jty'
 import { WE } from './WE.js'
 
-export class WHE extends WE {
-    constructor(ref: HTMLElement) {
+/**
+ * Wraps a DOM HTMLElement (which is a descendant of Element)
+ */
+export class WHE<T extends HTMLElement = HTMLElement> extends WE<T> {
+    static from(element: HTMLElement): WHE {
+        if (!isA(element, HTMLElement)) {
+            throw new TypeError(`Expected a HTMLElement. Got: ${element} (${typeof element})`)
+        }
+        return new WHE(element)
+    }
+
+    static fromTag(tagName: string, options?: ElementCreationOptions): WE {
+        if (!isStr(tagName)) {
+            throw new TypeError(`Expected a string for tagName. Got: ${tagName} (${typeof tagName})`)
+        }
+        return new WE(document.createElement(tagName, options))
+    }
+
+    static byId(id: string): WHE | null {
+        const el = document.getElementById(id)
+        return el ? WHE.from(el) : el
+    }
+
+    constructor(ref: T) {
         if (!isA(ref, HTMLElement)) {
             throw new TypeError(`Expected a HTMLElement. Got ${ref} (${typeof ref})`)
         }
         super(ref)
     }
 
-    get ref(): HTMLElement {
-        return super.ref as HTMLElement
-    }
-
-    set ref(value: HTMLElement) {
+    set ref(value: T) {
         if (!isA(value, HTMLElement)) {
             throw new TypeError(`Expected a HTMLElement. Got ${value} (${typeof value})`)
         }
@@ -37,6 +55,10 @@ export class WHE extends WE {
 
     getData(name: string): string | undefined {
         return this.ref.dataset[name]
+    }
+
+    hasData(name: string): boolean {
+        return hasOwnProp(this.ref.dataset, name)
     }
 
     setData(name: string, value: string): this {

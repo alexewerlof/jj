@@ -1,47 +1,70 @@
-import { isA, isArr, isStr } from 'jty'
+import { isA } from 'jty'
+import { unwrapAll, wrap, Wrappable, Wrapped } from './util.js'
 
-export class WN {
-    #ref!: Node
+/** @returns true if this.ref is an instance of descendant of Element or DocumentFragment  */
+function isElementOrDocumentFragment(x: unknown): x is Element | DocumentFragment {
+    return isA(x, Element) || isA(x, DocumentFragment)
+}
 
-    constructor(ref: Node) {
-        if (!isA(ref, Node)) {
-            throw new TypeError(`Expected a Node. Got: ${ref} (${typeof ref})`)
-        }
-        this.#ref = ref
+/**
+ * Wraps a DOM Node
+ */
+export class WN<T extends Node = Node> {
+    static from(node: Node): WN {
+        return new WN(node)
     }
 
-    get ref(): Node {
+    #ref!: T
+
+    constructor(ref: T) {
+        this.ref = ref
+    }
+
+    get ref(): T {
         return this.#ref
     }
 
-    set ref(value: Node) {
-        if (!(value instanceof Node)) {
+    set ref(value: T) {
+        if (!isA(value, Node)) {
             throw new TypeError(`Expected a Node. Got: ${value} (${typeof value})`)
         }
         this.#ref = value
     }
 
-    static wrap(x: Node | WN): WN {
-        if (isA(x, WN)) {
-            return x
-        }
-        if (isA(x, Node)) {
-            return new WN(x)
-        }
-        throw new TypeError(`Expected a WN or Node. Got: ${x} (${typeof x})`)
+    clone(deep?: boolean): Wrapped {
+        return wrap(this.ref.cloneNode(deep))
     }
 
-    static unwrap(x: WN | Node): Node {
-        if (isA(x, WN)) {
-            return x.ref
+    append(...children: Wrappable[]): this {
+        const nodes = unwrapAll(children)
+        if (isElementOrDocumentFragment(this.ref)) {
+            this.ref.append(...nodes)
+        } else {
+            for (const node of nodes) {
+                this.ref.appendChild(node)
+            }
         }
-        if (isA(x, Node)) {
-            return x
-        }
-        throw new TypeError(`Expected a WN or Node. Got: ${x} (${typeof x})`)
+        return this
     }
 
-    static from(node: Node): WN {
-        return new WN(node)
+    mapAppend<T>(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable): this {
+        return this.append(...array.map(mapFn))
+    }
+
+    prepend(...children: Wrappable[]): this {
+        const nodes = unwrapAll(children)
+        if (isElementOrDocumentFragment(this.ref)) {
+            this.ref.prepend(...nodes)
+        } else {
+            const first = this.ref.firstChild
+            for (const node of nodes) {
+                this.ref.insertBefore(node, first)
+            }
+        }
+        return this
+    }
+
+    mapPrepend<T>(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable): this {
+        return this.prepend(...array.map(mapFn))
     }
 }

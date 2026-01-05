@@ -1,35 +1,35 @@
 import { isA } from 'jty'
 import { WF } from './WF.js'
 
-export class WS extends WF {
-    constructor(shadow: ShadowRoot) {
+/**
+ * Wraps a DOM ShadowRoot node (which is a descendant of DocumentFragment)
+ */
+export class WS<T extends ShadowRoot = ShadowRoot> extends WF<T> {
+    constructor(shadow: T) {
         if (!isA(shadow, ShadowRoot)) {
             throw new TypeError(`Expected a ShadowRoot. Got ${shadow} (${typeof shadow})`)
         }
         super(shadow)
     }
 
-    get ref() {
-        return super.ref as ShadowRoot
-    }
-
-    set ref(value) {
+    set ref(value: T) {
         if (!isA(value, ShadowRoot)) {
             throw new TypeError(`Expected a ShadowRoot. Got ${value} (${typeof value})`)
         }
         super.ref = value
     }
 
-    getHtml() {
+    getHtml(): string {
         return this.ref.innerHTML
     }
 
-    setHtml(value: string) {
+    setHtml(value: string, unsafe: false): this {
+        // TODO: https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/setHTMLUnsafe
         this.ref.innerHTML = value
         return this
     }
 
-    addStyleSheets(...styleSheets: CSSStyleSheet[]) {
+    addStyleSheets(...styleSheets: CSSStyleSheet[]): this {
         this.ref.adoptedStyleSheets.push(...styleSheets)
         return this
     }
