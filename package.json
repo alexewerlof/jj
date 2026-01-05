@@ -28,6 +28,7 @@
         "doc": "typedoc src/index.ts",
         "build": "tsc",
         "bundle": "esbuild src/index.ts --bundle --outfile=lib/bundle.js --format=esm",
+        "bundle:min": "esbuild src/index.ts --bundle --outfile=lib/bundle.min.js --format=esm --minify",
         "typecheck": "tsc --noEmit",
         "fmt": "prettier --write .",
         "test": "npm run typecheck && node --import tsx --test",
