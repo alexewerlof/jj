@@ -27,7 +27,7 @@ export type Wrapped = WHE | WE | WF | WF | WS | WT | WN
  */
 export function wrap(raw: Wrappable): Wrapped {
     if (isStr(raw)) {
-        return new WT(raw)
+        return WT.from(document.createTextNode(raw))
     }
     if (!isObj(raw)) {
         throw new TypeError(`Expected an object to wrap. Got ${raw} (${typeof raw})`)
@@ -36,22 +36,22 @@ export function wrap(raw: Wrappable): Wrapped {
         return raw
     }
     if (isA(raw, HTMLElement)) {
-        return new WHE(raw)
+        return WHE.from(raw)
     }
     if (isA(raw, Element)) {
-        return new WE(raw)
+        return WE.from(raw)
     }
     if (isA(raw, ShadowRoot)) {
-        return new WS(raw)
+        return WS.from(raw)
     }
     if (isA(raw, DocumentFragment)) {
-        return new WF(raw)
+        return WF.from(raw)
     }
     if (isA(raw, Text)) {
-        return new WT(raw)
+        return WT.from(raw)
     }
     if (isA(raw, Node)) {
-        return new WN(raw)
+        return WN.from(raw)
     }
     throw new TypeError(`Only Frag or DocumentFragment can be wrapped. Got ${raw} (${typeof raw})`)
 }
@@ -72,10 +72,10 @@ export function unwrap(obj: Wrappable): Unwrapped {
     if (!isObj(obj)) {
         throw new TypeError(`Expected an object. Got ${obj} (${typeof obj})`)
     }
-    if (obj instanceof Node) {
+    if (isA(obj, Node)) {
         return obj
     }
-    if (obj instanceof WN) {
+    if (isA(obj, WN)) {
         return obj.ref
     }
     throw new TypeError(`Could not unwrap ${obj} (${typeof obj})`)
