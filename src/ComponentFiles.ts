@@ -2,19 +2,19 @@ import { isA, isStr } from 'jty'
 import { WF } from './WF.js'
 import { WHE } from './WHE.js'
 
-async function fetchText(url: string, mimeSubtype: string): Promise<string> {
-    const response = await fetch(url, { headers: { Accept: `text/${mimeSubtype}` } })
-    if (!response.ok) {
-        throw new Error(`GET ${url} failed: ${response.status} ${response.statusText}`)
-    }
-    return response.text()
-}
-
 class ComponentFile {
     constructor(protected href: string) {
         if (!isStr(href)) {
             throw new TypeError(`Expected a string href. Got ${href} (${typeof href})`)
         }
+    }
+
+    protected async _fetch(mimeSubtype: string): Promise<string> {
+        const response = await fetch(this.href, { headers: { Accept: `text/${mimeSubtype}` } })
+        if (!response.ok) {
+            throw new Error(`GET ${this.href} failed: ${response.status} ${response.statusText}`)
+        }
+        return response.text()
     }
 
     /**
@@ -38,7 +38,7 @@ export class TemplateFile extends ComponentFile {
     }
 
     async fetch(): Promise<string> {
-        return await fetchText(this.href, 'html')
+        return await this._fetch('html')
     }
 
     get promise(): Promise<string> {
@@ -65,7 +65,7 @@ export class StyleFile extends ComponentFile {
     }
 
     async fetch(): Promise<CSSStyleSheet> {
-        const cssString = await fetchText(this.href, 'css')
+        const cssString = await this._fetch('css')
         const sheet = new CSSStyleSheet()
         return await sheet.replace(`${cssString}\n/*# sourceURL=${this.href} */`)
     }
