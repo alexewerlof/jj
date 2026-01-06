@@ -1,4 +1,4 @@
-import { hasOwnProp, isA, isStr } from 'jty'
+import { hasProp, isA, isStr } from 'jty'
 import { WE } from './WE.js'
 
 /**
@@ -31,22 +31,15 @@ export class WHE<T extends HTMLElement = HTMLElement> extends WE<T> {
         super(ref)
     }
 
-    set ref(value: T) {
-        if (!isA(value, HTMLElement)) {
-            throw new TypeError(`Expected a HTMLElement. Got ${value} (${typeof value})`)
-        }
-        super.ref = value
-    }
-
     getValue(): string {
-        if (!hasOwnProp(this.ref, 'value')) {
+        if (!hasProp(this.ref, 'value')) {
             throw new Error('Element does not have a value property')
         }
         return this.ref.value
     }
 
     setValue(value: string): this {
-        if (!hasOwnProp(this.ref, 'value')) {
+        if (!hasProp(this.ref, 'value')) {
             throw new Error('Element does not have a value property')
         }
         this.ref.value = value
@@ -58,7 +51,7 @@ export class WHE<T extends HTMLElement = HTMLElement> extends WE<T> {
     }
 
     hasData(name: string): boolean {
-        return hasOwnProp(this.ref.dataset, name)
+        return hasProp(this.ref.dataset, name)
     }
 
     setData(name: string, value: string): this {

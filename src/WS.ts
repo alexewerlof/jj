@@ -12,13 +12,6 @@ export class WS<T extends ShadowRoot = ShadowRoot> extends WF<T> {
         super(shadow)
     }
 
-    set ref(value: T) {
-        if (!isA(value, ShadowRoot)) {
-            throw new TypeError(`Expected a ShadowRoot. Got ${value} (${typeof value})`)
-        }
-        super.ref = value
-    }
-
     getHtml(): string {
         return this.ref.innerHTML
     }

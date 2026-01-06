@@ -13,13 +13,6 @@ export class WF<T extends DocumentFragment = DocumentFragment> extends WN<T> {
         super(ref)
     }
 
-    set ref(val: T) {
-        if (!isA(val, DocumentFragment)) {
-            throw new TypeError(`Expected a DocumentFragment. Got ${val} (${typeof val})`)
-        }
-        super.ref = val
-    }
-
     static from(fragment: DocumentFragment): WF {
         if (!isA(fragment, DocumentFragment)) {
             throw new TypeError(`Expected a DocumentFragment. Got ${fragment} (${typeof fragment})`)

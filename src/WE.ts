@@ -1,7 +1,8 @@
 import { isA } from 'jty'
 import { WF } from './WF.js'
 import { WN } from './WN.js'
-import { off, on, wrap, wrapAll, Wrapped } from './util.js'
+import { off, on } from './util.js'
+import { Wrapped } from './WN-mixin.js'
 
 /**
  * Wraps a DOM Element (which is a descendant of Node)
@@ -24,11 +25,11 @@ export class WE<T extends Element = Element> extends WN<T> {
 
     static query(selector: string): Wrapped | null {
         const queryResult = document.querySelector(selector)
-        return queryResult === null ? null : wrap(queryResult)
+        return queryResult === null ? null : WN.wrap(queryResult)
     }
 
     static queryAll(selector: string): Wrapped[] {
-        return wrapAll(document.querySelectorAll(selector))
+        return WN.wrapAll(document.querySelectorAll(selector))
     }
 
     constructor(ref: T) {
@@ -36,13 +37,6 @@ export class WE<T extends Element = Element> extends WN<T> {
             throw new TypeError(`Expected a Element. Got: ${ref} (${typeof ref})`)
         }
         super(ref)
-    }
-
-    set ref(value: T) {
-        if (!(value instanceof Element)) {
-            throw new TypeError(`Expected a Element. Got: ${value} (${typeof value})`)
-        }
-        super.ref = value
     }
 
     byClass(className: string): WE[] {

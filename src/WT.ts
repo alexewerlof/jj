@@ -21,13 +21,6 @@ export class WT<T extends Text = Text> extends WN<Text> {
         throw new TypeError(`Expected a Text. Got: ${ref} (${typeof ref})`)
     }
 
-    set ref(value: T) {
-        if (!isA(value, Text)) {
-            throw new TypeError(`Expected a Text object. Got: ${value} (${typeof value})`)
-        }
-        super.ref = value
-    }
-
     getText(): string {
         return this.ref.textContent
     }

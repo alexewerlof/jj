@@ -1,5 +1,5 @@
 import { isA } from 'jty'
-import { unwrapAll, wrap, Wrappable, Wrapped } from './util.js'
+import { Unwrapped, Wrappable, Wrapped } from './WN-mixin.js'
 
 /** @returns true if this.ref is an instance of descendant of Element or DocumentFragment  */
 function isElementOrDocumentFragment(x: unknown): x is Element | DocumentFragment {
@@ -14,29 +14,42 @@ export class WN<T extends Node = Node> {
         return new WN(node)
     }
 
+    declare static wrap: (raw: Wrappable) => Wrapped
+    declare static unwrap: (obj: Wrappable) => Unwrapped
+
+    /**
+     * wraps an iteratable object (e.g. an array of wrapped or DOM elements)
+     */
+    static wrapAll(iterable: Iterable<Wrappable>): Wrapped[] {
+        return Array.from(iterable, WN.wrap)
+    }
+
+    /**
+     * unwraps an iteratable object (e.g. an array of HTMLCollection)
+     */
+    static unwrapAll(iterable: Iterable<Wrappable>): Unwrapped[] {
+        return Array.from(iterable, WN.unwrap)
+    }
+
     #ref!: T
 
     constructor(ref: T) {
-        this.ref = ref
+        if (!isA(ref, Node)) {
+            throw new TypeError(`Expected a Node. Got ${ref} (${typeof ref})`)
+        }
+        this.#ref = ref
     }
 
-    get ref(): T {
+    get ref() {
         return this.#ref
     }
 
-    set ref(value: T) {
-        if (!isA(value, Node)) {
-            throw new TypeError(`Expected a Node. Got: ${value} (${typeof value})`)
-        }
-        this.#ref = value
-    }
-
     clone(deep?: boolean): Wrapped {
-        return wrap(this.ref.cloneNode(deep))
+        return WN.wrap(this.ref.cloneNode(deep))
     }
 
     append(...children: Wrappable[]): this {
-        const nodes = unwrapAll(children)
+        const nodes = WN.unwrapAll(children)
         if (isElementOrDocumentFragment(this.ref)) {
             this.ref.append(...nodes)
         } else {
@@ -52,7 +65,7 @@ export class WN<T extends Node = Node> {
     }
 
     prepend(...children: Wrappable[]): this {
-        const nodes = unwrapAll(children)
+        const nodes = WN.unwrapAll(children)
         if (isElementOrDocumentFragment(this.ref)) {
             this.ref.prepend(...nodes)
         } else {
