@@ -1,21 +1,10 @@
-import { StyleFile, TemplateFile, ComponentFiles, ensureComponent } from '../../../lib/bundle.js'
-
-const files = new ComponentFiles(
-    new TemplateFile(import.meta.resolve('./chat-thread.html')),
-    new StyleFile(import.meta.resolve('./chat-thread.css')),
-)
+import { StyleFile, TemplateFile, ensureComponent } from '../../../lib/bundle.js'
 
 export class ChatThread extends HTMLElement {
-    #shadow = null
-
-    constructor() {
-        super()
-    }
-
-    async connectedCallback() {
-        // Welem.from(this).setShadow('open', ...await ChatMessage.#files.getTemplateAndSheet())
-        this.#shadow = await files.initShadow(this, 'open')
-    }
+    static template = new TemplateFile(import.meta.resolve('./chat-thread.html'))
+    static styles = [
+        new StyleFile(import.meta.resolve('./chat-thread.css')),
+    ]
 }
 
 await ensureComponent('chat-thread', ChatThread)

@@ -5,23 +5,14 @@ import { WE } from './WE.js'
  * Wraps a DOM HTMLElement (which is a descendant of Element)
  */
 export class WHE<T extends HTMLElement = HTMLElement> extends WE<T> {
-    static from(element: HTMLElement): WHE {
-        if (!isA(element, HTMLElement)) {
-            throw new TypeError(`Expected a HTMLElement. Got: ${element} (${typeof element})`)
-        }
-        return new WHE(element)
+    static from(ref: HTMLElement): WHE {
+        return new WHE(ref)
     }
-
     static fromTag(tagName: string, options?: ElementCreationOptions): WE {
         if (!isStr(tagName)) {
             throw new TypeError(`Expected a string for tagName. Got: ${tagName} (${typeof tagName})`)
         }
         return new WE(document.createElement(tagName, options))
-    }
-
-    static byId(id: string): WHE | null {
-        const el = document.getElementById(id)
-        return el ? WHE.from(el) : el
     }
 
     constructor(ref: T) {
@@ -31,7 +22,7 @@ export class WHE<T extends HTMLElement = HTMLElement> extends WE<T> {
         super(ref)
     }
 
-    getValue(): string {
+    getValue() {
         if (!hasProp(this.ref, 'value')) {
             throw new Error('Element does not have a value property')
         }

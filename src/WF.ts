@@ -1,11 +1,15 @@
 import { isA } from 'jty'
 import { WN } from './WN.js'
-import { WE } from './WE.js'
+import { Wrapped } from './WN-mixin.js'
 
 /**
  * Wraps a DocumentFragment (which is a descendant of Node)
  */
 export class WF<T extends DocumentFragment = DocumentFragment> extends WN<T> {
+    static from(ref: DocumentFragment): WF {
+        return new WF(ref)
+    }
+
     constructor(ref: T) {
         if (!isA(ref, DocumentFragment)) {
             throw new TypeError(`Expected a DocumentFragment. Got ${ref} (${typeof ref})`)
@@ -13,26 +17,15 @@ export class WF<T extends DocumentFragment = DocumentFragment> extends WN<T> {
         super(ref)
     }
 
-    static from(fragment: DocumentFragment): WF {
-        if (!isA(fragment, DocumentFragment)) {
-            throw new TypeError(`Expected a DocumentFragment. Got ${fragment} (${typeof fragment})`)
-        }
-        return new WF(fragment)
-    }
-
-    byId(id: string): WE {
+    byId(id: string, throwIfNotFound = true): Wrapped | null {
         const el = this.ref.getElementById(id)
-        if (!el) throw new TypeError(`Element with id ${id} not found`)
-        return WE.from(el)
-    }
-
-    query(selector: string): WE | null {
-        const result = this.ref.querySelector(selector)
-        return result === null ? result : WE.from(result)
-    }
-
-    queryAll(selector: string): WE[] {
-        return WE.fromIter(this.ref.querySelectorAll(selector))
+        if (el) {
+            return WN.wrap(el)
+        }
+        if (throwIfNotFound) {
+            throw new TypeError(`Element with id ${id} not found`)
+        }
+        return null
     }
 
     empty(): this {

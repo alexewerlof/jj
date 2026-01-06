@@ -1,35 +1,13 @@
 import { isA } from 'jty'
-import { WF } from './WF.js'
 import { WN } from './WN.js'
-import { off, on } from './util.js'
-import { Wrapped } from './WN-mixin.js'
+import { WS } from './WS.js'
 
 /**
  * Wraps a DOM Element (which is a descendant of Node)
  */
 export class WE<T extends Element = Element> extends WN<T> {
-    static byClass(className: string): WE[] {
-        return Array.from(document.getElementsByClassName(className), WE.from)
-    }
-
-    static from(element: Element): WE {
-        if (!isA(element, Element)) {
-            throw new TypeError(`Expected a WE or Element. Got: ${element} (${typeof element})`)
-        }
-        return new WE(element)
-    }
-
-    static fromIter(iterable: Iterable<Element>): WE[] {
-        return Array.from(iterable, WE.from)
-    }
-
-    static query(selector: string): Wrapped | null {
-        const queryResult = document.querySelector(selector)
-        return queryResult === null ? null : WN.wrap(queryResult)
-    }
-
-    static queryAll(selector: string): Wrapped[] {
-        return WN.wrapAll(document.querySelectorAll(selector))
+    static from(ref: Element): WE {
+        return new WE(ref)
     }
 
     constructor(ref: T) {
@@ -37,19 +15,6 @@ export class WE<T extends Element = Element> extends WN<T> {
             throw new TypeError(`Expected a Element. Got: ${ref} (${typeof ref})`)
         }
         super(ref)
-    }
-
-    byClass(className: string): WE[] {
-        return Array.from(this.ref.getElementsByClassName(className), WE.from)
-    }
-
-    query(selector: string): Wrapped | null {
-        const queryResult = this.ref.querySelector(selector)
-        return queryResult ? WE.from(queryResult) : null
-    }
-
-    queryAll(selector: string): Wrapped[] {
-        return Array.from(this.ref.querySelectorAll(selector), WE.from)
     }
 
     getAttr(name: string): string | null {
@@ -124,18 +89,8 @@ export class WE<T extends Element = Element> extends WN<T> {
         return this
     }
 
-    on(eventName: string, handler: EventListenerOrEventListenerObject): this {
-        on(this.ref, eventName, handler)
-        return this
-    }
-
     onClick(handler: EventListenerOrEventListenerObject): this {
         return this.on('click', handler)
-    }
-
-    off(eventName: string, handler: EventListenerOrEventListenerObject): this {
-        off(this.ref, eventName, handler)
-        return this
     }
 
     hide(): this {
@@ -152,11 +107,6 @@ export class WE<T extends Element = Element> extends WN<T> {
 
     enable(): this {
         return this.rmAttrs('disabled', 'aria-disabled')
-    }
-
-    rm(): this {
-        this.ref.remove()
-        return this
     }
 
     getTitle(): string | null {
@@ -192,8 +142,8 @@ export class WE<T extends Element = Element> extends WN<T> {
         return this
     }
 
-    getShadow(): WF {
+    getShadow(): WS {
         if (!this.ref.shadowRoot) throw new Error('No shadow root')
-        return new WF(this.ref.shadowRoot)
+        return new WS(this.ref.shadowRoot)
     }
 }

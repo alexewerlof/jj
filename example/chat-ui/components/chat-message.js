@@ -1,20 +1,14 @@
-import { ComponentFiles, ensureComponent, keb2cam, StyleFile, TemplateFile } from '../../../lib/bundle.js'
-
-const shadowMaster = new ComponentFiles(
-    new TemplateFile(import.meta.resolve('./chat-message.html')),
-    new StyleFile(import.meta.resolve('./chat-message.css')),
-)
+import { WC, ensureComponent, keb2cam, StyleFile, TemplateFile, WHE } from '../../../lib/bundle.js'
 
 const VALID_ROLES = ['user', 'system', 'assistant']
 
-export class ChatMessage extends HTMLElement {
+export class ChatMessage extends WC {
+    static template = new TemplateFile(import.meta.resolve('./chat-message.html'))
+    static styles = [new StyleFile(import.meta.resolve('./chat-message.css'))]
+
     #role = VALID_ROLES[0]
     #content = ''
-    #shadow = null
-
-    constructor(r) {
-        super()
-    }
+    #shadow
 
     get role() {
         return this.#role
@@ -38,14 +32,10 @@ export class ChatMessage extends HTMLElement {
     }
 
     async connectedCallback() {
-        // Welem.from(this).setShadow('open', ...await ChatMessage.#files.getTemplateAndSheet())
-        this.#shadow = await shadowMaster.initShadow(this, 'open')
+        await super.connectedCallback()
+        this.#shadow = WHE.from(this).getShadow()
         this.#render()
         console.debug('ChatMessage connectedCallback', this)
-    }
-
-    disconnectedCallback() {
-        // Called when removed from the DOM. Good for cleanup.
     }
 
     static get observedAttributes() {

@@ -1,5 +1,6 @@
 import { isA } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './WN-mixin.js'
+import { off, on } from './util.js'
 
 /** @returns true if this.ref is an instance of descendant of Element or DocumentFragment  */
 function isElementOrDocumentFragment(x: unknown): x is Element | DocumentFragment {
@@ -29,6 +30,57 @@ export class WN<T extends Node = Node> {
      */
     static unwrapAll(iterable: Iterable<Wrappable>): Unwrapped[] {
         return Array.from(iterable, WN.unwrap)
+    }
+
+    static byId(id: string, throwIfNotFound = true): Wrapped | null {
+        const el = document.getElementById(id)
+        if (el) {
+            return WN.wrap(el)
+        }
+        if (throwIfNotFound) {
+            throw new TypeError(`Element with id ${id} not found`)
+        }
+        return null
+    }
+
+    static byClass(className: string) {
+        return WN.wrapAll(document.getElementsByClassName(className))
+    }
+
+    static query(selector: string, throwIfNotFound = true): Wrapped | null {
+        const queryResult = document.querySelector(selector)
+        if (queryResult) {
+            return WN.wrap(queryResult)
+        }
+        if (throwIfNotFound) {
+            throw new TypeError(`Element with selector ${selector} not found`)
+        }
+        return null
+    }
+
+    query(selector: string, throwIfNotFound = true): Wrapped | null {
+        if (!isElementOrDocumentFragment(this.ref)) {
+            throw new TypeError(`Expected an Element or DocumentFragment. Got ${this.ref} (${typeof this.ref})`)
+        }
+        const queryResult = this.ref.querySelector(selector)
+        if (queryResult) {
+            return WN.wrap(queryResult)
+        }
+        if (throwIfNotFound) {
+            throw new TypeError(`Element with selector ${selector} not found`)
+        }
+        return null
+    }
+
+    static queryAll(selector: string): Wrapped[] {
+        return WN.wrapAll(document.querySelectorAll(selector))
+    }
+
+    queryAll(selector: string): Wrapped[] {
+        if (!isElementOrDocumentFragment(this.ref)) {
+            throw new TypeError(`Expected an Element or DocumentFragment. Got ${this.ref} (${typeof this.ref})`)
+        }
+        return WN.wrapAll(this.ref.querySelectorAll(selector))
     }
 
     #ref!: T
@@ -79,5 +131,20 @@ export class WN<T extends Node = Node> {
 
     mapPrepend<T>(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable): this {
         return this.prepend(...array.map(mapFn))
+    }
+
+    on(eventName: string, handler: EventListenerOrEventListenerObject): this {
+        on(this.ref, eventName, handler)
+        return this
+    }
+
+    off(eventName: string, handler: EventListenerOrEventListenerObject): this {
+        off(this.ref, eventName, handler)
+        return this
+    }
+
+    rm() {
+        this.ref.parentNode?.removeChild(this.ref)
+        return this
     }
 }
