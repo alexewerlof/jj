@@ -1,10 +1,10 @@
-import { StyleFile, TemplateFile, ensureComponent } from '../../../lib/bundle.js'
+import { ensureComponent, WC } from '../../../lib/bundle.js'
 
-export class ChatThread extends HTMLElement {
-    static template = new TemplateFile(import.meta.resolve('./chat-thread.html'))
-    static styles = [
-        new StyleFile(import.meta.resolve('./chat-thread.css')),
-    ]
+export class ChatThread extends WC {
+    static {
+        this.setTemplate(import.meta.resolve('./chat-thread.html'))
+        this.addStyle(import.meta.resolve('./chat-thread.css'))
+    }
 }
 
 await ensureComponent('chat-thread', ChatThread)
