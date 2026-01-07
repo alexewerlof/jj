@@ -1,13 +1,45 @@
 import { WHE } from './WHE.js'
 import { isStr } from 'jty'
 
-abstract class ComponentFile<T = string | CSSStyleSheet> {
+class ComponentFile<T extends string | CSSStyleSheet> {
     #promise: Promise<T> | undefined
 
-    constructor(protected href: string) {
+    constructor(
+        protected href: string,
+        protected as: T extends string ? 'fetch' : 'style',
+        loading: LoadingStrategy = 'lazy',
+    ) {
         if (!isStr(href)) {
             throw new TypeError(`Expected a string href. Got ${href} (${typeof href})`)
         }
+        if (!['fetch', 'style'].includes(as)) {
+            throw new TypeError(`Expected a valid 'as'. Got: ${as} (${typeof as})`)
+        }
+        switch (loading) {
+            case 'eager':
+                this.promise // Trigger fetch
+                break
+            case 'prefetch':
+            case 'preload':
+                this.addLinkPre(loading)
+                break
+            case 'lazy':
+                break
+            default:
+                throw new RangeError(`Expected a valid loading strategy. Got: ${loading} (${typeof loading})`)
+        }
+    }
+
+    /**
+     * Creates a <lik re="preload|prefetch"> element and adds it to the document <head> element.
+     * @param as the link "as" attribute. Use 'fetch' for HTML, 'style' for CSS, and 'script' for JavaScript
+     * @param rel when set to a truthy value, a 'preload' link is created. Otherwise a 'prefetch' is created
+     * The difference lies in the priority of loading the resource to the browser cache where preload has higher prio.
+     */
+    protected addLinkPre(rel: 'prefetch' | 'preload') {
+        const link = WHE.fromTag('link').setAttr('rel', rel).setAttr('href', this.href).setAttr('as', this.as)
+        document.head.append(link.ref)
+        return this
     }
 
     get promise(): Promise<T> {
@@ -17,71 +49,47 @@ abstract class ComponentFile<T = string | CSSStyleSheet> {
         return this.#promise
     }
 
-    abstract fetch(): Promise<T>
-
-    protected async _fetch(mimeSubtype: string): Promise<string> {
+    protected async fetch(): Promise<T> {
+        const mimeSubtype = this.as === 'fetch' ? 'html' : 'css'
         const response = await fetch(this.href, { headers: { Accept: `text/${mimeSubtype}` } })
         if (!response.ok) {
             throw new Error(`GET ${this.href} failed: ${response.status} ${response.statusText}`)
         }
-        return response.text()
-    }
-
-    /**
-     * Creates a <lik re="preload|prefetch"> element and adds it to the document <head> element.
-     * @param as the link "as" attribute. Use 'fetch' for HTML, 'style' for CSS, and 'script' for JavaScript
-     * @param rel when set to a truthy value, a 'preload' link is created. Otherwise a 'prefetch' is created
-     * The difference lies in the priority of loading the resource to the browser cache where preload has higher prio.
-     */
-    protected addLinkPre(as: 'fetch' | 'style', rel: 'prefetch' | 'preload') {
-        const link = WHE.fromTag('link').setAttr('rel', rel).setAttr('href', this.href).setAttr('as', as)
-        document.head.append(link.ref)
-        return this
-    }
-}
-
-export class TemplateFile extends ComponentFile<string> {
-    async fetch(): Promise<string> {
-        return await this._fetch('html')
-    }
-
-    prefetch() {
-        return this.addLinkPre('fetch', 'prefetch')
-    }
-
-    preload() {
-        return this.addLinkPre('fetch', 'preload')
-    }
-}
-
-export class StyleFile extends ComponentFile<CSSStyleSheet> {
-    async fetch(): Promise<CSSStyleSheet> {
-        const cssString = await this._fetch('css')
+        const text = await response.text()
+        if (this.as === 'fetch') {
+            return text as unknown as T
+        }
         const sheet = new CSSStyleSheet()
-        return await sheet.replace(`${cssString}\n/*# sourceURL=${this.href} */`)
+        return (await sheet.replace(`${text}\n/*# sourceURL=${this.href} */`)) as unknown as T
     }
+}
 
-    prefetch() {
-        return this.addLinkPre('style', 'prefetch')
-    }
+export type LoadingStrategy = 'eager' | 'lazy' | 'prefetch' | 'preload'
 
-    preload() {
-        return this.addLinkPre('style', 'preload')
-    }
+export interface TemplateOptions {
+    shadowMode?: ShadowRootMode
+    loading?: LoadingStrategy
+}
+
+export interface StyleOptions {
+    loading?: LoadingStrategy
 }
 
 export class WC extends HTMLElement {
-    static template: TemplateFile
-    static styles: StyleFile[] = []
+    static template: ComponentFile<string>
+    static styles: ComponentFile<CSSStyleSheet>[] = []
     static shadowMode?: ShadowRootMode
 
-    static setTemplate(href: string) {
-        this.template = new TemplateFile(href)
+    static setTemplate(href: string, options?: TemplateOptions) {
+        this.template = new ComponentFile<string>(href, 'fetch', options?.loading)
+        if (isStr(options?.shadowMode) && ['open', 'closed'].includes(options.shadowMode)) {
+            this.shadowMode = options.shadowMode
+        }
         return this
     }
 
-    static addStyle(href: string) {
-        this.styles.push(new StyleFile(href))
+    static addStyle(href: string, options?: StyleOptions) {
+        this.styles.push(new ComponentFile<CSSStyleSheet>(href, 'style', options?.loading))
         return this
     }
 
