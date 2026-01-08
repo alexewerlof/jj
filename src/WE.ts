@@ -117,6 +117,14 @@ export class WE<T extends Element = Element> extends WN<T> {
         return this.setAttr('title', title)
     }
 
+    setId(id: string): this {
+        return this.setAttr('id', id)
+    }
+
+    getId(): string | null {
+        return this.getAttr('id')
+    }
+
     getHtml(): string {
         return this.ref.innerHTML
     }
