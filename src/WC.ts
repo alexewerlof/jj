@@ -77,6 +77,9 @@ class ComponentString implements ComponentResource<string> {
     promise: Promise<string>
 
     constructor(content: string) {
+        if (!isStr(content)) {
+            throw new TypeError(`Expected a HTML string. Got ${content} (${typeof content})`)
+        }
         this.promise = Promise.resolve(content)
     }
 }
@@ -85,18 +88,12 @@ class ComponentCss implements ComponentResource<CSSStyleSheet> {
     promise: Promise<CSSStyleSheet>
 
     constructor(css: string) {
+        if (!isStr(css)) {
+            throw new TypeError(`Expected a CSS string. Got ${css} (${typeof css})`)
+        }
         const sheet = new CSSStyleSheet()
         this.promise = sheet.replace(css)
     }
-}
-
-export interface TemplateOptions {
-    shadowMode?: ShadowRootMode
-    loading?: LoadingStrategy
-}
-
-export interface StyleOptions {
-    loading?: LoadingStrategy
 }
 
 /**
