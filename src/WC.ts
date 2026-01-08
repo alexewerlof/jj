@@ -76,6 +76,14 @@ export interface StyleOptions {
     loading?: LoadingStrategy
 }
 
+/**
+ * Parent class for custom components.
+ * It adds a few pragmatic functionalities
+ * - `setTemplate` sets the template for the custom component body
+ * - `addStyle` adds a stylesheet to be used by the shadowRoot
+ * - `connectedCallback` assigns the templates to shadowRoot and attaches any styles
+ * - `attributeChangedCallback` sets any props that corresponds to attributes defined in `static observedAttributes`
+ */
 export class WC extends HTMLElement {
     declare static jjHtml?: ComponentFile<string>
     declare static jjCss?: ComponentFile<CSSStyleSheet>[]

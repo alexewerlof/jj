@@ -7,6 +7,8 @@ export class ChatMessage extends WC {
         this.setTemplate(import.meta.resolve('./chat-message.html'))
         this.addStyle(import.meta.resolve('./chat-message.css'))
     }
+    static observedAttributes = ['role', 'content']
+
     #role = VALID_ROLES[0]
     #content = ''
     #shadow
@@ -20,7 +22,11 @@ export class ChatMessage extends WC {
             throw new Error(`Invalid role: ${value}`)
         }
         this.#role = value
-        this.#render()
+        this.#renderRole()
+    }
+    
+    #renderRole() {
+        this.#shadow?.byId('role').setText(this.role)
     }
 
     get content() {
@@ -29,7 +35,11 @@ export class ChatMessage extends WC {
 
     set content(value) {
         this.#content = value
-        this.#render()
+        this.#renderContent()
+    }
+    
+    #renderContent() {
+        this.#shadow?.byId('content').setHtml(this.contentHtml)
     }
 
     async connectedCallback() {
@@ -39,23 +49,9 @@ export class ChatMessage extends WC {
         console.debug('ChatMessage connectedCallback', this)
     }
 
-    static get observedAttributes() {
-        return ['role', 'content']
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        // Called when observed attributes change.
-        if (super.attributeChangedCallback(name, oldValue, newValue)){
-            this.#render()
-        }
-    }
-
     #render() {
-        console.log('rendering')
-        if (!this.#shadow) return
-        // Safe to update the shadow DOM here
-        this.#shadow.byId('role').setText(this.role)
-        this.#shadow.byId('content').setHtml(this.contentHtml)
+        this.#renderRole()
+        this.#renderContent()
     }
 
     get contentHtml() {
