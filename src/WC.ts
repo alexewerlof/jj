@@ -1,10 +1,16 @@
 import { keb2cam } from './case.js'
 import { WHE } from './WHE.js'
-import { hasProp, isArr, isStr } from 'jty'
+import { hasProp, isA, isArr, isStr } from 'jty'
+import { WS } from './WS.js'
+import { WN } from './WN.js'
 
 export type LoadingStrategy = 'eager' | 'lazy' | 'prefetch' | 'preload'
 
-class ComponentFile<T extends string | CSSStyleSheet> {
+interface ComponentResource<T> {
+    get promise(): Promise<T>
+}
+
+class ComponentFile<T extends string | CSSStyleSheet> implements ComponentResource<T> {
     #promise: Promise<T> | undefined
 
     constructor(
@@ -67,6 +73,23 @@ class ComponentFile<T extends string | CSSStyleSheet> {
     }
 }
 
+class ComponentString implements ComponentResource<string> {
+    promise: Promise<string>
+
+    constructor(content: string) {
+        this.promise = Promise.resolve(content)
+    }
+}
+
+class ComponentCss implements ComponentResource<CSSStyleSheet> {
+    promise: Promise<CSSStyleSheet>
+
+    constructor(css: string) {
+        const sheet = new CSSStyleSheet()
+        this.promise = sheet.replace(css)
+    }
+}
+
 export interface TemplateOptions {
     shadowMode?: ShadowRootMode
     loading?: LoadingStrategy
@@ -85,39 +108,45 @@ export interface StyleOptions {
  * - `attributeChangedCallback` sets any props that corresponds to attributes defined in `static observedAttributes`
  */
 export class WC extends HTMLElement {
-    declare static jjHtml?: ComponentFile<string>
-    declare static jjCss?: ComponentFile<CSSStyleSheet>[]
-    declare static jjShMode?: ShadowRootMode
+    declare static jjHtml?: ComponentResource<string>
+    declare static jjCss?: ComponentResource<CSSStyleSheet>[]
+    declare static closedShadow?: boolean
     declare static observedAttributes?: string[]
 
-    static setTemplate(href: string, options?: TemplateOptions) {
-        this.jjHtml = new ComponentFile<string>(href, 'fetch', options?.loading)
-        if (isStr(options?.shadowMode) && ['open', 'closed'].includes(options.shadowMode)) {
-            this.jjShMode = options.shadowMode
-        }
+    static setTemplateFile(href: string, loading?: LoadingStrategy) {
+        this.jjHtml = new ComponentFile<string>(href, 'fetch', loading)
         return this
     }
 
-    static addStyle(href: string, options?: StyleOptions) {
+    static setTemplateHtml(html: string) {
+        this.jjHtml = new ComponentString(html)
+        return this
+    }
+
+    static addStyleFile(href: string, loading?: LoadingStrategy) {
         if (!isArr(this.jjCss)) {
             this.jjCss = []
         }
-        this.jjCss.push(new ComponentFile<CSSStyleSheet>(href, 'style', options?.loading))
+        this.jjCss.push(new ComponentFile<CSSStyleSheet>(href, 'style', loading))
+        return this
+    }
+
+    static addStyleCss(css: string) {
+        if (!isArr(this.jjCss)) {
+            this.jjCss = []
+        }
+        this.jjCss.push(new ComponentCss(css))
         return this
     }
 
     async connectedCallback() {
-        const {
-            jjHtml: templateFile,
-            jjCss: styleFiles = [],
-            jjShMode: shadowMode = 'open',
-        } = this.constructor as typeof WC
+        const { jjHtml: templateFile, jjCss: styleFiles = [], closedShadow } = this.constructor as typeof WC
         const [html, ...styleSheets] = await Promise.all([
             templateFile?.promise,
             ...styleFiles.map((style) => style.promise),
         ])
         // Prevent FOUC by assigning the template and CSS in one go
-        WHE.from(this).setShadow(shadowMode, html, ...styleSheets)
+        WHE.from(this).setShadow(closedShadow ? 'closed' : 'open', html, ...styleSheets)
     }
 
     /**

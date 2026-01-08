@@ -1,11 +1,11 @@
-import { WC, ensureComponent, keb2cam, WHE } from '../../../lib/bundle.js'
+import { WC, ensureComponent, WHE } from '../../../lib/bundle.js'
 
 const VALID_ROLES = ['user', 'system', 'assistant']
 
 export class ChatMessage extends WC {
     static {
-        this.setTemplate(import.meta.resolve('./chat-message.html'))
-        this.addStyle(import.meta.resolve('./chat-message.css'))
+        this.setTemplateFile(import.meta.resolve('./chat-message.html'))
+        this.addStyleFile(import.meta.resolve('./chat-message.css'))
     }
     static observedAttributes = ['role', 'content']
 
