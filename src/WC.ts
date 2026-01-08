@@ -2,6 +2,8 @@ import { keb2cam } from './case.js'
 import { WHE } from './WHE.js'
 import { hasProp, isArr, isStr } from 'jty'
 
+export type LoadingStrategy = 'eager' | 'lazy' | 'prefetch' | 'preload'
+
 class ComponentFile<T extends string | CSSStyleSheet> {
     #promise: Promise<T> | undefined
 
@@ -65,8 +67,6 @@ class ComponentFile<T extends string | CSSStyleSheet> {
     }
 }
 
-export type LoadingStrategy = 'eager' | 'lazy' | 'prefetch' | 'preload'
-
 export interface TemplateOptions {
     shadowMode?: ShadowRootMode
     loading?: LoadingStrategy
@@ -77,35 +77,39 @@ export interface StyleOptions {
 }
 
 export class WC extends HTMLElement {
-    static template: ComponentFile<string>
-    static styles: ComponentFile<CSSStyleSheet>[] = []
-    static shadowMode?: ShadowRootMode
+    declare static jjHtml?: ComponentFile<string>
+    declare static jjCss?: ComponentFile<CSSStyleSheet>[]
+    declare static jjShMode?: ShadowRootMode
+    declare static observedAttributes?: string[]
 
     static setTemplate(href: string, options?: TemplateOptions) {
-        this.template = new ComponentFile<string>(href, 'fetch', options?.loading)
+        this.jjHtml = new ComponentFile<string>(href, 'fetch', options?.loading)
         if (isStr(options?.shadowMode) && ['open', 'closed'].includes(options.shadowMode)) {
-            this.shadowMode = options.shadowMode
+            this.jjShMode = options.shadowMode
         }
         return this
     }
 
     static addStyle(href: string, options?: StyleOptions) {
-        this.styles.push(new ComponentFile<CSSStyleSheet>(href, 'style', options?.loading))
+        if (!isArr(this.jjCss)) {
+            this.jjCss = []
+        }
+        this.jjCss.push(new ComponentFile<CSSStyleSheet>(href, 'style', options?.loading))
         return this
     }
 
     async connectedCallback() {
-        // Prevent FOUC
-        const { template: templateFile, styles: styleFiles, shadowMode = 'open' } = this.constructor as typeof WC
-        const [template, ...styleSheets] = await Promise.all([
-            templateFile.promise,
+        const {
+            jjHtml: templateFile,
+            jjCss: styleFiles = [],
+            jjShMode: shadowMode = 'open',
+        } = this.constructor as typeof WC
+        const [html, ...styleSheets] = await Promise.all([
+            templateFile?.promise,
             ...styleFiles.map((style) => style.promise),
         ])
-        WHE.from(this).setShadow(shadowMode, template, ...styleSheets)
-    }
-
-    static get observedAttributes() {
-        return ['role', 'content']
+        // Prevent FOUC by assigning the template and CSS in one go
+        WHE.from(this).setShadow(shadowMode, html, ...styleSheets)
     }
 
     /**
