@@ -45,8 +45,7 @@ export class ChatMessage extends WC {
 
     attributeChangedCallback(name, oldValue, newValue) {
         // Called when observed attributes change.
-        if (oldValue !== newValue) {
-            this[keb2cam(name)] = newValue
+        if (super.attributeChangedCallback(name, oldValue, newValue)){
             this.#render()
         }
     }

@@ -1,5 +1,6 @@
+import { keb2cam } from './case.js'
 import { WHE } from './WHE.js'
-import { isStr } from 'jty'
+import { hasProp, isArr, isStr } from 'jty'
 
 class ComponentFile<T extends string | CSSStyleSheet> {
     #promise: Promise<T> | undefined
@@ -101,5 +102,32 @@ export class WC extends HTMLElement {
             ...styleFiles.map((style) => style.promise),
         ])
         WHE.from(this).setShadow(shadowMode, template, ...styleSheets)
+    }
+
+    static get observedAttributes() {
+        return ['role', 'content']
+    }
+
+    /**
+     * The class that extends this one should define
+     * `static observedAttributes[]` containing kebab-based attribute names (all lower case)
+     * @param name kebab-case and in lower case exactly as it appears in `observedAttributes`
+     * @param oldValue
+     * @param newValue
+     * @returns true if it tried to set the attribute; otherwise false
+     */
+    attributeChangedCallback(name: string, oldValue: any, newValue: any) {
+        // Called when observed attributes change.
+        if (oldValue !== newValue) {
+            const observedAttributes = (this.constructor as typeof WC).observedAttributes
+            if (isArr(observedAttributes) && observedAttributes.includes(name)) {
+                const kebabName = keb2cam(name)
+                if (hasProp(this, kebabName)) {
+                    this[kebabName as keyof this] = newValue
+                    return true
+                }
+            }
+        }
+        return false
     }
 }
