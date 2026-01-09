@@ -5,9 +5,9 @@ import { Wrapped } from './WN-mixin.js'
 /**
  * Wraps a DocumentFragment (which is a descendant of Node)
  */
-export class WF<T extends DocumentFragment = DocumentFragment> extends WN<T> {
-    static from(ref: DocumentFragment): WF {
-        return new WF(ref)
+export class WDF<T extends DocumentFragment = DocumentFragment> extends WN<T> {
+    static from(ref: DocumentFragment): WDF {
+        return new WDF(ref)
     }
 
     constructor(ref: T) {
