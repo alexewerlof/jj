@@ -8,11 +8,12 @@ export class WHE<T extends HTMLElement = HTMLElement> extends WE<T> {
     static from(ref: HTMLElement): WHE {
         return new WHE(ref)
     }
-    static fromTag(tagName: string, options?: ElementCreationOptions): WE {
+
+    static fromTag(tagName: string, options?: ElementCreationOptions): WHE {
         if (!isStr(tagName)) {
             throw new TypeError(`Expected a string for tagName. Got: ${tagName} (${typeof tagName})`)
         }
-        return new WE(document.createElement(tagName, options))
+        return new WHE(document.createElement(tagName, options))
     }
 
     constructor(ref: T) {

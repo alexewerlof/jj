@@ -5,6 +5,10 @@ import { WF } from './WF.js'
  * Wraps a DOM ShadowRoot node (which is a descendant of DocumentFragment)
  */
 export class WS<T extends ShadowRoot = ShadowRoot> extends WF<T> {
+    static from(shadow: ShadowRoot) {
+        return new WS(shadow)
+    }
+
     constructor(shadow: T) {
         if (!isA(shadow, ShadowRoot)) {
             throw new TypeError(`Expected a ShadowRoot. Got ${shadow} (${typeof shadow})`)
