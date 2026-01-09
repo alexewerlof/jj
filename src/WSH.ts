@@ -4,9 +4,9 @@ import { WDF } from './WDF.js'
 /**
  * Wraps a DOM ShadowRoot node (which is a descendant of DocumentFragment)
  */
-export class WS<T extends ShadowRoot = ShadowRoot> extends WDF<T> {
+export class WSH<T extends ShadowRoot = ShadowRoot> extends WDF<T> {
     static from(shadow: ShadowRoot) {
-        return new WS(shadow)
+        return new WSH(shadow)
     }
 
     constructor(shadow: T) {

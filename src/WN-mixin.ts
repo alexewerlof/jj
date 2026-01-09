@@ -2,12 +2,12 @@ import { isA, isObj, isStr } from 'jty'
 import { WHE } from './WHE.js'
 import { WE } from './WE.js'
 import { WDF } from './WDF.js'
-import { WS } from './WS.js'
+import { WSH } from './WSH.js'
 import { WT } from './WT.js'
 import { WN } from './WN.js'
 
 export type Wrappable = WN | Node | string
-export type Wrapped = WHE | WE | WDF | WS | WDF | WT | WN
+export type Wrapped = WHE | WE | WDF | WSH | WDF | WT | WN
 export type Unwrapped = HTMLElement | Element | ShadowRoot | DocumentFragment | Text | Node
 
 /**
@@ -30,7 +30,7 @@ WN.wrap = (raw: Wrappable): Wrapped => {
         return WE.from(raw)
     }
     if (isA(raw, ShadowRoot)) {
-        return WS.from(raw)
+        return WSH.from(raw)
     }
     if (isA(raw, DocumentFragment)) {
         return WDF.from(raw)

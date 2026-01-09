@@ -1,6 +1,6 @@
 import { isA } from 'jty'
 import { WN } from './WN.js'
-import { WS } from './WS.js'
+import { WSH } from './WSH.js'
 
 /**
  * Wraps a DOM Element (which is a descendant of Node)
@@ -150,8 +150,8 @@ export class WE<T extends Element = Element> extends WN<T> {
         return this
     }
 
-    getShadow(): WS {
+    getShadow(): WSH {
         if (!this.ref.shadowRoot) throw new Error('No shadow root')
-        return new WS(this.ref.shadowRoot)
+        return new WSH(this.ref.shadowRoot)
     }
 }
