@@ -73,7 +73,7 @@ class ComponentFile<T extends string | CSSStyleSheet> implements ComponentResour
     }
 }
 
-class ComponentString implements ComponentResource<string> {
+class TemplateStr implements ComponentResource<string> {
     promise: Promise<string>
 
     constructor(content: string) {
@@ -84,7 +84,7 @@ class ComponentString implements ComponentResource<string> {
     }
 }
 
-class ComponentCss implements ComponentResource<CSSStyleSheet> {
+class StyleStr implements ComponentResource<CSSStyleSheet> {
     promise: Promise<CSSStyleSheet>
 
     constructor(css: string) {
@@ -116,7 +116,7 @@ export class WC extends HTMLElement {
     }
 
     static setTemplateHtml(html: string) {
-        this.jjHtml = new ComponentString(html)
+        this.jjHtml = new TemplateStr(html)
         return this
     }
 
@@ -132,7 +132,7 @@ export class WC extends HTMLElement {
         if (!isArr(this.jjCss)) {
             this.jjCss = []
         }
-        this.jjCss.push(new ComponentCss(css))
+        this.jjCss.push(new StyleStr(css))
         return this
     }
 
