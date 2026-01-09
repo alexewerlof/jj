@@ -27,7 +27,7 @@
     "scripts": {
         "doc": "typedoc src/index.ts",
         "build": "tsc",
-        "bundle": "esbuild src/index.ts --bundle --outfile=lib/bundle.js --format=esm",
+        "bundle": "esbuild src/index.ts --bundle --outfile=lib/bundle.js --format=esm --sourcemap",
         "bundle:min": "esbuild src/index.ts --bundle --outfile=lib/bundle.min.js --format=esm --minify",
         "typecheck": "tsc --noEmit",
         "fmt": "prettier --write .",
