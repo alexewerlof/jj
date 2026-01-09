@@ -10,19 +10,16 @@ interface ComponentResource<T> {
     get promise(): Promise<T>
 }
 
-class ComponentFile<T extends string | CSSStyleSheet> implements ComponentResource<T> {
+abstract class ComponentFile<T> implements ComponentResource<T> {
     #promise: Promise<T> | undefined
 
     constructor(
+        protected as: 'fetch' | 'style',
         protected href: string,
-        protected as: T extends string ? 'fetch' : 'style',
         loading: LoadingStrategy = 'lazy',
     ) {
         if (!isStr(href)) {
             throw new TypeError(`Expected a string href. Got ${href} (${typeof href})`)
-        }
-        if (!['fetch', 'style'].includes(as)) {
-            throw new TypeError(`Expected a valid 'as'. Got: ${as} (${typeof as})`)
         }
         switch (loading) {
             case 'eager':
@@ -58,18 +55,36 @@ class ComponentFile<T extends string | CSSStyleSheet> implements ComponentResour
         return this.#promise
     }
 
-    protected async fetch(): Promise<T> {
-        const mimeSubtype = this.as === 'fetch' ? 'html' : 'css'
-        const response = await fetch(this.href, { headers: { Accept: `text/${mimeSubtype}` } })
+    protected abstract fetch(): Promise<T>
+}
+
+class TemplateFile extends ComponentFile<string> {
+    constructor(href: string, loading?: LoadingStrategy) {
+        super('fetch', href, loading)
+    }
+
+    protected async fetch(): Promise<string> {
+        const response = await fetch(this.href, { headers: { Accept: 'text/html' } })
+        if (!response.ok) {
+            throw new Error(`GET ${this.href} failed: ${response.status} ${response.statusText}`)
+        }
+        return response.text()
+    }
+}
+
+class StyleFile extends ComponentFile<CSSStyleSheet> {
+    constructor(href: string, loading?: LoadingStrategy) {
+        super('style', href, loading)
+    }
+
+    protected async fetch(): Promise<CSSStyleSheet> {
+        const response = await fetch(this.href, { headers: { Accept: 'text/css' } })
         if (!response.ok) {
             throw new Error(`GET ${this.href} failed: ${response.status} ${response.statusText}`)
         }
         const text = await response.text()
-        if (this.as === 'fetch') {
-            return text as unknown as T
-        }
         const sheet = new CSSStyleSheet()
-        return (await sheet.replace(`${text}\n/*# sourceURL=${this.href} */`)) as unknown as T
+        return sheet.replace(`${text}\n/*# sourceURL=${this.href} */`)
     }
 }
 
@@ -105,43 +120,40 @@ class StyleStr implements ComponentResource<CSSStyleSheet> {
  * - `attributeChangedCallback` sets any props that corresponds to attributes defined in `static observedAttributes`
  */
 export class WC extends HTMLElement {
-    declare static jjHtml?: ComponentResource<string>
-    declare static jjCss?: ComponentResource<CSSStyleSheet>[]
+    declare static jjTemplate?: ComponentResource<string>
+    declare static jjStyle?: ComponentResource<CSSStyleSheet>[]
     declare static closedShadow?: boolean
     declare static observedAttributes?: string[]
 
     static setTemplateFile(href: string, loading?: LoadingStrategy) {
-        this.jjHtml = new ComponentFile<string>(href, 'fetch', loading)
+        this.jjTemplate = new TemplateFile(href, loading)
         return this
     }
 
     static setTemplateHtml(html: string) {
-        this.jjHtml = new TemplateStr(html)
+        this.jjTemplate = new TemplateStr(html)
         return this
     }
 
     static addStyleFile(href: string, loading?: LoadingStrategy) {
-        if (!isArr(this.jjCss)) {
-            this.jjCss = []
+        if (!isArr(this.jjStyle)) {
+            this.jjStyle = []
         }
-        this.jjCss.push(new ComponentFile<CSSStyleSheet>(href, 'style', loading))
+        this.jjStyle.push(new StyleFile(href, loading))
         return this
     }
 
     static addStyleCss(css: string) {
-        if (!isArr(this.jjCss)) {
-            this.jjCss = []
+        if (!isArr(this.jjStyle)) {
+            this.jjStyle = []
         }
-        this.jjCss.push(new StyleStr(css))
+        this.jjStyle.push(new StyleStr(css))
         return this
     }
 
     async connectedCallback() {
-        const { jjHtml: templateFile, jjCss: styleFiles = [], closedShadow } = this.constructor as typeof WC
-        const [html, ...styleSheets] = await Promise.all([
-            templateFile?.promise,
-            ...styleFiles.map((style) => style.promise),
-        ])
+        const { jjTemplate: template, jjStyle: style = [], closedShadow } = this.constructor as typeof WC
+        const [html, ...styleSheets] = await Promise.all([template?.promise, ...style.map((style) => style.promise)])
         // Prevent FOUC by assigning the template and CSS in one go
         WHE.from(this).setShadow(closedShadow ? 'closed' : 'open', html, ...styleSheets)
     }
