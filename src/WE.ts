@@ -1,4 +1,4 @@
-import { isA } from 'jty'
+import { isA, isObj } from 'jty'
 import { WN } from './WN.js'
 import { WSH } from './WSH.js'
 
@@ -31,6 +31,9 @@ export class WE<T extends Element = Element> extends WN<T> {
     }
 
     setAttrs(obj: Record<string, string>): this {
+        if (!isObj(obj)) {
+            throw new TypeError(`Expected an object. Got: ${obj} (${typeof obj})`)
+        }
         for (const [name, value] of Object.entries(obj)) {
             this.setAttr(name, value)
         }

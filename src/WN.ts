@@ -106,7 +106,9 @@ export class WN<T extends Node = Node> {
             this.ref.append(...nodes)
         } else {
             for (const node of nodes) {
-                this.ref.appendChild(node)
+                if (node) {
+                    this.ref.appendChild(node)
+                }
             }
         }
         return this
@@ -123,7 +125,9 @@ export class WN<T extends Node = Node> {
         } else {
             const first = this.ref.firstChild
             for (const node of nodes) {
-                this.ref.insertBefore(node, first)
+                if (node) {
+                    this.ref.insertBefore(node, first)
+                }
             }
         }
         return this
