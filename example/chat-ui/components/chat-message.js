@@ -24,7 +24,7 @@ export class ChatMessage extends WC {
         this.#role = value
         this.#renderRole()
     }
-    
+
     #renderRole() {
         this.#shadow?.byId('role').setText(this.role)
     }
@@ -37,7 +37,7 @@ export class ChatMessage extends WC {
         this.#content = value
         this.#renderContent()
     }
-    
+
     #renderContent() {
         this.#shadow?.byId('content').setHtml(this.contentHtml)
     }
