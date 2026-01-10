@@ -2,7 +2,10 @@ import { WC, ensureComponent, WHE } from '../../../lib/bundle.js'
 
 const VALID_ROLES = ['user', 'system', 'assistant']
 
+// Test comment
 export class ChatMessage extends WC {
+    /* longer comment
+    in multiple lines*/
     static {
         this.setTemplateFile(import.meta.resolve('./chat-message.html'))
         this.addStyleFile(import.meta.resolve('./chat-message.css'))

@@ -1,0 +1,17 @@
+@import url('variables.css');
+html,
+body {
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+    font-family: var(--body-font-family);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+th {
+    font-family: var(--title-font-family);
+}

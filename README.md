@@ -1,6 +1,7 @@
 # Just JavaScript!
 
 **Do you know what runs faster than VDOM? No VDOM!**
+**Do you know what's faster than transpilation? No transpilation!**
 
 **JJ** A human readable WYWIWIR (what you write is what is run) DSL for creating and manipulating HTML and CSS for modern browsers.
 
