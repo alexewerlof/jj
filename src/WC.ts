@@ -1,8 +1,6 @@
 import { keb2cam } from './case.js'
 import { WHE } from './WHE.js'
 import { hasProp, isA, isArr, isStr } from 'jty'
-import { WSH } from './WSH.js'
-import { WN } from './WN.js'
 
 export type LoadingStrategy = 'eager' | 'lazy' | 'prefetch' | 'preload'
 
