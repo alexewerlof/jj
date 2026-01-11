@@ -1,114 +1,89 @@
 import { keb2cam } from './case.js'
 import { WHE } from './WHE.js'
-import { hasProp, isA, isArr, isStr } from 'jty'
+import { hasProp, isArr, isStr, isObj, isFn, isA, isDef } from 'jty'
 
-export type LoadingStrategy = 'eager' | 'lazy' | 'prefetch' | 'preload'
-
-interface ComponentResource<T> {
-    get promise(): Promise<T>
+export async function fetchText(url: URL | string, mime: string = 'text/*') {
+    if (!isStr(mime)) {
+        throw new TypeError(`Expected a string mime like 'text/html' or 'text/css'. Got ${mime} (${typeof mime})`)
+    }
+    const response = await fetch(url, { headers: { Accept: mime } })
+    if (!response.ok) {
+        throw new Error(`GET ${url} failed: ${response.status} ${response.statusText}`)
+    }
+    return response.text()
 }
 
-abstract class ComponentFile<T> implements ComponentResource<T> {
-    #promise: Promise<T> | undefined
-
-    constructor(
-        protected as: 'fetch' | 'style',
-        protected href: string,
-        loading: LoadingStrategy = 'lazy',
-    ) {
-        if (!isStr(href)) {
-            throw new TypeError(`Expected a string href. Got ${href} (${typeof href})`)
-        }
-        switch (loading) {
-            case 'eager':
-                this.promise // Trigger fetch
-                break
-            case 'prefetch':
-            case 'preload':
-                this.addLinkPre(loading)
-                break
-            case 'lazy':
-                break
-            default:
-                throw new RangeError(`Expected a valid loading strategy. Got: ${loading} (${typeof loading})`)
-        }
-    }
-
-    /**
-     * Creates a <lik re="preload|prefetch"> element and adds it to the document <head> element.
-     * @param as the link "as" attribute. Use 'fetch' for HTML, 'style' for CSS, and 'script' for JavaScript
-     * @param rel when set to a truthy value, a 'preload' link is created. Otherwise a 'prefetch' is created
-     * The difference lies in the priority of loading the resource to the browser cache where preload has higher prio.
-     */
-    protected addLinkPre(rel: 'prefetch' | 'preload') {
-        const link = WHE.fromTag('link').setAttr('rel', rel).setAttr('href', this.href).setAttr('as', this.as)
-        document.head.append(link.ref)
-        return this
-    }
-
-    get promise(): Promise<T> {
-        if (this.#promise === undefined) {
-            this.#promise = this.fetch()
-        }
-        return this.#promise
-    }
-
-    protected abstract fetch(): Promise<T>
+export async function fetchHtml(url: URL | string): Promise<string> {
+    return await fetchText(url, 'text/html')
 }
 
-class TemplateFile extends ComponentFile<string> {
-    constructor(href: string, loading?: LoadingStrategy) {
-        super('fetch', href, loading)
-    }
-
-    protected async fetch(): Promise<string> {
-        const response = await fetch(this.href, { headers: { Accept: 'text/html' } })
-        if (!response.ok) {
-            throw new Error(`GET ${this.href} failed: ${response.status} ${response.statusText}`)
-        }
-        return response.text()
-    }
+export async function fetchCss(url: URL | string): Promise<string> {
+    return await fetchText(url, 'text/css')
 }
 
-class StyleFile extends ComponentFile<CSSStyleSheet> {
-    constructor(href: string, loading?: LoadingStrategy) {
-        super('style', href, loading)
-    }
-
-    protected async fetch(): Promise<CSSStyleSheet> {
-        const response = await fetch(this.href, { headers: { Accept: 'text/css' } })
-        if (!response.ok) {
-            throw new Error(`GET ${this.href} failed: ${response.status} ${response.statusText}`)
-        }
-        const text = await response.text()
-        const sheet = new CSSStyleSheet()
-        return sheet.replace(`${text}\n/*# sourceURL=${this.href} */`)
-    }
+export async function cssToStyle(css: string): Promise<CSSStyleSheet> {
+    const sheet = new CSSStyleSheet()
+    return await sheet.replace(css)
 }
 
-class TemplateStr implements ComponentResource<string> {
-    promise: Promise<string>
-
-    constructor(content: string) {
-        if (!isStr(content)) {
-            throw new TypeError(`Expected a HTML string. Got ${content} (${typeof content})`)
-        }
-        this.promise = Promise.resolve(content)
-    }
+export async function fetchStyle(url: URL | string): Promise<CSSStyleSheet> {
+    return await cssToStyle(await fetchCss(url))
 }
 
-class StyleStr implements ComponentResource<CSSStyleSheet> {
-    promise: Promise<CSSStyleSheet>
-
-    constructor(css: string) {
-        if (!isStr(css)) {
-            throw new TypeError(`Expected a CSS string. Got ${css} (${typeof css})`)
-        }
-        const sheet = new CSSStyleSheet()
-        this.promise = sheet.replace(css)
-    }
+export function addLinkPre(href: string, rel: 'prefetch' | 'preload', as: 'fetch' | 'style' | 'script' = 'fetch') {
+    const link = WHE.fromTag('link').setAttrs({
+        rel,
+        href,
+        as,
+    })
+    document.head.append(link.ref)
+    return link
 }
 
+export type JJResource<T> = T | Promise<T> | (() => T | Promise<T>)
+export type JJTemplateConfig = JJResource<string>
+export type JJStylesConfig = JJResource<string | CSSStyleSheet> | JJResource<string | CSSStyleSheet>[]
+
+export interface JJConfig {
+    name: string
+    template?: JJTemplateConfig
+    styles?: JJStylesConfig
+    templateMode?: 'open' | 'closed'
+}
+
+interface JJProcessedConfig {
+    template?: string
+    styles: CSSStyleSheet[]
+}
+
+async function processStyleConfig(style: JJResource<string | CSSStyleSheet>): Promise<CSSStyleSheet> {
+    if (isFn(style)) {
+        style = await style()
+    }
+    style = await style
+    if (isA(style, CSSStyleSheet)) {
+        return style
+    }
+    if (isStr(style)) {
+        return await cssToStyle(style)
+    }
+    throw new TypeError(`Expected a css string or CSSStyleSheet. Got ${style} (${typeof style})`)
+}
+
+async function processConfig(
+    templateResource?: JJTemplateConfig,
+    styleResources?: JJStylesConfig,
+): Promise<JJProcessedConfig> {
+    const templatePromise = isFn(templateResource) ? templateResource() : Promise.resolve(templateResource)
+    if (!isDef(styleResources)) {
+        styleResources = []
+    }
+    if (!isArr(styleResources)) {
+        styleResources = [styleResources]
+    }
+    const [template, ...styles] = await Promise.all([templatePromise, ...styleResources.map(processStyleConfig)])
+    return { template, styles }
+}
 /**
  * Parent class for custom components.
  * It adds a few pragmatic functionalities
@@ -118,40 +93,15 @@ class StyleStr implements ComponentResource<CSSStyleSheet> {
  * - `attributeChangedCallback` sets any props that corresponds to attributes defined in `static observedAttributes`
  */
 export class WC extends HTMLElement {
-    declare static jjName: string
-    declare static jjTemplate?: ComponentResource<string>
-    declare static jjStyle?: ComponentResource<CSSStyleSheet>[]
-    declare static closedShadow?: boolean
+    static _jjCache: Promise<JJProcessedConfig> | JJProcessedConfig | undefined
+    declare static jj: JJConfig
     declare static observedAttributes?: string[]
 
-    static setTemplateFile(href: string, loading?: LoadingStrategy) {
-        this.jjTemplate = new TemplateFile(href, loading)
-        return this
-    }
-
-    static setTemplateHtml(html: string) {
-        this.jjTemplate = new TemplateStr(html)
-        return this
-    }
-
-    static addStyleFile(href: string, loading?: LoadingStrategy) {
-        if (!isArr(this.jjStyle)) {
-            this.jjStyle = []
-        }
-        this.jjStyle.push(new StyleFile(href, loading))
-        return this
-    }
-
-    static addStyleCss(css: string) {
-        if (!isArr(this.jjStyle)) {
-            this.jjStyle = []
-        }
-        this.jjStyle.push(new StyleStr(css))
-        return this
-    }
-
     static async register(): Promise<void> {
-        const { jjName: name } = this
+        if (!isObj(this.jj)) {
+            throw new Error(`static jj object is missing from the extending class. Got ${this.jj} (${typeof this.jj})`)
+        }
+        const { name } = this.jj
         if (!isStr(name)) {
             throw new TypeError(`Expected a string name. Got ${name} (${typeof name})`)
         }
@@ -162,10 +112,17 @@ export class WC extends HTMLElement {
     }
 
     async connectedCallback() {
-        const { jjTemplate: template, jjStyle: style = [], closedShadow } = this.constructor as typeof WC
-        const [html, ...styleSheets] = await Promise.all([template?.promise, ...style.map((style) => style.promise)])
-        // Prevent FOUC by assigning the template and CSS in one go
-        WHE.from(this).setShadow(closedShadow ? 'closed' : 'open', html, ...styleSheets)
+        const classRef = this.constructor as typeof WC
+        const jj = classRef.jj
+        if (!isObj(jj)) {
+            throw new TypeError(`static jj object is missing from the extending class. Got ${jj} (${typeof jj})`)
+        }
+        if (!classRef._jjCache) {
+            classRef._jjCache = processConfig(classRef.jj.template, classRef.jj.styles)
+        }
+        const { template, styles } = await classRef._jjCache
+        const { templateMode } = jj
+        WHE.from(this).setShadow(templateMode, template, ...styles)
     }
 
     /**

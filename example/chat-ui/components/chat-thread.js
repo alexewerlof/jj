@@ -1,10 +1,9 @@
-import { ensureComponent, WC } from '../../../lib/bundle.js'
+import { fetchCss, fetchHtml, WC } from '../../../lib/bundle.js'
 
 export class ChatThread extends WC {
-    static {
-        this.setTemplateFile(import.meta.resolve('./chat-thread.html'))
-        this.addStyleFile(import.meta.resolve('./chat-thread.css'))
+    static jj = {
+        name: 'chat-thread',
+        template: () => fetchHtml(import.meta.resolve('./chat-thread.html')),
+        styles: fetchCss(import.meta.resolve('./chat-thread.css')),
     }
 }
-
-await ensureComponent('chat-thread', ChatThread)

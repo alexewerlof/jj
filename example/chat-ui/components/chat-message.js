@@ -1,4 +1,4 @@
-import { WC, ensureComponent, WHE } from '../../../lib/bundle.js'
+import { fetchCss, fetchHtml, WC, WHE } from '../../../lib/bundle.js'
 
 const VALID_ROLES = ['user', 'system', 'assistant']
 
@@ -6,10 +6,12 @@ const VALID_ROLES = ['user', 'system', 'assistant']
 export class ChatMessage extends WC {
     /* longer comment
     in multiple lines*/
-    static {
-        this.setTemplateFile(import.meta.resolve('./chat-message.html'))
-        this.addStyleFile(import.meta.resolve('./chat-message.css'))
+    static jj = {
+        name: 'chat-message',
+        template: fetchHtml(import.meta.resolve('./chat-message.html')),
+        styles: fetchCss(import.meta.resolve('./chat-message.css')),
     }
+
     static observedAttributes = ['role', 'content']
 
     #role = VALID_ROLES[0]
@@ -61,5 +63,3 @@ export class ChatMessage extends WC {
         return `<p>${this.content}</p>`
     }
 }
-
-await ensureComponent('chat-message', ChatMessage)

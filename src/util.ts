@@ -10,15 +10,3 @@ export function on(target: EventTarget, eventName: string, handler: EventListene
 export function off(target: EventTarget, eventName: string, handler: EventListenerOrEventListenerObject): void {
     target.removeEventListener(eventName, handler)
 }
-
-export async function ensureComponent(
-    name: string,
-    constructor: CustomElementConstructor,
-): Promise<CustomElementConstructor> {
-    if (!customElements.get(name)) {
-        customElements.define(name, constructor)
-        await customElements.whenDefined(name)
-        return constructor
-    }
-    return constructor
-}

@@ -138,6 +138,7 @@ export class WE<T extends Element = Element> extends WN<T> {
     }
 
     /**
+     * We prevent FOUC by assigning the template and CSS in one go
      * @remarks
      * **Note:** You can't attach a shadow root to every type of element. There are some that can't have a
      * shadow DOM for security reasons (for example `<a>`).

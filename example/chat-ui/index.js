@@ -2,6 +2,9 @@ import { ChatMessage } from './components/chat-message.js'
 import { ChatThread } from './components/chat-thread.js'
 import { WHE } from '../../lib/bundle.js'
 
+await ChatThread.register()
+await ChatMessage.register()
+
 const promptInput = WHE.byId('prompt-input')
 const chatForm = WHE.byId('chat-form')
 const chatThread = WHE.byId('chat-thread')
