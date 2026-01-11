@@ -50,7 +50,9 @@ export class CodeBlock extends WC {
         try {
             const response = await fetch(this.#filePath)
             if (!response.ok) {
-                return this.#shadow.setText(`Error loading ${this.#filePath}: ${response.status} ${response.statusText}`)
+                return this.#shadow.setText(
+                    `Error loading ${this.#filePath}: ${response.status} ${response.statusText}`,
+                )
             }
             const codeText = await response.text()
             return highlighter.highlight(codeText, {
