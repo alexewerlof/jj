@@ -35,7 +35,7 @@
         "test:watch": "npm run typecheck && node --import tsx --test --watch",
         "test:coverage": "npm run typecheck && node --import tsx --test --experimental-test-coverage",
         "preversion": "npm run fmt && npm t",
-        "prepublishOnly": "npm run build && npm run bundle",
+        "prepublishOnly": "rm -rf lib && npm run build && npm run bundle && npm run bundle:min",
         "postversion": "git push && git push --tags"
     },
     "repository": {
