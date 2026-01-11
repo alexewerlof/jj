@@ -120,6 +120,7 @@ class StyleStr implements ComponentResource<CSSStyleSheet> {
  * - `attributeChangedCallback` sets any props that corresponds to attributes defined in `static observedAttributes`
  */
 export class WC extends HTMLElement {
+    declare static jjName: string
     declare static jjTemplate?: ComponentResource<string>
     declare static jjStyle?: ComponentResource<CSSStyleSheet>[]
     declare static closedShadow?: boolean
@@ -149,6 +150,17 @@ export class WC extends HTMLElement {
         }
         this.jjStyle.push(new StyleStr(css))
         return this
+    }
+
+    static async register(): Promise<void> {
+        const { jjName: name } = this
+        if (!isStr(name)) {
+            throw new TypeError(`Expected a string name. Got ${name} (${typeof name})`)
+        }
+        if (!customElements.get(name)) {
+            customElements.define(name, this)
+            await customElements.whenDefined(name)
+        }
     }
 
     async connectedCallback() {

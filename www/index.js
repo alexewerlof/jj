@@ -3,6 +3,9 @@ import highlighter from 'highlight'
 import hljs from 'highlight-js'
 import hlcss from 'highlight-css'
 import hlxml from 'highlight-xml'
+import { CodeBlock } from './components/code-block.js'
+
+await CodeBlock.register()
 
 // https://highlightjs.readthedocs.io/en/latest/api.html#configure
 highlighter.configure({
@@ -22,7 +25,6 @@ await Promise.all(WHE.queryAll('pre[data-file]').map(async (el) => {
         const highlighted = highlighter.highlight(code, {
             language: 'js',
         }).value
-        console.log(highlighted)
         el.setHtml(highlighted)
     } catch (e) {
         el.setText(`Error: ${e.message}`)
