@@ -14,6 +14,14 @@ highlighter.registerLanguage('css', hlcss)
 highlighter.registerLanguage('xml', hlxml)
 highlighter.registerAliases('html', { languagename: 'xml' })
 
+function getFileExtension(filePath) {
+    const lastDotIndex = filePath.lastIndexOf('.')
+    if (lastDotIndex === -1) {
+        return ''
+    }
+    return filePath.slice(lastDotIndex + 1)
+}
+
 async function loadFile(filePath) {
     try {
         const response = await fetch(filePath)
@@ -22,7 +30,7 @@ async function loadFile(filePath) {
         }
         const codeText = await response.text()
         return highlighter.highlight(codeText, {
-            language: 'js',
+            language: getFileExtension(filePath),
         }).value
     } catch (e) {
         return `Error: ${e.message}`
@@ -39,34 +47,15 @@ export class CodeBlock extends WC {
     static observedAttributes = ['file']
 
     #shadow
-    #filePath
     #codeHtml
 
     constructor() {
         super()
     }
 
-    async loadFile() {
-        try {
-            const response = await fetch(this.#filePath)
-            if (!response.ok) {
-                return this.#shadow.setText(
-                    `Error loading ${this.#filePath}: ${response.status} ${response.statusText}`,
-                )
-            }
-            const codeText = await response.text()
-            return highlighter.highlight(codeText, {
-                language: 'js',
-            }).value
-        } catch (e) {
-            return `Error: ${e.message}`
-        }
-    }
-
     set file(value) {
         if (!isStr(value)) throw new Error('file must be a string')
-        this.#filePath = value
-        this.#codeHtml = this.loadFile(value)
+        this.#codeHtml = loadFile(value)
     }
 
     async connectedCallback() {
