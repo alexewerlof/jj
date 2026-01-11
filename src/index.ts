@@ -1,4 +1,5 @@
 export * from './util.js'
+export * from './fetch.js'
 export * from './case.js'
 export * from './WN.js'
 export * from './WT.js'

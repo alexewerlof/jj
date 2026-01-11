@@ -1,44 +1,7 @@
 import { keb2cam } from './case.js'
+import { cssToStyle } from './util.js'
 import { WHE } from './WHE.js'
 import { hasProp, isArr, isStr, isObj, isFn, isA, isDef } from 'jty'
-
-export async function fetchText(url: URL | string, mime: string = 'text/*') {
-    if (!isStr(mime)) {
-        throw new TypeError(`Expected a string mime like 'text/html' or 'text/css'. Got ${mime} (${typeof mime})`)
-    }
-    const response = await fetch(url, { headers: { Accept: mime } })
-    if (!response.ok) {
-        throw new Error(`GET ${url} failed: ${response.status} ${response.statusText}`)
-    }
-    return response.text()
-}
-
-export async function fetchHtml(url: URL | string): Promise<string> {
-    return await fetchText(url, 'text/html')
-}
-
-export async function fetchCss(url: URL | string): Promise<string> {
-    return await fetchText(url, 'text/css')
-}
-
-export async function cssToStyle(css: string): Promise<CSSStyleSheet> {
-    const sheet = new CSSStyleSheet()
-    return await sheet.replace(css)
-}
-
-export async function fetchStyle(url: URL | string): Promise<CSSStyleSheet> {
-    return await cssToStyle(await fetchCss(url))
-}
-
-export function addLinkPre(href: string, rel: 'prefetch' | 'preload', as: 'fetch' | 'style' | 'script' = 'fetch') {
-    const link = WHE.fromTag('link').setAttrs({
-        rel,
-        href,
-        as,
-    })
-    document.head.append(link.ref)
-    return link
-}
 
 export type JJResource<T> = T | Promise<T> | (() => T | Promise<T>)
 export type JJTemplateConfig = JJResource<string>
