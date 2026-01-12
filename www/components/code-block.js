@@ -1,18 +1,18 @@
 import { fetchCss, fetchHtml, WC, WHE } from '../../lib/index.js'
-import highlighter from 'highlight'
-import hljs from 'highlight-js'
-import hlcss from 'highlight-css'
-import hlxml from 'highlight-xml'
+import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
+import highlightJs from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
+import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'
+import highlightXml from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/xml.min.js'
 import { isStr } from 'jty'
 
 // https://highlightjs.readthedocs.io/en/latest/api.html#configure
-highlighter.configure({
+highlight.configure({
     languages: ['js', 'css', 'html'],
 })
-highlighter.registerLanguage('js', hljs)
-highlighter.registerLanguage('css', hlcss)
-highlighter.registerLanguage('xml', hlxml)
-highlighter.registerAliases('html', { languagename: 'xml' })
+highlight.registerLanguage('js', highlightJs)
+highlight.registerLanguage('css', highlightCss)
+highlight.registerLanguage('xml', highlightXml)
+highlight.registerAliases('html', { languagename: 'xml' })
 
 function getFileExtension(filePath) {
     const lastDotIndex = filePath.lastIndexOf('.')
@@ -29,7 +29,7 @@ async function loadFile(filePath) {
             return `Error loading ${filePath}: ${response.status} ${response.statusText}`
         }
         const codeText = await response.text()
-        return highlighter.highlight(codeText, {
+        return highlight.highlight(codeText, {
             language: getFileExtension(filePath),
         }).value
     } catch (e) {
