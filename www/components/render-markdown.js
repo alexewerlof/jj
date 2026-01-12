@@ -9,9 +9,7 @@ async function loadFile(filePath) {
         if (!response.ok) {
             return `Error loading ${filePath}: ${response.status} ${response.statusText}`
         }
-        const codeText = await response.text()
-        console.log(codeText)
-        return md.render(codeText)
+        return md.render(await response.text())
     } catch (e) {
         return `Error: ${e.message}`
     }
@@ -20,7 +18,6 @@ async function loadFile(filePath) {
 export class RenderMarkdown extends WC {
     static jj = {
         name: 'render-markdown',
-        template: fetchHtml(import.meta.resolve('./render-markdown.html')),
     }
 
     static observedAttributes = ['file']
