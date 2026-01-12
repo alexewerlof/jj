@@ -18,9 +18,9 @@ function createMinuteIndicators() {
       }
 
       line.setAttrs({
-        x1: '50',
-        y1: '5',
-        x2: '50',
+        x1: 50,
+        y1: 5,
+        x2: 50,
         y2: fifth ? 14 : 7.8,
         transform: `rotate(${i * 6} 50 50)`
       })
