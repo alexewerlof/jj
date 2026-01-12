@@ -10,6 +10,10 @@ export class WDF<T extends DocumentFragment = DocumentFragment> extends WN<T> {
         return new WDF(ref)
     }
 
+    static new() {
+        return new WDF(document.createDocumentFragment())
+    }
+
     constructor(ref: T) {
         if (!isA(ref, DocumentFragment)) {
             throw new TypeError(`Expected a DocumentFragment. Got ${ref} (${typeof ref})`)
