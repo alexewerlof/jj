@@ -1,6 +1,5 @@
-import { fetchHtml, WC, WHE } from '../../lib/index.js'
+import { fetchHtml, WC, WHE } from '../../lib/bundle.js'
 import markdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
-import { isStr } from 'jty'
 
 const md = markdownIt()
 
@@ -34,7 +33,7 @@ export class RenderMarkdown extends WC {
     }
 
     set file(value) {
-        if (!isStr(value)) throw new Error('file must be a string')
+        if (typeof value !== 'string') throw new Error('file must be a string')
         this.#contentHtml = loadFile(value)
     }
 

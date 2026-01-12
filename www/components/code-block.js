@@ -1,9 +1,8 @@
-import { fetchCss, fetchHtml, WC, WHE } from '../../lib/index.js'
+import { fetchCss, fetchHtml, WC, WHE } from '../../lib/bundle.js'
 import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
 import highlightJs from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
 import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'
 import highlightXml from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/xml.min.js'
-import { isStr } from 'jty'
 
 // https://highlightjs.readthedocs.io/en/latest/api.html#configure
 highlight.configure({
@@ -54,7 +53,7 @@ export class CodeBlock extends WC {
     }
 
     set file(value) {
-        if (!isStr(value)) throw new Error('file must be a string')
+        if (typeof value !== 'string') throw new Error('file must be a string')
         this.#codeHtml = loadFile(value)
     }
 
