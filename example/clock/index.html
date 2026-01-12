@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="index.css" />
+        <title>JJ Clock</title>
+    </head>
+    <body>
+        <div id="clock" hidden>
+            <svg viewBox="0 0 100 100">
+                <circle id="rim" cx="50" cy="50" r="48"></circle>
+                <g id="minute-indicators">
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(0 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(6 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(12 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(18 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(24 50 50)"></line>
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(30 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(36 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(42 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(48 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(54 50 50)"></line>
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(60 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(66 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(72 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(78 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(84 50 50)"></line>
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(90 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(96 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(102 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(108 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(114 50 50)"></line>
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(120 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(126 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(132 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(138 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(144 50 50)"></line>
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(150 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(156 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(162 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(168 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(174 50 50)"></line>
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(180 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(186 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(192 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(198 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(204 50 50)"></line>
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(210 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(216 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(222 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(228 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(234 50 50)"></line>
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(240 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(246 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(252 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(258 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(264 50 50)"></line>
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(270 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(276 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(282 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(288 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(294 50 50)"></line>
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(300 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(306 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(312 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(318 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(324 50 50)"></line>
+                    <line
+                        class="minute-indicator minute-indicator--major"
+                        x1="50"
+                        y1="5"
+                        x2="50"
+                        y2="14"
+                        transform="rotate(330 50 50)"
+                    ></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(336 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(342 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(348 50 50)"></line>
+                    <line class="minute-indicator" x1="50" y1="5" x2="50" y2="7.8" transform="rotate(354 50 50)"></line>
+                </g>
+                <line
+                    id="hour-hand"
+                    x1="50"
+                    y1="58"
+                    x2="50"
+                    y2="24"
+                    stroke-width="4"
+                    transform="rotate(500 50 50)"
+                ></line>
+                <line
+                    id="minute-hand"
+                    x1="50"
+                    y1="60"
+                    x2="50"
+                    y2="17"
+                    stroke-width="2"
+                    transform="rotate(245.3 50 50)"
+                ></line>
+                <g id="second-group">
+                    <line id="second-hand" x1="50" y1="70" x2="50" y2="14" transform="rotate(318 50 50)"></line>
+                    <circle id="cap" cx="50" cy="50" r="2"></circle>
+                </g>
+            </svg>
+        </div>
+        <script type="module" src="index.js"></script>
+    </body>
+</html>
