@@ -151,4 +151,18 @@ export class WN<T extends Node = Node> {
         this.ref.parentNode?.removeChild(this.ref)
         return this
     }
+
+    /**
+     * Runs a function in the context of this WN instance.
+     *
+     * @param fn - The function to run. `this` inside the function will refer to this WN instance.
+     * @param args - Arguments to pass to the function.
+     * @returns The return value of the function.
+     * @remark if the function throws, `run()` doesn't swallow the exception.
+     * So if you're expecting an error, make sure to wrap it in a `try..catch` block and handle the exception.
+     * @remark if the function returns a promise, you can `await` on the response.
+     */
+    run<R, Args extends any[]>(fn: (this: this, ...args: Args) => R, ...args: Args): R {
+        return fn.call(this, ...args)
+    }
 }
