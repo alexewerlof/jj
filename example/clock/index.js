@@ -6,7 +6,7 @@ const minuteHand = WSE.byId('minute-hand')
 const hourHand = WSE.byId('hour-hand')
 
 function createMinuteIndicators() {
-    const frag = WDF.new()
+    const frag = WDF.create()
 
     for (let i = 0; i < 60; i++) {
       const line = WSE.fromTag('line')

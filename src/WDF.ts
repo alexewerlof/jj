@@ -10,7 +10,7 @@ export class WDF<T extends DocumentFragment = DocumentFragment> extends WN<T> {
         return new WDF(ref)
     }
 
-    static new() {
+    static create() {
         return new WDF(document.createDocumentFragment())
     }
 
