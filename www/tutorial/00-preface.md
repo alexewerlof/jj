@@ -9,8 +9,11 @@ Unlike frameworks like React, Vue, or Svelte, JJ doesn't have a huge API surface
 - Use modern browser features
 - Immutability: once a wrapper is initialized, its underlying reference cannot change.
 - It is essentially a **tiny** library. There's only so much that can fit here. Currently we don't have sugar syntax for a few constructs but you can easily use native browser API for those because JJ is built with the assumption that you can handle the browser API:
-    - [Animation](https://developer.mozilla.org/en-US/docs/Web/API/Animation)
     - [Routing](https://developer.mozilla.org/en-US/docs/Web/API/History_API)
     - [Travering](https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker)
+    - [Animation](https://developer.mozilla.org/en-US/docs/Web/API/Animation)
+    - [CSS Nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Nesting)
+    - [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascading_variables/Using_custom_properties)
+    - etc.
 
 But still, you're here because you want to learn something, so let's get to it.
