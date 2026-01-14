@@ -11,13 +11,13 @@ document.createElement('div')
 In JJ, you write that as:
 
 ```js
-WHE.fromTag('div')
+JJHE.fromTag('div')
 ```
 
 Let's unpack that:
 
-- `WHE`: Stands for Wrapped `HTMLElement`
-- `fromTag(string)` calls `document.createElement(string)` and assigns it to `.ref` of a newly created `WHE`
+- `JJHE`: Stands for Wrapped `HTMLElement`
+- `fromTag(string)` calls `document.createElement(string)` and assigns it to `.ref` of a newly created `JJHE`
 
 ## Chaining
 
@@ -32,7 +32,7 @@ div.textContent = 'Hello world'
 With JJ, you write:
 
 ```js
-const divWrapper = WHE.fromTag('div').setText('Hello world')
+const divWrapper = JJHE.fromTag('div').setText('Hello world')
 ```
 
 This gives you:
@@ -73,7 +73,7 @@ Most methods return a reference to this which enables chaining.
 For example if you wanted to set a `'title'` attribute and add a `dominant` class to the element, you can write:
 
 ```js
-const divWrapper = WHE.fromTag('div').setText('Hello world').setTitle('Hello world').addClass('dominant')
+const divWrapper = JJHE.fromTag('div').setText('Hello world').setTitle('Hello world').addClass('dominant')
 ```
 
 This gives you:
