@@ -1,4 +1,4 @@
-import { isA } from 'jty'
+import { isA, isStr } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './WN-mixin.js'
 import { off, on } from './util.js'
 
@@ -55,6 +55,12 @@ export class WN<T extends Node = Node> {
     }
 
     byId(id: string, throwIfNotFound = true): Wrapped | null {
+        if (!isStr(id)) {
+            throw new TypeError(`Expected a string id. Got ${id} (${typeof id})`)
+        }
+        if (isA(this.ref, HTMLElement)) {
+            return this.query(`#${id}`, throwIfNotFound)
+        }
         if (!isDDF(this.ref)) {
             throw new TypeError(`Expected an Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`)
         }
