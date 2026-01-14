@@ -1,5 +1,5 @@
-import { isA, isStr } from 'jty'
-import { Unwrapped, Wrappable, Wrapped } from './JJN-mixin.js'
+import { isA, isObj, isStr } from 'jty'
+import { Unwrapped, Wrappable, Wrapped } from './types.js'
 import { off, on } from './util.js'
 
 /**
@@ -38,10 +38,59 @@ export class JJN<T extends Node = Node> {
         return new JJN(node)
     }
 
+    /**
+     * Wraps a native DOM node or string into the most specific JJ wrapper available.
+     *
+     * @remarks
+     * This function acts as a factory, inspecting the input type and returning the appropriate
+     * subclass of `JJN` (e.g., `JJHE` for `HTMLElement`, `JJT` for `Text`).
+     *
+     * @example
+     * ```ts
+     * const bodyWrapper = JJN.wrap(document.body) // Returns JJHE
+     * const textWrapper = JJN.wrap('Hello') // Returns JJT wrapping a new Text node
+     * ```
+     *
+     * @param raw - The object to wrap. If it's already Wrapped, it'll be returned without any change. We don't double-wrap or clone it.
+     * @returns The most granular Wrapped subclass instance. If the input is already wrapped, it'll be returned as is without cloning.
+     * @throws {TypeError} If the input is not a Node, string, or JJ wrapper.
+     */
     declare static wrap: (raw: Wrappable) => Wrapped
-    declare static unwrap: (obj: Wrappable) => Unwrapped
 
     /**
+     * Extracts the underlying native DOM node from a wrapper.
+     *
+     * @remarks
+     * If the input is already a native Node, it is returned as is.
+     * If the input is a string, a new Text node is created and returned.
+     *
+     * @example
+     * ```ts
+     * const rawElement = JJN.unwrap(myJJHE) // Returns HTMLElement
+     * ```
+     *
+     * @param obj - The object to unwrap.
+     * @returns The underlying DOM node.
+     * @throws {TypeError} If the input cannot be unwrapped.
+     */
+    static unwrap(obj: Wrappable): Unwrapped {
+        if (isStr(obj)) {
+            return document.createTextNode(obj)
+        }
+        if (!isObj(obj)) {
+            throw new TypeError(`Expected an object. Got ${obj} (${typeof obj})`)
+        }
+        if (isA(obj, Node)) {
+            return obj
+        }
+        if (isA(obj, JJN)) {
+            return obj.ref
+        }
+        throw new TypeError(`Could not unwrap ${obj} (${typeof obj})`)
+    }
+
+    /**
+     * wraps an iteratable object (e.g. an array of wrapped or DOM elements)
      * Wraps an iterable object (e.g. an array of wrapped or DOM elements).
      *
      * @param iterable - The iterable to wrap.
@@ -52,6 +101,7 @@ export class JJN<T extends Node = Node> {
     }
 
     /**
+     * unwraps an iteratable object (e.g. an array of HTMLCollection)
      * Unwraps an iterable object (e.g. an array of HTMLCollection).
      *
      * @param iterable - The iterable to unwrap.
@@ -357,9 +407,11 @@ export class JJN<T extends Node = Node> {
      * @param fn - The function to run. `this` inside the function will refer to this JJN instance.
      * @param args - Arguments to pass to the function.
      * @returns The return value of the function.
-     * @remarks if the function throws, `run()` doesn't swallow the exception.
+     * @remarks
+     * If the function throws, `run()` doesn't swallow the exception.
      * So if you're expecting an error, make sure to wrap it in a `try..catch` block and handle the exception.
-     * @remarks if the function returns a promise, you can `await` on the response.
+     * If the function returns a promise, you can `await` on the response.
+     * If the function returns a promise, you can `await` on the response.
      */
     run<R, Args extends any[]>(fn: (this: this, ...args: Args) => R, ...args: Args): R {
         return fn.call(this, ...args)

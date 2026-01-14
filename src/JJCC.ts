@@ -2,45 +2,10 @@ import { keb2cam } from './case.js'
 import { cssToStyle } from './util.js'
 import { JJHE } from './JJHE.js'
 import { hasProp, isArr, isStr, isObj, isFn, isA, isDef } from 'jty'
+import { JJConfig, JJStyleConfig, JJStylesConfig, JJTemplateConfig } from './types.js'
 
-/**
- * Represents a resource that can be a direct value, a Promise, or a function returning either.
- * Used for lazy loading or dynamic generation.
- */
-export type JJResource<T> = T | Promise<T> | (() => T | Promise<T>)
-
-/**
- * Configuration for the component's template.
- * Can be an HTML string, a JJHE instance, or a raw HTMLElement.
- */
-export type JJTemplateConfig = JJResource<string | JJHE | HTMLElement>
-
-/**
- * Configuration for the component's styles.
- * Can be a CSS string or a CSSStyleSheet.
- */
-export type JJStyleConfig = JJResource<string | CSSStyleSheet> | JJResource<string | CSSStyleSheet>
-
-/**
- * Configuration for one or more style resources.
- */
-export type JJStylesConfig = JJStyleConfig | JJStyleConfig[]
-
-/**
- * Configuration object for defining a JJCC component.
- */
-export interface JJConfig {
-    /** The tag name for the custom element. Must contain a hyphen. */
-    name: string
-    /** The template configuration. */
-    template?: JJTemplateConfig
-    /** The styles configuration. */
-    styles?: JJStylesConfig
-    /** The Shadow DOM mode. Defaults to 'open'. */
-    templateMode?: 'open' | 'closed'
-}
-
-interface JJProcessedConfig {
+/** @internal represents the normalized config ready for further processing */
+interface JJConfigNorm {
     template?: string
     styles: CSSStyleSheet[]
 }
@@ -83,15 +48,7 @@ async function processStyleConfig(styleConfig: JJStyleConfig): Promise<CSSStyleS
     throw new TypeError(`Expected a css string or CSSStyleSheet. Got ${styleConfig} (${typeof styleConfig})`)
 }
 
-/*
-Type '[string | undefined, ...(string | CSSStyleSheet | (() => string | CSSStyleSheet | Promise<string | CSSStyleSheet>) | JJStyleConfig[])[]]' is not assignable to
-  type '[string | undefined, ...CSSStyleSheet[]]'.
-  
-  Type at position 1 in source is not compatible with type at position 1 in target.
-    Type 'string | CSSStyleSheet | (() => string | CSSStyleSheet | Promise<string | CSSStyleSheet>) | JJStyleConfig[]' is not assignable to type 'CSSStyleSheet'.
-      Type 'string' is not assignable to type 'CSSStyleSheet'.ts(2322)
-*/
-async function processConfig(jjConfig: JJConfig): Promise<JJProcessedConfig> {
+async function processConfig(jjConfig: JJConfig): Promise<JJConfigNorm> {
     if (!isObj(jjConfig)) {
         throw new TypeError(`Expected an static jj config object. Got ${jjConfig} (${typeof jjConfig})`)
     }
@@ -102,6 +59,9 @@ async function processConfig(jjConfig: JJConfig): Promise<JJProcessedConfig> {
     ])
     return { template, styles }
 }
+
+const jjCache = Symbol('jjCache')
+
 /**
  * Parent class for custom components.
  *
@@ -111,7 +71,7 @@ async function processConfig(jjConfig: JJConfig): Promise<JJProcessedConfig> {
  * - `attributeChangedCallback` sets any props that corresponds to attributes defined in `static observedAttributes`.
  *
  * @example
- * // Simple inline component
+ * Simple inline component
  * ```ts
  * import { JJCC } from 'jj'
  *
@@ -125,8 +85,8 @@ async function processConfig(jjConfig: JJConfig): Promise<JJProcessedConfig> {
  * SimpleGreeting.register()
  * ```
  *
- * // Advanced component with external template and styles.
- * // This keeps your HTML, CSS, and JS separate for better organization.
+ * Advanced component with external template and styles.
+ * This keeps your HTML, CSS, and JS separate for better organization.
  * ```ts
  * // my-component.js
  * import { JJCC, fetchHtml, fetchCss } from 'jj'
@@ -152,38 +112,46 @@ async function processConfig(jjConfig: JJConfig): Promise<JJProcessedConfig> {
  *     this.jjRoot?.query('#name-span')?.setText(value)
  *   }
  * }
- * MyComponent.register()
+ * await MyComponent.register()
+ * ```
  *
- * // You can also lazy-load resources by providing a function that returns the resource or a promise that resolves to the resource.
- * // The function will be called only when the component is first connected to the DOM and the result is cached.
+ * You can also lazy-load resources by providing a function that returns the resource or a promise that resolves to the resource.
+ * The function will be called only when the component is first connected to the DOM and the result is cached.
+ * ```ts
  * class LazyComponent extends JJCC {
  *   static jj = {
  *     name: 'lazy-component',
- *     template: () => fetchHtml(import.meta.resolve('./lazy.html')),
- *     styles: () => fetchCss(import.meta.resolve('./lazy.css')),
+ *     template: () => fetchHtml(import.meta.resolve('./lazy-template.html')),
+ *     styles: () => fetchCss(import.meta.resolve('./lazy-styles.css')),
  *   }
  * }
- * LazyComponent.register()
+ * await LazyComponent.register()
  * ```
  *
- * ```html
- * <div>
- *   Hello, <span id="name-span">Guest</span>!
- * </div>
- * ```
- *
- * ```css
- * div {
- *   border: 1px solid #ccc;
- *   padding: 1rem;
+ * You can also omit any of the `template` or `styles` or provide multiple styles (even of different types)
+ * ```ts
+ * class CrazyComponent extends JJCC {
+ *   static jj = {
+ *     name: 'crazy-component',
+ *     styles: [
+ *       // Eager loading starts as soon as this line is parsed
+ *       fetchCss(import.meta.resolve('path/to/some.css')),
+ *       // The function will be called when the first instance of CrazyComponent is connected to DOM
+ *       () => `body { color: "${primaryColor}" }`,
+ *       // Hard-coded CSS
+ *       'body { color: "red"' }`
+ *       // The file will be fetched when the first instance of CrazyComponent is connected to DOM
+ *       () => fetchCss(import.meta.resolve('./path/to/another.css')),
+ *   }
  * }
+ * await CrazyComponent.register()
  * ```
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements | Using custom elements}
  */
 export class JJCC extends HTMLElement {
     /** @internal Cache for processed configuration. */
-    static _jjCache?: Promise<JJProcessedConfig>
+    private static [jjCache]?: Promise<JJConfigNorm>
     /** The wrapper around the component's Shadow Root (or host). */
     jjRoot?: JJHE
 
@@ -222,6 +190,7 @@ export class JJCC extends HTMLElement {
     /**
      * Invoked when the custom element is appended to the document's DOM.
      * Initializes the Shadow DOM with the processed template and styles.
+     * To initialize the document template and styles, we override this standard custom component lifecycle hook.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#using_the_lifecycle_callbacks | Lifecycle callbacks}
      */
     async connectedCallback() {
@@ -230,10 +199,10 @@ export class JJCC extends HTMLElement {
         if (!isObj(jj)) {
             throw new TypeError(`static jj object is missing from the extending class. Got ${jj} (${typeof jj})`)
         }
-        if (!classRef._jjCache) {
-            classRef._jjCache = processConfig(classRef.jj)
+        if (!classRef[jjCache]) {
+            classRef[jjCache] = processConfig(classRef.jj)
         }
-        const { template, styles } = await classRef._jjCache
+        const { template, styles } = await classRef[jjCache]
         const { templateMode } = jj
         this.jjRoot = JJHE.from(this).initShadow(templateMode, template, ...styles)
     }
