@@ -45,7 +45,7 @@ export class CodeBlock extends WC {
 
     static observedAttributes = ['file']
 
-    #shadow
+    jjRoot
     #codeHtml
 
     constructor() {
@@ -59,7 +59,6 @@ export class CodeBlock extends WC {
 
     async connectedCallback() {
         await super.connectedCallback()
-        this.#shadow = WHE.from(this).getShadow()
-        this.#shadow.byId('code').setHtml(await this.#codeHtml)
+        this.jjRoot.shadow.byId('code').setHtml(await this.#codeHtml)
     }
 }

@@ -87,6 +87,8 @@ async function processConfig(jjConfig: JJConfig): Promise<JJProcessedConfig> {
  */
 export class WC extends HTMLElement {
     static _jjCache?: Promise<JJProcessedConfig>
+    jjRoot?: WHE
+
     declare static jj: JJConfig
     declare static observedAttributes?: string[]
 
@@ -115,7 +117,7 @@ export class WC extends HTMLElement {
         }
         const { template, styles } = await classRef._jjCache
         const { templateMode } = jj
-        WHE.from(this).setShadow(templateMode, template, ...styles)
+        this.jjRoot = WHE.from(this).initShadow(templateMode, template, ...styles)
     }
 
     /**

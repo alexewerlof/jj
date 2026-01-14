@@ -143,7 +143,7 @@ export class WE<T extends Element = Element> extends WN<T> {
      * **Note:** You can't attach a shadow root to every type of element. There are some that can't have a
      * shadow DOM for security reasons (for example `<a>`).
      */
-    setShadow(mode: ShadowRootMode = 'open', html?: string, ...styleSheets: CSSStyleSheet[]): this {
+    initShadow(mode: ShadowRootMode = 'open', html?: string, ...styleSheets: CSSStyleSheet[]): this {
         const shadowRoot = this.ref.shadowRoot ?? this.ref.attachShadow({ mode })
         if (html) {
             shadowRoot.innerHTML = html
@@ -154,8 +154,7 @@ export class WE<T extends Element = Element> extends WN<T> {
         return this
     }
 
-    getShadow(): WSH {
-        if (!this.ref.shadowRoot) throw new Error('No shadow root')
-        return new WSH(this.ref.shadowRoot)
+    get shadow() {
+        return this.ref.shadowRoot ? new WSH(this.ref.shadowRoot) : null
     }
 }

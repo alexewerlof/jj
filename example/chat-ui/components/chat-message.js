@@ -16,7 +16,6 @@ export class ChatMessage extends WC {
 
     #role = VALID_ROLES[0]
     #content = ''
-    #shadow
 
     get role() {
         return this.#role
@@ -31,7 +30,7 @@ export class ChatMessage extends WC {
     }
 
     #renderRole() {
-        this.#shadow?.byId('role').setText(this.role)
+        this.jjRoot?.shadow.byId('role').setText(this.role)
     }
 
     get content() {
@@ -44,12 +43,11 @@ export class ChatMessage extends WC {
     }
 
     #renderContent() {
-        this.#shadow?.byId('content').setHtml(this.contentHtml)
+        this.jjRoot?.shadow.byId('content').setHtml(this.contentHtml)
     }
 
     async connectedCallback() {
         await super.connectedCallback()
-        this.#shadow = WHE.from(this).getShadow()
         this.#render()
         console.debug('ChatMessage connectedCallback', this)
     }

@@ -1,4 +1,4 @@
-import { fetchHtml, WC, WHE } from '../../lib/bundle.js'
+import { WC } from '../../lib/bundle.js'
 import markdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
 
 const md = markdownIt()
@@ -22,7 +22,7 @@ export class RenderMarkdown extends WC {
 
     static observedAttributes = ['file']
 
-    #shadow
+    jjRoot
     #contentHtml
 
     constructor() {
@@ -36,7 +36,6 @@ export class RenderMarkdown extends WC {
 
     async connectedCallback() {
         await super.connectedCallback()
-        this.#shadow = WHE.from(this).getShadow()
-        this.#shadow.setHtml(await this.#contentHtml)
+        this.jjRoot.shadow.setHtml(await this.#contentHtml)
     }
 }
