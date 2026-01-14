@@ -86,7 +86,7 @@ async function processConfig(jjConfig: JJConfig): Promise<JJProcessedConfig> {
  * - `attributeChangedCallback` sets any props that corresponds to attributes defined in `static observedAttributes`
  */
 export class WC extends HTMLElement {
-    static _jjCache: Promise<JJProcessedConfig> | JJProcessedConfig | undefined
+    static _jjCache?: Promise<JJProcessedConfig>
     declare static jj: JJConfig
     declare static observedAttributes?: string[]
 
