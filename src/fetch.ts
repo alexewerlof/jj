@@ -1,6 +1,6 @@
 import { isA, isStr } from 'jty'
 import { cssToStyle } from './util.js'
-import { WHE } from './WHE.js'
+import { JJHE } from './JJHE.js'
 
 /**
  * Fetches a file and returns its contents as string
@@ -50,6 +50,15 @@ export async function fetchStyle(url: URL | string): Promise<CSSStyleSheet> {
     return await cssToStyle(await fetchCss(url))
 }
 
+/**
+ * Adds a <link> tag to the document head for prefetching or preloading resources.
+ * @param href The URL of the resource.
+ * @param rel The relationship of the linked resource ('prefetch' or 'preload').
+ * @param as The type of content being loaded ('fetch', 'style', or 'script'). Defaults to 'fetch'.
+ * @returns The JJHE instance representing the link element.
+ * @throws {TypeError} If href is not a string or URL.
+ * @throws {RangeError} If rel or as are not valid values.
+ */
 export function addLinkPre(
     href: string | URL,
     rel: 'prefetch' | 'preload',
@@ -61,13 +70,13 @@ export function addLinkPre(
         }
         href = href.toString()
     }
-    if (['prefetch', 'preload'].includes(rel)) {
+    if (!['prefetch', 'preload'].includes(rel)) {
         throw new RangeError(`rel should be one of 'prefetch' or 'preload'. Got ${rel} (${typeof rel})`)
     }
-    if (['fetch', 'style', 'script'].includes(as)) {
+    if (!['fetch', 'style', 'script'].includes(as)) {
         throw new RangeError(`as should be one of 'fetch' or 'style'. Got ${as} (${typeof as})`)
     }
-    const link = WHE.fromTag('link').setAttrs({
+    const link = JJHE.fromTag('link').setAttrs({
         rel,
         href,
         as,

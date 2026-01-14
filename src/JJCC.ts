@@ -1,10 +1,10 @@
 import { keb2cam } from './case.js'
 import { cssToStyle } from './util.js'
-import { WHE } from './WHE.js'
+import { JJHE } from './JJHE.js'
 import { hasProp, isArr, isStr, isObj, isFn, isA, isDef } from 'jty'
 
 export type JJResource<T> = T | Promise<T> | (() => T | Promise<T>)
-export type JJTemplateConfig = JJResource<string | WHE | HTMLElement>
+export type JJTemplateConfig = JJResource<string | JJHE | HTMLElement>
 export type JJStyleConfig = JJResource<string | CSSStyleSheet> | JJResource<string | CSSStyleSheet>
 export type JJStylesConfig = JJStyleConfig | JJStyleConfig[]
 
@@ -28,13 +28,13 @@ async function processTemplateConfig(template?: JJTemplateConfig): Promise<strin
     if (!isDef(template) || isStr(template)) {
         return template
     }
-    if (isA(template, WHE)) {
+    if (isA(template, JJHE)) {
         return template.getHtml()
     }
     if (isA(template, HTMLElement)) {
         return template.outerHTML
     }
-    throw new TypeError(`Expected a string, WHE or HTMLElement. Got ${template} (${typeof template})`)
+    throw new TypeError(`Expected a string, JJHE or HTMLElement. Got ${template} (${typeof template})`)
 }
 
 function normalizeStyles(styles?: JJStyleConfig | JJStyleConfig[]): JJStyleConfig[] {
@@ -85,9 +85,9 @@ async function processConfig(jjConfig: JJConfig): Promise<JJProcessedConfig> {
  * - `connectedCallback` assigns the templates to shadowRoot and attaches any styles
  * - `attributeChangedCallback` sets any props that corresponds to attributes defined in `static observedAttributes`
  */
-export class WC extends HTMLElement {
+export class JJCC extends HTMLElement {
     static _jjCache?: Promise<JJProcessedConfig>
-    jjRoot?: WHE
+    jjRoot?: JJHE
 
     declare static jj: JJConfig
     declare static observedAttributes?: string[]
@@ -107,7 +107,7 @@ export class WC extends HTMLElement {
     }
 
     async connectedCallback() {
-        const classRef = this.constructor as typeof WC
+        const classRef = this.constructor as typeof JJCC
         const jj = classRef.jj
         if (!isObj(jj)) {
             throw new TypeError(`static jj object is missing from the extending class. Got ${jj} (${typeof jj})`)
@@ -117,7 +117,7 @@ export class WC extends HTMLElement {
         }
         const { template, styles } = await classRef._jjCache
         const { templateMode } = jj
-        this.jjRoot = WHE.from(this).initShadow(templateMode, template, ...styles)
+        this.jjRoot = JJHE.from(this).initShadow(templateMode, template, ...styles)
     }
 
     /**
@@ -131,7 +131,7 @@ export class WC extends HTMLElement {
     attributeChangedCallback(name: string, oldValue: any, newValue: any) {
         // Called when observed attributes change.
         if (oldValue !== newValue) {
-            const observedAttributes = (this.constructor as typeof WC).observedAttributes
+            const observedAttributes = (this.constructor as typeof JJCC).observedAttributes
             if (isArr(observedAttributes) && observedAttributes.includes(name)) {
                 const kebabName = keb2cam(name)
                 if (hasProp(this, kebabName)) {

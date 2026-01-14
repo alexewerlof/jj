@@ -1,13 +1,13 @@
 import { ChatMessage } from './components/chat-message.js'
 import { ChatThread } from './components/chat-thread.js'
-import { WHE } from '../../lib/bundle.js'
+import { JJHE } from '../../lib/bundle.js'
 
 await ChatThread.register()
 await ChatMessage.register()
 
-const promptInput = WHE.byId('prompt-input')
-const chatForm = WHE.byId('chat-form')
-const chatThread = WHE.byId('chat-thread')
+const promptInput = JJHE.byId('prompt-input')
+const chatForm = JJHE.byId('chat-form')
+const chatThread = JJHE.byId('chat-thread')
 
 promptInput.on('keydown', (event) => {
     if (event.key === 'Enter' && !event.ctrlKey && !event.isComposing) {
@@ -20,12 +20,12 @@ chatForm.on('submit', (event) => {
     event.preventDefault()
     const content = promptInput.getValue()
     console.log('Handling submission:', content)
-    const userChatMessage = WHE.from(new ChatMessage('user', content))
+    const userChatMessage = JJHE.from(new ChatMessage('user', content))
     userChatMessage.setAttr('role', 'user')
     userChatMessage.setAttr('content', content)
     // userChatMessage.ref.content = content
 
-    console.log(userChatMessage.el)
+    console.log(userChatMessage.ref)
     chatThread.append(userChatMessage)
     promptInput.setValue('')
     // Add your submission logic here

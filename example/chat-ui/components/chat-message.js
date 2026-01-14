@@ -1,9 +1,9 @@
-import { fetchCss, fetchHtml, WC, WHE } from '../../../lib/bundle.js'
+import { fetchCss, fetchHtml, JJCC } from '../../../lib/bundle.js'
 
 const VALID_ROLES = ['user', 'system', 'assistant']
 
 // Test comment
-export class ChatMessage extends WC {
+export class ChatMessage extends JJCC {
     /* longer comment
     in multiple lines*/
     static jj = {

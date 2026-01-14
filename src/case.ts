@@ -1,3 +1,9 @@
+/**
+ * Converts a PascalCase or camelCase string to kebab-case.
+ * @param str The string to convert.
+ * @returns The kebab-case string.
+ * @throws {TypeError} If str is not a string or contains invalid characters.
+ */
 export function pas2keb(str: string): string {
     if (typeof str !== 'string') {
         throw new TypeError(`Expected a string. Got ${str} (${typeof str})`)
@@ -12,6 +18,11 @@ export function pas2keb(str: string): string {
         .toLowerCase()
 }
 
+/**
+ * Converts a kebab-case string to PascalCase.
+ * @param str The string to convert.
+ * @returns The PascalCase string.
+ */
 export function keb2pas(str: string): string {
     if (typeof str !== 'string') {
         throw new TypeError(`Expected a string. Got ${str} (${typeof str})`)
@@ -27,6 +38,11 @@ export function keb2pas(str: string): string {
     )
 }
 
+/**
+ * Converts a kebab-case string to camelCase.
+ * @param str The string to convert.
+ * @returns The camelCase string.
+ */
 export function keb2cam(str: string): string {
     if (typeof str !== 'string') {
         throw new TypeError(`Expected a string. Got ${str} (${typeof str})`)

@@ -1,5 +1,5 @@
 import { isA, isStr } from 'jty'
-import { Unwrapped, Wrappable, Wrapped } from './WN-mixin.js'
+import { Unwrapped, Wrappable, Wrapped } from './JJN-mixin.js'
 import { off, on } from './util.js'
 
 /**
@@ -21,9 +21,9 @@ function isEDDF(x: unknown): x is Element | Document | DocumentFragment {
 /**
  * Wraps a DOM Node
  */
-export class WN<T extends Node = Node> {
-    static from(node: Node): WN {
-        return new WN(node)
+export class JJN<T extends Node = Node> {
+    static from(node: Node): JJN {
+        return new JJN(node)
     }
 
     declare static wrap: (raw: Wrappable) => Wrapped
@@ -33,20 +33,20 @@ export class WN<T extends Node = Node> {
      * wraps an iteratable object (e.g. an array of wrapped or DOM elements)
      */
     static wrapAll(iterable: Iterable<Wrappable>): Wrapped[] {
-        return Array.from(iterable, WN.wrap)
+        return Array.from(iterable, JJN.wrap)
     }
 
     /**
      * unwraps an iteratable object (e.g. an array of HTMLCollection)
      */
     static unwrapAll(iterable: Iterable<Wrappable>): Unwrapped[] {
-        return Array.from(iterable, WN.unwrap)
+        return Array.from(iterable, JJN.unwrap)
     }
 
     static byId(id: string, throwIfNotFound = true): Wrapped | null {
         const el = document.getElementById(id)
         if (el) {
-            return WN.wrap(el)
+            return JJN.wrap(el)
         }
         if (throwIfNotFound) {
             throw new TypeError(`Found no element with id ${id} in the document.`)
@@ -62,11 +62,11 @@ export class WN<T extends Node = Node> {
             return this.query(`#${id}`, throwIfNotFound)
         }
         if (!isDDF(this.ref)) {
-            throw new TypeError(`Expected an Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`)
+            throw new TypeError(`Expected a Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`)
         }
         const el = this.ref.getElementById(id)
         if (el) {
-            return WN.wrap(el)
+            return JJN.wrap(el)
         }
         if (throwIfNotFound) {
             throw new TypeError(`Element with id ${id} not found`)
@@ -75,13 +75,13 @@ export class WN<T extends Node = Node> {
     }
 
     static byClass(className: string) {
-        return WN.wrapAll(document.getElementsByClassName(className))
+        return JJN.wrapAll(document.getElementsByClassName(className))
     }
 
     static query(selector: string, throwIfNotFound = true): Wrapped | null {
         const queryResult = document.querySelector(selector)
         if (queryResult) {
-            return WN.wrap(queryResult)
+            return JJN.wrap(queryResult)
         }
         if (throwIfNotFound) {
             throw new TypeError(`Element with selector ${selector} not found`)
@@ -97,7 +97,7 @@ export class WN<T extends Node = Node> {
         }
         const queryResult = this.ref.querySelector(selector)
         if (queryResult) {
-            return WN.wrap(queryResult)
+            return JJN.wrap(queryResult)
         }
         if (throwIfNotFound) {
             throw new TypeError(`Element with selector ${selector} not found`)
@@ -106,7 +106,7 @@ export class WN<T extends Node = Node> {
     }
 
     static queryAll(selector: string): Wrapped[] {
-        return WN.wrapAll(document.querySelectorAll(selector))
+        return JJN.wrapAll(document.querySelectorAll(selector))
     }
 
     queryAll(selector: string): Wrapped[] {
@@ -115,7 +115,7 @@ export class WN<T extends Node = Node> {
                 `Expected an Element, Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`,
             )
         }
-        return WN.wrapAll(this.ref.querySelectorAll(selector))
+        return JJN.wrapAll(this.ref.querySelectorAll(selector))
     }
 
     #ref!: T
@@ -132,11 +132,11 @@ export class WN<T extends Node = Node> {
     }
 
     clone(deep?: boolean): Wrapped {
-        return WN.wrap(this.ref.cloneNode(deep))
+        return JJN.wrap(this.ref.cloneNode(deep))
     }
 
     append(...children: Wrappable[]): this {
-        const nodes = WN.unwrapAll(children)
+        const nodes = JJN.unwrapAll(children)
         if (isEDDF(this.ref)) {
             this.ref.append(...nodes)
         } else {
@@ -154,7 +154,7 @@ export class WN<T extends Node = Node> {
     }
 
     prepend(...children: Wrappable[]): this {
-        const nodes = WN.unwrapAll(children)
+        const nodes = JJN.unwrapAll(children)
         if (isEDDF(this.ref)) {
             this.ref.prepend(...nodes)
         } else {
@@ -198,9 +198,9 @@ export class WN<T extends Node = Node> {
     }
 
     /**
-     * Runs a function in the context of this WN instance.
+     * Runs a function in the context of this JJN instance.
      *
-     * @param fn - The function to run. `this` inside the function will refer to this WN instance.
+     * @param fn - The function to run. `this` inside the function will refer to this JJN instance.
      * @param args - Arguments to pass to the function.
      * @returns The return value of the function.
      * @remark if the function throws, `run()` doesn't swallow the exception.

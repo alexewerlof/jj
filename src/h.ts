@@ -1,8 +1,15 @@
-import { WHE } from './WHE.js'
-import { Wrappable } from './WN-mixin.js'
+import { JJHE } from './JJHE.js'
+import { Wrappable } from './JJN-mixin.js'
 
-export function h(tagName: string, attributes: Record<string, string>, ...children: Wrappable[]): WHE {
-    const ret = WHE.fromTag(tagName).append(...children)
+/**
+ * Hyperscript helper to create JJHE instances.
+ * @param tagName The HTML tag name.
+ * @param attributes Attributes to set on the element. Can be null.
+ * @param children Children to append.
+ * @returns The created JJHE instance.
+ */
+export function h(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJHE {
+    const ret = JJHE.fromTag(tagName).append(...children)
     if (attributes) {
         ret.setAttrs(attributes)
     }

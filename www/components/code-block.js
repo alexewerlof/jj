@@ -1,4 +1,4 @@
-import { fetchCss, fetchHtml, WC, WHE } from '../../lib/bundle.js'
+import { fetchCss, fetchHtml, JJCC } from '../../lib/bundle.js'
 import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
 import highlightJs from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
 import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'
@@ -36,7 +36,7 @@ async function loadFile(filePath) {
     }
 }
 
-export class CodeBlock extends WC {
+export class CodeBlock extends JJCC {
     static jj = {
         name: 'code-block',
         template: fetchHtml(import.meta.resolve('./code-block.html')),

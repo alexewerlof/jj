@@ -1,18 +1,18 @@
 import { isA, isObj } from 'jty'
-import { WN } from './WN.js'
-import { WSH } from './WSH.js'
+import { JJN } from './JJN.js'
+import { JJSR } from './JJSR.js'
 
 /**
  * Wraps a DOM Element (which is a descendant of Node)
  */
-export class WE<T extends Element = Element> extends WN<T> {
-    static from(ref: Element): WE {
-        return new WE(ref)
+export class JJE<T extends Element = Element> extends JJN<T> {
+    static from(ref: Element): JJE {
+        return new JJE(ref)
     }
 
     constructor(ref: T) {
         if (!isA(ref, Element)) {
-            throw new TypeError(`Expected a Element. Got: ${ref} (${typeof ref})`)
+            throw new TypeError(`Expected an Element. Got: ${ref} (${typeof ref})`)
         }
         super(ref)
     }
@@ -155,6 +155,6 @@ export class WE<T extends Element = Element> extends WN<T> {
     }
 
     get shadow() {
-        return this.ref.shadowRoot ? new WSH(this.ref.shadowRoot) : null
+        return this.ref.shadowRoot ? new JJSR(this.ref.shadowRoot) : null
     }
 }
