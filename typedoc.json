@@ -1,6 +1,8 @@
 {
     "$schema": "https://typedoc.org/schema.json",
     "name": "jj",
+    "cleanOutputDir": true,
+    "excludePrivate": true,
     "entryPoints": ["src/index.ts"],
     "customCss": "typedoc.css",
     "hostedBaseUrl": "https://alexewerlof.github.io/jj/",
