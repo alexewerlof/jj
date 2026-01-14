@@ -38,7 +38,7 @@ export class WN<T extends Node = Node> {
             return WN.wrap(el)
         }
         if (throwIfNotFound) {
-            throw new TypeError(`Element with id ${id} not found`)
+            throw new TypeError(`Found no element with id ${id} in the document.`)
         }
         return null
     }
