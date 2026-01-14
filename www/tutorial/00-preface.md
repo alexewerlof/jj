@@ -15,6 +15,7 @@ Unlike frameworks like React, Vue, or Svelte, JJ doesn't have a huge API surface
     - [CSS Nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Nesting)
     - [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascading_variables/Using_custom_properties)
     - [Preload](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/preload) and [Prefetch](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/prefetch)
+    - [Import Map](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap)
     - [PWA](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
     - etc.
 
