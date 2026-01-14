@@ -4,8 +4,9 @@ import { WHE } from './WHE.js'
 import { hasProp, isArr, isStr, isObj, isFn, isA, isDef } from 'jty'
 
 export type JJResource<T> = T | Promise<T> | (() => T | Promise<T>)
-export type JJTemplateConfig = JJResource<string>
-export type JJStylesConfig = JJResource<string | CSSStyleSheet> | JJResource<string | CSSStyleSheet>[]
+export type JJTemplateConfig = JJResource<string | WHE | HTMLElement>
+export type JJStyleConfig = JJResource<string | CSSStyleSheet> | JJResource<string | CSSStyleSheet>
+export type JJStylesConfig = JJStyleConfig | JJStyleConfig[]
 
 export interface JJConfig {
     name: string
@@ -19,32 +20,61 @@ interface JJProcessedConfig {
     styles: CSSStyleSheet[]
 }
 
-async function processStyleConfig(style: JJResource<string | CSSStyleSheet>): Promise<CSSStyleSheet> {
-    if (isFn(style)) {
-        style = await style()
+async function processTemplateConfig(template?: JJTemplateConfig): Promise<string | undefined> {
+    if (isFn(template)) {
+        template = await template()
     }
-    style = await style
-    if (isA(style, CSSStyleSheet)) {
-        return style
+    template = await template
+    if (!isDef(template) || isStr(template)) {
+        return template
     }
-    if (isStr(style)) {
-        return await cssToStyle(style)
+    if (isA(template, WHE)) {
+        return template.getHtml()
     }
-    throw new TypeError(`Expected a css string or CSSStyleSheet. Got ${style} (${typeof style})`)
+    if (isA(template, HTMLElement)) {
+        return template.outerHTML
+    }
+    throw new TypeError(`Expected a string, WHE or HTMLElement. Got ${template} (${typeof template})`)
 }
 
-async function processConfig(
-    templateResource?: JJTemplateConfig,
-    styleResources?: JJStylesConfig,
-): Promise<JJProcessedConfig> {
-    const templatePromise = isFn(templateResource) ? templateResource() : Promise.resolve(templateResource)
-    if (!isDef(styleResources)) {
-        styleResources = []
+function normalizeStyles(styles?: JJStyleConfig | JJStyleConfig[]): JJStyleConfig[] {
+    if (isDef(styles)) {
+        return isArr(styles) ? styles : [styles]
     }
-    if (!isArr(styleResources)) {
-        styleResources = [styleResources]
+    return []
+}
+
+async function processStyleConfig(styleConfig: JJStyleConfig): Promise<CSSStyleSheet> {
+    if (isFn(styleConfig)) {
+        styleConfig = await styleConfig()
     }
-    const [template, ...styles] = await Promise.all([templatePromise, ...styleResources.map(processStyleConfig)])
+    styleConfig = await styleConfig
+    if (isA(styleConfig, CSSStyleSheet)) {
+        return styleConfig
+    }
+    if (isStr(styleConfig)) {
+        return await cssToStyle(styleConfig)
+    }
+    throw new TypeError(`Expected a css string or CSSStyleSheet. Got ${styleConfig} (${typeof styleConfig})`)
+}
+
+/*
+Type '[string | undefined, ...(string | CSSStyleSheet | (() => string | CSSStyleSheet | Promise<string | CSSStyleSheet>) | JJStyleConfig[])[]]' is not assignable to
+  type '[string | undefined, ...CSSStyleSheet[]]'.
+  
+  Type at position 1 in source is not compatible with type at position 1 in target.
+    Type 'string | CSSStyleSheet | (() => string | CSSStyleSheet | Promise<string | CSSStyleSheet>) | JJStyleConfig[]' is not assignable to type 'CSSStyleSheet'.
+      Type 'string' is not assignable to type 'CSSStyleSheet'.ts(2322)
+*/
+async function processConfig(jjConfig: JJConfig): Promise<JJProcessedConfig> {
+    if (!isObj(jjConfig)) {
+        throw new TypeError(`Expected an static jj config object. Got ${jjConfig} (${typeof jjConfig})`)
+    }
+    const { template: templateConfig, styles: stylesConfig } = jjConfig
+    const [template, ...styles]: [string | undefined, ...CSSStyleSheet[]] = await Promise.all([
+        processTemplateConfig(templateConfig),
+        ...normalizeStyles(stylesConfig).map(processStyleConfig),
+    ])
     return { template, styles }
 }
 /**
@@ -81,7 +111,7 @@ export class WC extends HTMLElement {
             throw new TypeError(`static jj object is missing from the extending class. Got ${jj} (${typeof jj})`)
         }
         if (!classRef._jjCache) {
-            classRef._jjCache = processConfig(classRef.jj.template, classRef.jj.styles)
+            classRef._jjCache = processConfig(classRef.jj)
         }
         const { template, styles } = await classRef._jjCache
         const { templateMode } = jj
