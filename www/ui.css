@@ -15,3 +15,13 @@ h6,
 th {
     font-family: var(--title-font-family);
 }
+
+a {
+    color: var(--secondary-color);
+    &:hover {
+        color: color-mix(in srgb, var(--secondary-color), white 30%);
+    }
+    &:visited {
+        opacity: 0.85;
+    }
+}
