@@ -2,9 +2,20 @@ import { isA } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './WN-mixin.js'
 import { off, on } from './util.js'
 
-/** @returns true if this.ref is an instance of descendant of Element or DocumentFragment  */
-function isElementOrDocumentFragment(x: unknown): x is Element | DocumentFragment {
-    return isA(x, Element) || isA(x, DocumentFragment)
+/**
+ * Checks if a given reference is an instance or descendant of
+ * Document or DocumentFragment
+ */
+function isDDF(x: unknown): x is Document | DocumentFragment {
+    return isA(x, Document) || isA(x, DocumentFragment)
+}
+
+/**
+ * Checks if a given reference is an instance or descendant of
+ * Element, Document or DocumentFragment
+ */
+function isEDDF(x: unknown): x is Element | Document | DocumentFragment {
+    return isA(x, Element) || isDDF(x)
 }
 
 /**
@@ -43,6 +54,20 @@ export class WN<T extends Node = Node> {
         return null
     }
 
+    byId(id: string, throwIfNotFound = true): Wrapped | null {
+        if (!isDDF(this.ref)) {
+            throw new TypeError(`Expected an Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`)
+        }
+        const el = this.ref.getElementById(id)
+        if (el) {
+            return WN.wrap(el)
+        }
+        if (throwIfNotFound) {
+            throw new TypeError(`Element with id ${id} not found`)
+        }
+        return null
+    }
+
     static byClass(className: string) {
         return WN.wrapAll(document.getElementsByClassName(className))
     }
@@ -59,8 +84,10 @@ export class WN<T extends Node = Node> {
     }
 
     query(selector: string, throwIfNotFound = true): Wrapped | null {
-        if (!isElementOrDocumentFragment(this.ref)) {
-            throw new TypeError(`Expected an Element or DocumentFragment. Got ${this.ref} (${typeof this.ref})`)
+        if (!isEDDF(this.ref)) {
+            throw new TypeError(
+                `Expected an Element, Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`,
+            )
         }
         const queryResult = this.ref.querySelector(selector)
         if (queryResult) {
@@ -77,8 +104,10 @@ export class WN<T extends Node = Node> {
     }
 
     queryAll(selector: string): Wrapped[] {
-        if (!isElementOrDocumentFragment(this.ref)) {
-            throw new TypeError(`Expected an Element or DocumentFragment. Got ${this.ref} (${typeof this.ref})`)
+        if (!isEDDF(this.ref)) {
+            throw new TypeError(
+                `Expected an Element, Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`,
+            )
         }
         return WN.wrapAll(this.ref.querySelectorAll(selector))
     }
@@ -102,7 +131,7 @@ export class WN<T extends Node = Node> {
 
     append(...children: Wrappable[]): this {
         const nodes = WN.unwrapAll(children)
-        if (isElementOrDocumentFragment(this.ref)) {
+        if (isEDDF(this.ref)) {
             this.ref.append(...nodes)
         } else {
             for (const node of nodes) {
@@ -120,7 +149,7 @@ export class WN<T extends Node = Node> {
 
     prepend(...children: Wrappable[]): this {
         const nodes = WN.unwrapAll(children)
-        if (isElementOrDocumentFragment(this.ref)) {
+        if (isEDDF(this.ref)) {
             this.ref.prepend(...nodes)
         } else {
             const first = this.ref.firstChild
@@ -149,6 +178,16 @@ export class WN<T extends Node = Node> {
 
     rm() {
         this.ref.parentNode?.removeChild(this.ref)
+        return this
+    }
+
+    empty(): this {
+        if (!isEDDF(this.ref)) {
+            throw new TypeError(
+                `Expected an Element, Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`,
+            )
+        }
+        this.ref.replaceChildren()
         return this
     }
 
