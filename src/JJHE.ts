@@ -2,12 +2,19 @@ import { hasProp, isA, isStr } from 'jty'
 import { JJE } from './JJE.js'
 
 /**
- * Wraps a DOM HTMLElement (which is a descendant of Element)
+ * Wraps a DOM HTMLElement (which is a descendant of Element).
+ *
+ * @remarks
+ * This class extends `JJE` to provide specific functionality for HTML elements,
+ * such as access to `dataset`, `innerText`, and form values.
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement | HTMLElement}
  */
 export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     /**
      * Creates a JJHE instance from an HTMLElement reference.
-     * @param ref The HTMLElement.
+     *
+     * @param ref - The HTMLElement.
      * @returns A new JJHE instance.
      */
     static from(ref: HTMLElement): JJHE {
@@ -16,10 +23,18 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Creates a JJHE instance from a tag name.
-     * @param tagName The tag name.
-     * @param options Element creation options.
+     *
+     * @example
+     * ```ts
+     * const div = JJHE.fromTag('div')
+     * const input = JJHE.fromTag('input', { is: 'custom-input' })
+     * ```
+     *
+     * @param tagName - The tag name.
+     * @param options - Element creation options.
      * @returns A new JJHE instance.
-     * @throws {TypeError} If tagName is not a string.
+     * @throws {TypeError} If `tagName` is not a string.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement | document.createElement}
      */
     static fromTag(tagName: string, options?: ElementCreationOptions): JJHE {
         if (!isStr(tagName)) {
@@ -30,8 +45,9 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Creates an instance of JJHE.
-     * @param ref The HTMLElement to wrap.
-     * @throws {TypeError} If ref is not an HTMLElement.
+     *
+     * @param ref - The HTMLElement to wrap.
+     * @throws {TypeError} If `ref` is not an HTMLElement.
      */
     constructor(ref: T) {
         if (!isA(ref, HTMLElement)) {
@@ -42,8 +58,10 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Gets the value property of the element (e.g. for inputs).
+     *
      * @returns The value.
      * @throws {Error} If the element does not have a value property.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/value | HTMLInputElement.value}
      */
     getValue() {
         if (!hasProp(this.ref, 'value')) {
@@ -54,8 +72,14 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Sets the value property of the element.
-     * @param value The value to set.
-     * @returns This instance.
+     *
+     * @example
+     * ```ts
+     * input.setValue('new value')
+     * ```
+     *
+     * @param value - The value to set.
+     * @returns This instance for chaining.
      * @throws {Error} If the element does not have a value property.
      */
     setValue(value: string): this {
@@ -68,8 +92,19 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Gets a data attribute value.
-     * @param name The data attribute name (camelCase).
+     *
+     * @remarks
+     * Accesses the `dataset` property. Keys should be in camelCase.
+     *
+     * @example
+     * ```ts
+     * // <div data-user-id="123"></div>
+     * div.getData('userId') // '123'
+     * ```
+     *
+     * @param name - The data attribute name (camelCase).
      * @returns The value or undefined.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
      */
     getData(name: string): string | undefined {
         return this.ref.dataset[name]
@@ -77,8 +112,9 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Checks if a data attribute exists.
-     * @param name The data attribute name (camelCase).
-     * @returns True if it exists.
+     *
+     * @param name - The data attribute name (camelCase).
+     * @returns `true` if it exists.
      */
     hasData(name: string): boolean {
         return hasProp(this.ref.dataset, name)
@@ -86,9 +122,15 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Sets a data attribute.
-     * @param name The data attribute name (camelCase).
-     * @param value The value to set.
-     * @returns This instance.
+     *
+     * @example
+     * ```ts
+     * div.setData('userId', '123') // sets data-user-id="123"
+     * ```
+     *
+     * @param name - The data attribute name (camelCase).
+     * @param value - The value to set.
+     * @returns This instance for chaining.
      */
     setData(name: string, value: string): this {
         this.ref.dataset[name] = value
@@ -97,8 +139,14 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Sets multiple data attributes.
-     * @param obj An object of data keys and values.
-     * @returns This instance.
+     *
+     * @example
+     * ```ts
+     * div.setDataObj({ userId: '123', role: 'admin' })
+     * ```
+     *
+     * @param obj - An object of data keys and values.
+     * @returns This instance for chaining.
      */
     setDataObj(obj: Record<string, string>): this {
         for (const [name, value] of Object.entries(obj)) {
@@ -109,8 +157,9 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Removes a data attribute.
-     * @param name The data attribute name (camelCase).
-     * @returns This instance.
+     *
+     * @param name - The data attribute name (camelCase).
+     * @returns This instance for chaining.
      */
     rmData(name: string): this {
         delete this.ref.dataset[name]
@@ -119,7 +168,9 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Focuses the element.
-     * @returns This instance.
+     *
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus | HTMLElement.focus}
      */
     focus(): this {
         this.ref.focus()
@@ -128,7 +179,9 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Clicks the element.
-     * @returns This instance.
+     *
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/click | HTMLElement.click}
      */
     click(): this {
         this.ref.click()
@@ -137,7 +190,12 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Clears the inner text of the element.
-     * @returns This instance.
+     *
+     * @remarks
+     * Sets `innerText` to an empty string.
+     *
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
      */
     empty(): this {
         this.ref.innerText = ''
@@ -146,7 +204,9 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Gets the inner text of the element.
+     *
      * @returns The inner text.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
      */
     getText(): string {
         return this.ref.innerText
@@ -154,8 +214,10 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
 
     /**
      * Sets the inner text of the element.
-     * @param text The text to set.
-     * @returns This instance.
+     *
+     * @param text - The text to set.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
      */
     setText(text: string): this {
         this.ref.innerText = text

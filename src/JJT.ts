@@ -2,14 +2,22 @@ import { isA, isStr } from 'jty'
 import { JJN } from './JJN.js'
 
 /**
- * Wraps a DOM Text Node
+ * Wraps a DOM Text Node.
+ *
+ * @remarks
+ * The Text interface represents the textual content of Element or Attr.
+ * If an element has no markup within its content, it has a single child implementing Text
+ * that contains the element's text.
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Text | Text}
  */
 export class JJT<T extends Text = Text> extends JJN<Text> {
     /**
      * Creates a JJT instance from a Text node.
-     * @param text The Text node.
+     *
+     * @param text - The Text node.
      * @returns A new JJT instance.
-     * @throws {TypeError} If text is not a Text node.
+     * @throws {TypeError} If `text` is not a Text node.
      */
     static from(text: Text): JJT {
         if (!isA(text, Text)) {
@@ -20,8 +28,14 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
 
     /**
      * Creates an instance of JJT.
-     * @param ref The Text node or a string to create a Text node from.
-     * @throws {TypeError} If ref is not a Text node or string.
+     *
+     * @example
+     * ```ts
+     * const text = new JJT('Hello World')
+     * ```
+     *
+     * @param ref - The Text node or a string to create a Text node from.
+     * @throws {TypeError} If `ref` is not a Text node or string.
      */
     constructor(ref: T | string) {
         if (isStr(ref)) {
@@ -35,7 +49,9 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
 
     /**
      * Gets the text content.
+     *
      * @returns The text content.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
     getText(): string {
         return this.ref.textContent ?? ''
@@ -43,9 +59,11 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
 
     /**
      * Sets the text content.
-     * @param text The text to set.
-     * @returns This instance.
-     * @throws {TypeError} If text is not a string.
+     *
+     * @param text - The text to set.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `text` is not a string.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
     setText(text: string): this {
         if (!isStr(text)) {
@@ -57,7 +75,8 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
 
     /**
      * Clears the text content.
-     * @returns This instance.
+     *
+     * @returns This instance for chaining.
      */
     empty(): this {
         return this.setText('')
@@ -65,8 +84,9 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
 
     /**
      * Sets the text content to multiple lines joined by newline.
-     * @param lines The lines of text.
-     * @returns This instance.
+     *
+     * @param lines - The lines of text.
+     * @returns This instance for chaining.
      */
     addLines(...lines: string[]): this {
         return this.setText(lines.join('\n'))

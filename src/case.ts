@@ -1,8 +1,21 @@
 /**
  * Converts a PascalCase or camelCase string to kebab-case.
- * @param str The string to convert.
+ *
+ * @remarks
+ * This function is useful for converting JavaScript property names to CSS or HTML attribute names.
+ * It strictly validates the input to contain only alphanumeric characters and underscores.
+ *
+ * @example
+ * ```ts
+ * pas2keb('backgroundColor') // 'background-color'
+ * pas2keb('MyComponent') // 'my-component'
+ * pas2keb('user_id') // 'user-id'
+ * ```
+ *
+ * @param str - The string to convert.
  * @returns The kebab-case string.
- * @throws {TypeError} If str is not a string or contains invalid characters.
+ * @throws {TypeError} If `str` is not a string or contains invalid characters (anything other than `/[a-zA-Z0-9_]/`).
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace | String.prototype.replace}
  */
 export function pas2keb(str: string): string {
     if (typeof str !== 'string') {
@@ -20,8 +33,23 @@ export function pas2keb(str: string): string {
 
 /**
  * Converts a kebab-case string to PascalCase.
- * @param str The string to convert.
+ *
+ * @remarks
+ * This function splits the string by hyphens and capitalizes the first letter of each segment.
+ * It handles multiple hyphens by ignoring empty segments.
+ *
+ * @example
+ * ```ts
+ * keb2pas('background-color') // 'BackgroundColor'
+ * keb2pas('my-component') // 'MyComponent'
+ * keb2pas('multi--dash') // 'MultiDash'
+ * ```
+ *
+ * @param str - The string to convert.
  * @returns The PascalCase string.
+ * @throws {TypeError} If `str` is not a string.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split | String.prototype.split}
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map | Array.prototype.map}
  */
 export function keb2pas(str: string): string {
     if (typeof str !== 'string') {
@@ -40,8 +68,21 @@ export function keb2pas(str: string): string {
 
 /**
  * Converts a kebab-case string to camelCase.
- * @param str The string to convert.
+ *
+ * @remarks
+ * This function is primarily useful for converting attributes to JavaScript property names.
+ * Leading and trailing hyphens are removed before conversion.
+ *
+ * @example
+ * ```ts
+ * keb2cam('background-color') // 'backgroundColor'
+ * keb2cam('-webkit-transform') // 'webkitTransform'
+ * ```
+ *
+ * @param str - The string to convert.
  * @returns The camelCase string.
+ * @throws {TypeError} If `str` is not a string.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace | String.prototype.replace}
  */
 export function keb2cam(str: string): string {
     if (typeof str !== 'string') {
