@@ -1,5 +1,7 @@
 import { hasProp, isA, isStr } from 'jty'
 import { JJE } from './JJE.js'
+import { JJN } from './JJN.js'
+import { Wrapped } from './types.js'
 
 /**
  * Wraps a DOM HTMLElement (which is a descendant of Element).
@@ -189,20 +191,6 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     }
 
     /**
-     * Clears the inner text of the element.
-     *
-     * @remarks
-     * Sets `innerText` to an empty string.
-     *
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
-     */
-    empty(): this {
-        this.ref.innerText = ''
-        return this
-    }
-
-    /**
      * Gets the inner text of the element.
      *
      * @returns The inner text.
@@ -222,5 +210,36 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     setText(text: string): this {
         this.ref.innerText = text
         return this
+    }
+
+    /**
+     * Finds the first element matching a selector within this element's context.
+     *
+     * @param selector - The CSS selector.
+     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
+     * @returns The wrapped element, or null.
+     * @throws {TypeError} If element not found (when requested).
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
+     */
+    query(selector: string, throwIfNotFound = true): Wrapped | null {
+        const el = this.ref.querySelector(selector)
+        if (el) {
+            return JJN.wrap(el)
+        }
+        if (throwIfNotFound) {
+            throw new TypeError(`Element with selector ${selector} not found`)
+        }
+        return null
+    }
+
+    /**
+     * Finds all elements matching a selector within this element's context.
+     *
+     * @param selector - The CSS selector.
+     * @returns An array of wrapped elements.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll | Element.querySelectorAll}
+     */
+    queryAll(selector: string): Wrapped[] {
+        return JJN.wrapAll(this.ref.querySelectorAll(selector))
     }
 }

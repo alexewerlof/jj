@@ -2,10 +2,10 @@ import { keb2cam } from './case.js'
 import { cssToStyle } from './util.js'
 import { JJHE } from './JJHE.js'
 import { hasProp, isArr, isStr, isObj, isFn, isA, isDef } from 'jty'
-import { JJConfig, JJStyleConfig, JJStylesConfig, JJTemplateConfig } from './types.js'
+import { JJCConfig, JJStyleConfig, JJStylesConfig, JJTemplateConfig } from './types.js'
 
 /** @internal represents the normalized config ready for further processing */
-interface JJConfigNorm {
+interface NormalizedConfig {
     template?: string
     styles: CSSStyleSheet[]
 }
@@ -48,7 +48,7 @@ async function processStyleConfig(styleConfig: JJStyleConfig): Promise<CSSStyleS
     throw new TypeError(`Expected a css string or CSSStyleSheet. Got ${styleConfig} (${typeof styleConfig})`)
 }
 
-async function processConfig(jjConfig: JJConfig): Promise<JJConfigNorm> {
+async function processConfig(jjConfig: JJCConfig): Promise<NormalizedConfig> {
     if (!isObj(jjConfig)) {
         throw new TypeError(`Expected an static jj config object. Got ${jjConfig} (${typeof jjConfig})`)
     }
@@ -151,7 +151,7 @@ const jjCache = Symbol('jjCache')
  */
 export class JJCC extends HTMLElement {
     /** @internal Cache for processed configuration. */
-    private static [jjCache]?: Promise<JJConfigNorm>
+    private static [jjCache]?: Promise<NormalizedConfig>
     /** The wrapper around the component's Shadow Root (or host). */
     jjRoot?: JJHE
 
@@ -159,7 +159,7 @@ export class JJCC extends HTMLElement {
      * The configuration object for the component.
      * The class that extens JJCC _MUST_ set this otherwise things don't work.
      */
-    declare static jj: JJConfig
+    declare static jj: JJCConfig
     /**
      * Attributes to observe for changes.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes | Responding to attribute changes}

@@ -1,6 +1,10 @@
-import { isA, isObj } from 'jty'
+import { isA, isObj, isStr } from 'jty'
 import { JJN } from './JJN.js'
 import { JJSR } from './JJSR.js'
+import { IAppendPrepend, IById, IQuery } from './mixin-types.js'
+import { Wrapped } from './types.js'
+
+export interface JJE<T extends Element> extends IQuery, IAppendPrepend {}
 
 /**
  * Wraps a DOM Element (which is a descendant of Node).
@@ -11,7 +15,7 @@ import { JJSR } from './JJSR.js'
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element | Element}
  */
-export class JJE<T extends Element = Element> extends JJN<T> {
+export class JJE<T extends Element = Element> extends JJN<T> implements IById {
     /**
      * Creates a JJE instance from an Element reference.
      *
@@ -33,6 +37,23 @@ export class JJE<T extends Element = Element> extends JJN<T> {
             throw new TypeError(`Expected an Element. Got: ${ref} (${typeof ref})`)
         }
         super(ref)
+    }
+
+    /**
+     * Finds an element by ID within this element's context
+     *
+     * @remarks
+     * This method uses `Element.querySelector()` under the hood.
+     *
+     * @param id - The ID to search for.
+     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
+     * @returns The wrapped element, or null if not found and throwIfNotFound is false.
+     */
+    byId(id: string, throwIfNotFound = true): Wrapped | null {
+        if (!isStr(id)) {
+            throw new TypeError(`Expected a string id. Got ${id} (${typeof id})`)
+        }
+        return this.query(`#${id}`, throwIfNotFound)
     }
 
     /**

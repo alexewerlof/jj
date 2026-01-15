@@ -49,7 +49,7 @@ export type JJStylesConfig = JJStyleConfig | JJStyleConfig[]
 /**
  * Configuration object for defining a JJCC component.
  */
-export interface JJConfig {
+export interface JJCConfig {
     /** The tag name for the custom element. Must contain a hyphen. */
     name: string
     /** The template configuration. */

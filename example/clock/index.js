@@ -1,9 +1,9 @@
-import { JJDF, JJSE } from '../../lib/bundle.js'
+import { JJDF, JJSE, byId } from '../../lib/bundle.js'
 
-const clock = JJSE.byId('clock')
-const secondHand = JJSE.byId('second-hand')
-const minuteHand = JJSE.byId('minute-hand')
-const hourHand = JJSE.byId('hour-hand')
+const clock = byId('clock')
+const secondHand = byId('second-hand')
+const minuteHand = byId('minute-hand')
+const hourHand = byId('hour-hand')
 
 function createMinuteIndicators() {
     const frag = JJDF.create()
@@ -44,6 +44,6 @@ function updateClock() {
     requestAnimationFrame(updateClock)
 }
 
-JJSE.byId('minute-indicators').append(createMinuteIndicators())
+byId('minute-indicators').append(createMinuteIndicators())
 updateClock()
 clock.show()

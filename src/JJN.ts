@@ -1,22 +1,7 @@
-import { isA, isObj, isStr } from 'jty'
+import { isA } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './types.js'
 import { off, on } from './util.js'
-
-/**
- * Checks if a given reference is an instance or descendant of
- * Document or DocumentFragment
- */
-function isDDF(x: unknown): x is Document | DocumentFragment {
-    return isA(x, Document) || isA(x, DocumentFragment)
-}
-
-/**
- * Checks if a given reference is an instance or descendant of
- * Element, Document or DocumentFragment
- */
-function isEDDF(x: unknown): x is Element | Document | DocumentFragment {
-    return isA(x, Element) || isDDF(x)
-}
+import { IAppendPrepend } from './mixin-types.js'
 
 /**
  * Wraps a DOM Node.
@@ -27,7 +12,7 @@ function isEDDF(x: unknown): x is Element | Document | DocumentFragment {
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node | Node}
  */
-export class JJN<T extends Node = Node> {
+export class JJN<T extends Node = Node> implements IAppendPrepend {
     /**
      * Creates a JJN instance from a Node reference.
      *
@@ -55,7 +40,9 @@ export class JJN<T extends Node = Node> {
      * @returns The most granular Wrapped subclass instance. If the input is already wrapped, it'll be returned as is without cloning.
      * @throws {TypeError} If the input is not a Node, string, or JJ wrapper.
      */
-    declare static wrap: (raw: Wrappable) => Wrapped
+    static wrap(raw: Wrappable): Wrapped {
+        throw new ReferenceError(`The mixin is supposed to override this method.`)
+    }
 
     /**
      * Extracts the underlying native DOM node from a wrapper.
@@ -74,23 +61,10 @@ export class JJN<T extends Node = Node> {
      * @throws {TypeError} If the input cannot be unwrapped.
      */
     static unwrap(obj: Wrappable): Unwrapped {
-        if (isStr(obj)) {
-            return document.createTextNode(obj)
-        }
-        if (!isObj(obj)) {
-            throw new TypeError(`Expected an object. Got ${obj} (${typeof obj})`)
-        }
-        if (isA(obj, Node)) {
-            return obj
-        }
-        if (isA(obj, JJN)) {
-            return obj.ref
-        }
-        throw new TypeError(`Could not unwrap ${obj} (${typeof obj})`)
+        throw new ReferenceError(`The mixin is supposed to override this method.`)
     }
 
     /**
-     * wraps an iteratable object (e.g. an array of wrapped or DOM elements)
      * Wraps an iterable object (e.g. an array of wrapped or DOM elements).
      *
      * @param iterable - The iterable to wrap.
@@ -101,151 +75,13 @@ export class JJN<T extends Node = Node> {
     }
 
     /**
-     * unwraps an iteratable object (e.g. an array of HTMLCollection)
-     * Unwraps an iterable object (e.g. an array of HTMLCollection).
+     * Unwraps an iterable object (e.g. an array or HTMLCollection).
      *
      * @param iterable - The iterable to unwrap.
      * @returns An array of native DOM nodes.
      */
     static unwrapAll(iterable: Iterable<Wrappable>): Unwrapped[] {
         return Array.from(iterable, JJN.unwrap)
-    }
-
-    /**
-     * Finds an element by ID in the document.
-     *
-     * @param id - The ID to search for.
-     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
-     * @returns The wrapped element, or null if not found and throwIfNotFound is false.
-     * @throws {TypeError} If the element is not found and throwIfNotFound is true.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById | Document.getElementById}
-     */
-    static byId(id: string, throwIfNotFound = true): Wrapped | null {
-        const el = document.getElementById(id)
-        if (el) {
-            return JJN.wrap(el)
-        }
-        if (throwIfNotFound) {
-            throw new TypeError(`Found no element with id ${id} in the document.`)
-        }
-        return null
-    }
-
-    /**
-     * Finds an element by ID within this context.
-     *
-     * @remarks
-     * If this instance wraps an Element, it uses `querySelector('#id')`.
-     * If it wraps a Document or DocumentFragment, it uses `getElementById`.
-     *
-     * @param id - The ID to search for.
-     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
-     * @returns The wrapped element, or null if not found and throwIfNotFound is false.
-     * @throws {TypeError} If `id` is not a string.
-     * @throws {TypeError} If the context is not an Element, Document, or DocumentFragment.
-     * @throws {TypeError} If the element is not found and throwIfNotFound is true.
-     */
-    byId(id: string, throwIfNotFound = true): Wrapped | null {
-        if (!isStr(id)) {
-            throw new TypeError(`Expected a string id. Got ${id} (${typeof id})`)
-        }
-        if (isA(this.ref, HTMLElement)) {
-            return this.query(`#${id}`, throwIfNotFound)
-        }
-        if (!isDDF(this.ref)) {
-            throw new TypeError(`Expected a Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`)
-        }
-        const el = this.ref.getElementById(id)
-        if (el) {
-            return JJN.wrap(el)
-        }
-        if (throwIfNotFound) {
-            throw new TypeError(`Element with id ${id} not found`)
-        }
-        return null
-    }
-
-    /**
-     * Finds elements by class name in the document.
-     *
-     * @param className - The class name to search for.
-     * @returns An array of wrapped elements.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByClassName | Document.getElementsByClassName}
-     */
-    static byClass(className: string) {
-        return JJN.wrapAll(document.getElementsByClassName(className))
-    }
-
-    /**
-     * Finds the first element matching a selector in the document.
-     *
-     * @param selector - The CSS selector.
-     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
-     * @returns The wrapped element, or null.
-     * @throws {TypeError} If not found and throwIfNotFound is true.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector | Document.querySelector}
-     */
-    static query(selector: string, throwIfNotFound = true): Wrapped | null {
-        const queryResult = document.querySelector(selector)
-        if (queryResult) {
-            return JJN.wrap(queryResult)
-        }
-        if (throwIfNotFound) {
-            throw new TypeError(`Element with selector ${selector} not found`)
-        }
-        return null
-    }
-
-    /**
-     * Finds the first element matching a selector within this element's context.
-     *
-     * @param selector - The CSS selector.
-     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
-     * @returns The wrapped element, or null.
-     * @throws {TypeError} If context is invalid or element not found (when requested).
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
-     */
-    query(selector: string, throwIfNotFound = true): Wrapped | null {
-        if (!isEDDF(this.ref)) {
-            throw new TypeError(
-                `Expected an Element, Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`,
-            )
-        }
-        const queryResult = this.ref.querySelector(selector)
-        if (queryResult) {
-            return JJN.wrap(queryResult)
-        }
-        if (throwIfNotFound) {
-            throw new TypeError(`Element with selector ${selector} not found`)
-        }
-        return null
-    }
-
-    /**
-     * Finds all elements matching a selector in the document.
-     *
-     * @param selector - The CSS selector.
-     * @returns An array of wrapped elements.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll | Document.querySelectorAll}
-     */
-    static queryAll(selector: string): Wrapped[] {
-        return JJN.wrapAll(document.querySelectorAll(selector))
-    }
-
-    /**
-     * Finds all elements matching a selector within this element's context.
-     *
-     * @param selector - The CSS selector.
-     * @returns An array of wrapped elements.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll | Element.querySelectorAll}
-     */
-    queryAll(selector: string): Wrapped[] {
-        if (!isEDDF(this.ref)) {
-            throw new TypeError(
-                `Expected an Element, Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`,
-            )
-        }
-        return JJN.wrapAll(this.ref.querySelectorAll(selector))
     }
 
     #ref!: T
@@ -289,15 +125,12 @@ export class JJN<T extends Node = Node> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/append | Element.append}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild | Node.appendChild}
      */
-    append(...children: Wrappable[]): this {
+    append(...children: Wrappable[]) {
         const nodes = JJN.unwrapAll(children)
-        if (isEDDF(this.ref)) {
-            this.ref.append(...nodes)
-        } else {
-            for (const node of nodes) {
-                if (node) {
-                    this.ref.appendChild(node)
-                }
+        const ref = this.ref
+        for (const node of nodes) {
+            if (node) {
+                ref.appendChild(node)
             }
         }
         return this
@@ -310,7 +143,7 @@ export class JJN<T extends Node = Node> {
      * @param mapFn - The mapping function returning a Wrappable.
      * @returns This instance for chaining.
      */
-    mapAppend<T>(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable): this {
+    mapAppend(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
         return this.append(...array.map(mapFn))
     }
 
@@ -321,16 +154,13 @@ export class JJN<T extends Node = Node> {
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend | Element.prepend}
      */
-    prepend(...children: Wrappable[]): this {
+    prepend(...children: Wrappable[]) {
         const nodes = JJN.unwrapAll(children)
-        if (isEDDF(this.ref)) {
-            this.ref.prepend(...nodes)
-        } else {
-            const first = this.ref.firstChild
-            for (const node of nodes) {
-                if (node) {
-                    this.ref.insertBefore(node, first)
-                }
+        const ref = this.ref
+        const first = ref.firstChild
+        for (const node of nodes) {
+            if (node) {
+                ref.insertBefore(node, first)
             }
         }
         return this
@@ -343,7 +173,7 @@ export class JJN<T extends Node = Node> {
      * @param mapFn - The mapping function.
      * @returns This instance for chaining.
      */
-    mapPrepend<T>(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable): this {
+    mapPrepend(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
         return this.prepend(...array.map(mapFn))
     }
 
@@ -388,16 +218,13 @@ export class JJN<T extends Node = Node> {
      * Removes all children from this node.
      *
      * @returns This instance for chaining.
-     * @throws {TypeError} If the node is not an Element, Document, or DocumentFragment.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
      */
     empty(): this {
-        if (!isEDDF(this.ref)) {
-            throw new TypeError(
-                `Expected an Element, Document or DocumentFragment. Got ${this.ref} (${typeof this.ref})`,
-            )
+        const element = this.ref
+        while (element.firstChild) {
+            element.removeChild(element.firstChild)
         }
-        this.ref.replaceChildren()
         return this
     }
 

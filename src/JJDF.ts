@@ -1,5 +1,8 @@
 import { isA } from 'jty'
 import { JJN } from './JJN.js'
+import { IAppendPrepend, IById, IQuery } from './mixin-types.js'
+
+export interface JJDF<T extends DocumentFragment> extends IById, IQuery, IAppendPrepend {}
 
 /**
  * Wraps a DocumentFragment (which is a descendant of Node).
@@ -44,7 +47,7 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJN<T> 
      * @returns A new JJDF instance.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createDocumentFragment | document.createDocumentFragment}
      */
-    static create() {
+    static create(): JJDF<DocumentFragment> {
         return new JJDF(document.createDocumentFragment())
     }
 

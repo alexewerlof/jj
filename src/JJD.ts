@@ -1,5 +1,8 @@
 import { isA } from 'jty'
 import { JJN } from './JJN.js'
+import { IAppendPrepend, IById, IQuery } from './mixin-types.js'
+
+export interface JJD<T extends Document> extends IById, IQuery, IAppendPrepend {}
 
 /**
  * Wraps a Document (which is a descendant of Node).
