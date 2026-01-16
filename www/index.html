@@ -3,82 +3,124 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="JJ: The lightweight, no-build, WYWIWIR JavaScript library for modern web development."
+        />
         <link rel="stylesheet" href="ui.css" />
         <link rel="stylesheet" href="index.css" />
         <link rel="stylesheet" href="code.css" />
-        <title>JJ</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <title>JJ - Just JavaScript</title>
     </head>
     <body>
-        <header>
-            <a href="tutorial/">Tutorial</a>
-            <a href="../doc/">Reference</a>
-            <a href="examples">Examples</a>
-        </header>
-        <section class="intro">
-            <h1>JJ</h1>
-            <p>A thin sugar API on top of brower's native features.</p>
-            <p>Design Philosophy:</p>
-            <ol>
-                <li>
-                    <strong>Balance simplicity with power:</strong>
-                    Provide a light weightsugar syntax for the most common use cases while providing easy access to the
-                    browser's native API.
-                </li>
-                <li>
-                    <strong>Embrace browser features:</strong>
-                    Don't hide the modern browser features.
-                </li>
-                <li>
-                    <strong>Don't sacrifice performance in the name of abstraction:</strong>
-                    Use the absolute minimum memory. No Virtual DOM, no CSS in JS, no HTML in JS, no babysitting the
-                    developer.
-                </li>
-                <li>
-                    <strong>Play well with other frameworks:</strong>
-                    React, Vue, Svelte, Lit, ... whatever you prefer is fine because JJ plays nice with other libraries
-                    and frameworks. JJ doesn't want to dominate the world. It just wants to introduce elegance when
-                    needed.
-                </li>
-            </ol>
-        </section>
-        <section>
-            <h2>How is this possible [now]?</h2>
-            <p>
-                For years, complex web development required complex tools. We traded simplicity for power. But today,
-                the web platform is ready to stand on its own. Most browsers update regularly and the killer features
-                are already in place.
-            </p>
-            <p>
-                JJ leverages modern standards like <strong>Web Components</strong> and <strong>ES Modules</strong> to
-                give you a developer experience that feels like a framework, with the lightweight footprint of vanilla
-                JavaScript.
-            </p>
-            <p>
-                No build steps required. No Virtual DOM overhead. Just clean, performant code that runs everywhere.
-                <strong>Welcome to the future of native web development.</strong>
-            </p>
-            <h2>When should you [not] use JJ?</h2>
-            <p>JJ is a good choice for:</p>
-            <ul>
-                <li>Web applications that prioritize performance</li>
-                <li>Simple web applications</li>
-                <li>Static websites where a little JavaScript is enough</li>
-                <li>Developers who prefer to work with browser API beautifully</li>
-            </ul>
-            <p>JJ is not a good choice for:</p>
-            <ul>
-                <li>Complex and heavy web applications with hundreds of files</li>
-                <li>Web applications that need to support legacy applications</li>
-                <li>
-                    Produts where the exisitng code base and tooling is in a drastically different framework/library
-                </li>
-                <li>Developers who prefer abstractions on top of the API and don't mind performance hit</li>
-            </ul>
-        </section>
-        <section>
-            <h2>Examples</h2>
-            <code-block file="examples/chat-ui/components/chat-message.js"></code-block>
-        </section>
+        <nav id="main-nav">
+            <div class="nav-content">
+                <a href="#" class="brand">JJ</a>
+                <div class="links">
+                    <a href="tutorial/">Docs</a>
+                    <a href="https://github.com/alexewerlof/jj" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </nav>
+
+        <main>
+            <header class="hero">
+                <div class="hero-content">
+                    <h1 class="glitch-text" data-text="Just JavaScript">Just JavaScript</h1>
+                    <p class="tagline">
+                        Faster than VDOM. No Build Step. Use the Platform!<br />
+                        <span class="highlight">What You Write Is What Is Run.</span>
+                    </p>
+                    <div class="cta-group">
+                        <div class="install-box">
+                            <span class="cmd">npm i jj</span>
+                            <button id="copy-btn" aria-label="Copy install command">Copy</button>
+                        </div>
+                        <a href="tutorial/" class="btn primary">Get Started</a>
+                    </div>
+                </div>
+            </header>
+
+            <section class="features">
+                <div class="feature-card">
+                    <div class="icon">⚡</div>
+                    <h3>No Transpilation</h3>
+                    <p>
+                        Runs directly in the browser. No Webpack, no Babel, no source map headaches. Debug the code you
+                        actually wrote.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🚀</div>
+                    <h3>Native Performance</h3>
+                    <p>
+                        Direct DOM manipulation. No Virtual DOM overhead or diffing algorithms. Just raw, optimized
+                        speed.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🧩</div>
+                    <h3>Web Components</h3>
+                    <p>
+                        First-class support for Custom Elements via <code>JJCC</code>. Encapsulate styles and logic
+                        using standard browser APIs.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">💎</div>
+                    <h3>Fluent API</h3>
+                    <p>
+                        Chained methods for cleaner, readable code. <code>JJHE</code> wrappers make DOM manipulation a
+                        joy again.
+                    </p>
+                </div>
+            </section>
+
+            <section class="showcase">
+                <div class="showcase-content">
+                    <h2>Less Boilerplate, More Logic</h2>
+                    <p>See how JJ compares to standard DOM API.</p>
+
+                    <div class="code-split">
+                        <div class="code-panel">
+                            <div class="panel-header">Standard DOM API</div>
+                            <pre><code class="language-js">const div = document.createElement('div');
+div.className = 'card';
+div.textContent = 'Hello World';
+div.setAttribute('id', 'intro');
+div.onclick = () => console.log('Hi');
+document.body.appendChild(div);</code></pre>
+                        </div>
+                        <div class="code-panel jj-panel">
+                            <div class="panel-header">JJ (Just JavaScript)</div>
+                            <pre><code class="language-js">JJHE.fromTag('div')
+    .addClass('card')
+    .setText('Hello World')
+    .setId('intro')
+    .on('click', () => console.log('Hi'))
+    .appendToBody()</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>Live Component Demo</h2>
+                <p>An interactive counter component built with <code>JJCC</code>.</p>
+                <div id="demo-container">
+                    <simple-counter></simple-counter>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>Released under MIT License.</p>
+                <p>Made in Sweden 🇸🇪 by <a href="https://alexewerlof.com/">Alex Ewerlöf</a></p>
+            </div>
+        </footer>
         <script type="module" src="index.js"></script>
     </body>
 </html>

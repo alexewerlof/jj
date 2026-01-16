@@ -1,0 +1,37 @@
+.counter-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--background-lighter, #001b33);
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    border: 1px solid var(--primary-color, #ffbc52);
+}
+
+button {
+    background: none;
+    border: 1px solid var(--secondary-color, #47a9ff);
+    color: var(--secondary-color, #47a9ff);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    &:hover {
+        background: var(--secondary-color, #47a9ff);
+        color: white;
+    }
+}
+
+#count {
+    font-family: monospace;
+    font-size: 1.5rem;
+    min-width: 2ch;
+    color: var(--foreground-color, white);
+}
