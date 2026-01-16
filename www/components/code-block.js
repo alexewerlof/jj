@@ -1,4 +1,4 @@
-import { fetchCss, fetchHtml, JJCC } from '../../lib/bundle.js'
+import { fetchCss, fetchHtml, fileExt, JJCC } from '../../lib/bundle.js'
 import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
 import highlightJs from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
 import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'
@@ -13,14 +13,6 @@ highlight.registerLanguage('css', highlightCss)
 highlight.registerLanguage('xml', highlightXml)
 highlight.registerAliases('html', { languagename: 'xml' })
 
-function getFileExtension(filePath) {
-    const lastDotIndex = filePath.lastIndexOf('.')
-    if (lastDotIndex === -1) {
-        return ''
-    }
-    return filePath.slice(lastDotIndex + 1)
-}
-
 async function loadFile(filePath) {
     try {
         const response = await fetch(filePath)
@@ -29,7 +21,7 @@ async function loadFile(filePath) {
         }
         const codeText = await response.text()
         return highlight.highlight(codeText, {
-            language: getFileExtension(filePath),
+            language: fileExt(filePath),
         }).value
     } catch (e) {
         return `Error: ${e.message}`
