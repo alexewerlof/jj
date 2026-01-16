@@ -1,0 +1,7 @@
+Rapid Serial Visual Presentation (RSVP) fundamentally changes how we consume
+text by eliminating the need for saccadic eye movements. Instead of your eyes
+chasing words across a page, the words come to you at a fixed focal point.
+This JJ example explores the intersection of cognitive science and web
+performance, delivering a seamless reading experience that pushes the
+boundaries of human processing speed while maintaining comprehension through
+careful visual guidance.

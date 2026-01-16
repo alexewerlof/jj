@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500&display=swap');
+
+.reader-container {
+    font-family: 'Lexend', sans-serif;
+    /* Monospaced numbers prevent jitter if you display a timer/WPM count */
+    font-variant-numeric: tabular-nums;
+}
+
+:root {
+    --normal-text-color: #fff;
+    --emphasis-text-color: #f00;
+    --background-color: #000;
+    --guide-thickness: 0.1em;
+}
+
+#input-text {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#word {
+    background-color: var(--background-color);
+    color: var(--normal-text-color);
+    font-size: 400%;
+    padding: 1em;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
+#left-side {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    text-align: right;
+}
+
+#right-side {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    text-align: left;
+}
+
+#pivot-char {
+    flex: 0 0 auto;
+    color: var(--emphasis-text-color);
+}
+
+#render-progress {
+    width: 100%;
+}
+
+.guides {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-top: var(--guide-thickness) solid var(--emphasis-text-color);
+    border-bottom: var(--guide-thickness) solid var(--emphasis-text-color);
+}
+
+.guides::before,
+.guides::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: var(--guide-thickness);
+    height: 20%;
+    background-color: var(--emphasis-text-color);
+}
+
+.guides::before {
+    top: 0;
+}
+
+.guides::after {
+    bottom: 0;
+}
