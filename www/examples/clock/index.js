@@ -1,4 +1,4 @@
-import { JJDF, JJSE, byId } from '../../lib/bundle.js'
+import { JJDF, JJSE, byId } from '../../../lib/bundle.js'
 
 const clock = byId('clock')
 const secondHand = byId('second-hand')

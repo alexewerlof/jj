@@ -1,4 +1,4 @@
-import { fetchCss, fetchHtml, JJCC } from '../../../lib/bundle.js'
+import { fetchCss, fetchHtml, JJCC } from '../../../../lib/bundle.js'
 
 const VALID_ROLES = ['user', 'system', 'assistant']
 

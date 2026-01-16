@@ -1,5 +1,5 @@
 import { RSVPEngine } from "./RSVPEngine.js";
-import { byId, fetchText } from '../../lib/bundle.js'
+import { byId, fetchText } from '../../../lib/bundle.js'
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 

@@ -1,6 +1,6 @@
 import { ChatMessage } from './components/chat-message.js'
 import { ChatThread } from './components/chat-thread.js'
-import { JJHE, byId } from '../../lib/bundle.js'
+import { JJHE, byId } from '../../../../lib/bundle.js'
 
 await ChatThread.register()
 await ChatMessage.register()

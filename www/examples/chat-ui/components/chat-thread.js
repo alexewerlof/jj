@@ -1,4 +1,4 @@
-import { fetchCss, fetchHtml, JJCC } from '../../../lib/bundle.js'
+import { fetchCss, fetchHtml, JJCC } from '../../../../lib/bundle.js'
 
 export class ChatThread extends JJCC {
     static jj = {
