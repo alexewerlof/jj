@@ -40,7 +40,7 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      * @returns The inner HTML string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
      */
-    getHtml(): string {
+    getHTML(): string {
         return this.ref.innerHTML
     }
 
@@ -52,7 +52,7 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
      */
-    setHtml(value: string, unsafe: false): this {
+    setHTML(value: string, unsafe: false): this {
         // TODO: https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/setHTMLUnsafe
         this.ref.innerHTML = value
         return this

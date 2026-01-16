@@ -340,7 +340,7 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      * @returns The inner HTML string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
      */
-    getHtml(): string {
+    getHTML(): string {
         return this.ref.innerHTML
     }
 
@@ -351,7 +351,7 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
      */
-    setHtml(html: string): this {
+    setHTML(html: string): this {
         this.ref.innerHTML = html
         return this
     }

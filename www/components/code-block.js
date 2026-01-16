@@ -59,6 +59,6 @@ export class CodeBlock extends JJCC {
 
     async connectedCallback() {
         await super.connectedCallback()
-        this.jjRoot.shadow.byId('code').setHtml(await this.#codeHtml)
+        this.jjRoot.shadow.byId('code').setHTML(await this.#codeHtml)
     }
 }

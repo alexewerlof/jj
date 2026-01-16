@@ -37,6 +37,6 @@ export class RenderMarkdown extends JJCC {
 
     async connectedCallback() {
         await super.connectedCallback()
-        this.jjRoot.shadow.setHtml(await this.#contentHtml)
+        this.jjRoot.shadow.setHTML(await this.#contentHtml)
     }
 }

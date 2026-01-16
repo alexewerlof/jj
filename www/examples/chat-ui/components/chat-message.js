@@ -43,7 +43,7 @@ export class ChatMessage extends JJCC {
     }
 
     #renderContent() {
-        this.jjRoot?.shadow.byId('content').setHtml(this.contentHtml)
+        this.jjRoot?.shadow.byId('content').setHTML(this.contentHtml)
     }
 
     async connectedCallback() {

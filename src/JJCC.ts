@@ -19,7 +19,7 @@ async function processTemplateConfig(template?: JJTemplateConfig): Promise<strin
         return template
     }
     if (isA(template, JJHE)) {
-        return template.getHtml()
+        return template.getHTML()
     }
     if (isA(template, HTMLElement)) {
         return template.outerHTML
