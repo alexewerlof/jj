@@ -1,7 +1,7 @@
 import { isA, isStr } from 'jty'
 import { JJHE } from './JJHE.js'
 import { Wrappable } from './types.js'
-import { cssToStyle } from './util.js'
+import { cssToStyle, fileExt } from './util.js'
 
 /**
  * Hyperscript helper to create JJHE instances.
@@ -48,15 +48,40 @@ export function h(tagName: string, attributes?: Record<string, string> | null, .
 }
 
 /**
+ * Tries to find the best match for the link.as attribute when it's omitted
+ * @param href a relative, absolute, or URL resource
+ * @returns a valid value for the link.as attribute
+ * @throws {TypeError} if it cannot guess a valid value for the 'link.as' attribute
+ */
+function linkAs(href: string): 'fetch' | 'style' | 'script' {
+    switch (fileExt(href)) {
+        case 'html':
+        case 'htm':
+        case 'md':
+            return 'fetch'
+        case 'css':
+            return 'style'
+        case 'js':
+        case 'mjs':
+        case 'cjs':
+            return 'script'
+        default:
+            throw new Error(`No 'as' attribute was specified and we failed to guess it from the URL: ${href}`)
+    }
+}
+
+/**
  * Creates a `<link>` element for prefetching or preloading resources.
  *
  * @remarks
  * This function validates the input arguments and returns a wrapped `JJHE` instance.
  * It does not append the element to the document.
  *
- * @param href - The URL of the resource.
  * @param rel - The relationship of the linked resource ('prefetch' or 'preload').
- * @param as - The type of content being loaded ('fetch' for HTML, 'style' for CSS, or 'script' for Javascript files). Defaults to 'fetch'.
+ * @param href - The URL of the resource.
+ * @param as - The type of content being loaded ('fetch' for HTML, 'style' for CSS, or 'script' for Javascript files).
+ * If it's not provided or set to a falsy value, it runs heuristics to find the best match from the href parameter.
+ *
  * @returns The JJHE instance representing the link element. The `<link>` is accessible via `.ref`
  * @throws {TypeError} If `href` is not a string or URL.
  * @throws {RangeError} If `rel` or `as` are not valid values.
@@ -64,9 +89,9 @@ export function h(tagName: string, attributes?: Record<string, string> | null, .
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/prefetch | Link types: prefetch}
  */
 export function createLinkPre(
-    href: string | URL,
     rel: 'prefetch' | 'preload',
-    as: 'fetch' | 'style' | 'script' = 'fetch',
+    href: string | URL,
+    as?: 'fetch' | 'style' | 'script',
 ): JJHE {
     if (!isStr(href)) {
         if (!isA(href, URL)) {
@@ -77,6 +102,13 @@ export function createLinkPre(
 
     if (!['prefetch', 'preload'].includes(rel)) {
         throw new RangeError(`rel should be one of 'prefetch' or 'preload'. Got ${rel} (${typeof rel})`)
+    }
+
+    if (!as) {
+        as = linkAs(href)
+        if (!as) {
+            throw new Error(`No 'as' attribute was specified and we failed to guess it from the URL: ${href}`)
+        }
     }
 
     if (!['fetch', 'style', 'script'].includes(as)) {

@@ -1,3 +1,36 @@
+import { isStr } from 'jty'
+
+/**
+ * Returns the file extension
+ *
+ * @remarks
+ * This convenience function is primarily used to guess the 'as' attribute of
+ * a link preload/prefetch behind the scene.
+ *
+ * @example
+ * ```ts
+ * fileExt('file.txt') // => 'txt'
+ * fileExt('https://www.alexewerlof.com/path/to/file.js') // => 'js'
+ * ```
+ *
+ * @param path - absolute, relative, or URL path to a file
+ * @returns the extension name in lowercase and without any dot prefix
+ */
+export function fileExt(path: string): string {
+    if (!isStr(path)) {
+        throw new TypeError(`Expected a string file path. Got ${path} (${typeof path})`)
+    }
+    const lastDotIndex = path.lastIndexOf('.')
+    if (lastDotIndex === -1) {
+        return ''
+    }
+    const ext = path.slice(lastDotIndex + 1)
+    if (ext.indexOf('/') !== -1) {
+        return ''
+    }
+    return ext.toLowerCase().trim()
+}
+
 /**
  * Returns a promise that resolves before the next repaint.
  *
