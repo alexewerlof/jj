@@ -237,13 +237,31 @@ const EDDF = {
     },
 
     /**
+     * Replaces the existing children of a node with a specified new set of children.
+     *
+     * @remarks
+     * If no children are provided, it'll empty this
+     *
+     * @param this - The JJE, JJD or JJDF instance.
+     * @param children - The children to replace with.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/replaceChildren | Document.replaceChildren}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/replaceChildren | DocumentFragment.replaceChildren}
+     */
+    replaceChildren<T extends JJE | JJD | JJDF>(this: T, ...children: Wrappable[]): T {
+        const nodes = unwrapAll(children)
+        this.ref.replaceChildren(...nodes)
+        return this
+    },
+
+    /**
      * Removes all children from this node.
      *
      * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
      */
     empty<T extends JJE | JJD | JJDF>(this: T): T {
-        this.ref.replaceChildren()
+        this.replaceChildren()
         return this
     },
 }
