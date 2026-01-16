@@ -50,6 +50,27 @@ export function nextAnimationFrame(): Promise<number> {
 }
 
 /**
+ * Returns a promise that resolves after the specified delay.
+ *
+ * @remarks
+ * Uses `setTimeout` to delay execution. When used with 0ms, it defers
+ * execution to the next macro-task, allowing the event loop to cycle.
+ *
+ * @example
+ * ```ts
+ * await sleep(100)
+ * await sleep() // equivalent to setTimeout(..., 0)
+ * ```
+ *
+ * @param ms - The delay in milliseconds. Defaults to 0.
+ * @returns A promise that resolves after the delay.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/setTimeout | setTimeout}
+ */
+export function sleep(ms: number = 0): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+/**
  * Adds an event listener to a target.
  *
  * @param target - The event target.

@@ -1,7 +1,5 @@
 import { RSVPEngine } from "./RSVPEngine.js";
-import { byId, fetchText } from '../../../lib/bundle.js'
-
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { sleep, byId, fetchText } from '../../../lib/bundle.js'
 
 const inputTextArea = byId('input-text')
 const leftSpan = byId('left-side')
