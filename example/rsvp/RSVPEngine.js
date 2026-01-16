@@ -30,7 +30,7 @@ export class RSVPEngine {
         // 1. Length Penalty: Add time for long words
         // (e.g., proportional extra time per char over 6 chars)
         if (word.length > 6) {
-            delay += (word.length - 6) * (delay / 20)
+            delay += (word.length - 6) * (delay / 10)
         }
 
         // 2. Punctuation Multiplier: The rhythm maker
