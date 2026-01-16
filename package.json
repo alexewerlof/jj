@@ -13,8 +13,18 @@
     "main": "./lib/index.js",
     "unpkg": "./lib/bundle.js",
     "exports": {
-        "types": "./lib/index.d.ts",
-        "import": "./lib/index.js"
+        ".": {
+            "types": "./lib/index.d.ts",
+            "import": "./lib/index.js"
+        },
+        "./lib/bundle.js": {
+            "types": "./lib/index.d.ts",
+            "import": "./lib/bundle.js"
+        },
+        "./lib/bundle.min.js": {
+            "types": "./lib/index.d.ts",
+            "import": "./lib/bundle.min.js"
+        }
     },
     "directories": {
         "lib": "lib",
@@ -27,15 +37,14 @@
     "scripts": {
         "doc": "typedoc src/index.ts",
         "build": "tsc",
-        "bundle": "esbuild src/index.ts --bundle --outfile=lib/bundle.js --format=esm --sourcemap",
-        "bundle:min": "esbuild src/index.ts --bundle --outfile=lib/bundle.min.js --format=esm --minify",
+        "bundle": "node bundle.js",
         "typecheck": "tsc --noEmit",
         "fmt": "prettier --write .",
         "test": "npm run typecheck && node --import tsx --test",
         "test:watch": "npm run typecheck && node --import tsx --test --watch",
         "test:coverage": "npm run typecheck && node --import tsx --test --experimental-test-coverage",
         "preversion": "npm run fmt && npm t",
-        "prepublishOnly": "rm -rf lib && npm run build && npm run bundle && npm run bundle:min",
+        "prepublishOnly": "rm -rf lib && npm run build && npm run bundle",
         "postversion": "git push && git push --tags"
     },
     "repository": {
