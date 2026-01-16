@@ -1,3 +1,5 @@
+import { isStr } from 'jty'
+
 /**
  * Converts a PascalCase or camelCase string to kebab-case.
  *
@@ -18,7 +20,7 @@
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace | String.prototype.replace}
  */
 export function pas2keb(str: string): string {
-    if (typeof str !== 'string') {
+    if (!isStr(str)) {
         throw new TypeError(`Expected a string. Got ${str} (${typeof str})`)
     }
     if (/[^a-zA-Z0-9_]/.test(str)) {
@@ -52,7 +54,7 @@ export function pas2keb(str: string): string {
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map | Array.prototype.map}
  */
 export function keb2pas(str: string): string {
-    if (typeof str !== 'string') {
+    if (!isStr(str)) {
         throw new TypeError(`Expected a string. Got ${str} (${typeof str})`)
     }
     return (
@@ -85,7 +87,7 @@ export function keb2pas(str: string): string {
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace | String.prototype.replace}
  */
 export function keb2cam(str: string): string {
-    if (typeof str !== 'string') {
+    if (!isStr(str)) {
         throw new TypeError(`Expected a string. Got ${str} (${typeof str})`)
     }
     return str
