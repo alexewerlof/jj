@@ -235,6 +235,7 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
      * @param args - Arguments to pass to the function.
      * @returns The return value of the function.
      * @remarks
+     * If you want to access the current JJ* instance, you SHOULD use a `function` not an arrow function.
      * If the function throws, `run()` doesn't swallow the exception.
      * So if you're expecting an error, make sure to wrap it in a `try..catch` block and handle the exception.
      * If the function returns a promise, you can `await` on the response.
