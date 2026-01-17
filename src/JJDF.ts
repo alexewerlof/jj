@@ -29,8 +29,15 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJN<T> 
     /**
      * Creates a JJDF instance from a DocumentFragment reference.
      *
+     * @example
+     * ```ts
+     * const frag = JJDF.from(myFrag)
+     * ```
+     *
+     *
      * @param ref - The DocumentFragment instance.
      * @returns A new JJDF instance.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}
      */
     static from(ref: DocumentFragment): JJDF {
         return new JJDF(ref)

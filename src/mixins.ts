@@ -101,10 +101,16 @@ export function unwrap(obj: Wrappable): Unwrapped {
 /**
  * Finds an element by ID in the document.
  *
+ * @example
+ * ```ts
+ * const el = byId('my-id')
+ * ```
+ *
  * @param id - The ID to search for.
  * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
  * @returns The wrapped element, or null if not found and throwIfNotFound is false.
  * @throws {TypeError} If the element is not found and throwIfNotFound is true.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById | Document.getElementById}
  */
 export function byId(id: string, throwIfNotFound = true): Wrapped | null {
     const el = document.getElementById(id)
@@ -120,6 +126,11 @@ export function byId(id: string, throwIfNotFound = true): Wrapped | null {
 /**
  * Finds elements by class name in the document.
  *
+ * @example
+ * ```ts
+ * const items = byClass('list-item')
+ * ```
+ *
  * @param className - The class name to search for.
  * @returns An array of wrapped elements.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByClassName | Document.getElementsByClassName}
@@ -131,10 +142,16 @@ export function byClass(className: string): Wrapped[] {
 /**
  * Finds the first element matching a selector in the document.
  *
+ * @example
+ * ```ts
+ * const btn = query('.submit-btn')
+ * ```
+ *
  * @param selector - The CSS selector.
  * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
  * @returns The wrapped element, or null.
  * @throws {TypeError} If not found and throwIfNotFound is true.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector | Document.querySelector}
  */
 export function query(selector: string, throwIfNotFound = true): Wrapped | null {
     const queryResult = document.querySelector(selector)
@@ -150,8 +167,14 @@ export function query(selector: string, throwIfNotFound = true): Wrapped | null 
 /**
  * Finds all elements matching a selector in the document.
  *
+ * @example
+ * ```ts
+ * const inputs = queryAll('input[type="text"]')
+ * ```
+ *
  * @param selector - The CSS selector.
  * @returns An array of wrapped elements.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll | Document.querySelectorAll}
  */
 export function queryAll(selector: string): Wrapped[] {
     return wrapAll(document.querySelectorAll(selector))
@@ -161,10 +184,17 @@ const DDF: IById = {
     /**
      * Finds an element by ID within this Document or DocumentFragment.
      *
+     * @example
+     * ```ts
+     * const el = doc.byId('header')
+     * ```
+     *
      * @param this - The JJD or JJDF instance.
      * @param id - The ID to search for.
      * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
      * @returns The wrapped element, or null if not found and throwIfNotFound is false.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById | Document.getElementById}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/getElementById | DocumentFragment.getElementById}
      */
     byId(this: JJD | JJDF, id: string, throwIfNotFound = true): Wrapped | null {
         const el = this.ref.getElementById(id)
@@ -182,11 +212,19 @@ const EDDF = {
     /**
      * Finds the first element matching a selector within this element's context.
      *
+     * @example
+     * ```ts
+     * const span = div.query('span')
+     * ```
+     *
      * @param this - The JJE, JJD or JJDF instance.
      * @param selector - The CSS selector.
      * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
      * @returns The wrapped element, or null.
      * @throws {TypeError} If context is invalid or element not found (when requested).
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector | Document.querySelector}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/querySelector | DocumentFragment.querySelector}
      */
     query(this: JJE | JJD | JJDF, selector: string, throwIfNotFound = true): Wrapped | null {
         const queryResult = this.ref.querySelector(selector)
@@ -202,9 +240,17 @@ const EDDF = {
     /**
      * Finds all elements matching a selector within this element's context.
      *
+     * @example
+     * ```ts
+     * const items = list.queryAll('li')
+     * ```
+     *
      * @param this - The JJE, JJD or JJDF instance.
      * @param selector - The CSS selector.
      * @returns An array of wrapped elements.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll | Element.querySelectorAll}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll | Document.querySelectorAll}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/querySelectorAll | DocumentFragment.querySelectorAll}
      */
     queryAll(this: JJE | JJD | JJDF, selector: string): Wrapped[] {
         return wrapAll(this.ref.querySelectorAll(selector))
@@ -213,9 +259,17 @@ const EDDF = {
     /**
      * Appends children to this node using native append.
      *
+     * @example
+     * ```ts
+     * myDiv.append(h('span', null, 'hello'))
+     * ```
+     *
      * @param this - The JJE, JJD or JJDF instance.
      * @param children - The children to append.
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/append | Element.append}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/append | Document.append}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/append | DocumentFragment.append}
      */
     append<T extends JJE | JJD | JJDF>(this: T, ...children: Wrappable[]): T {
         const nodes = unwrapAll(children)
@@ -226,9 +280,17 @@ const EDDF = {
     /**
      * Prepends children to this node using native prepend.
      *
+     * @example
+     * ```ts
+     * div.prepend(h('span', null, 'first'))
+     * ```
+     *
      * @param this - The JJE, JJD or JJDF instance.
      * @param children - The children to prepend.
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend | Element.prepend}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/prepend | Document.prepend}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/prepend | DocumentFragment.prepend}
      */
     prepend<T extends JJE | JJD | JJDF>(this: T, ...children: Wrappable[]): T {
         const nodes = unwrapAll(children)
@@ -240,7 +302,12 @@ const EDDF = {
      * Replaces the existing children of a node with a specified new set of children.
      *
      * @remarks
-     * If no children are provided, it'll empty this
+     * If no children are provided, it empties the node.
+     *
+     * @example
+     * ```ts
+     * div.replaceChildren(h('p', null, 'New Content'))
+     * ```
      *
      * @param this - The JJE, JJD or JJDF instance.
      * @param children - The children to replace with.
@@ -258,7 +325,13 @@ const EDDF = {
     /**
      * Removes all children from this node.
      *
+     * @example
+     * ```ts
+     * div.empty()
+     * ```
+     *
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
      */
     empty<T extends JJE | JJD | JJDF>(this: T): T {
         this.replaceChildren()

@@ -15,6 +15,12 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
     /**
      * Creates a JJT instance from a Text node.
      *
+     * @example
+     * ```ts
+     * const textNode = document.createTextNode('foo')
+     * const jjText = JJT.from(textNode)
+     * ```
+     *
      * @param text - The Text node.
      * @returns A new JJT instance.
      * @throws {TypeError} If `text` is not a Text node.
@@ -60,6 +66,11 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
     /**
      * Sets the text content.
      *
+     * @example
+     * ```ts
+     * text.setText('New content')
+     * ```
+     *
      * @param text - The text to set.
      * @returns This instance for chaining.
      * @throws {TypeError} If `text` is not a string.
@@ -77,6 +88,7 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * Clears the text content.
      *
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
     empty(): this {
         return this.setText('')
@@ -84,6 +96,11 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
 
     /**
      * Sets the text content to multiple lines joined by newline.
+     *
+     * @example
+     * ```ts
+     * text.addLines('Line 1', 'Line 2')
+     * ```
      *
      * @param lines - The lines of text.
      * @returns This instance for chaining.

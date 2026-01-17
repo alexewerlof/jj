@@ -16,6 +16,11 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
     /**
      * Creates a JJN instance from a Node reference.
      *
+     * @example
+     * ```ts
+     * const node = JJN.from(document.createTextNode('hello'))
+     * ```
+     *
      * @param node - The Node instance.
      * @returns A new JJN instance.
      */
@@ -67,6 +72,11 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
     /**
      * Wraps an iterable object (e.g. an array of wrapped or DOM elements).
      *
+     * @example
+     * ```ts
+     * const wrappedList = JJN.wrapAll(document.querySelectorAll('div'))
+     * ```
+     *
      * @param iterable - The iterable to wrap.
      * @returns An array of wrapped instances.
      */
@@ -76,6 +86,11 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
 
     /**
      * Unwraps an iterable object (e.g. an array or HTMLCollection).
+     *
+     * @example
+     * ```ts
+     * const nodes = JJN.unwrapAll(wrappedList)
+     * ```
      *
      * @param iterable - The iterable to unwrap.
      * @returns An array of native DOM nodes.
@@ -139,6 +154,11 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
     /**
      * Maps an array to children and appends them.
      *
+     * @example
+     * ```ts
+     * list.mapAppend(['a', 'b'], item => h('li', null, item))
+     * ```
+     *
      * @param array - The source array.
      * @param mapFn - The mapping function returning a Wrappable.
      * @returns This instance for chaining.
@@ -169,6 +189,11 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
     /**
      * Maps an array to children and prepends them.
      *
+     * @example
+     * ```ts
+     * list.mapPrepend(['a', 'b'], item => JJHE.fromTag('li').setText(item))
+     * ```
+     *
      * @param array - The source array.
      * @param mapFn - The mapping function.
      * @returns This instance for chaining.
@@ -177,6 +202,16 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
         return this.prepend(...array.map(mapFn))
     }
 
+    /**
+     * Replaces the existing children of this node with a specified new set of children.
+     *
+     * @remarks
+     * If no children are specified, it essentially empties the node
+     *
+     * @param children - The new children to set.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
+     */
     replaceChildren(...children: Wrappable[]): this {
         return this.empty().append(...children)
     }
@@ -235,15 +270,22 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
     /**
      * Runs a function in the context of this JJN instance.
      *
-     * @param fn - The function to run. `this` inside the function will refer to this JJN instance.
-     * @param args - Arguments to pass to the function.
-     * @returns The return value of the function.
+     * @example
+     * ```ts
+     * div.run(function() {
+     *   this.addClass('active')
+     *   console.log(this.ref)
+     * })
+     * ```
      * @remarks
      * If you want to access the current JJ* instance, you SHOULD use a `function` not an arrow function.
      * If the function throws, `run()` doesn't swallow the exception.
      * So if you're expecting an error, make sure to wrap it in a `try..catch` block and handle the exception.
      * If the function returns a promise, you can `await` on the response.
-     * If the function returns a promise, you can `await` on the response.
+     *
+     * @param fn - The function to run. `this` inside the function will refer to this JJN instance.
+     * @param args - Arguments to pass to the function.
+     * @returns The return value of the function.
      */
     run<R, Args extends any[]>(fn: (this: this, ...args: Args) => R, ...args: Args): R {
         return fn.call(this, ...args)

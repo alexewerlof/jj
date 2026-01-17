@@ -1,4 +1,4 @@
-import { hasProp, isA, isArr, isDef, isFn, isObj, isStr } from 'jty'
+import { hasProp, isA, isArr, isDef, isFn, isStr } from 'jty'
 import { JJStyleConfig, JJTemplateConfig, ShadowConfig } from './types.js'
 import { JJHE } from './JJHE.js'
 import { cssToStyle } from './util.js'
@@ -12,6 +12,7 @@ import { keb2cam } from './case.js'
  * @param templateConfig - The configuration to resolve.
  * @returns A promise resolving to the HTML string or undefined.
  * @throws {TypeError} If the resolved value is not a string, JJHE, or HTMLElement.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML | Element.outerHTML}
  */
 async function templatePromise(templateConfig?: JJTemplateConfig): Promise<ShadowConfig['template']> {
     if (!isDef(templateConfig)) {
@@ -46,6 +47,7 @@ async function templatePromise(templateConfig?: JJTemplateConfig): Promise<Shado
  * @param styleConfig - The configuration to resolve.
  * @returns A promise resolving to a CSSStyleSheet.
  * @throws {TypeError} If the resolved value is not a string or CSSStyleSheet.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet | CSSStyleSheet}
  */
 async function stylePromise(styleConfig?: JJStyleConfig): Promise<CSSStyleSheet> {
     if (isFn(styleConfig)) {
@@ -164,7 +166,7 @@ export class ShadowMaster {
     }
 
     /**
-     * Resolves the configuration to something that can be fed to JJE.initShadow() function
+     * Resolves the configuration to something that can be fed to `JJHE.initShadow()` function
      *
      * The result is cached, so subsequent calls return the same promise.
      * Note: Any changes made to the ShadowMaster instance (via setTemplate/addStyles)
@@ -192,31 +194,30 @@ export class ShadowMaster {
  * @example
  * ```ts
  * class MyComponent extends HTMLElement {
- *   static observedAttributes = ['user-name', 'counter']
- *   userName = '' // Property MUST exist on the instance (or prototype setter)
- *   #counter = 0  // You can also use private properties together with getter/setters
+ *     static observedAttributes = ['user-name', 'counter']
+ *     userName = '' // Property MUST exist on the instance (or prototype setter)
+ *     #counter = 0  // You can also use private properties together with getter/setters
  *   
- *   attributeChangedCallback(name, oldValue, newValue) {
- *     attr2prop(this, name, oldValue, newValue)
- *   }
+ *     attributeChangedCallback(name, oldValue, newValue) {
+ *         attr2prop(this, name, oldValue, newValue)
+ *     }
 
- *   get counter() {
- *       return this.#counter
- *   }
+ *     get counter() {
+ *         return this.#counter
+ *     }
  * 
- *   set counter(value) {
- *       this.#counter = value
- *       this.#render() // You can call your render function to update the DOM
- *   }
+ *     set counter(value) {
+ *         this.#counter = value
+ *         this.#render() // You can call your render function to update the DOM
+ *     }
  * 
- *   #render() {
- *       const shadow = JJHE.from(this).shadow
- *       if (shadow) {
- *           shadow.byId('user').setText(this.userName)
- *           shadow.byId('counter').setText(this.counter)
- *       }
- *       JJHE.from(this).shadow?.byId('counter')
- *   }
+ *     #render() {
+ *         const shadow = JJHE.from(this).shadow
+ *         if (shadow) {
+ *             shadow.byId('user').setText(this.userName)
+ *             shadow.byId('counter').setText(this.counter)
+ *         }
+ *     }
  * }
  * ```
  *
@@ -225,6 +226,7 @@ export class ShadowMaster {
  * @param oldValue - The previous value of the attribute.
  * @param newValue - The new value of the attribute.
  * @returns `true` if it tried to set the attribute; otherwise `false`.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes | Responding to attribute changes}
  */
 export function attr2prop(instance: HTMLElement, name: string, oldValue: any, newValue: any) {
     if (!isA(instance, HTMLElement)) {
@@ -250,13 +252,27 @@ export function attr2prop(instance: HTMLElement, name: string, oldValue: any, ne
  * ```ts
  * class MyComponent extends HTMLElement {}
  * await registerComponent('my-component', MyComponent)
- *
- * Another convention is to have a `static async register()` function in the Custom Component.
- * That way, you can import multiple components and do a `Promise.all()` on all their `.register()`s.
  * ```
+ * Another convention is to have a `static async register()` function in the Custom Component.
+ * ```ts
+ * export class MyComponent extends HTMLElement {
+ *     static async register() {
+ *         return registerComponent('my-component', MyComponent)
+ *     }
+ * }
+ * ```
+ * That way, you can import multiple components and do a `Promise.all()` on all their `.register()`s.
+ * ```ts
+ * import { MyComponent, YourComponent, TheirComponent } ...
+ * await Promise.all([
+ *     MyComponent.register(),
+ *     YourComponent.register(),
+ *     TheirComponent.register(),
+ * ])
  *
  * @throws {TypeError} If name is not a string or constructor is not a function
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define | customElements.define}
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/whenDefined | customElements.whenDefined}
  */
 export async function registerComponent(
     name: string,

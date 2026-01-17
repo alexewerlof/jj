@@ -79,7 +79,7 @@ function linkAs(href: string): 'fetch' | 'style' | 'script' {
  *
  * @param rel - The relationship of the linked resource ('prefetch' or 'preload').
  * @param href - The URL of the resource.
- * @param as - The type of content being loaded ('fetch' for HTML, 'style' for CSS, or 'script' for Javascript files).
+ * @param as - The type of content being loaded ('fetch' for HTML, 'style' for CSS, or 'script' for JavaScript files).
  * If it's not provided or set to a falsy value, it runs heuristics to find the best match from the href parameter.
  *
  * @returns The JJHE instance representing the link element. The `<link>` is accessible via `.ref`
@@ -149,7 +149,7 @@ export function createLinkPre(
  */
 export function addLinkPre(...args: Parameters<typeof createLinkPre>) {
     const link = createLinkPre(...args)
-    document.head.append()
+    document.head.append(link.ref)
     return link
 }
 
@@ -197,7 +197,7 @@ export async function fetchText(url: URL | string, mime: string = 'text/*') {
  * ```
  *
  * @param url - The HTML file location.
- * @returns The file content in string.
+ * @returns The file content as a string.
  * @throws {Error} If the response is not ok.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types | MIME types}
  */
@@ -217,7 +217,7 @@ export async function fetchHtml(url: URL | string): Promise<string> {
  * ```
  *
  * @param url - The CSS file location.
- * @returns The file content in string.
+ * @returns The file content as a string.
  * @throws {Error} If the response is not ok.
  */
 export async function fetchCss(url: URL | string): Promise<string> {

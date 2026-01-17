@@ -16,6 +16,11 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     /**
      * Creates a JJHE instance from an HTMLElement reference.
      *
+     * @example
+     * ```ts
+     * const el = JJHE.from(document.getElementById('my-id'))
+     * ```
+     *
      * @param ref - The HTMLElement.
      * @returns A new JJHE instance.
      */
@@ -83,6 +88,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
      * @param value - The value to set.
      * @returns This instance for chaining.
      * @throws {Error} If the element does not have a value property.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/value | HTMLInputElement.value}
      */
     setValue(value: string): this {
         if (!hasProp(this.ref, 'value')) {
@@ -117,6 +123,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
      *
      * @param name - The data attribute name (camelCase).
      * @returns `true` if it exists.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
      */
     hasData(name: string): boolean {
         return hasProp(this.ref.dataset, name)
@@ -133,6 +140,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
      * @param name - The data attribute name (camelCase).
      * @param value - The value to set.
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
      */
     setData(name: string, value: string): this {
         this.ref.dataset[name] = value
@@ -162,6 +170,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
      *
      * @param name - The data attribute name (camelCase).
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
      */
     rmData(name: string): this {
         delete this.ref.dataset[name]
@@ -218,7 +227,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
      * @param selector - The CSS selector.
      * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
      * @returns The wrapped element, or null.
-     * @throws {TypeError} If element not found (when requested).
+     * @throws {TypeError} If the element is not found and `throwIfNotFound` is true.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
      */
     query(selector: string, throwIfNotFound = true): Wrapped | null {

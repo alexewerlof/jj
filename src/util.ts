@@ -15,6 +15,7 @@ import { isStr } from 'jty'
  *
  * @param path - absolute, relative, or URL path to a file
  * @returns the extension name in lowercase and without any dot prefix
+ * @throws {TypeError} If path is not a string.
  */
 export function fileExt(path: string): string {
     if (!isStr(path)) {
@@ -73,6 +74,11 @@ export function sleep(ms: number = 0): Promise<void> {
 /**
  * Adds an event listener to a target.
  *
+ * @example
+ * ```ts
+ * on(window, 'resize', () => console.log('resized'))
+ * ```
+ *
  * @param target - The event target.
  * @param eventName - The name of the event.
  * @param handler - The event handler.
@@ -84,6 +90,11 @@ export function on(target: EventTarget, eventName: string, handler: EventListene
 
 /**
  * Removes an event listener from a target.
+ *
+ * @example
+ * ```ts
+ * off(window, 'resize', handler)
+ * ```
  *
  * @param target - The event target.
  * @param eventName - The name of the event.

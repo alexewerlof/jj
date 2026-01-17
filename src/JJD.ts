@@ -10,6 +10,7 @@ export interface JJD<T extends Document> extends IById, IQuery, IAppendPrepend {
  * @remarks
  * This class provides a wrapper around the native `Document` interface, inheriting
  * the fluent API capabilities of `JJN`.
+ * It also supports querying (`byId`, `query`) and manipulation (`append`, `prepend`) methods.
  *
  * @example
  * ```ts
@@ -30,6 +31,7 @@ export class JJD<T extends Document = Document> extends JJN<T> {
      *
      * @param ref - The Document instance.
      * @returns A new JJD instance.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document | Document}
      */
     static from(ref: Document): JJD {
         return new JJD(ref)
@@ -49,7 +51,7 @@ export class JJD<T extends Document = Document> extends JJN<T> {
     }
 
     /**
-     * Gets the `<head>` element of the document wrapped in a JJHE instance.
+     * Gets the `<head>` element of the document wrapped in a `JJHE` instance.
      *
      * @returns The wrapped head element.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/head | Document.head}
@@ -59,7 +61,7 @@ export class JJD<T extends Document = Document> extends JJN<T> {
     }
 
     /**
-     * Gets the `<body>` element of the document wrapped in a JJHE instance.
+     * Gets the `<body>` element of the document wrapped in a `JJHE` instance.
      *
      * @returns The wrapped body element.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/body | Document.body}

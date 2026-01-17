@@ -14,6 +14,11 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
     /**
      * Creates a JJSR instance from a ShadowRoot reference.
      *
+     * @example
+     * ```ts
+     * const shadow = JJSR.from(element.shadowRoot)
+     * ```
+     *
      * @param shadowRoot - The ShadowRoot instance.
      * @returns A new JJSR instance.
      */
@@ -46,6 +51,11 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
 
     /**
      * Sets the inner HTML of the shadow root.
+     *
+     * @example
+     * ```ts
+     * shadow.setHTML('<p>Hello</p>', false)
+     * ```
      *
      * @param value - The HTML string.
      * @param unsafe - Reserved for future use (must be false).

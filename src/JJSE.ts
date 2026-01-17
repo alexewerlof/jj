@@ -16,8 +16,14 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
     /**
      * Creates a JJSE instance from an SVGElement reference.
      *
+     * @example
+     * ```ts
+     * const svg = JJSE.from(myCircle)
+     * ```
+     *
      * @param ref - The SVGElement.
      * @returns A new JJSE instance.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement | SVGElement}
      */
     static from(ref: SVGElement): JJSE {
         return new JJSE(ref)
@@ -88,6 +94,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
      * Clears the text content of the element.
      *
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
     empty(): this {
         this.ref.textContent = ''
@@ -113,6 +120,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
      *
      * @param name - The data attribute name (camelCase).
      * @returns `true` if it exists.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
      */
     hasData(name: string): boolean {
         return hasProp(this.ref.dataset, name)
@@ -124,6 +132,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
      * @param name - The data attribute name (camelCase).
      * @param value - The value to set.
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
      */
     setData(name: string, value: string): this {
         this.ref.dataset[name] = value
@@ -132,6 +141,11 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
 
     /**
      * Sets multiple data attributes.
+     *
+     * @example
+     * ```ts
+     * svg.setDataObj({ id: '123', role: 'icon' })
+     * ```
      *
      * @param obj - An object of data keys and values.
      * @returns This instance for chaining.
@@ -148,6 +162,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
      *
      * @param name - The data attribute name (camelCase).
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
      */
     rmData(name: string): this {
         delete this.ref.dataset[name]

@@ -1,7 +1,7 @@
 import { isStr } from 'jty'
 
 /**
- * Converts a PascalCase or camelCase string to kebab-case.
+ * Converts a PascalCase, camelCase, or snake_case string to kebab-case.
  *
  * @remarks
  * This function is useful for converting JavaScript property names to CSS or HTML attribute names.

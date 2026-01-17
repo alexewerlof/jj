@@ -19,6 +19,11 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
     /**
      * Creates a JJE instance from an Element reference.
      *
+     * @example
+     * ```ts
+     * const el = JJE.from(document.querySelector('.my-class'))
+     * ```
+     *
      * @param ref - The Element instance.
      * @returns A new JJE instance.
      */
@@ -48,6 +53,7 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      * @param id - The ID to search for.
      * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
      * @returns The wrapped element, or null if not found and throwIfNotFound is false.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
      */
     byId(id: string, throwIfNotFound = true): Wrapped | null {
         if (!isStr(id)) {
@@ -150,6 +156,7 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      *
      * @param name - The ARIA attribute suffix (e.g., 'label' for 'aria-label').
      * @returns The attribute value, or null if not present.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
     getAria(name: string): string | null {
         return this.ref.getAttribute(`aria-${name}`)
@@ -255,6 +262,7 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      *
      * @param handler - The event handler.
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener | EventTarget.addEventListener}
      */
     onClick(handler: EventListenerOrEventListenerObject): this {
         return this.on('click', handler)
@@ -264,6 +272,8 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      * Hides the element by setting the `hidden` attribute and `aria-hidden="true"`.
      *
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/hidden | hidden attribute}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden | aria-hidden}
      */
     hide(): this {
         return this.setAttr('hidden', '').setAttr('aria-hidden', 'true')
@@ -282,6 +292,8 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      * Disables the element by setting the `disabled` attribute and `aria-disabled="true"`.
      *
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled | disabled attribute}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-disabled | aria-disabled}
      */
     disable(): this {
         return this.setAttr('disabled', '').setAttr('aria-disabled', 'true')
@@ -365,9 +377,7 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      * shadow DOM for security reasons (for example `<a>`).
      *
      * @param mode - The encapsulation mode ('open' or 'closed'). Defaults to 'open'.
-     * @param config - Has
-     * Optional HTML content to set in the shadow root.
-     * @param styleSheets - Optional CSSStyleSheets to adopt in the shadow root.
+     * @param config - Optional configuration object containing `template` (HTML string) and `styles` (array of CSSStyleSheet).
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow | Element.attachShadow}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets | ShadowRoot.adoptedStyleSheets}
