@@ -1,11 +1,11 @@
 import { SimpleCounter } from './components/simple-counter.js'
 import { RenderMarkdown } from './components/render-markdown.js'
-import { CodeBlock } from './components/code-block.js'
+import { CodeHighlight } from './components/code-highlight.js'
 
 await Promise.all([
     SimpleCounter.register(),
     RenderMarkdown.register(),
-    CodeBlock.register(),
+    CodeHighlight.register(),
 ])
 
 import {  byId } from '../lib/bundle.js'

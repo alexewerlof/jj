@@ -31,10 +31,10 @@ async function loadFile(filePath) {
     }
 }
 
-export class CodeBlock extends JJCC {
+export class CodeHighlight extends JJCC {
     static jj = {
-        name: 'code-block',
-        template: fetchHtml(import.meta.resolve('./code-block.html')),
+        name: 'code-highlight',
+        template: fetchHtml(import.meta.resolve('./code-highlight.html')),
         styles: [fetchCss(import.meta.resolve('../code.css'))],
     }
 

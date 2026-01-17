@@ -1,11 +1,3 @@
-.code-block {
-    display: block;
-    background-color: var(--background-darker);
-    padding: var(--gap);
-    border-radius: var(--bradius2);
-    border: var(--bthick) solid var(--ui-border);
-}
-
 .hljs-punctuation,
 .hljs-number,
 .hljs-operator {
