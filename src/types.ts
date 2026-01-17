@@ -47,15 +47,11 @@ export type JJStyleConfig = JJResource<string | CSSStyleSheet>
 export type JJStylesConfig = JJStyleConfig | JJStyleConfig[]
 
 /**
- * Configuration object for defining a JJCC component.
+ * Configuration for initializing a shadowRoot
  */
-export interface JJCConfig {
-    /** The tag name for the custom element. Must contain a hyphen. */
-    name: string
-    /** The template configuration. */
-    template?: JJTemplateConfig
-    /** The styles configuration. */
-    styles?: JJStylesConfig
-    /** The Shadow DOM mode. Defaults to 'open'. */
-    templateMode?: 'open' | 'closed'
+export interface ShadowConfig {
+    /** Optional HTML content to set in the shadow root */
+    template?: string
+    /** Optional CSSStyleSheets to adopt in the shadow root */
+    styles?: CSSStyleSheet[]
 }

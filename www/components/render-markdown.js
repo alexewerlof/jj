@@ -1,4 +1,4 @@
-import { fetchCss, JJCC } from '../../lib/bundle.js'
+import { attr2prop, fetchCss, JJHE, registerComponent, ShadowMaster } from '../../lib/bundle.js'
 import markdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
 
 const md = markdownIt()
@@ -15,10 +15,12 @@ async function loadFile(filePath) {
     }
 }
 
-export class RenderMarkdown extends JJCC {
-    static jj = {
-        name: 'render-markdown',
-        styles: fetchCss(import.meta.resolve('../ui.css'))
+const sm = ShadowMaster.create()
+    .setTemplate(fetchCss(import.meta.resolve('../ui.css')))
+
+export class RenderMarkdown extends HTMLElement {
+    static register() {
+        registerComponent('render-markdown', RenderMarkdown)
     }
 
     static observedAttributes = ['file']
@@ -29,6 +31,10 @@ export class RenderMarkdown extends JJCC {
     constructor() {
         super()
     }
+    
+    attributeChangedCallback(name, oldValue, newValue) {
+        attr2prop(this, name, oldValue, newValue)
+    }
 
     set file(value) {
         if (typeof value !== 'string') throw new Error('file must be a string')
@@ -36,7 +42,7 @@ export class RenderMarkdown extends JJCC {
     }
 
     async connectedCallback() {
-        await super.connectedCallback()
+        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
         this.jjRoot.shadow.setHTML(await this.#contentHtml)
     }
 }

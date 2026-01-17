@@ -1,8 +1,8 @@
-import { isA, isObj, isStr } from 'jty'
+import { isA, isArr, isObj, isStr } from 'jty'
 import { JJN } from './JJN.js'
 import { JJSR } from './JJSR.js'
 import { IAppendPrepend, IById, IQuery } from './mixin-types.js'
-import { Wrapped } from './types.js'
+import { ShadowConfig, Wrapped } from './types.js'
 
 export interface JJE<T extends Element> extends IQuery, IAppendPrepend {}
 
@@ -365,18 +365,25 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      * shadow DOM for security reasons (for example `<a>`).
      *
      * @param mode - The encapsulation mode ('open' or 'closed'). Defaults to 'open'.
-     * @param html - Optional HTML content to set in the shadow root.
+     * @param config - Has
+     * Optional HTML content to set in the shadow root.
      * @param styleSheets - Optional CSSStyleSheets to adopt in the shadow root.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow | Element.attachShadow}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets | ShadowRoot.adoptedStyleSheets}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/adoptedStyleSheets | Document.adoptedStyleSheets}
      */
-    initShadow(mode: ShadowRootMode = 'open', html?: string, ...styleSheets: CSSStyleSheet[]): this {
+    initShadow(mode: ShadowRootMode = 'open', config?: ShadowConfig): this {
         const shadowRoot = this.ref.shadowRoot ?? this.ref.attachShadow({ mode })
-        if (html) {
-            shadowRoot.innerHTML = html
-        }
-        if (styleSheets.length) {
-            shadowRoot.adoptedStyleSheets.push(...styleSheets)
+        if (isObj(config)) {
+            const { template, styles } = config
+
+            if (template) {
+                shadowRoot.innerHTML = template
+            }
+            if (isArr(styles) && styles.length) {
+                shadowRoot.adoptedStyleSheets.push(...styles)
+            }
         }
         return this
     }

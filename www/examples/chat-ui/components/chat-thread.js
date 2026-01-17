@@ -1,9 +1,15 @@
-import { fetchCss, fetchHtml, JJCC } from '../../../../lib/bundle.js'
+import { fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from '../../../../lib/bundle.js'
 
-export class ChatThread extends JJCC {
-    static jj = {
-        name: 'chat-thread',
-        template: fetchHtml(import.meta.resolve('./chat-thread.html')),
-        styles: fetchCss(import.meta.resolve('./chat-thread.css')),
+const sm = ShadowMaster.create()
+    .setTemplate(fetchHtml(import.meta.resolve('./chat-thread.html')))
+    .addStyles(fetchCss(import.meta.resolve('./chat-thread.css')))
+
+export class ChatThread extends HTMLElement {
+    static register() {
+        registerComponent('chat-thread', ChatThread)
+    }
+
+    async connectedCallback() {
+        JJHE.from(this).initShadow('open', await sm.getResolved())
     }
 }

@@ -27,10 +27,6 @@ JJ does not provide sugar syntax for every web capability. It assumes you can ha
 
 `JJHE` stands for **Wrapped HTMLElement**. It is a wrapper class used by JJ to provide method chaining and sugar syntax.
 
-## What is `JJCC`?
-
-`JJCC` stands for **Custom Component**. It is a base class for creating reusable components that encapsulate state, a few helpers and logic.
-
 ## Can I access the underlying DOM element?
 
 Yes. Every wrapper instance has a `.ref` property that points to the underlying DOM entity (e.g., `HTMLElement`, `Text`, `SVGElement`).

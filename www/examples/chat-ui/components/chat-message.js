@@ -1,21 +1,31 @@
-import { fetchCss, fetchHtml, JJCC } from '../../../../lib/bundle.js'
+import { attr2prop, fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from '../../../../lib/bundle.js'
 
 const VALID_ROLES = ['user', 'system', 'assistant']
 
-// Test comment
-export class ChatMessage extends JJCC {
-    /* longer comment
-    in multiple lines*/
-    static jj = {
-        name: 'chat-message',
-        template: fetchHtml(import.meta.resolve('./chat-message.html')),
-        styles: fetchCss(import.meta.resolve('./chat-message.css')),
-    }
+const sm = ShadowMaster.create()
+    .setTemplate(fetchHtml(import.meta.resolve('./chat-message.html')))
+    .addStyles(fetchCss(import.meta.resolve('./chat-message.css')))
 
+// Test comment
+export class ChatMessage extends HTMLElement {
     static observedAttributes = ['role', 'content']
+
+    static register() {
+        registerComponent('chat-message', ChatMessage)
+    }
 
     #role = VALID_ROLES[0]
     #content = ''
+
+    constructor() {
+        super()
+        this.#role = VALID_ROLES[0]
+        this.#content = ''
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        attr2prop(this, name, oldValue, newValue)
+    }
 
     get role() {
         return this.#role
@@ -47,7 +57,7 @@ export class ChatMessage extends JJCC {
     }
 
     async connectedCallback() {
-        await super.connectedCallback()
+        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
         this.#render()
         console.debug('ChatMessage connectedCallback', this)
     }

@@ -1,4 +1,4 @@
-import { fetchCss, fetchHtml, fileExt, JJCC } from '../../lib/bundle.js'
+import { attr2prop, fetchCss, fetchHtml, fileExt, ShadowMaster, JJHE, registerComponent } from '../../lib/bundle.js'
 import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
 import highlightJs from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
 import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'
@@ -31,21 +31,25 @@ async function loadFile(filePath) {
     }
 }
 
-export class CodeHighlight extends JJCC {
-    static jj = {
-        name: 'code-highlight',
-        template: fetchHtml(import.meta.resolve('./code-highlight.html')),
-        styles: [fetchCss(import.meta.resolve('../code.css'))],
+const tempStyle = ShadowMaster.create()
+    .setTemplate(fetchHtml(import.meta.resolve('./code-highlight.html')))
+    .addStyles(fetchCss(import.meta.resolve('../code.css')))
+
+export class CodeHighlight extends HTMLElement {
+    static observedAttributes = ['file', 'language']
+    static register() {
+        registerComponent('code-highlight', CodeHighlight)
     }
 
-    static observedAttributes = ['file', 'language']
-
-    jjRoot
     #fileContent
     #language
 
     constructor() {
         super()
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        attr2prop(this, name, oldValue, newValue)
     }
 
     get language() {
@@ -63,7 +67,7 @@ export class CodeHighlight extends JJCC {
     }
 
     async connectedCallback() {
-        await super.connectedCallback()
+        this.jjRoot = JJHE.from(this).initShadow('open', await tempStyle.getResolved())
         const codeText = this.#fileContent ? await this.#fileContent: this.innerText
         this.jjRoot.shadow.byId('code').setHTML(this.#language ? highlightCode(codeText, this.#language) : codeText)
     }
