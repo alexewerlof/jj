@@ -86,21 +86,21 @@
                     <div class="code-split">
                         <div class="code-panel">
                             <div class="panel-header">Standard DOM API</div>
-                            <pre><code class="language-js">const div = document.createElement('div');
+                            <pre><code-block language="javascript">const div = document.createElement('div');
 div.className = 'card';
 div.textContent = 'Hello World';
 div.setAttribute('id', 'intro');
 div.onclick = () => console.log('Hi');
-document.body.appendChild(div);</code></pre>
+document.body.appendChild(div);</code-block></pre>
                         </div>
                         <div class="code-panel jj-panel">
                             <div class="panel-header">JJ (Just JavaScript)</div>
-                            <pre><code class="language-js">JJHE.fromTag('div')
+                            <pre><code-block language="javascript">JJHE.fromTag('div')
     .addClass('card')
     .setText('Hello World')
     .setId('intro')
-    .on('click', () => console.log('Hi'))
-    .appendToBody()</code></pre>
+    .onClick(() => console.log('Hi'))
+    .appendToBody()</code-block></pre>
                         </div>
                     </div>
                 </div>

@@ -13,16 +13,19 @@ highlight.registerLanguage('css', highlightCss)
 highlight.registerLanguage('xml', highlightXml)
 highlight.registerAliases('html', { languagename: 'xml' })
 
+function highlightCode(code, language) {
+    return highlight.highlight(code, {
+        language,
+    }).value
+}
+
 async function loadFile(filePath) {
     try {
         const response = await fetch(filePath)
         if (!response.ok) {
             return `Error loading ${filePath}: ${response.status} ${response.statusText}`
         }
-        const codeText = await response.text()
-        return highlight.highlight(codeText, {
-            language: fileExt(filePath),
-        }).value
+        return await response.text()
     } catch (e) {
         return `Error: ${e.message}`
     }
@@ -32,25 +35,36 @@ export class CodeBlock extends JJCC {
     static jj = {
         name: 'code-block',
         template: fetchHtml(import.meta.resolve('./code-block.html')),
-        styles: [fetchCss(import.meta.resolve('./code-block.css'))],
+        styles: [fetchCss(import.meta.resolve('../code.css'))],
     }
 
-    static observedAttributes = ['file']
+    static observedAttributes = ['file', 'language']
 
     jjRoot
-    #codeHtml
+    #fileContent
+    #language
 
     constructor() {
         super()
     }
 
+    get language() {
+        return this.#language
+    }
+
+    set language(value) {
+        if (typeof value !== 'string') throw new Error('language must be a string')
+        this.#language = value
+    }
+
     set file(value) {
         if (typeof value !== 'string') throw new Error('file must be a string')
-        this.#codeHtml = loadFile(value)
+        this.#fileContent = loadFile(value)
     }
 
     async connectedCallback() {
         await super.connectedCallback()
-        this.jjRoot.shadow.byId('code').setHTML(await this.#codeHtml)
+        const codeText = this.#fileContent ? await this.#fileContent: this.innerText
+        this.jjRoot.shadow.byId('code').setHTML(this.#language ? highlightCode(codeText, this.#language) : codeText)
     }
 }
