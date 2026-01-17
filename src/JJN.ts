@@ -177,6 +177,10 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
         return this.prepend(...array.map(mapFn))
     }
 
+    replaceChildren(...children: Wrappable[]): this {
+        return this.empty().append(...children)
+    }
+
     /**
      * Adds an event listener.
      *
