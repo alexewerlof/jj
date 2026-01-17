@@ -1,5 +1,6 @@
-import { hasProp, isA, isStr } from 'jty'
+import { isA, isStr } from 'jty'
 import { JJE } from './JJE.js'
+import { IElementData } from './mixin-types.js'
 
 const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg'
 
@@ -98,74 +99,6 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
      */
     empty(): this {
         this.ref.textContent = ''
-        return this
-    }
-
-    /**
-     * Gets a data attribute value.
-     *
-     * @remarks
-     * Accesses the `dataset` property. Keys should be in camelCase.
-     *
-     * @param name - The data attribute name (camelCase).
-     * @returns The value or undefined.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
-     */
-    getData(name: string): string | undefined {
-        return this.ref.dataset[name]
-    }
-
-    /**
-     * Checks if a data attribute exists.
-     *
-     * @param name - The data attribute name (camelCase).
-     * @returns `true` if it exists.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
-     */
-    hasData(name: string): boolean {
-        return hasProp(this.ref.dataset, name)
-    }
-
-    /**
-     * Sets a data attribute.
-     *
-     * @param name - The data attribute name (camelCase).
-     * @param value - The value to set.
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
-     */
-    setData(name: string, value: string): this {
-        this.ref.dataset[name] = value
-        return this
-    }
-
-    /**
-     * Sets multiple data attributes.
-     *
-     * @example
-     * ```ts
-     * svg.setDataObj({ id: '123', role: 'icon' })
-     * ```
-     *
-     * @param obj - An object of data keys and values.
-     * @returns This instance for chaining.
-     */
-    setDataObj(obj: Record<string, string>): this {
-        for (const [name, value] of Object.entries(obj)) {
-            this.setData(name, value)
-        }
-        return this
-    }
-
-    /**
-     * Removes a data attribute.
-     *
-     * @param name - The data attribute name (camelCase).
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
-     */
-    rmData(name: string): this {
-        delete this.ref.dataset[name]
         return this
     }
 
@@ -270,3 +203,6 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
         return this.setAttr('transform', value)
     }
 }
+
+// IElementData
+export declare interface JJSE<T extends SVGElement> extends IElementData {}

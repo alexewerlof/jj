@@ -1,4 +1,4 @@
-import { isA, isObj, isStr } from 'jty'
+import { hasProp, isA, isObj, isStr } from 'jty'
 import { JJHE } from './JJHE.js'
 import { JJE } from './JJE.js'
 import { JJDF } from './JJDF.js'
@@ -339,6 +339,33 @@ const EDDF = {
     },
 }
 
+const HESE = {
+    getData<T extends JJHE | JJSE>(this: T, name: string): string | undefined {
+        return this.ref.dataset[name]
+    },
+
+    hasData<T extends JJHE | JJSE>(this: T, name: string): boolean {
+        return hasProp(this.ref.dataset, name)
+    },
+
+    setData<T extends JJHE | JJSE>(this: T, name: string, value: string): T {
+        this.ref.dataset[name] = value
+        return this
+    },
+
+    setDataObj<T extends JJHE | JJSE>(this: T, obj: Record<string, string>): T {
+        for (const [name, value] of Object.entries(obj)) {
+            this.setData(name, value)
+        }
+        return this
+    },
+
+    rmData<T extends JJHE | JJSE>(this: T, name: string): T {
+        delete this.ref.dataset[name]
+        return this
+    },
+}
+
 function assignPrototype(Class: any, ...mixins: any[]) {
     for (const mixin of mixins) {
         Object.assign(Class.prototype, mixin)
@@ -351,3 +378,5 @@ JJN.unwrap = unwrap
 assignPrototype(JJE, EDDF)
 assignPrototype(JJD, DDF, EDDF)
 assignPrototype(JJDF, DDF, EDDF)
+assignPrototype(JJHE, HESE)
+assignPrototype(JJSE, HESE)
