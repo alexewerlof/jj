@@ -285,6 +285,20 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
     }
 
     /**
+     * Replaces a class with another one
+     *
+     * @remarks
+     * If the `oldClassName` doesn't exist, the `newClassName` isn't added
+     *
+     * @param oldClassName - The class name to remove
+     * @param newClassName - The class name to add
+     */
+    replaceClass(oldClassName: string, newClassName: string): this {
+        this.ref.classList.replace(oldClassName, newClassName)
+        return this
+    }
+
+    /**
      * Adds a click event listener.
      *
      * @param handler - The event handler.
