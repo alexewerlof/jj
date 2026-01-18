@@ -1,17 +1,21 @@
 import { attr2prop, fetchCss, fetchHtml, fileExt, ShadowMaster, JJHE, registerComponent } from '../../lib/bundle.js'
 import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
-import highlightJs from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
+import highlightJavascript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
 import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'
 import highlightXml from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/xml.min.js'
+import highlightTypescript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/typescript.min.js'
 
 // https://highlightjs.readthedocs.io/en/latest/api.html#configure
 highlight.configure({
     languages: ['js', 'css', 'html'],
 })
-highlight.registerLanguage('js', highlightJs)
-highlight.registerLanguage('css', highlightCss)
+highlight.registerLanguage('javascript', highlightJavascript)
+highlight.registerAliases('js', { languageName: 'javascript' })
+highlight.registerLanguage('typescript', highlightTypescript)
+highlight.registerAliases('ts', { languageName: 'typescript' })
 highlight.registerLanguage('xml', highlightXml)
-highlight.registerAliases('html', { languagename: 'xml' })
+highlight.registerAliases('html', { languageName: 'xml' })
+highlight.registerLanguage('css', highlightCss)
 
 function highlightCode(code, language) {
     return highlight.highlight(code, {
