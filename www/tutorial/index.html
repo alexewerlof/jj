@@ -4,12 +4,22 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="../ui.css" />
+        <link rel="stylesheet" href="index.css" />
         <title>JJ Tutorial</title>
     </head>
     <body>
-        <render-markdown file="00-preface.md"></render-markdown>
-        <render-markdown file="01-dom.md"></render-markdown>
-        <render-markdown file="02-state-management.md"></render-markdown>
+        <header>
+            <h1>JJ Tutorial</h1>
+        </header>
+        <main>
+            <aside id="toc"></aside>
+            <article>
+                <render-markdown id="content-renderer"></render-markdown>
+            </article>
+        </main>
+        <footer>
+            <p>Released under MIT License.</p>
+        </footer>
 
         <script type="module" src="index.js"></script>
     </body>

@@ -1,48 +1,58 @@
-import { attr2prop, fetchCss, JJHE, registerComponent, ShadowMaster } from '../../lib/bundle.js'
+import { attr2prop, JJHE, registerComponent } from '../../lib/bundle.js'
 import markdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
+import {CodeHighlight} from './code-highlight.js'
+
+await CodeHighlight.register()
 
 const md = markdownIt()
 
-async function loadFile(filePath) {
-    try {
-        const response = await fetch(filePath)
-        if (!response.ok) {
-            return `Error loading ${filePath}: ${response.status} ${response.statusText}`
-        }
-        return md.render(await response.text())
-    } catch (e) {
-        return `Error: ${e.message}`
-    }
+md.renderer.rules.fence = (tokens, idx) => {
+    const token = tokens[idx]
+    const info = token.info ? token.info.trim() : ''
+    const language = info.split(/\s+/)[0] ?? 'javascript'
+    return `<code-highlight language="${language}">${md.utils.escapeHtml(token.content)}</code-highlight>`
 }
-
-const sm = ShadowMaster.create()
-    .setTemplate(fetchCss(import.meta.resolve('../ui.css')))
 
 export class RenderMarkdown extends HTMLElement {
     static register() {
         registerComponent('render-markdown', RenderMarkdown)
     }
 
-    static observedAttributes = ['file']
+    static observedAttributes = ['content']
 
-    jjRoot
-    #contentHtml
+    #root
+    #content = ''
 
     constructor() {
         super()
     }
     
+    async connectedCallback() {
+        this.#root = JJHE.from(this)
+        this.#render()
+    }
+
     attributeChangedCallback(name, oldValue, newValue) {
         attr2prop(this, name, oldValue, newValue)
     }
 
-    set file(value) {
-        if (typeof value !== 'string') throw new Error('file must be a string')
-        this.#contentHtml = loadFile(value)
+    set content(markdown) {
+        this.#content = markdown
+        this.#render()
     }
 
-    async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
-        this.jjRoot.shadow.setHTML(await this.#contentHtml)
+    get content() {
+        return this.#content
     }
+
+    #render() {
+        if (this.#root) {
+            try {
+                this.#root.setHTML(md.render(this.#content))
+            } catch (e) {
+                this.#root.setText(e.message)
+            }
+        }
+    }
+
 }
