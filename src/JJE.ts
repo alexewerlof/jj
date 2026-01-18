@@ -222,6 +222,18 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
     }
 
     /**
+     * Removes the `class` attribute of the element.
+     *
+     * @remarks
+     * If you want to remove a few specific class instead of all, use `rmClasses`
+     *
+     * @returns This instance for chaining.
+     */
+    rmClass(): this {
+        return this.rmAttr('class')
+    }
+
+    /**
      * Adds one or more classes to the element.
      *
      * @param classNames - The classes to add.
@@ -245,16 +257,6 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
     rmClasses(...classNames: string[]): this {
         this.ref.classList.remove(...classNames)
         return this
-    }
-
-    /**
-     * Removes a single class. Alias for `rmClasses`.
-     *
-     * @param className - The class to remove.
-     * @returns This instance for chaining.
-     */
-    rmClass(className: string) {
-        return this.rmClasses(className)
     }
 
     /**
