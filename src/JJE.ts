@@ -205,6 +205,7 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      *
      * @param classNames - The classes to add.
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/add | DOMTokenList.add}
      */
     addClass(...classNames: string[]): this {
@@ -217,6 +218,7 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      *
      * @param classNames - The classes to remove.
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/remove | DOMTokenList.remove}
      */
     rmClasses(...classNames: string[]): this {
@@ -239,6 +241,7 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      *
      * @param className - The class to check for.
      * @returns `true` if the element has the class.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/contains | DOMTokenList.contains}
      */
     hasClass(className: string): boolean {
@@ -250,6 +253,7 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
      *
      * @param className - The class to toggle.
      * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/toggle | DOMTokenList.toggle}
      */
     toggleClass(className: string): this {
