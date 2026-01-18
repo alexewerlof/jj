@@ -201,6 +201,27 @@ export class JJE<T extends Element = Element> extends JJN<T> implements IById {
     }
 
     /**
+     * Gets the class attribute.
+     *
+     * @returns The class attribute value, or null if not present.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/className | Element.className}
+     */
+    getClass(): string | null {
+        return this.getAttr('class')
+    }
+
+    /**
+     * Sets the class attribute.
+     *
+     * @param className - The class string to set.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/className | Element.className}
+     */
+    setClass(className: string): this {
+        return this.setAttr('class', className)
+    }
+
+    /**
      * Adds one or more classes to the element.
      *
      * @param classNames - The classes to add.
