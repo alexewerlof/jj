@@ -1,4 +1,4 @@
-import { RSVPEngine } from "./RSVPEngine.js";
+import { RSVPEngine } from './RSVPEngine.js'
 import { sleep, byId, fetchText } from '../../../lib/bundle.js'
 
 const inputTextArea = byId('input-text')
@@ -19,27 +19,26 @@ inputTextArea.on('keydown', (event) => {
     }
 })
 
-
 async function startRendering(abortController) {
-    const engine = new RSVPEngine(300); // 300 WPM
-    const queue = engine.processText(inputTextArea.getValue());
+    const engine = new RSVPEngine(300) // 300 WPM
+    const queue = engine.processText(inputTextArea.getValue())
     renderProgress.setAttrs({
         min: 0,
         max: queue.length,
         value: 0,
     })
 
-    console.log(queue);
+    console.log(queue)
     for (let i = 0; i < queue.length; i++) {
         renderProgress.setValue(i + 1)
         const item = queue[i]
-        const { leftPart, pivotChar, rightPart, delay } = item;
-        leftSpan.setText(leftPart);
-        pivotSpan.setText(pivotChar);
-        rightSpan.setText(rightPart);
+        const { leftPart, pivotChar, rightPart, delay } = item
+        leftSpan.setText(leftPart)
+        pivotSpan.setText(pivotChar)
+        rightSpan.setText(rightPart)
         if (abortController.signal.aborted) {
-            break;
+            break
         }
-        await sleep(delay);
+        await sleep(delay)
     }
 }

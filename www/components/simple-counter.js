@@ -1,4 +1,4 @@
-import { fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from "../../lib/bundle.js"
+import { fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from '../../lib/bundle.js'
 
 const sm = ShadowMaster.create()
     .setTemplate(fetchHtml(import.meta.resolve('./simple-counter.html')))

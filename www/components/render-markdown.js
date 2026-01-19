@@ -1,6 +1,6 @@
 import { attr2prop, JJHE, registerComponent } from '../../lib/bundle.js'
 import markdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
-import {CodeHighlight} from './code-highlight.js'
+import { CodeHighlight } from './code-highlight.js'
 
 await CodeHighlight.register()
 
@@ -26,7 +26,7 @@ export class RenderMarkdown extends HTMLElement {
     constructor() {
         super()
     }
-    
+
     async connectedCallback() {
         this.#root = JJHE.from(this)
         this.#render()
@@ -54,5 +54,4 @@ export class RenderMarkdown extends HTMLElement {
             }
         }
     }
-
 }

@@ -25,7 +25,4 @@ async function bundle(minify = false) {
     console.log(`Created typefile: ${typefile}`)
 }
 
-await Promise.all([
-    bundle(false),
-    bundle(true),
-])
+await Promise.all([bundle(false), bundle(true)])

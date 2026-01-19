@@ -72,7 +72,7 @@ export class CodeHighlight extends HTMLElement {
 
     async connectedCallback() {
         this.jjRoot = JJHE.from(this).initShadow('open', await tempStyle.getResolved())
-        const codeText = this.#fileContent ? await this.#fileContent: this.innerText
+        const codeText = this.#fileContent ? await this.#fileContent : this.innerText
         this.jjRoot.shadow.byId('code').setHTML(this.#language ? highlightCode(codeText, this.#language) : codeText)
     }
 }
