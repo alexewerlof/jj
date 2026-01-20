@@ -10,7 +10,7 @@ import { JJSE } from './JJSE.js'
 import { Unwrapped, Wrappable, Wrapped } from './types.js'
 import { IById } from './mixin-types.js'
 
-export const { wrapAll, unwrapAll } = JJN
+export const { wrapAll, unwrap, unwrapAll, isWrapable } = JJN
 
 /**
  * Wraps a native DOM node or string into the most specific JJ wrapper available.
@@ -64,38 +64,6 @@ export function wrap(raw: Wrappable): Wrapped {
         return JJN.from(raw)
     }
     throw new TypeError(`Expected a Node to wrap. Got ${raw} (${typeof raw})`)
-}
-
-/**
- * Extracts the underlying native DOM node from a wrapper.
- *
- * @remarks
- * If the input is already a native Node, it is returned as is.
- * If the input is a string, a new Text node is created and returned.
- *
- * @example
- * ```ts
- * const rawElement = JJN.unwrap(myJJHE) // Returns HTMLElement
- * ```
- *
- * @param obj - The object to unwrap.
- * @returns The underlying DOM node.
- * @throws {TypeError} If the input cannot be unwrapped.
- */
-export function unwrap(obj: Wrappable): Unwrapped {
-    if (isStr(obj)) {
-        return document.createTextNode(obj)
-    }
-    if (!isObj(obj)) {
-        throw new TypeError(`Expected an object. Got ${obj} (${typeof obj})`)
-    }
-    if (isA(obj, Node)) {
-        return obj
-    }
-    if (isA(obj, JJN)) {
-        return obj.ref
-    }
-    throw new TypeError(`Could not unwrap ${obj} (${typeof obj})`)
 }
 
 /**
@@ -264,6 +232,9 @@ const EDDF = {
      * myDiv.append(h('span', null, 'hello'))
      * ```
      *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
      * @param this - The JJE, JJD or JJDF instance.
      * @param children - The children to append.
      * @returns This instance for chaining.
@@ -272,7 +243,7 @@ const EDDF = {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/append | DocumentFragment.append}
      */
     append<T extends JJE | JJD | JJDF>(this: T, ...children: Wrappable[]): T {
-        const nodes = unwrapAll(children)
+        const nodes = unwrapAll(children.filter(isWrapable))
         this.ref.append(...nodes)
         return this
     },
@@ -285,6 +256,9 @@ const EDDF = {
      * div.prepend(h('span', null, 'first'))
      * ```
      *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
      * @param this - The JJE, JJD or JJDF instance.
      * @param children - The children to prepend.
      * @returns This instance for chaining.
@@ -293,7 +267,7 @@ const EDDF = {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/prepend | DocumentFragment.prepend}
      */
     prepend<T extends JJE | JJD | JJDF>(this: T, ...children: Wrappable[]): T {
-        const nodes = unwrapAll(children)
+        const nodes = unwrapAll(children.filter(isWrapable))
         this.ref.prepend(...nodes)
         return this
     },
@@ -306,8 +280,11 @@ const EDDF = {
      *
      * @example
      * ```ts
-     * div.replaceChildren(h('p', null, 'New Content'))
+     * div.setChildren(h('p', null, 'New Content'))
      * ```
+     *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
      *
      * @param this - The JJE, JJD or JJDF instance.
      * @param children - The children to replace with.
@@ -316,8 +293,8 @@ const EDDF = {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/replaceChildren | Document.replaceChildren}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/replaceChildren | DocumentFragment.replaceChildren}
      */
-    replaceChildren<T extends JJE | JJD | JJDF>(this: T, ...children: Wrappable[]): T {
-        const nodes = unwrapAll(children)
+    setChildren<T extends JJE | JJD | JJDF>(this: T, ...children: Wrappable[]): T {
+        const nodes = unwrapAll(children.filter(isWrapable))
         this.ref.replaceChildren(...nodes)
         return this
     },
@@ -331,10 +308,10 @@ const EDDF = {
      * ```
      *
      * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.setChildren}
      */
     empty<T extends JJE | JJD | JJDF>(this: T): T {
-        this.replaceChildren()
+        this.setChildren()
         return this
     },
 }
@@ -373,7 +350,6 @@ function assignPrototype(Class: any, ...mixins: any[]) {
 }
 
 JJN.wrap = wrap
-JJN.unwrap = unwrap
 
 assignPrototype(JJE, EDDF)
 assignPrototype(JJD, DDF, EDDF)

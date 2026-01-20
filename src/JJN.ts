@@ -1,4 +1,4 @@
-import { isA } from 'jty'
+import { isA, isObj, isStr } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './types.js'
 import { off, on } from './util.js'
 import { IAppendPrepend } from './mixin-types.js'
@@ -26,6 +26,19 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
      */
     static from(node: Node): JJN {
         return new JJN(node)
+    }
+
+    /**
+     * Checks if a value can be passed to the `wrap()` or `unwrap()` function.
+     *
+     * @remarks
+     * This is useful for filtering the array that is passed to `append()`, `prepend()` or `setChildren()`
+     *
+     * @param x an unknown value
+     * @returns true if `x` is a string, Node (or its descendents), JJN (or its descendents)
+     */
+    static isWrapable(x: unknown): x is Wrappable {
+        return isStr(x) || isA(x, Node) || isA(x, JJN)
     }
 
     /**
@@ -66,7 +79,19 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
      * @throws {TypeError} If the input cannot be unwrapped.
      */
     static unwrap(obj: Wrappable): Unwrapped {
-        throw new ReferenceError(`The mixin is supposed to override this method.`)
+        if (isStr(obj)) {
+            return document.createTextNode(obj)
+        }
+        if (!isObj(obj)) {
+            throw new TypeError(`Expected an object. Got ${obj} (${typeof obj})`)
+        }
+        if (isA(obj, Node)) {
+            return obj
+        }
+        if (isA(obj, JJN)) {
+            return obj.ref
+        }
+        throw new TypeError(`Could not unwrap ${obj} (${typeof obj})`)
     }
 
     /**
@@ -135,13 +160,16 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
     /**
      * Appends children to this node.
      *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
      * @param children - The children to append (Nodes, strings, or Wrappers).
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/append | Element.append}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild | Node.appendChild}
      */
     append(...children: Wrappable[]) {
-        const nodes = JJN.unwrapAll(children)
+        const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
         const ref = this.ref
         for (const node of nodes) {
             if (node) {
@@ -159,6 +187,9 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
      * list.mapAppend(['a', 'b'], item => h('li', null, item))
      * ```
      *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
      * @param array - The source array.
      * @param mapFn - The mapping function returning a Wrappable.
      * @returns This instance for chaining.
@@ -170,12 +201,15 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
     /**
      * Prepends children to this node.
      *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
      * @param children - The children to prepend.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend | Element.prepend}
      */
     prepend(...children: Wrappable[]) {
-        const nodes = JJN.unwrapAll(children)
+        const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
         const ref = this.ref
         const first = ref.firstChild
         for (const node of nodes) {
@@ -194,6 +228,9 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
      * list.mapPrepend(['a', 'b'], item => JJHE.fromTag('li').setText(item))
      * ```
      *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
      * @param array - The source array.
      * @param mapFn - The mapping function.
      * @returns This instance for chaining.
@@ -207,13 +244,14 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
      *
      * @remarks
      * If no children are specified, it essentially empties the node
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
      *
      * @param children - The new children to set.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
      */
-    replaceChildren(...children: Wrappable[]): this {
-        return this.empty().append(...children)
+    setChildren(...children: Wrappable[]): this {
+        return this.empty().append(...children.filter(JJN.isWrapable))
     }
 
     /**
@@ -278,7 +316,7 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
      * })
      * ```
      * @remarks
-     * If you want to access the current JJ* instance, you SHOULD use a `function` not an arrow function.
+     * If you want to access the current JJ* instance using `this` keyword, you SHOULD use a `function` not an arrow function.
      * If the function throws, `run()` doesn't swallow the exception.
      * So if you're expecting an error, make sure to wrap it in a `try..catch` block and handle the exception.
      * If the function returns a promise, you can `await` on the response.

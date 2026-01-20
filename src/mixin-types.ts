@@ -48,7 +48,7 @@ export interface IAppendPrepend {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/replaceChildren | Document.replaceChildren}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/replaceChildren | DocumentFragment.replaceChildren}
      */
-    replaceChildren(...children: Wrappable[]): this
+    setChildren(...children: Wrappable[]): this
 
     /**
      * Removes all children.
