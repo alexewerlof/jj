@@ -7,7 +7,7 @@ import { JJT } from './JJT.js'
 import { JJN } from './JJN.js'
 import { JJD } from './JJD.js'
 import { JJSE } from './JJSE.js'
-import { Unwrapped, Wrappable, Wrapped } from './types.js'
+import { Wrappable, Wrapped } from './types.js'
 import { IById } from './mixin-types.js'
 
 export const { wrapAll, unwrap, unwrapAll, isWrapable } = JJN
