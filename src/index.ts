@@ -1,6 +1,7 @@
 export * from './types.js'
 export * from './util.js'
 export * from './case.js'
+export * from './JJET.js'
 export * from './JJN.js'
 export * from './JJT.js'
 export * from './JJE.js'

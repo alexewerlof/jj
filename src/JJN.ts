@@ -1,6 +1,6 @@
 import { isA, isObj, isStr } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './types.js'
-import { off, on } from './util.js'
+import { JJET } from './JJET.js'
 import { IAppendPrepend } from './mixin-types.js'
 
 /**
@@ -12,7 +12,8 @@ import { IAppendPrepend } from './mixin-types.js'
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node | Node}
  */
-export class JJN<T extends Node = Node> implements IAppendPrepend {
+
+export class JJN<T extends Node = Node> extends JJET<T> implements IAppendPrepend {
     /**
      * Creates a JJN instance from a Node reference.
      *
@@ -136,14 +137,7 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
         if (!isA(ref, Node)) {
             throw new TypeError(`Expected a Node. Got ${ref} (${typeof ref})`)
         }
-        this.#ref = ref
-    }
-
-    /**
-     * Gets the underlying DOM Node.
-     */
-    get ref() {
-        return this.#ref
+        super(ref)
     }
 
     /**
@@ -252,38 +246,6 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
      */
     setChildren(...children: Wrappable[]): this {
         return this.empty().append(...children.filter(JJN.isWrapable))
-    }
-
-    /**
-     * Adds an event listener.
-     *
-     * @param eventName - The name of the event.
-     * @param handler - The event handler.
-     * @param options - Optional event listener options.
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener | EventTarget.addEventListener}
-     */
-    on(eventName: string, handler: EventListenerOrEventListenerObject | null, options?: AddEventListenerOptions): this {
-        on(this.ref, eventName, handler, options)
-        return this
-    }
-
-    /**
-     * Removes an event listener.
-     *
-     * @param eventName - The name of the event.
-     * @param handler - The event handler.
-     * @param options - Optional event listener options or boolean.
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener | EventTarget.removeEventListener}
-     */
-    off(
-        eventName: string,
-        handler: EventListenerOrEventListenerObject | null,
-        options?: EventListenerOptions | boolean,
-    ): this {
-        off(this.ref, eventName, handler, options)
-        return this
     }
 
     /**
