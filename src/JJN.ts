@@ -257,26 +257,32 @@ export class JJN<T extends Node = Node> implements IAppendPrepend {
     /**
      * Adds an event listener.
      *
-     * @param eventName - The event name.
+     * @param eventName - The name of the event.
      * @param handler - The event handler.
+     * @param options - Optional event listener options.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener | EventTarget.addEventListener}
      */
-    on(eventName: string, handler: EventListenerOrEventListenerObject): this {
-        on(this.ref, eventName, handler)
+    on(eventName: string, handler: EventListenerOrEventListenerObject | null, options?: AddEventListenerOptions): this {
+        on(this.ref, eventName, handler, options)
         return this
     }
 
     /**
      * Removes an event listener.
      *
-     * @param eventName - The event name.
+     * @param eventName - The name of the event.
      * @param handler - The event handler.
+     * @param options - Optional event listener options or boolean.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener | EventTarget.removeEventListener}
      */
-    off(eventName: string, handler: EventListenerOrEventListenerObject): this {
-        off(this.ref, eventName, handler)
+    off(
+        eventName: string,
+        handler: EventListenerOrEventListenerObject | null,
+        options?: EventListenerOptions | boolean,
+    ): this {
+        off(this.ref, eventName, handler, options)
         return this
     }
 
