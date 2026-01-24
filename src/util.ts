@@ -72,52 +72,6 @@ export function sleep(ms: number = 0): Promise<void> {
 }
 
 /**
- * Adds an event listener to a target.
- *
- * @example
- * ```ts
- * on(window, 'resize', () => console.log('resized'))
- * ```
- *
- * @param target - The event target.
- * @param eventName - The name of the event.
- * @param handler - The event handler.
- * @param options - Optional event listener options.
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener | EventTarget.addEventListener}
- */
-export function on(
-    target: EventTarget,
-    eventName: string,
-    handler: EventListenerOrEventListenerObject | null,
-    options?: AddEventListenerOptions,
-): void {
-    target.addEventListener(eventName, handler, options)
-}
-
-/**
- * Removes an event listener from a target.
- *
- * @example
- * ```ts
- * off(window, 'resize', handler)
- * ```
- *
- * @param target - The event target.
- * @param eventName - The name of the event.
- * @param handler - The event handler.
- * @param options - Optional event listener options or boolean.
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener | EventTarget.removeEventListener}
- */
-export function off(
-    target: EventTarget,
-    eventName: string,
-    handler: EventListenerOrEventListenerObject | null,
-    options?: EventListenerOptions | boolean,
-): void {
-    target.removeEventListener(eventName, handler, options)
-}
-
-/**
  * Converts a CSS string to a CSSStyleSheet.
  *
  * @remarks

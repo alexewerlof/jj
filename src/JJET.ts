@@ -1,6 +1,4 @@
-import { isA, isObj, isStr } from 'jty'
-import { off, on } from './util.js'
-import { Unwrapped, Wrappable, Wrapped } from './types.js'
+import { isA } from 'jty'
 
 /**
  * Wraps a DOM EventTarget.
@@ -11,6 +9,10 @@ import { Unwrapped, Wrappable, Wrapped } from './types.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget | EventTarget}
  */
 export class JJET<T extends EventTarget = EventTarget> {
+    static from(ref: EventTarget) {
+        return new JJET(ref)
+    }
+
     #ref!: T
 
     /**
@@ -36,6 +38,10 @@ export class JJET<T extends EventTarget = EventTarget> {
     /**
      * Adds an event listener.
      *
+     *  * @example
+     * ```ts
+     * JJET.from(window).on('resize', () => console.log('resized'))
+     * ```
      * @param eventName - The name of the event.
      * @param handler - The event handler.
      * @param options - Optional event listener options.
@@ -43,13 +49,17 @@ export class JJET<T extends EventTarget = EventTarget> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener | EventTarget.addEventListener}
      */
     on(eventName: string, handler: EventListenerOrEventListenerObject | null, options?: AddEventListenerOptions): this {
-        on(this.ref, eventName, handler, options)
+        this.ref.addEventListener(eventName, handler, options)
         return this
     }
 
     /**
      * Removes an event listener.
      *
+     *  * @example
+     * ```ts
+     * JJET.from(window).off('resize', previouslyAttachedHandler)
+     * ```
      * @param eventName - The name of the event.
      * @param handler - The event handler.
      * @param options - Optional event listener options or boolean.
@@ -61,7 +71,7 @@ export class JJET<T extends EventTarget = EventTarget> {
         handler: EventListenerOrEventListenerObject | null,
         options?: EventListenerOptions | boolean,
     ): this {
-        off(this.ref, eventName, handler, options)
+        this.ref.removeEventListener(eventName, handler, options)
         return this
     }
 
