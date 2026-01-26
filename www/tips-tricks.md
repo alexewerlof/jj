@@ -13,8 +13,9 @@ Instead, we can use a `DocumentFragment` to accumulate all the children and then
 Instead of:
 
 ```ts
+import doc, { JJHE } from 'jj'
 const contents = ['New York', 'Stockholm', 'Tokyo']
-const parent = byId('#parent-ul')
+const parent = doc.byId('#parent-ul')
 
 for (const city of contents) {
     parent.append(JJHE.from('li').setText(city))
@@ -24,8 +25,9 @@ for (const city of contents) {
 Write:
 
 ```ts
+import doc, { JJDF, JJHE } from 'jj'
 const contents = ['New York', 'Stockholm', 'Tokyo']
-const parent = byId('#parent-ul')
+const parent = doc.byId('#parent-ul')
 
 const docFrag = new JJDF()
 for (const city of contents) {
@@ -44,7 +46,8 @@ Instead, we can attach the event listener to a common parent and take advantage 
 Example, instead of:
 
 ```ts
-const parent = byId('#parent-ul')
+import doc from 'jj'
+const parent = doc.byId('#parent-ul')
 for (const child of parent.getChildren()) {
     child.on('click', function () {
         alert('Hello world')
@@ -53,7 +56,8 @@ for (const child of parent.getChildren()) {
 ```
 
 ```ts
-const parent = byId('#parent-ul')
+import doc from 'jj'
+const parent = doc.byId('#parent-ul')
 parent.on('click', function (evt) {
     if (evt.target?.tagName !== 'LI') return
     alert('Hello world')

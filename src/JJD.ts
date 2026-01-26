@@ -53,12 +53,13 @@ export class JJD<T extends Document = Document> extends JJN<T> {
      *
      * @example
      * ```ts
-     * const el = doc.byId('header')
+     * const el = byId('my-id')
      * ```
      *
      * @param id - The ID to search for.
      * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
      * @returns The wrapped element, or null if not found and throwIfNotFound is false.
+     * @throws {TypeError} If the element is not found and throwIfNotFound is true.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById | Document.getElementById}
      */
     byId(id: string, throwIfNotFound = true): Wrapped | null {
@@ -73,17 +74,33 @@ export class JJD<T extends Document = Document> extends JJN<T> {
     }
 
     /**
-     * Finds the first element matching a selector within this Document.
+     * Finds elements by class name in the Document.
      *
      * @example
      * ```ts
-     * const span = doc.query('span')
+     * const items = byClass('list-item')
+     * ```
+     *
+     * @param className - The class name to search for.
+     * @returns An array of wrapped elements.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByClassName | Document.getElementsByClassName}
+     */
+    byClass(className: string): Wrapped[] {
+        return JJN.wrapAll(this.ref.getElementsByClassName(className))
+    }
+
+    /**
+     * Finds the first element matching a selector in the document.
+     *
+     * @example
+     * ```ts
+     * const btn = doc.query('.submit-btn')
      * ```
      *
      * @param selector - The CSS selector.
      * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
      * @returns The wrapped element, or null.
-     * @throws {TypeError} If context is invalid or element not found (when requested).
+     * @throws {TypeError} If not found and throwIfNotFound is true.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector | Document.querySelector}
      */
     query(selector: string, throwIfNotFound = true): Wrapped | null {

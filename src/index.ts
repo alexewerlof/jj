@@ -10,7 +10,11 @@ export * from './JJSE.js'
 export * from './JJD.js'
 export * from './JJDF.js'
 export * from './JJSR.js'
-import './mixins.js'
 export * from './helpers.js'
-export * from './mixins.js'
 export * from './components.js'
+export { wrap } from './mixins.js'
+
+import { JJD } from './JJD.js'
+
+const doc = JJD.from(document)
+export default doc

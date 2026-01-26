@@ -1,10 +1,10 @@
-import { byId, fetchText } from '../../lib/bundle.js'
+import doc, { fetchText } from '../../lib/bundle.js'
 import { RenderMarkdown } from '../components/render-markdown.js'
 import toc from './toc.js'
 
 await RenderMarkdown.register()
 
-byId('toc').append(toc)
+doc.byId('toc').append(toc)
 
 function getFrom(urlStr) {
     const url = new URL(urlStr)
@@ -16,7 +16,7 @@ function fetchFile(path) {
     return fetchText(url)
 }
 
-const contentRenderer = byId('content-renderer')
+const contentRenderer = doc.byId('content-renderer')
 console.log(contentRenderer)
 console.log(contentRenderer.ref.content)
 const file = getFrom(window.location)

@@ -1,13 +1,13 @@
 import { ChatMessage } from './components/chat-message.js'
 import { ChatThread } from './components/chat-thread.js'
-import { JJHE, byId } from '../../../../lib/bundle.js'
+import doc, { JJHE } from '../../../../lib/bundle.js'
 
 await ChatThread.register()
 await ChatMessage.register()
 
-const promptInput = byId('prompt-input')
-const chatForm = byId('chat-form')
-const chatThread = byId('chat-thread')
+const promptInput = doc.byId('prompt-input')
+const chatForm = doc.byId('chat-form')
+const chatThread = doc.byId('chat-thread')
 
 promptInput.on('keydown', (event) => {
     if (event.key === 'Enter' && !event.ctrlKey && !event.isComposing) {
