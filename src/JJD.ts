@@ -1,8 +1,6 @@
 import { isA } from 'jty'
 import { JJN } from './JJN.js'
-import { IAppendPrepend, IById, IQuery } from './mixin-types.js'
-
-export interface JJD<T extends Document> extends IById, IQuery, IAppendPrepend {}
+import { Wrappable, Wrapped } from './types.js'
 
 /**
  * Wraps a Document (which is a descendant of Node).
@@ -48,6 +46,149 @@ export class JJD<T extends Document = Document> extends JJN<T> {
             throw new TypeError(`Expected a Document. Got ${ref} (${typeof ref})`)
         }
         super(ref)
+    }
+
+    /**
+     * Finds an element by ID within this Document.
+     *
+     * @example
+     * ```ts
+     * const el = doc.byId('header')
+     * ```
+     *
+     * @param id - The ID to search for.
+     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
+     * @returns The wrapped element, or null if not found and throwIfNotFound is false.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById | Document.getElementById}
+     */
+    byId(id: string, throwIfNotFound = true): Wrapped | null {
+        const el = this.ref.getElementById(id)
+        if (el) {
+            return JJN.wrap(el)
+        }
+        if (throwIfNotFound) {
+            throw new TypeError(`Element with id ${id} not found`)
+        }
+        return null
+    }
+
+    /**
+     * Finds the first element matching a selector within this Document.
+     *
+     * @example
+     * ```ts
+     * const span = doc.query('span')
+     * ```
+     *
+     * @param selector - The CSS selector.
+     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
+     * @returns The wrapped element, or null.
+     * @throws {TypeError} If context is invalid or element not found (when requested).
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector | Document.querySelector}
+     */
+    query(selector: string, throwIfNotFound = true): Wrapped | null {
+        const queryResult = this.ref.querySelector(selector)
+        if (queryResult) {
+            return JJN.wrap(queryResult)
+        }
+        if (throwIfNotFound) {
+            throw new TypeError(`Element with selector ${selector} not found`)
+        }
+        return null
+    }
+
+    /**
+     * Finds all elements matching a selector within this Document.
+     *
+     * @example
+     * ```ts
+     * const items = doc.queryAll('li')
+     * ```
+     *
+     * @param selector - The CSS selector.
+     * @returns An array of wrapped elements.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll | Document.querySelectorAll}
+     */
+    queryAll(selector: string): Wrapped[] {
+        return JJN.wrapAll(this.ref.querySelectorAll(selector))
+    }
+
+    /**
+     * Appends children to this Document.
+     *
+     * @example
+     * ```ts
+     * doc.append(h('span', null, 'hello'))
+     * ```
+     *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
+     * @param children - The children to append.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/append | Document.append}
+     */
+    append(...children: Wrappable[]): this {
+        const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
+        this.ref.append(...nodes)
+        return this
+    }
+
+    /**
+     * Prepends children to this Document.
+     *
+     * @example
+     * ```ts
+     * doc.prepend(h('span', null, 'first'))
+     * ```
+     *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
+     * @param children - The children to prepend.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/prepend | Document.prepend}
+     */
+    prepend(...children: Wrappable[]): this {
+        const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
+        this.ref.prepend(...nodes)
+        return this
+    }
+
+    /**
+     * Replaces the existing children of a Document with a specified new set of children.
+     *
+     * @remarks
+     * If no children are provided, it empties the Document.
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
+     * @example
+     * ```ts
+     * doc.setChildren(h('p', null, 'New Content'))
+     * ```
+     * @param children - The children to replace with.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/replaceChildren | Document.replaceChildren}
+     */
+    setChildren(...children: Wrappable[]): this {
+        const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
+        this.ref.replaceChildren(...nodes)
+        return this
+    }
+
+    /**
+     * Removes all children from this Document.
+     *
+     * @example
+     * ```ts
+     * doc.empty()
+     * ```
+     *
+     * @returns This instance for chaining.
+     */
+    empty(): this {
+        this.setChildren()
+        return this
     }
 
     /**

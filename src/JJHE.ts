@@ -1,7 +1,6 @@
 import { hasProp, isA, isStr } from 'jty'
 import { JJE } from './JJE.js'
 import { JJN } from './JJN.js'
-import { IElementData, IQuery } from './mixin-types.js'
 import { Wrapped } from './types.js'
 
 /**
@@ -19,7 +18,8 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
      *
      * @example
      * ```ts
-     * const el = JJHE.from(document.getElementById('my-id'))
+     * const el = JJHE.from(document.getElementById('my-id'))  // from an existing HTMLElement
+     * const el = JJHE.from(new document.createElement('div')) // from a new HTMLElement
      * ```
      *
      * @param ref - The HTMLElement.
@@ -65,10 +65,10 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     }
 
     /**
-     * Gets the value property of the element (e.g. for inputs).
+     * Gets the value property of the HTMLElement (e.g. for inputs).
      *
      * @returns The value.
-     * @throws {Error} If the element does not have a value property.
+     * @throws {Error} If the HTMLElement does not have a value property.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/value | HTMLInputElement.value}
      */
     getValue() {
@@ -79,7 +79,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     }
 
     /**
-     * Sets the value property of the element.
+     * Sets the value property of the HTMLElement.
      *
      * @example
      * ```ts
@@ -88,7 +88,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
      *
      * @param value - The value to set.
      * @returns This instance for chaining.
-     * @throws {Error} If the element does not have a value property.
+     * @throws {Error} If the HTMLElement does not have a value property.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/value | HTMLInputElement.value}
      */
     setValue(value: string): this {
@@ -100,7 +100,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     }
 
     /**
-     * Focuses the element.
+     * Focuses the HTMLElement.
      *
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus | HTMLElement.focus}
@@ -111,7 +111,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     }
 
     /**
-     * Clicks the element.
+     * Clicks the HTMLElement.
      *
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/click | HTMLElement.click}
@@ -122,7 +122,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     }
 
     /**
-     * Gets the inner text of the element.
+     * Gets the inner text of the HTMLElement.
      *
      * @returns The inner text.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
@@ -132,7 +132,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     }
 
     /**
-     * Sets the inner text of the element.
+     * Sets the inner text of the HTMLElement.
      *
      * @param text - The text to set.
      * @returns This instance for chaining.
@@ -144,7 +144,98 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     }
 
     /**
-     * Finds the first element matching a selector within this element's context.
+     * Gets a data attribute from the HTMLElement.
+     *
+     * @example
+     * ```ts
+     * const value = el.getData('my-key')
+     * ```
+     *
+     * @param name - The data attribute name (in camelCase).
+     * @returns The value of the attribute, or undefined if not set.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     */
+    getData(name: string): string | undefined {
+        return this.ref.dataset[name]
+    }
+
+    /**
+     * Checks if a data attribute exists on the HTMLElement.
+     *
+     * @example
+     * ```ts
+     * if (el.hasData('my-key')) {
+     *   // ...
+     * }
+     * ```
+     *
+     * @param name - The data attribute name (in camelCase).
+     * @returns True if the attribute exists, false otherwise.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     */
+    hasData(name: string): boolean {
+        return hasProp(this.ref.dataset, name)
+    }
+
+    /**
+     * Sets a data attribute on the HTMLElement.
+     *
+     * @example
+     * ```ts
+     * el.setData('my-key', 'my-value')
+     * ```
+     *
+     * @param name - The data attribute name (in camelCase).
+     * @param value - The value to set.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     */
+    setData(name: string, value: string): this {
+        this.ref.dataset[name] = value
+        return this
+    }
+
+    /**
+     * Sets multiple data attributes on the HTMLElement from an object.
+     *
+     * @example
+     * ```ts
+     * el.setDataObj({
+     *   'my-key': 'my-value',
+     *   'other-key': 'other-value'
+     * })
+     * ```
+     *
+     * @param obj - An object where keys are data attribute names (in camelCase) and values are the values to set.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     */
+    setDataObj(obj: Record<string, string>): this {
+        for (const [name, value] of Object.entries(obj)) {
+            this.setData(name, value)
+        }
+        return this
+    }
+
+    /**
+     * Removes a data attribute from the HTMLElement.
+     *
+     * @example
+     * ```ts
+     * el.rmData('my-key')
+     * ```
+     *
+     * @param name - The data attribute name (in camelCase).
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     */
+    rmData(name: string): this {
+        delete this.ref.dataset[name]
+        return this
+    }
+
+    /**
+     * Finds the first element matching a selector within this HTMLElement's context.
      *
      * @param selector - The CSS selector.
      * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
@@ -164,7 +255,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
     }
 
     /**
-     * Finds all elements matching a selector within this element's context.
+     * Finds all elements matching a selector within this HTMLElement's context.
      *
      * @param selector - The CSS selector.
      * @returns An array of wrapped elements.
@@ -174,5 +265,3 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJE<T> {
         return JJN.wrapAll(this.ref.querySelectorAll(selector))
     }
 }
-
-export declare interface JJHE<T extends HTMLElement> extends IQuery, IElementData {}

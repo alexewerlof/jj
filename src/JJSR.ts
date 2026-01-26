@@ -2,11 +2,15 @@ import { isA } from 'jty'
 import { JJDF } from './JJDF.js'
 
 /**
- * Wraps a DOM ShadowRoot node (which is a descendant of DocumentFragment).
+ * Wraps a DOM ShadowRoot (which is a descendant of DocumentFragment).
  *
  * @remarks
  * The ShadowRoot interface of the Shadow DOM API is the root node of a DOM subtree
  * that is rendered separately from a document's main DOM tree.
+ *
+ * ShadowRoot inherits DocumentFragment and therefore has access to all its methods
+ * most importantly `byId`, `query`, and `queryAll` which come handy to access and
+ * update its children.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot | ShadowRoot}
  */
@@ -40,7 +44,7 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
     }
 
     /**
-     * Gets the inner HTML of the shadow root.
+     * Gets the inner HTML of the ShadowRoot.
      *
      * @returns The inner HTML string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
@@ -50,7 +54,7 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
     }
 
     /**
-     * Sets the inner HTML of the shadow root.
+     * Sets the inner HTML of the ShadowRoot.
      *
      * @example
      * ```ts
@@ -69,7 +73,7 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
     }
 
     /**
-     * Adds constructed stylesheets to the shadow root.
+     * Adds constructed stylesheets to the ShadowRoot.
      *
      * @example
      * ```ts

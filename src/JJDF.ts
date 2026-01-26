@@ -1,8 +1,6 @@
 import { isA } from 'jty'
 import { JJN } from './JJN.js'
-import { IAppendPrepend, IById, IQuery } from './mixin-types.js'
-
-export interface JJDF<T extends DocumentFragment> extends IById, IQuery, IAppendPrepend {}
+import { Wrappable, Wrapped } from './types.js'
 
 /**
  * Wraps a DocumentFragment (which is a descendant of Node).
@@ -69,5 +67,148 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJN<T> 
             throw new TypeError(`Expected a DocumentFragment. Got ${ref} (${typeof ref})`)
         }
         super(ref)
+    }
+
+    /**
+     * Finds an element by ID within this DocumentFragment.
+     *
+     * @example
+     * ```ts
+     * const el = frag.byId('header')
+     * ```
+     *
+     * @param id - The ID to search for.
+     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
+     * @returns The wrapped element, or null if not found and throwIfNotFound is false.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/getElementById | DocumentFragment.getElementById}
+     */
+    byId(id: string, throwIfNotFound = true): Wrapped | null {
+        const el = this.ref.getElementById(id)
+        if (el) {
+            return JJN.wrap(el)
+        }
+        if (throwIfNotFound) {
+            throw new TypeError(`Element with id ${id} not found`)
+        }
+        return null
+    }
+
+    /**
+     * Finds the first element matching a selector within this DocumentFragment.
+     *
+     * @example
+     * ```ts
+     * const span = frag.query('span')
+     * ```
+     *
+     * @param selector - The CSS selector.
+     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
+     * @returns The wrapped element, or null.
+     * @throws {TypeError} If context is invalid or element not found (when requested).
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/querySelector | DocumentFragment.querySelector}
+     */
+    query(selector: string, throwIfNotFound = true): Wrapped | null {
+        const queryResult = this.ref.querySelector(selector)
+        if (queryResult) {
+            return JJN.wrap(queryResult)
+        }
+        if (throwIfNotFound) {
+            throw new TypeError(`Element with selector ${selector} not found`)
+        }
+        return null
+    }
+
+    /**
+     * Finds all elements matching a selector within this DocumentFragment.
+     *
+     * @example
+     * ```ts
+     * const items = frag.queryAll('li')
+     * ```
+     *
+     * @param selector - The CSS selector.
+     * @returns An array of wrapped elements.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/querySelectorAll | DocumentFragment.querySelectorAll}
+     */
+    queryAll(selector: string): Wrapped[] {
+        return JJN.wrapAll(this.ref.querySelectorAll(selector))
+    }
+
+    /**
+     * Appends children to this DocumentFragment.
+     *
+     * @example
+     * ```ts
+     * frag.append(h('span', null, 'hello'))
+     * ```
+     *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
+     * @param children - The children to append.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/append | DocumentFragment.append}
+     */
+    append(...children: Wrappable[]): this {
+        const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
+        this.ref.append(...nodes)
+        return this
+    }
+
+    /**
+     * Prepends children to this DocumentFragment.
+     *
+     * @example
+     * ```ts
+     * frag.prepend(h('span', null, 'first'))
+     * ```
+     *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
+     * @param children - The children to prepend.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/prepend | DocumentFragment.prepend}
+     */
+    prepend(...children: Wrappable[]): this {
+        const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
+        this.ref.prepend(...nodes)
+        return this
+    }
+
+    /**
+     * Replaces the existing children of a DocumentFragment with a specified new set of children.
+     *
+     * @remarks
+     * If no children are provided, it empties the DocumentFragment.
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
+     * @example
+     * ```ts
+     * frag.setChildren(h('p', null, 'New Content'))
+     * ```
+     * @param children - The children to replace with.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/replaceChildren | DocumentFragment.replaceChildren}
+     */
+    setChildren(...children: Wrappable[]): this {
+        const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
+        this.ref.replaceChildren(...nodes)
+        return this
+    }
+
+    /**
+     * Removes all children from this DocumentFragment.
+     *
+     * @example
+     * ```ts
+     * frag.empty()
+     * ```
+     *
+     * @returns This instance for chaining.
+     */
+    empty(): this {
+        this.setChildren()
+        return this
     }
 }

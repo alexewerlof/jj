@@ -1,6 +1,5 @@
-import { isA, isStr } from 'jty'
+import { hasProp, isA, isStr } from 'jty'
 import { JJE } from './JJE.js'
-import { IElementData } from './mixin-types.js'
 
 const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg'
 
@@ -70,7 +69,12 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
     }
 
     /**
-     * Gets the text content of the element.
+     * Gets the text content of the SVGElement.
+     *
+     * @example
+     * ```ts
+     * const text = svg.getText()
+     * ```
      *
      * @returns The text content.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
@@ -80,7 +84,12 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
     }
 
     /**
-     * Sets the text content of the element.
+     * Sets the text content of the SVGElement.
+     *
+     * @example
+     * ```ts
+     * svg.setText('Hello SVG')
+     * ```
      *
      * @param text - The text to set.
      * @returns This instance for chaining.
@@ -92,7 +101,12 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
     }
 
     /**
-     * Clears the text content of the element.
+     * Clears the text content of the SVGElement.
+     *
+     * @example
+     * ```ts
+     * svg.empty()
+     * ```
      *
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
@@ -202,7 +216,95 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJE<T> {
     setTransform(value: string): this {
         return this.setAttr('transform', value)
     }
-}
 
-// IElementData
-export declare interface JJSE<T extends SVGElement> extends IElementData {}
+    /**
+     * Gets a data attribute from the SVGElement.
+     *
+     * @example
+     * ```ts
+     * const value = svg.getData('my-key')
+     * ```
+     *
+     * @param name - The data attribute name (in camelCase).
+     * @returns The value of the attribute, or undefined if not set.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     */
+    getData(name: string): string | undefined {
+        return this.ref.dataset[name]
+    }
+
+    /**
+     * Checks if a data attribute exists on the SVGElement.
+     *
+     * @example
+     * ```ts
+     * if (svg.hasData('my-key')) {
+     *   // ...
+     * }
+     * ```
+     *
+     * @param name - The data attribute name (in camelCase).
+     * @returns True if the attribute exists, false otherwise.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     */
+    hasData(name: string): boolean {
+        return hasProp(this.ref.dataset, name)
+    }
+
+    /**
+     * Sets a data attribute on the SVGElement.
+     *
+     * @example
+     * ```ts
+     * svg.setData('my-key', 'my-value')
+     * ```
+     *
+     * @param name - The data attribute name (in camelCase).
+     * @param value - The value to set.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     */
+    setData(name: string, value: string): this {
+        this.ref.dataset[name] = value
+        return this
+    }
+
+    /**
+     * Sets multiple data attributes on the SVGElement from an object.
+     *
+     * @example
+     * ```ts
+     * svg.setDataObj({
+     *   'my-key': 'my-value',
+     *   'other-key': 'other-value'
+     * })
+     * ```
+     *
+     * @param obj - An object where keys are data attribute names (in camelCase) and values are the values to set.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     */
+    setDataObj(obj: Record<string, string>): this {
+        for (const [name, value] of Object.entries(obj)) {
+            this.setData(name, value)
+        }
+        return this
+    }
+
+    /**
+     * Removes a data attribute from the SVGElement.
+     *
+     * @example
+     * ```ts
+     * svg.rmData('my-key')
+     * ```
+     *
+     * @param name - The data attribute name (in camelCase).
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     */
+    rmData(name: string): this {
+        delete this.ref.dataset[name]
+        return this
+    }
+}

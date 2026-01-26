@@ -1,7 +1,6 @@
 import { isA, isObj, isStr } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './types.js'
 import { JJET } from './JJET.js'
-import { IAppendPrepend } from './mixin-types.js'
 
 /**
  * Wraps a DOM Node.
@@ -13,7 +12,7 @@ import { IAppendPrepend } from './mixin-types.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node | Node}
  */
 
-export class JJN<T extends Node = Node> extends JJET<T> implements IAppendPrepend {
+export class JJN<T extends Node = Node> extends JJET<T> {
     /**
      * Creates a JJN instance from a Node reference.
      *
@@ -141,7 +140,7 @@ export class JJN<T extends Node = Node> extends JJET<T> implements IAppendPrepen
     }
 
     /**
-     * Clones the node.
+     * Clones the Node.
      *
      * @param deep - If true, clones the subtree.
      * @returns A new wrapped instance of the clone.
@@ -152,7 +151,7 @@ export class JJN<T extends Node = Node> extends JJET<T> implements IAppendPrepen
     }
 
     /**
-     * Appends children to this node.
+     * Appends children to this Node.
      *
      * @remarks
      * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
@@ -178,7 +177,7 @@ export class JJN<T extends Node = Node> extends JJET<T> implements IAppendPrepen
      *
      * @example
      * ```ts
-     * list.mapAppend(['a', 'b'], item => h('li', null, item))
+     * node.mapAppend(['a', 'b'], item => h('li', null, item))
      * ```
      *
      * @remarks
@@ -193,7 +192,7 @@ export class JJN<T extends Node = Node> extends JJET<T> implements IAppendPrepen
     }
 
     /**
-     * Prepends children to this node.
+     * Prepends children to this Node.
      *
      * @remarks
      * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
@@ -219,7 +218,7 @@ export class JJN<T extends Node = Node> extends JJET<T> implements IAppendPrepen
      *
      * @example
      * ```ts
-     * list.mapPrepend(['a', 'b'], item => JJHE.fromTag('li').setText(item))
+     * node.mapPrepend(['a', 'b'], item => JJHE.fromTag('li').setText(item))
      * ```
      *
      * @remarks
@@ -234,10 +233,10 @@ export class JJN<T extends Node = Node> extends JJET<T> implements IAppendPrepen
     }
 
     /**
-     * Replaces the existing children of this node with a specified new set of children.
+     * Replaces the existing children of this Node with a specified new set of children.
      *
      * @remarks
-     * If no children are specified, it essentially empties the node
+     * If no children are specified, it essentially empties the Node
      * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
      *
      * @param children - The new children to set.
@@ -249,7 +248,7 @@ export class JJN<T extends Node = Node> extends JJET<T> implements IAppendPrepen
     }
 
     /**
-     * Removes this node from the DOM.
+     * Removes this Node from the DOM.
      *
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild | Node.removeChild}
@@ -260,7 +259,7 @@ export class JJN<T extends Node = Node> extends JJET<T> implements IAppendPrepen
     }
 
     /**
-     * Removes all children from this node.
+     * Removes all children from this Node.
      *
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
@@ -278,8 +277,7 @@ export class JJN<T extends Node = Node> extends JJET<T> implements IAppendPrepen
      *
      * @example
      * ```ts
-     * div.run(function() {
-     *   this.addClass('active')
+     * node.run(function() {
      *   console.log(this.ref)
      * })
      * ```
