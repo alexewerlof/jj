@@ -1,12 +1,15 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
+import { JSDOM } from 'jsdom'
 import { JJET } from './JJET.js'
 
-class MockEventTarget extends EventTarget {}
+const { window } = new JSDOM()
+global.EventTarget = window.EventTarget
+global.Event = window.Event
 
 describe('JJET', () => {
     it('wraps an EventTarget', () => {
-        const et = new MockEventTarget()
+        const et = new EventTarget()
         const jjet = new JJET(et)
         assert.strictEqual(jjet.ref, et)
     })
@@ -16,7 +19,7 @@ describe('JJET', () => {
     })
 
     it('adds and removes event listeners', () => {
-        const et = new MockEventTarget()
+        const et = new EventTarget()
         const jjet = new JJET(et)
         let callCount = 0
         const handler = () => callCount++
@@ -31,7 +34,7 @@ describe('JJET', () => {
     })
 
     it('triggers an event', () => {
-        const et = new MockEventTarget()
+        const et = new EventTarget()
         const jjet = new JJET(et)
         let callCount = 0
         const handler = () => callCount++
@@ -40,11 +43,12 @@ describe('JJET', () => {
         const event = new Event('test', { cancelable: true })
         const result1 = jjet.trigger(event)
         assert.strictEqual(callCount, 1)
-        assert.strictEqual(result1, true)
+        assert.strictEqual(result1, jjet)
 
         jjet.on('test2', (e: Event) => e.preventDefault())
         const event2 = new Event('test2', { cancelable: true })
         const result2 = jjet.trigger(event2)
-        assert.strictEqual(result2, false)
+        assert.strictEqual(result2, jjet)
+        assert.strictEqual(event2.defaultPrevented, true)
     })
 })

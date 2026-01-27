@@ -79,10 +79,11 @@ export class JJET<T extends EventTarget = EventTarget> {
      * Dispatches an Event at the specified EventTarget.
      *
      * @param event - The Event object to dispatch.
-     * @returns `false` if event is cancelable and at least one of the event handlers which handled this event called Event.preventDefault(). Otherwise it returns `true`.
+     * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent | EventTarget.dispatchEvent}
      */
-    trigger(event: Event): boolean {
-        return this.ref.dispatchEvent(event)
+    trigger(event: Event): this {
+        this.ref.dispatchEvent(event)
+        return this
     }
 }
