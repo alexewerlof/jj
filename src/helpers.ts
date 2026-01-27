@@ -77,8 +77,8 @@ function linkAs(href: string): 'fetch' | 'style' | 'script' {
  * This function validates the input arguments and returns a wrapped `JJHE` instance.
  * It does not append the element to the document.
  *
- * @param rel - The relationship of the linked resource ('prefetch' or 'preload').
  * @param href - The URL of the resource.
+ * @param rel - The relationship of the linked resource ('prefetch' or 'preload').
  * @param as - The type of content being loaded ('fetch' for HTML, 'style' for CSS, or 'script' for JavaScript files).
  * If it's not provided or set to a falsy value, it runs heuristics to find the best match from the href parameter.
  *
@@ -89,8 +89,8 @@ function linkAs(href: string): 'fetch' | 'style' | 'script' {
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/prefetch | Link types: prefetch}
  */
 export function createLinkPre(
-    rel: 'prefetch' | 'preload',
     href: string | URL,
+    rel: 'prefetch' | 'preload',
     as?: 'fetch' | 'style' | 'script',
 ): JJHE {
     if (!isStr(href)) {
@@ -116,8 +116,8 @@ export function createLinkPre(
     }
 
     return JJHE.fromTag('link').setAttrs({
-        rel,
         href,
+        rel,
         as,
     })
 }
@@ -140,6 +140,7 @@ export function createLinkPre(
  * addLinkPre('/next-page.css', 'prefetch', 'style')
  * ```
  *
+ * @param args - The arguments to be passed to {@link createLinkPre}.
  * @returns The JJHE instance representing the link element.
  * @throws {TypeError} If `href` is not a string or URL.
  * @throws {RangeError} If `rel` or `as` are not valid values.
