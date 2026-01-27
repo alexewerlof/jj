@@ -3,17 +3,22 @@ A key implementation idea in JJ is wrappers. The wrappers add the sugar syntax o
 ```mermaid
 flowchart LR
     subgraph JJ
-        ET --> N
+        JJET --> JJN
 
-        N --> E
-        N --> DF
-        N --> D
-        N --> T
+        JJN --> JJNx
 
-        DF --> SR
+        JJN --> JJT
 
-        E --> HE
-        E --> SE
+        JJNx --> JJE
+        JJNx --> JJDF
+        JJNx --> JJD
+
+        JJDF --> JJSR
+
+        JJE --> JJEx
+
+        JJEx --> JJHE
+        JJEx --> JJSE
     end
 
     subgraph DOM
@@ -30,13 +35,13 @@ flowchart LR
         Element --> SVGElement
     end
 
-    ET -.wraps.- EventTarget
-    N -.wraps.- Node
-    DF -.wraps.- DocumentFragment
-    SR -.wraps.- ShadowRoot
-    D -.wraps.- Document
-    T -.wraps.- Text
-    E -.wraps.- Element
-    HE -.wraps.- HTMLElement
-    SE -.wraps.- SVGElement
+    JJET -.wraps.- EventTarget
+    JJN -.wraps.- Node
+    JJDF -.wraps.- DocumentFragment
+    JJSR -.wraps.- ShadowRoot
+    JJD -.wraps.- Document
+    JJT -.wraps.- Text
+    JJE -.wraps.- Element
+    JJHE -.wraps.- HTMLElement
+    JJSE -.wraps.- SVGElement
 ```

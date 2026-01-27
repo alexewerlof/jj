@@ -12,7 +12,7 @@ export * from './JJDF.js'
 export * from './JJSR.js'
 export * from './helpers.js'
 export * from './components.js'
-export { wrap } from './mixins.js'
+export { wrap } from './JJN-wrap.js'
 
 import { JJD } from './JJD.js'
 
