@@ -54,6 +54,7 @@
     "author": "Alex Ewerlöf",
     "license": "MIT",
     "devDependencies": {
+        "@types/jsdom": "^27.0.0",
         "@types/node": "^24.7.2",
         "esbuild": "^0.27.2",
         "jsdom": "^27.4.0",
