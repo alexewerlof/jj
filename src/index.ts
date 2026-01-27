@@ -3,6 +3,8 @@ export * from './util.js'
 export * from './case.js'
 export * from './JJET.js'
 export * from './JJN.js'
+// Monkey patch the wrap() method which requires all the other JJ classes
+import './JJN-wrap.js'
 export * from './JJT.js'
 export * from './JJE.js'
 export * from './JJHE.js'
@@ -12,9 +14,23 @@ export * from './JJDF.js'
 export * from './JJSR.js'
 export * from './helpers.js'
 export * from './components.js'
-export { wrap } from './JJN-wrap.js'
 
 import { JJD } from './JJD.js'
 
+/**
+ * A wrapped document for convenience.
+ * It can be used instead of document
+ *
+ * @example
+ * ```ts
+ * const el = doc.byId('my-element') // A JJHE instance
+ * const body = doc.body             // A JJHE instance
+ * doc.append(JJHE.fromTag('script').setAttr('src', 'my-code.js'))
+ * doc.head.append(JJHE.fromTag('link').setAttrs({
+ *   rel: 'stylesheet',
+ *   href: 'code.css'
+ * }))
+ * ```
+ */
 const doc = JJD.from(document)
 export default doc

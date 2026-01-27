@@ -9,28 +9,9 @@ import { JJD } from './JJD.js'
 import { JJSE } from './JJSE.js'
 import { Wrappable, Wrapped } from './types.js'
 
-export const { wrapAll, unwrap, unwrapAll, isWrapable } = JJN
-
-/**
- * Wraps a native DOM node or string into the most specific JJ wrapper available.
- *
- * @remarks
- * This function acts as a factory, inspecting the input type and returning the appropriate
- * subclass of `JJN` (e.g., `JJHE` for `HTMLElement`, `JJT` for `Text`).
- *
- * @example
- * ```ts
- * const bodyWrapper = JJN.wrap(document.body) // Returns JJHE
- * const textWrapper = JJN.wrap('Hello') // Returns JJT wrapping a new Text node
- * ```
- *
- * @param raw - The object to wrap. If it's already Wrapped, it'll be returned without any change. We don't double-wrap or clone it.
- * @returns The most granular Wrapped subclass instance. If the input is already wrapped, it'll be returned as is without cloning.
- * @throws {TypeError} If the input is not a Node, string, or JJ wrapper.
- */
-export function wrap(raw: Wrappable): Wrapped {
+JJN.wrap = function wrap(raw: Wrappable): Wrapped {
     if (isStr(raw)) {
-        return JJT.from(document.createTextNode(raw))
+        return JJT.fromStr(raw)
     }
     if (!isObj(raw)) {
         throw new TypeError(`Expected an object to wrap. Got ${raw} (${typeof raw})`)
@@ -64,5 +45,3 @@ export function wrap(raw: Wrappable): Wrapped {
     }
     throw new TypeError(`Expected a Node to wrap. Got ${raw} (${typeof raw})`)
 }
-
-JJN.wrap = wrap
