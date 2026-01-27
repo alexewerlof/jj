@@ -124,8 +124,6 @@ export class JJN<T extends Node = Node> extends JJET<T> {
         return Array.from(iterable, JJN.unwrap)
     }
 
-    #ref!: T
-
     /**
      * Creates an instance of JJN.
      *
