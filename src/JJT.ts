@@ -26,10 +26,11 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * @throws {TypeError} If `text` is not a Text node.
      */
     static from(text: Text): JJT {
-        if (!isA(text, Text)) {
-            throw new TypeError(`Expected a Text object. Got: ${text} (${typeof text})`)
-        }
         return new JJT(text)
+    }
+
+    static fromStr(text: string): JJT {
+        return new JJT(document.createTextNode(text))
     }
 
     /**
@@ -43,14 +44,11 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * @param ref - The Text node or a string to create a Text node from.
      * @throws {TypeError} If `ref` is not a Text node or string.
      */
-    constructor(ref: T | string) {
-        if (isStr(ref)) {
-            super(document.createTextNode(ref))
-        } else if (isA(ref, Text)) {
-            super(ref)
-        } else {
+    constructor(ref: T) {
+        if (!isA(ref, Text)) {
             throw new TypeError(`Expected a Text. Got: ${ref} (${typeof ref})`)
         }
+        super(ref)
     }
 
     /**
@@ -65,7 +63,7 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
     getText(): string {
-        return this.ref.textContent ?? ''
+        return this.ref.textContent
     }
 
     /**
@@ -76,14 +74,14 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * text.setText('New content')
      * ```
      *
-     * @param text - The text to set.
+     * @param text - The text to set. Set it to null or undefined to remove all text
      * @returns This instance for chaining.
      * @throws {TypeError} If `text` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
-    setText(text: string): this {
-        if (!isStr(text)) {
-            throw new TypeError(`Expected a string. Got: ${text} (${typeof text})`)
+    setText(text?: string | null): this {
+        if (text === undefined) {
+            text = null
         }
         this.ref.textContent = text
         return this
@@ -102,20 +100,5 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      */
     empty(): this {
         return this.setText('')
-    }
-
-    /**
-     * Sets the text content of the Text node to multiple lines joined by newline.
-     *
-     * @example
-     * ```ts
-     * text.addLines('Line 1', 'Line 2')
-     * ```
-     *
-     * @param lines - The lines of text.
-     * @returns This instance for chaining.
-     */
-    addLines(...lines: string[]): this {
-        return this.setText(lines.join('\n'))
     }
 }
