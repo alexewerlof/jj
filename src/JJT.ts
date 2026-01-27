@@ -88,6 +88,27 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
     }
 
     /**
+     * Appends text to the existing content.
+     *
+     * @example
+     * ```ts
+     * text.setText('hello')
+     * text.addText(' world')
+     * console.log(text.getText()) // 'hello world'
+     * ```
+     *
+     * @param text - The string to add to the existing contents. If null or undefined, nothing is added.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
+     */
+    addText(text?: string | null) {
+        if (text) {
+            this.ref.textContent += text
+        }
+        return this
+    }
+
+    /**
      * Clears the text content of the Text node.
      *
      * @example
