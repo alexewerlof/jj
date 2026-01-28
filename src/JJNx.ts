@@ -86,6 +86,44 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
     }
 
     /**
+     * Maps an array to children and appends them.
+     *
+     * @example
+     * ```ts
+     * node.mapAppend(['a', 'b'], item => h('li', null, item))
+     * ```
+     *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
+     * @param array - The source array.
+     * @param mapFn - The mapping function returning a Wrappable.
+     * @returns This instance for chaining.
+     */
+    mapAppend(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
+        return this.append(...array.map(mapFn))
+    }
+
+    /**
+     * Maps an array to children and prepends them.
+     *
+     * @example
+     * ```ts
+     * node.mapPrepend(['a', 'b'], item => JJHE.fromTag('li').setText(item))
+     * ```
+     *
+     * @remarks
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
+     * @param array - The source array.
+     * @param mapFn - The mapping function.
+     * @returns This instance for chaining.
+     */
+    mapPrepend(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
+        return this.prepend(...array.map(mapFn))
+    }
+
+    /**
      * Replaces the existing children of an Element with a specified new set of children.
      *
      * @remarks
