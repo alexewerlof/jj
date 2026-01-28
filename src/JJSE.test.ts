@@ -68,10 +68,18 @@ describe('JJSE', () => {
             assert.strictEqual(svg.textContent, '')
         })
 
-        it('throws TypeError for non-string/null/undefined', () => {
+        it('accepts numbers and converts to strings', () => {
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'text')
             const jjse = new JJSE(svg)
-            assert.throws(() => jjse.setText(123 as any), TypeError)
+            jjse.setText(123)
+            assert.strictEqual(svg.textContent, '123')
+        })
+
+        it('accepts booleans and converts to strings', () => {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+            const jjse = new JJSE(svg)
+            jjse.setText(true)
+            assert.strictEqual(svg.textContent, 'true')
         })
     })
 })

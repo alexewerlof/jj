@@ -97,16 +97,18 @@ describe('JJHE', () => {
                 assert.strictEqual(el.dataset.key2, 'val2')
             })
 
-            it('throws TypeError for non-string value in single mode', () => {
+            it('accepts numbers and converts to strings in single mode', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.throws(() => jjhe.setData('key', 123 as any), TypeError)
+                jjhe.setData('key', 123)
+                assert.strictEqual(el.dataset.key, '123')
             })
 
-            it('throws TypeError for non-string value in object mode', () => {
+            it('accepts numbers and converts to strings in object mode', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.throws(() => jjhe.setData({ key: 123 } as any), TypeError)
+                jjhe.setData({ key: 123 })
+                assert.strictEqual(el.dataset.key, '123')
             })
 
             it('throws TypeError for invalid type', () => {
@@ -162,10 +164,11 @@ describe('JJHE', () => {
                 assert.strictEqual(el.value, 'test')
             })
 
-            it('throws TypeError for non-string value', () => {
+            it('accepts numbers and converts to strings', () => {
                 const el = document.createElement('input')
                 const jjhe = new JJHE(el)
-                assert.throws(() => jjhe.setValue(123 as any), TypeError)
+                jjhe.setValue(123)
+                assert.strictEqual(el.value, '123')
             })
 
             it('throws Error for element without value property', () => {
@@ -213,10 +216,20 @@ describe('JJHE', () => {
                 assert.strictEqual(el.innerText, '')
             })
 
-            it('throws TypeError for non-string/null/undefined value', () => {
+            it('accepts numbers and converts to strings', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.throws(() => jjhe.setText(123 as any), TypeError)
+                jjhe.setText(123)
+                // DOM API converts to string automatically
+                assert.strictEqual(el.innerText, 123)
+            })
+
+            it('accepts booleans and converts to strings', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setText(true)
+                // DOM API converts to string automatically
+                assert.strictEqual(el.innerText, true)
             })
         })
     })

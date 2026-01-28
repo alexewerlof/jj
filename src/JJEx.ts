@@ -52,24 +52,19 @@ export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
      * ```ts
      * el.setData('myKey', 'myValue')  // Single
      * el.setData({ myKey: 'myValue', otherKey: 'otherValue' })  // Multiple
+     * el.setData('count', 42)  // Numbers are automatically converted
      * ```
      *
-     * @throws {TypeError} If arguments are invalid types or values are not strings.
+     * @throws {TypeError} If arguments are invalid types.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
      */
-    setData(name: string, value: string): this
-    setData(obj: Record<string, string>): this
-    setData(nameOrObj: string | Record<string, string>, value?: string): this {
+    setData(name: string, value: any): this
+    setData(obj: Record<string, any>): this
+    setData(nameOrObj: string | Record<string, any>, value?: any): this {
         if (typeof nameOrObj === 'string') {
-            if (!isStr(value)) {
-                throw typeErr('value', 'a string', value)
-            }
             this.ref.dataset[nameOrObj] = value
         } else if (isObj(nameOrObj)) {
             for (const [k, v] of Object.entries(nameOrObj)) {
-                if (!isStr(v)) {
-                    throw typeErr(`data['${k}']`, 'a string', v)
-                }
                 this.ref.dataset[k] = v
             }
         } else {

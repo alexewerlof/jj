@@ -82,24 +82,19 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * ```ts
      * el.setAttr('id', 'my-id')  // Single attribute
      * el.setAttr({ id: 'my-id', class: 'my-class' })  // Multiple attributes
+     * el.setAttr('x', 50)  // Numbers are automatically converted
      * ```
      *
-     * @throws {TypeError} If arguments are invalid types or values are not strings.
+     * @throws {TypeError} If arguments are invalid types.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute | Element.setAttribute}
      */
-    setAttr(name: string, value: string): this
-    setAttr(obj: Record<string, string>): this
-    setAttr(nameOrObj: string | Record<string, string>, value?: string): this {
+    setAttr(name: string, value: any): this
+    setAttr(obj: Record<string, any>): this
+    setAttr(nameOrObj: string | Record<string, any>, value?: any): this {
         if (typeof nameOrObj === 'string') {
-            if (!isStr(value)) {
-                throw typeErr('value', 'a string', value)
-            }
             this.ref.setAttribute(nameOrObj, value)
         } else if (isObj(nameOrObj)) {
             for (const [k, v] of Object.entries(nameOrObj)) {
-                if (!isStr(v)) {
-                    throw typeErr(`attrs['${k}']`, 'a string', v)
-                }
                 this.ref.setAttribute(k, v)
             }
         } else {
@@ -176,23 +171,18 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * ```ts
      * el.setAria('hidden', 'true')  // Single: sets aria-hidden="true"
      * el.setAria({ label: 'Close', hidden: 'false' })  // Multiple
+     * el.setAria('level', 2)  // Numbers are automatically converted
      * ```
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
-    setAria(name: string, value: string): this
-    setAria(obj: Record<string, string>): this
-    setAria(nameOrObj: string | Record<string, string>, value?: string): this {
+    setAria(name: string, value: any): this
+    setAria(obj: Record<string, any>): this
+    setAria(nameOrObj: string | Record<string, any>, value?: any): this {
         if (isStr(nameOrObj)) {
-            if (!isStr(value)) {
-                throw typeErr('value', 'a string', value)
-            }
             this.ref.setAttribute(`aria-${nameOrObj}`, value)
         } else if (isObj(nameOrObj)) {
             for (const [k, v] of Object.entries(nameOrObj)) {
-                if (!isStr(v)) {
-                    throw typeErr(`aria['${k}']`, 'a string', v)
-                }
                 this.ref.setAttribute(`aria-${k}`, v)
             }
         } else {

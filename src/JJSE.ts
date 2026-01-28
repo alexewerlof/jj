@@ -99,22 +99,20 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      * @remarks
      * This method operates on `textContent`. The method name is kept short for convenience.
      * Pass an empty string, `null`, or `undefined` to clear the content.
+     * Numbers and booleans are automatically converted to strings.
      *
      * @example
      * ```ts
      * svg.setText('Hello SVG')
      * svg.setText(null)  // Clear content
+     * svg.setText(42)  // Numbers are converted
      * ```
      *
      * @param text - The text to set, or null/undefined to clear.
      * @returns This instance for chaining.
-     * @throws {TypeError} If `text` is not a string, null, or undefined.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
-    setText(text?: string | null): this {
-        if (text !== null && text !== undefined && !isStr(text)) {
-            throw typeErr('text', 'a string, null, or undefined', text)
-        }
+    setText(text?: any): this {
         this.ref.textContent = text ?? ''
         return this
     }

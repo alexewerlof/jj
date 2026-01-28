@@ -101,18 +101,15 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      * @example
      * ```ts
      * input.setValue('new value')
+     * input.setValue(42)  // Numbers are automatically converted
      * ```
      *
      * @param value - The value to set.
      * @returns This instance for chaining.
-     * @throws {TypeError} If `value` is not a string.
      * @throws {Error} If the HTMLElement does not have a value property.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/value | HTMLInputElement.value}
      */
-    setValue(value: string): this {
-        if (!isStr(value)) {
-            throw typeErr('value', 'a string', value)
-        }
+    setValue(value: any): this {
         if (!hasProp(this.ref, 'value')) {
             throw new Error(
                 `Cannot set value on <${this.ref.tagName.toLowerCase()}>. ` +
@@ -165,16 +162,13 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      * @remarks
      * This method operates on `innerText`. The method name is kept short for convenience.
      * Pass an empty string, `null`, or `undefined` to clear the content.
+     * Numbers and booleans are automatically converted to strings.
      *
      * @param text - The text to set, or null/undefined to clear.
      * @returns This instance for chaining.
-     * @throws {TypeError} If `text` is not a string, null, or undefined.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
      */
-    setText(text?: string | null): this {
-        if (text !== null && text !== undefined && !isStr(text)) {
-            throw typeErr('text', 'a string, null, or undefined', text)
-        }
+    setText(text?: any): this {
         this.ref.innerText = text ?? ''
         return this
     }

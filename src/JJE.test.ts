@@ -103,16 +103,26 @@ describe('JJE', () => {
                 assert.strictEqual(result, jje)
             })
 
-            it('throws TypeError for non-string value in single mode', () => {
+            it('accepts numbers and converts to strings', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.setAttr('key', 123 as any), TypeError)
+                jje.setAttr('x', 123)
+                assert.strictEqual(el.getAttribute('x'), '123')
             })
 
-            it('throws TypeError for non-string value in object mode', () => {
+            it('accepts booleans and converts to strings', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.setAttr({ key: 123 } as any), TypeError)
+                jje.setAttr('enabled', true)
+                assert.strictEqual(el.getAttribute('enabled'), 'true')
+            })
+
+            it('accepts numbers in object mode', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                jje.setAttr({ x: 10, y: 20 })
+                assert.strictEqual(el.getAttribute('x'), '10')
+                assert.strictEqual(el.getAttribute('y'), '20')
             })
 
             it('throws TypeError for invalid nameOrObj type', () => {
@@ -197,16 +207,18 @@ describe('JJE', () => {
                 assert.strictEqual(el.getAttribute('aria-hidden'), 'true')
             })
 
-            it('throws TypeError for non-string value in single mode', () => {
+            it('accepts numbers and converts to strings in single mode', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.setAria('label', 123 as any), TypeError)
+                jje.setAria('level', 2)
+                assert.strictEqual(el.getAttribute('aria-level'), '2')
             })
 
-            it('throws TypeError for non-string value in object mode', () => {
+            it('accepts numbers and converts to strings in object mode', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.setAria({ label: 123 } as any), TypeError)
+                jje.setAria({ level: 3 })
+                assert.strictEqual(el.getAttribute('aria-level'), '3')
             })
         })
 
