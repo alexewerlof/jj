@@ -1,0 +1,8 @@
+# Erroring Philosophy
+
+JJ uses a strict erroring philosophy to improve the developer experience and agentic productivity.
+
+- **Specific:** Instead of generic JavaScript error messages, we try to use custom error messages that contain more information about where the error happened, what was expected and what is the current state. Instead of throwing generic `Error` objects try to use the most specific JavaScript native error type (`TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`, ...) which semantically fits what was wrong. Use `AggregateError` when multiple errors need to be thrown at once (e.g. in a map-reduce algorithm).
+- **Actionable:** The error message should ideally give suggestions for how to fix that.
+- **Proximity:** Errors should be thrown where a value is used. For example if function `A` takes a value `x` but passes it to `B` without processing it, it's function `B` that emits the error because the error message gives a better context. This means if the underlying JavaScript API reliably throws a runtime error, we don't have to put the runtime checks to duplicate that behavior.
+- **Type Verification:** Do not rely on TypeScript type checks because this library is primarily intended to be used in JavaScript code bases. Always verify the type of a value considering all the edge cases. For example a user-facing function that expect a string may accidentally be given an object, `undefined`, or `null`. In those cases, make sure that a proper error is thrown either by JavaScript runtime or through usage of the `jty` library and emitting a `TypeError`, `RangeError`, or `Error` whichever is more appropriate.
