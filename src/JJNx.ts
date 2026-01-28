@@ -7,21 +7,22 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * const span = el.query('span')
+     * const span = el.query('span')  // Returns null if not found
+     * const span = el.query('span', true)  // Throws if not found
      * ```
      *
      * @param selector - The CSS selector.
-     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
-     * @returns The wrapped element, or null.
-     * @throws {TypeError} If context is invalid or element not found (when requested).
+     * @param required - Whether to throw an error if not found. Defaults to false.
+     * @returns The wrapped element, or null if not found and required is false.
+     * @throws {TypeError} If element not found and required is true.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
      */
-    query(selector: string, throwIfNotFound = true): Wrapped | null {
+    query(selector: string, required = false): Wrapped | null {
         const queryResult = this.ref.querySelector(selector)
         if (queryResult) {
             return JJN.wrap(queryResult)
         }
-        if (throwIfNotFound) {
+        if (required) {
             throw new TypeError(`Element with selector ${selector} not found`)
         }
         return null

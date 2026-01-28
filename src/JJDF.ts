@@ -75,20 +75,21 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
      *
      * @example
      * ```ts
-     * const el = frag.byId('header')
+     * const el = frag.byId('header')  // Returns null if not found
+     * const el = frag.byId('header', true)  // Throws if not found
      * ```
      *
      * @param id - The ID to search for.
-     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
-     * @returns The wrapped element, or null if not found and throwIfNotFound is false.
+     * @param required - Whether to throw an error if not found. Defaults to false.
+     * @returns The wrapped element, or null if not found and required is false.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/getElementById | DocumentFragment.getElementById}
      */
-    byId(id: string, throwIfNotFound = true): Wrapped | null {
+    byId(id: string, required = false): Wrapped | null {
         const el = this.ref.getElementById(id)
         if (el) {
             return JJN.wrap(el)
         }
-        if (throwIfNotFound) {
+        if (required) {
             throw new TypeError(`Element with id ${id} not found`)
         }
         return null

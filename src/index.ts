@@ -26,7 +26,7 @@ import { JJD } from './JJD.js'
  * const el = doc.byId('my-element') // A JJHE instance
  * const body = doc.body             // A JJHE instance
  * doc.append(JJHE.fromTag('script').setAttr('src', 'my-code.js'))
- * doc.head.append(JJHE.fromTag('link').setAttrs({
+ * doc.head.append(JJHE.fromTag('link').setAttr({
  *   rel: 'stylesheet',
  *   href: 'code.css'
  * }))

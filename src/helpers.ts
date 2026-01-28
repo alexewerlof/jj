@@ -42,7 +42,7 @@ import { cssToStyle, fileExt } from './util.js'
 export function h(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJHE {
     const ret = JJHE.fromTag(tagName).append(...children)
     if (attributes) {
-        ret.setAttrs(attributes)
+        ret.setAttr(attributes)
     }
     return ret
 }
@@ -115,7 +115,7 @@ export function createLinkPre(
         throw new RangeError(`as should be one of 'fetch' or 'style'. Got ${as} (${typeof as})`)
     }
 
-    return JJHE.fromTag('link').setAttrs({
+    return JJHE.fromTag('link').setAttr({
         href,
         rel,
         as,

@@ -71,6 +71,9 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
     /**
      * Gets the text content of the SVGElement.
      *
+     * @remarks
+     * This method operates on `textContent`. The method name is kept short for convenience.
+     *
      * @example
      * ```ts
      * const text = svg.getText()
@@ -86,17 +89,22 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
     /**
      * Sets the text content of the SVGElement.
      *
+     * @remarks
+     * This method operates on `textContent`. The method name is kept short for convenience.
+     * Pass an empty string, `null`, or `undefined` to clear the content.
+     *
      * @example
      * ```ts
      * svg.setText('Hello SVG')
+     * svg.setText(null)  // Clear content
      * ```
      *
-     * @param text - The text to set.
+     * @param text - The text to set, or null/undefined to clear.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
-    setText(text: string): this {
-        this.ref.textContent = text
+    setText(text?: string | null): this {
+        this.ref.textContent = text ?? ''
         return this
     }
 

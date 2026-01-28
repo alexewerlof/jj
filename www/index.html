@@ -100,8 +100,8 @@ document.body.appendChild(div);</code-highlight></pre>
                             <pre><code-highlight language="javascript">JJHE.fromTag('div')
     .addClass('card')
     .setText('Hello World')
-    .setId('intro')
-    .onClick(() => console.log('Hi'))
+    .setAttr('id', 'intro')
+    .on('click', () => console.log('Hi'))
     .appendToBody()</code-highlight></pre>
                         </div>
                     </div>

@@ -37,59 +37,46 @@ export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
     }
 
     /**
-     * Sets a data attribute on the HTMLElement.
+     * Sets one or more data attributes on the HTMLElement.
      *
      * @example
      * ```ts
-     * el.setData('my-key', 'my-value')
+     * el.setData('myKey', 'myValue')  // Single
+     * el.setData({ myKey: 'myValue', otherKey: 'otherValue' })  // Multiple
      * ```
      *
-     * @param name - The data attribute name (in camelCase).
-     * @param value - The value to set.
-     * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
      */
-    setData(name: string, value: string): this {
-        this.ref.dataset[name] = value
-        return this
-    }
-
-    /**
-     * Sets multiple data attributes on the HTMLElement from an object.
-     *
-     * @example
-     * ```ts
-     * el.setDataObj({
-     *   'my-key': 'my-value',
-     *   'other-key': 'other-value'
-     * })
-     * ```
-     *
-     * @param obj - An object where keys are data attribute names (in camelCase) and values are the values to set.
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
-     */
-    setDataObj(obj: Record<string, string>): this {
-        for (const [name, value] of Object.entries(obj)) {
-            this.setData(name, value)
+    setData(name: string, value: string): this
+    setData(obj: Record<string, string>): this
+    setData(nameOrObj: string | Record<string, string>, value?: string): this {
+        if (typeof nameOrObj === 'string') {
+            this.ref.dataset[nameOrObj] = value!
+        } else {
+            for (const [k, v] of Object.entries(nameOrObj)) {
+                this.ref.dataset[k] = v
+            }
         }
         return this
     }
 
     /**
-     * Removes a data attribute from the HTMLElement.
+     * Removes one or more data attributes from the HTMLElement.
      *
      * @example
      * ```ts
-     * el.rmData('my-key')
+     * el.rmData('myKey')  // Remove single
+     * el.rmData('myKey', 'otherKey')  // Remove multiple
      * ```
      *
-     * @param name - The data attribute name (in camelCase).
+     * @param names - The data attribute name(s) (in camelCase).
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
      */
-    rmData(name: string): this {
-        delete this.ref.dataset[name]
+    rmData(...names: string[]): this {
+        for (const name of names) {
+            delete this.ref.dataset[name]
+        }
         return this
     }
 }

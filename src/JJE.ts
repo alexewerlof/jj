@@ -1,4 +1,4 @@
-import { isA, isArr, isObj } from 'jty'
+import { isA, isArr, isObj, isStr } from 'jty'
 import { JJSR } from './JJSR.js'
 import { ShadowConfig } from './types.js'
 import { JJNx } from './JJNx.js'
@@ -64,58 +64,45 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
-     * Sets the value of an attribute.
-     *
-     * @param name - The name of the attribute.
-     * @param value - The value to set.
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute | Element.setAttribute}
-     */
-    setAttr(name: string, value: string): this {
-        this.ref.setAttribute(name, value)
-        return this
-    }
-
-    /**
-     * Sets multiple attributes at once.
+     * Sets one or more attributes on the Element.
      *
      * @example
      * ```ts
-     * el.setAttrs({ id: 'my-id', class: 'my-class' })
+     * el.setAttr('id', 'my-id')  // Single attribute
+     * el.setAttr({ id: 'my-id', class: 'my-class' })  // Multiple attributes
      * ```
      *
-     * @param obj - An object where keys are attribute names and values are attribute values.
-     * @returns This instance for chaining.
-     * @throws {TypeError} If `obj` is not an object.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute | Element.setAttribute}
      */
-    setAttrs(obj: Record<string, string>): this {
-        if (!isObj(obj)) {
-            throw new TypeError(`Expected an object. Got: ${obj} (${typeof obj})`)
-        }
-        for (const [name, value] of Object.entries(obj)) {
-            this.setAttr(name, value)
+    setAttr(name: string, value: string): this
+    setAttr(obj: Record<string, string>): this
+    setAttr(nameOrObj: string | Record<string, string>, value?: string): this {
+        if (typeof nameOrObj === 'string') {
+            this.ref.setAttribute(nameOrObj, value!)
+        } else if (isObj(nameOrObj)) {
+            for (const [k, v] of Object.entries(nameOrObj)) {
+                this.ref.setAttribute(k, v)
+            }
+        } else {
+            throw new TypeError(`Expected a string or object. Got: ${nameOrObj} (${typeof nameOrObj})`)
         }
         return this
     }
 
     /**
-     * Removes an attribute.
+     * Removes one or more attributes from the Element.
      *
-     * @param name - The name of the attribute to remove.
+     * @example
+     * ```ts
+     * el.rmAttr('disabled')  // Remove single
+     * el.rmAttr('hidden', 'aria-hidden')  // Remove multiple
+     * ```
+     *
+     * @param names - The name(s) of the attribute(s) to remove.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute | Element.removeAttribute}
      */
-    rmAttr(name: string) {
-        return this.rmAttrs(name)
-    }
-
-    /**
-     * Removes multiple attributes.
-     *
-     * @param names - The names of the attributes to remove.
-     * @returns This instance for chaining.
-     */
-    rmAttrs(...names: string[]): this {
+    rmAttr(...names: string[]): this {
         for (const name of names) {
             this.ref.removeAttribute(name)
         }
@@ -152,30 +139,47 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
-     * Sets an ARIA attribute.
+     * Sets one or more ARIA attributes on the Element.
      *
      * @example
      * ```ts
-     * el.setAria('hidden', 'true') // sets aria-hidden="true"
+     * el.setAria('hidden', 'true')  // Single: sets aria-hidden="true"
+     * el.setAria({ label: 'Close', hidden: 'false' })  // Multiple
      * ```
      *
-     * @param name - The ARIA attribute suffix.
-     * @param value - The value to set.
-     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
-    setAria(name: string, value: string): this {
-        this.ref.setAttribute(`aria-${name}`, value)
+    setAria(name: string, value: string): this
+    setAria(obj: Record<string, string>): this
+    setAria(nameOrObj: string | Record<string, string>, value?: string): this {
+        if (isStr(nameOrObj)) {
+            this.ref.setAttribute(`aria-${nameOrObj}`, value!)
+        } else if (isObj(nameOrObj)) {
+            for (const [k, v] of Object.entries(nameOrObj)) {
+                this.ref.setAttribute(`aria-${k}`, v)
+            }
+        } else {
+            throw new TypeError(`Expected a string or object. Got: ${nameOrObj} (${typeof nameOrObj})`)
+        }
         return this
     }
 
     /**
-     * Removes an ARIA attribute.
+     * Removes one or more ARIA attributes from the Element.
      *
-     * @param name - The ARIA attribute suffix.
+     * @example
+     * ```ts
+     * el.rmAria('hidden')  // Remove single
+     * el.rmAria('label', 'hidden')  // Remove multiple
+     * ```
+     *
+     * @param names - The ARIA attribute suffix(es) to remove.
      * @returns This instance for chaining.
      */
-    rmAria(name: string): this {
-        this.ref.removeAttribute(`aria-${name}`)
+    rmAria(...names: string[]): this {
+        for (const name of names) {
+            this.ref.removeAttribute(`aria-${name}`)
+        }
         return this
     }
 
@@ -190,30 +194,50 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
-     * Sets the class attribute.
-     *
-     * @param className - The class string to set.
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/className | Element.className}
-     */
-    setClass(className: string): this {
-        return this.setAttr('class', className)
-    }
-
-    /**
-     * Removes the `class` attribute of the Element.
+     * Sets the class attribute or conditionally adds/removes classes.
      *
      * @remarks
-     * If you want to remove a few specific class instead of all, use `rmClasses`
+     * - Pass a string to replace the entire class attribute
+     * - Pass an object with class names as keys and boolean values to conditionally add/remove classes
+     * - To remove all classes, pass an empty string: `setClass('')`
      *
-     * @returns This instance for chaining.
+     * @example
+     * ```ts
+     * el.setClass('btn btn-primary')  // Set classes as string
+     * el.setClass({                   // Conditional classes (Vue.js style)
+     *   'active': true,               // adds 'active'
+     *   'disabled': false,            // removes 'disabled'
+     *   'highlight': isHighlighted    // adds/removes based on condition
+     * })
+     * ```
+     *
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/className | Element.className}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      */
-    rmClass(): this {
-        return this.rmAttr('class')
+    setClass(className: string): this
+    setClass(classMap: Record<string, boolean | unknown>): this
+    setClass(classNameOrMap: string | Record<string, boolean | unknown>): this {
+        if (typeof classNameOrMap === 'string') {
+            return this.setAttr('class', classNameOrMap)
+        }
+        // Conditional class object (Vue.js style)
+        for (const [className, condition] of Object.entries(classNameOrMap)) {
+            if (condition) {
+                this.ref.classList.add(className)
+            } else {
+                this.ref.classList.remove(className)
+            }
+        }
+        return this
     }
 
     /**
      * Adds one or more classes to the Element.
+     *
+     * @example
+     * ```ts
+     * el.addClass('btn', 'btn-primary')
+     * ```
      *
      * @param classNames - The classes to add.
      * @returns This instance for chaining.
@@ -228,12 +252,18 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     /**
      * Removes one or more classes from the Element.
      *
+     * @example
+     * ```ts
+     * el.rmClass('active')  // Remove single
+     * el.rmClass('btn', 'btn-primary')  // Remove multiple
+     * ```
+     *
      * @param classNames - The classes to remove.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/remove | DOMTokenList.remove}
      */
-    rmClasses(...classNames: string[]): this {
+    rmClass(...classNames: string[]): this {
         this.ref.classList.remove(...classNames)
         return this
     }
@@ -278,17 +308,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
-     * Adds a click event listener.
-     *
-     * @param handler - The event handler.
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener | EventTarget.addEventListener}
-     */
-    onClick(handler: EventListenerOrEventListenerObject): this {
-        return this.on('click', handler)
-    }
 
-    /**
      * Hides the Element by setting the `hidden` attribute and `aria-hidden="true"`.
      *
      * @returns This instance for chaining.
@@ -305,7 +325,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @returns This instance for chaining.
      */
     show(): this {
-        return this.rmAttrs('hidden', 'aria-hidden')
+        return this.rmAttr('hidden', 'aria-hidden')
     }
 
     /**
@@ -325,49 +345,14 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @returns This instance for chaining.
      */
     enable(): this {
-        return this.rmAttrs('disabled', 'aria-disabled')
-    }
-
-    /**
-     * Gets the title attribute.
-     *
-     * @returns The title, or null if not set.
-     */
-    getTitle(): string | null {
-        return this.getAttr('title')
-    }
-
-    /**
-     * Sets the title attribute.
-     *
-     * @param title - The title to set.
-     * @returns This instance for chaining.
-     */
-    setTitle(title: string): this {
-        return this.setAttr('title', title)
-    }
-
-    /**
-     * Sets the id attribute.
-     *
-     * @param id - The id to set.
-     * @returns This instance for chaining.
-     */
-    setId(id: string): this {
-        return this.setAttr('id', id)
-    }
-
-    /**
-     * Gets the id attribute.
-     *
-     * @returns The id, or null if not set.
-     */
-    getId(): string | null {
-        return this.getAttr('id')
+        return this.rmAttr('disabled', 'aria-disabled')
     }
 
     /**
      * Gets the inner HTML of the Element.
+     *
+     * @remarks
+     * This method operates on `innerHTML`. The method name is kept short for convenience.
      *
      * @returns The inner HTML string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
@@ -379,12 +364,16 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     /**
      * Sets the inner HTML of the Element.
      *
-     * @param html - The HTML string to set.
+     * @remarks
+     * This method operates on `innerHTML`. The method name is kept short for convenience.
+     * Pass an empty string, `null`, or `undefined` to clear the content.
+     *
+     * @param html - The HTML string to set, or null/undefined to clear.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
      */
-    setHTML(html: string): this {
-        this.ref.innerHTML = html
+    setHTML(html?: string | null): this {
+        this.ref.innerHTML = html ?? ''
         return this
     }
 

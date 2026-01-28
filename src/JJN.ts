@@ -147,4 +147,27 @@ export class JJN<T extends Node = Node> extends JJET<T> {
     clone(deep?: boolean): Wrapped {
         return JJN.wrap(this.ref.cloneNode(deep))
     }
+
+    /**
+     * Creates a Text node from a string and appends it to this Node.
+     *
+     * @remarks
+     * This method is overridden in JJT to append to the existing text content instead.
+     *
+     * @example
+     * ```ts
+     * el.addText('Hello ')
+     * el.addText('World')
+     * ```
+     *
+     * @param text - The text to add. If null or undefined, nothing is added.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createTextNode | document.createTextNode}
+     */
+    addText(text?: string | null): this {
+        if (text) {
+            this.ref.appendChild(document.createTextNode(text))
+        }
+        return this
+    }
 }

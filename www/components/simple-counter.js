@@ -21,8 +21,8 @@ export class SimpleCounter extends HTMLElement {
 
         // Access elements inside Shadow DOM via this.jjRoot
         this.countSpan = this.jjRoot.shadow.byId('count')
-        this.incBtn = this.jjRoot.shadow.byId('inc').onClick(() => this.#update(1))
-        this.decBtn = this.jjRoot.shadow.byId('dec').onClick(() => this.#update(-1))
+        this.incBtn = this.jjRoot.shadow.byId('inc').on('click', () => this.#update(1))
+        this.decBtn = this.jjRoot.shadow.byId('dec').on('click', () => this.#update(-1))
     }
 
     #update(delta) {

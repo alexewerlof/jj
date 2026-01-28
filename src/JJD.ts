@@ -11,10 +11,13 @@ import { JJNx } from './JJNx.js'
  * the fluent API capabilities of `JJN`.
  * It also supports querying (`byId`, `query`) and manipulation (`append`, `prepend`) methods.
  *
+ * To set the document title, use: `doc.ref.title = 'New Title'`
+ *
  * @example
  * ```ts
  * const doc = JJD.from(document)
  * doc.on('DOMContentLoaded', () => console.log('Ready'))
+ * doc.ref.title = 'My Page Title'  // Set document title
  * ```
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document | Document}
@@ -54,21 +57,22 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
      *
      * @example
      * ```ts
-     * const el = byId('my-id')
+     * const el = doc.byId('my-id')  // Returns null if not found
+     * const el = doc.byId('my-id', true)  // Throws if not found
      * ```
      *
      * @param id - The ID to search for.
-     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
-     * @returns The wrapped element, or null if not found and throwIfNotFound is false.
-     * @throws {TypeError} If the element is not found and throwIfNotFound is true.
+     * @param required - Whether to throw an error if not found. Defaults to false.
+     * @returns The wrapped element, or null if not found and required is false.
+     * @throws {TypeError} If the element is not found and required is true.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById | Document.getElementById}
      */
-    byId(id: string, throwIfNotFound = true): Wrapped | null {
+    byId(id: string, required = false): Wrapped | null {
         const el = this.ref.getElementById(id)
         if (el) {
             return JJN.wrap(el)
         }
-        if (throwIfNotFound) {
+        if (required) {
             throw new TypeError(`Element with id ${id} not found`)
         }
         return null
@@ -108,32 +112,5 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
      */
     get body() {
         return JJN.wrap(this.ref.body)
-    }
-
-    /**
-     * Sets the document title.
-     *
-     * @example
-     * ```ts
-     * JJD.from(document).setTitle('New Page Title')
-     * ```
-     *
-     * @param title - The new title string.
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/title | Document.title}
-     */
-    setTitle(title: string): this {
-        this.ref.title = title
-        return this
-    }
-
-    /**
-     * Gets the document title.
-     *
-     * @returns The current title of the document.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/title | Document.title}
-     */
-    getTitle(): string {
-        return this.ref.title
     }
 }

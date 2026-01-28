@@ -124,6 +124,9 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
     /**
      * Gets the inner text of the HTMLElement.
      *
+     * @remarks
+     * This method operates on `innerText`. The method name is kept short for convenience.
+     *
      * @returns The inner text.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
      */
@@ -134,43 +137,16 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
     /**
      * Sets the inner text of the HTMLElement.
      *
-     * @param text - The text to set.
+     * @remarks
+     * This method operates on `innerText`. The method name is kept short for convenience.
+     * Pass an empty string, `null`, or `undefined` to clear the content.
+     *
+     * @param text - The text to set, or null/undefined to clear.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
      */
-    setText(text: string): this {
-        this.ref.innerText = text
+    setText(text?: string | null): this {
+        this.ref.innerText = text ?? ''
         return this
-    }
-
-    /**
-     * Finds the first element matching a selector within this HTMLElement's context.
-     *
-     * @param selector - The CSS selector.
-     * @param throwIfNotFound - Whether to throw an error if not found. Defaults to true.
-     * @returns The wrapped element, or null.
-     * @throws {TypeError} If the element is not found and `throwIfNotFound` is true.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
-     */
-    query(selector: string, throwIfNotFound = true): Wrapped | null {
-        const el = this.ref.querySelector(selector)
-        if (el) {
-            return JJN.wrap(el)
-        }
-        if (throwIfNotFound) {
-            throw new TypeError(`Element with selector ${selector} not found`)
-        }
-        return null
-    }
-
-    /**
-     * Finds all elements matching a selector within this HTMLElement's context.
-     *
-     * @param selector - The CSS selector.
-     * @returns An array of wrapped elements.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll | Element.querySelectorAll}
-     */
-    queryAll(selector: string): Wrapped[] {
-        return JJN.wrapAll(this.ref.querySelectorAll(selector))
     }
 }
