@@ -149,7 +149,7 @@ describe('JJHE', () => {
                 const jjhe = new JJHE(el)
                 assert.throws(() => jjhe.getValue(), {
                     name: 'Error',
-                    message: /Cannot get value from DIV/,
+                    message: /Cannot get value from <div>/,
                 })
             })
         })
@@ -173,7 +173,7 @@ describe('JJHE', () => {
                 const jjhe = new JJHE(el)
                 assert.throws(() => jjhe.setValue('test'), {
                     name: 'Error',
-                    message: /Cannot set value on DIV/,
+                    message: /Cannot set value on <div>/,
                 })
             })
         })

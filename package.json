@@ -7,7 +7,12 @@
         "language",
         "DOM",
         "typescript",
-        "imperative programming"
+        "imperative programming",
+        "no-build",
+        "ai-friendly",
+        "llm-optimized",
+        "cursor-rules",
+        "zero-dependency"
     ],
     "type": "module",
     "main": "./lib/index.js",
@@ -32,7 +37,8 @@
         "test": "test"
     },
     "files": [
-        "lib"
+        "lib",
+        "llms.txt"
     ],
     "scripts": {
         "doc": "typedoc src/index.ts",

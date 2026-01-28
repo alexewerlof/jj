@@ -37,7 +37,10 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      */
     constructor(ref: T) {
         if (!isA(ref, Element)) {
-            throw new TypeError(`Expected an Element. Got: ${ref} (${typeof ref})`)
+            throw new TypeError(
+                `JJE expects an Element instance. Got ${ref} (${typeof ref}). ` +
+                    `Use JJE.from(element) with a DOM Element, or use the specific wrapper (JJHE for HTMLElement, JJSE for SVGElement).`,
+            )
         }
         super(ref)
     }

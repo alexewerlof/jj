@@ -49,7 +49,10 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      */
     static fromTag(tagName: string, options?: ElementCreationOptions): JJSE {
         if (!isStr(tagName)) {
-            throw new TypeError(`Expected a string for tagName. Got: ${tagName} (${typeof tagName})`)
+            throw new TypeError(
+                `JJSE.fromTag() expects tagName to be a string (e.g., 'circle', 'path'). ` +
+                    `Got ${tagName} (${typeof tagName}). Did you mean to pass a string literal like 'circle'?`,
+            )
         }
         // SVG elements must be created with the SVG namespace
         const element = document.createElementNS(SVG_NAMESPACE_URI, tagName, options)
@@ -64,7 +67,10 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      */
     constructor(ref: T) {
         if (!isA(ref, SVGElement)) {
-            throw new TypeError(`Expected an SVGElement. Got ${ref} (${typeof ref})`)
+            throw new TypeError(
+                `JJSE expects an SVGElement. Got ${ref} (${typeof ref}). ` +
+                    `Use JJSE.from(element) with an SVG element, or JJSE.fromTag('circle') to create one.`,
+            )
         }
         super(ref)
     }

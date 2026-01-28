@@ -26,52 +26,47 @@ export type Wrapped = JJN | JJT | JJE | JJHE | JJSE | JJD | JJDF | JJSR
 export type Unwrapped = Node | Text | Element | HTMLElement | SVGElement | Document | DocumentFragment | ShadowRoot
 
 /**
- * Represents a resource that can be a direct value, a Promise, or a function returning either.
- * Used for lazy loading or dynamic generation.
- *
- * @example
- * ```ts
- * type MyConfig = JJResource<string>
- * const c1: MyConfig = 'value'
- * const c2: MyConfig = Promise.resolve('value')
- * const c3: MyConfig = () => 'value'
- * const c4: MyConfig = async () => 'value'
- * ```
- */
-export type JJResource<T> = T | Promise<T> | (() => T | Promise<T>)
-
-/**
  * Configuration for the component's template.
- * Can be an HTML string, a JJHE instance, or a raw HTMLElement.
- *
- * @example
- * ```ts
- * const t1: JJTemplateConfig = '<div>Hello</div>'
- * const t2: JJTemplateConfig = fetchHtml('./template.html')
- * ```
+ * Can be an HTML string, a JJHE instance, a raw HTMLElement, or a
+ * Promise / factory that yields one of those.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
+ * @example
+ * ```ts
+ * const t1: tmplConf = '<div>Hello</div>'
+ * const t2: tmplConf = fetchHtml('./template.html') // Lazy loading
+ * const t3: tmplConf = () => fetchHtml('./template.html') // Lazy loading
+ * const t4: tmplConf = new JJHE(document.createElement('div')) // JJHE instance
+ * const t5: tmplConf = document.createElement('div') // Raw HTMLElement
+ * const t6: tmplConf = await fetchHtml('./template.html') // Eager loading
+ * ```
  */
-export type JJTemplateConfig = JJResource<string | JJHE | HTMLElement>
+export type JJTemplateConfig =
+    | string
+    | JJHE
+    | HTMLElement
+    | Promise<string | JJHE | HTMLElement>
+    | (() => string | JJHE | HTMLElement | Promise<string | JJHE | HTMLElement>)
 
 /**
  * Configuration for the component's styles.
- * Can be a CSS string or a CSSStyleSheet.
- *
- * @example
- * ```ts
- * const s1: JJStyleConfig = 'p { color: red; }'
- * const s2: JJStyleConfig = fetchCss('./style.css')
- * ```
+ * Can be a CSS string, a CSSStyleSheet, or a Promise / factory that yields one of those.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet | CSSStyleSheet}
+ * @example
+ * ```ts
+ * const s1: JJStyleConfig = 'p { color: red; }' // simple string
+ * const s2: JJStyleConfig = cssToSheet('p { color: red; }') // Parse string to CSSStyleSheet
+ * const s3: JJStyleConfig = await fetchCss('./style.css') // Eager loading
+ * const s4: JJStyleConfig = fetchCss('./style.css') // Lazy loading
+ * const s5: JJStyleConfig = () => fetchCss('./style.css') // Lazy loading
+ * ```
  */
-export type JJStyleConfig = JJResource<string | CSSStyleSheet>
-
-/**
- * Configuration for one or more style resources.
- */
-export type JJStylesConfig = JJStyleConfig | JJStyleConfig[]
+export type JJStyleConfig =
+    | string
+    | CSSStyleSheet
+    | Promise<string | CSSStyleSheet>
+    | (() => string | CSSStyleSheet | Promise<string | CSSStyleSheet>)
 
 /**
  * Configuration for initializing a shadowRoot

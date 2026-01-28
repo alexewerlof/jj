@@ -47,7 +47,10 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      */
     constructor(ref: T) {
         if (!isA(ref, Text)) {
-            throw new TypeError(`Expected a Text. Got: ${ref} (${typeof ref})`)
+            throw new TypeError(
+                `JJT expects a Text node. Got ${ref} (${typeof ref}). ` +
+                    `Create a Text node with JJT.fromStr() or document.createTextNode('text').`,
+            )
         }
         super(ref)
     }

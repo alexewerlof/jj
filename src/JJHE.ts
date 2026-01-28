@@ -26,7 +26,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      * @param ref - The HTMLElement.
      * @returns A new JJHE instance.
      */
-    static from(ref: HTMLElement): JJHE {
+    static from<T extends HTMLElement>(ref: T): JJHE<T> {
         return new JJHE(ref)
     }
 
@@ -45,9 +45,17 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      * @throws {TypeError} If `tagName` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement | document.createElement}
      */
+    static fromTag<K extends keyof HTMLElementTagNameMap>(
+        tagName: K,
+        options?: ElementCreationOptions,
+    ): JJHE<HTMLElementTagNameMap[K]>
+    static fromTag(tagName: string, options?: ElementCreationOptions): JJHE
     static fromTag(tagName: string, options?: ElementCreationOptions): JJHE {
         if (!isStr(tagName)) {
-            throw new TypeError(`Expected a string for tagName. Got: ${tagName} (${typeof tagName})`)
+            throw new TypeError(
+                `JJHE.fromTag() expects tagName to be a string (e.g., 'div', 'button'). ` +
+                    `Got ${tagName} (${typeof tagName}). Did you mean to use a string literal like 'div'?`,
+            )
         }
         return new JJHE(document.createElement(tagName, options))
     }
@@ -60,7 +68,11 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      */
     constructor(ref: T) {
         if (!isA(ref, HTMLElement)) {
-            throw new TypeError(`Expected an HTMLElement. Got ${ref} (${typeof ref})`)
+            throw new TypeError(
+                `JJHE expects an HTMLElement. Got ${ref} (${typeof ref}). ` +
+                    `If you have a DOM node, use JJHE.from(element). ` +
+                    `If creating a new element, use JJHE.fromTag('div').`,
+            )
         }
         super(ref)
     }
@@ -75,8 +87,9 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
     getValue() {
         if (!hasProp(this.ref, 'value')) {
             throw new Error(
-                `Cannot get value from ${this.ref.tagName}. ` +
-                    `The value property is only available on form elements like input, textarea, select.`,
+                `Cannot get value from <${this.ref.tagName.toLowerCase()}>. ` +
+                    `The value property only exists on form elements (input, textarea, select). ` +
+                    `If you need text content, try .getText() instead.`,
             )
         }
         return this.ref.value
@@ -102,8 +115,9 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
         }
         if (!hasProp(this.ref, 'value')) {
             throw new Error(
-                `Cannot set value on ${this.ref.tagName}. ` +
-                    `The value property is only available on form elements like input, textarea, select.`,
+                `Cannot set value on <${this.ref.tagName.toLowerCase()}>. ` +
+                    `The value property only exists on form elements (input, textarea, select). ` +
+                    `If you need to set text content, try .setText() instead.`,
             )
         }
         this.ref.value = value

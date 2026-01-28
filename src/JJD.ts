@@ -48,7 +48,7 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
      */
     constructor(ref: T) {
         if (!isA(ref, Document)) {
-            throw new TypeError(`Expected a Document. Got ${ref} (${typeof ref})`)
+            throw new TypeError(`JJD expects a Document instance. Got ${ref} (${typeof ref}). `)
         }
         super(ref)
     }
@@ -77,7 +77,10 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
             return JJN.wrap(el)
         }
         if (required) {
-            throw new TypeError(`Element with id ${id} not found`)
+            throw new TypeError(
+                `Element with id "${id}" not found in the document. ` +
+                    `Did you mean to call .byId("${id}", false) to return null instead? `,
+            )
         }
         return null
     }

@@ -23,7 +23,7 @@ export class JJET<T extends EventTarget = EventTarget> {
      */
     constructor(ref: T) {
         if (!isA(ref, EventTarget)) {
-            throw new TypeError(`Expected an EventTarget. Got ${ref} (${typeof ref})`)
+            throw new TypeError(`JJET expects an EventTarget instance. Got ${ref} (${typeof ref}). `)
         }
         this.#ref = ref
     }
