@@ -2,6 +2,7 @@ import { isA, isArr, isObj, isStr } from 'jty'
 import { JJSR } from './JJSR.js'
 import { ShadowConfig } from './types.js'
 import { JJNx } from './JJNx.js'
+import { typeErr } from './internal.js'
 
 /**
  * Wraps a DOM Element (which is a descendant of Node).
@@ -46,9 +47,13 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param name - The name of the attribute.
      * @returns The attribute value, or null if not present.
+     * @throws {TypeError} If `name` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute | Element.getAttribute}
      */
     getAttr(name: string): string | null {
+        if (!isStr(name)) {
+            throw typeErr('name', 'a string', name)
+        }
         return this.ref.getAttribute(name)
     }
 
@@ -57,9 +62,13 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param name - The name of the attribute.
      * @returns `true` if the attribute exists, otherwise `false`.
+     * @throws {TypeError} If `name` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/hasAttribute | Element.hasAttribute}
      */
     hasAttr(name: string): boolean {
+        if (!isStr(name)) {
+            throw typeErr('name', 'a string', name)
+        }
         return this.ref.hasAttribute(name)
     }
 
@@ -72,19 +81,26 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * el.setAttr({ id: 'my-id', class: 'my-class' })  // Multiple attributes
      * ```
      *
+     * @throws {TypeError} If arguments are invalid types or values are not strings.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute | Element.setAttribute}
      */
     setAttr(name: string, value: string): this
     setAttr(obj: Record<string, string>): this
     setAttr(nameOrObj: string | Record<string, string>, value?: string): this {
         if (typeof nameOrObj === 'string') {
-            this.ref.setAttribute(nameOrObj, value!)
+            if (!isStr(value)) {
+                throw typeErr('value', 'a string', value)
+            }
+            this.ref.setAttribute(nameOrObj, value)
         } else if (isObj(nameOrObj)) {
             for (const [k, v] of Object.entries(nameOrObj)) {
+                if (!isStr(v)) {
+                    throw typeErr(`attrs['${k}']`, 'a string', v)
+                }
                 this.ref.setAttribute(k, v)
             }
         } else {
-            throw new TypeError(`Expected a string or object. Got: ${nameOrObj} (${typeof nameOrObj})`)
+            throw typeErr('nameOrObj', 'a string or object', nameOrObj)
         }
         return this
     }
@@ -100,10 +116,14 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param names - The name(s) of the attribute(s) to remove.
      * @returns This instance for chaining.
+     * @throws {TypeError} If any name is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute | Element.removeAttribute}
      */
     rmAttr(...names: string[]): this {
         for (const name of names) {
+            if (!isStr(name)) {
+                throw typeErr('name', 'a string', name)
+            }
             this.ref.removeAttribute(name)
         }
         return this
@@ -122,9 +142,13 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param name - The ARIA attribute suffix (e.g., 'label' for 'aria-label').
      * @returns The attribute value, or null if not present.
+     * @throws {TypeError} If `name` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
     getAria(name: string): string | null {
+        if (!isStr(name)) {
+            throw typeErr('name', 'a string', name)
+        }
         return this.ref.getAttribute(`aria-${name}`)
     }
 
@@ -133,8 +157,12 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param name - The ARIA attribute suffix.
      * @returns `true` if the attribute exists.
+     * @throws {TypeError} If `name` is not a string.
      */
     hasAria(name: string): boolean {
+        if (!isStr(name)) {
+            throw typeErr('name', 'a string', name)
+        }
         return this.ref.hasAttribute(`aria-${name}`)
     }
 
@@ -153,13 +181,19 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     setAria(obj: Record<string, string>): this
     setAria(nameOrObj: string | Record<string, string>, value?: string): this {
         if (isStr(nameOrObj)) {
-            this.ref.setAttribute(`aria-${nameOrObj}`, value!)
+            if (!isStr(value)) {
+                throw typeErr('value', 'a string', value)
+            }
+            this.ref.setAttribute(`aria-${nameOrObj}`, value)
         } else if (isObj(nameOrObj)) {
             for (const [k, v] of Object.entries(nameOrObj)) {
+                if (!isStr(v)) {
+                    throw typeErr(`aria['${k}']`, 'a string', v)
+                }
                 this.ref.setAttribute(`aria-${k}`, v)
             }
         } else {
-            throw new TypeError(`Expected a string or object. Got: ${nameOrObj} (${typeof nameOrObj})`)
+            throw typeErr('nameOrObj', 'a string or object', nameOrObj)
         }
         return this
     }
@@ -175,9 +209,13 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param names - The ARIA attribute suffix(es) to remove.
      * @returns This instance for chaining.
+     * @throws {TypeError} If any name is not a string.
      */
     rmAria(...names: string[]): this {
         for (const name of names) {
+            if (!isStr(name)) {
+                throw typeErr('name', 'a string', name)
+            }
             this.ref.removeAttribute(`aria-${name}`)
         }
         return this
@@ -241,10 +279,16 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param classNames - The classes to add.
      * @returns This instance for chaining.
+     * @throws {TypeError} If any class name is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/add | DOMTokenList.add}
      */
     addClass(...classNames: string[]): this {
+        for (const className of classNames) {
+            if (!isStr(className)) {
+                throw typeErr('className', 'a string', className)
+            }
+        }
         this.ref.classList.add(...classNames)
         return this
     }
@@ -260,10 +304,16 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param classNames - The classes to remove.
      * @returns This instance for chaining.
+     * @throws {TypeError} If any class name is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/remove | DOMTokenList.remove}
      */
     rmClass(...classNames: string[]): this {
+        for (const className of classNames) {
+            if (!isStr(className)) {
+                throw typeErr('className', 'a string', className)
+            }
+        }
         this.ref.classList.remove(...classNames)
         return this
     }
@@ -273,10 +323,14 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param className - The class to check for.
      * @returns `true` if the element has the class.
+     * @throws {TypeError} If `className` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/contains | DOMTokenList.contains}
      */
     hasClass(className: string): boolean {
+        if (!isStr(className)) {
+            throw typeErr('className', 'a string', className)
+        }
         return this.ref.classList.contains(className)
     }
 
@@ -285,10 +339,14 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param className - The class to toggle.
      * @returns This instance for chaining.
+     * @throws {TypeError} If `className` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/toggle | DOMTokenList.toggle}
      */
     toggleClass(className: string): this {
+        if (!isStr(className)) {
+            throw typeErr('className', 'a string', className)
+        }
         this.ref.classList.toggle(className)
         return this
     }
@@ -301,8 +359,15 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param oldClassName - The class name to remove
      * @param newClassName - The class name to add
+     * @throws {TypeError} If either className is not a string.
      */
     replaceClass(oldClassName: string, newClassName: string): this {
+        if (!isStr(oldClassName)) {
+            throw typeErr('oldClassName', 'a string', oldClassName)
+        }
+        if (!isStr(newClassName)) {
+            throw typeErr('newClassName', 'a string', newClassName)
+        }
         this.ref.classList.replace(oldClassName, newClassName)
         return this
     }

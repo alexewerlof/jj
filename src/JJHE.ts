@@ -2,6 +2,7 @@ import { hasProp, isA, isStr } from 'jty'
 import { JJN } from './JJN.js'
 import { Wrapped } from './types.js'
 import { JJEx } from './JJEx.js'
+import { typeErr } from './internal.js'
 
 /**
  * Wraps a DOM HTMLElement (which is a descendant of Element).
@@ -73,7 +74,10 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      */
     getValue() {
         if (!hasProp(this.ref, 'value')) {
-            throw new Error('Element does not have a value property')
+            throw new Error(
+                `Cannot get value from ${this.ref.tagName}. ` +
+                    `The value property is only available on form elements like input, textarea, select.`,
+            )
         }
         return this.ref.value
     }
@@ -88,12 +92,19 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      *
      * @param value - The value to set.
      * @returns This instance for chaining.
+     * @throws {TypeError} If `value` is not a string.
      * @throws {Error} If the HTMLElement does not have a value property.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/value | HTMLInputElement.value}
      */
     setValue(value: string): this {
+        if (!isStr(value)) {
+            throw typeErr('value', 'a string', value)
+        }
         if (!hasProp(this.ref, 'value')) {
-            throw new Error('Element does not have a value property')
+            throw new Error(
+                `Cannot set value on ${this.ref.tagName}. ` +
+                    `The value property is only available on form elements like input, textarea, select.`,
+            )
         }
         this.ref.value = value
         return this
@@ -143,9 +154,13 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      *
      * @param text - The text to set, or null/undefined to clear.
      * @returns This instance for chaining.
+     * @throws {TypeError} If `text` is not a string, null, or undefined.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
      */
     setText(text?: string | null): this {
+        if (text !== null && text !== undefined && !isStr(text)) {
+            throw typeErr('text', 'a string, null, or undefined', text)
+        }
         this.ref.innerText = text ?? ''
         return this
     }

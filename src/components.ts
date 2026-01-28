@@ -2,6 +2,7 @@ import { hasProp, isA, isArr, isDef, isFn, isStr } from 'jty'
 import { JJStyleConfig, JJTemplateConfig, ShadowConfig } from './types.js'
 import { JJHE } from './JJHE.js'
 import { cssToStyle } from './util.js'
+import { typeErr } from './internal.js'
 import { keb2cam } from './case.js'
 
 /**
@@ -35,7 +36,7 @@ async function templatePromise(templateConfig?: JJTemplateConfig): Promise<Shado
         return templateConfig.outerHTML
     }
 
-    throw new TypeError(`Expected a string, JJHE or HTMLElement. Got ${templateConfig} (${typeof templateConfig})`)
+    throw new TypeError(`Expected template to be a string, JJHE, or HTMLElement. Got ${typeof templateConfig}`)
 }
 
 /**
@@ -63,7 +64,7 @@ async function stylePromise(styleConfig?: JJStyleConfig): Promise<CSSStyleSheet>
         return await cssToStyle(styleConfig)
     }
 
-    throw new TypeError(`Expected a css string or CSSStyleSheet. Got ${styleConfig} (${typeof styleConfig})`)
+    throw new TypeError(`Expected style to be a CSS string or CSSStyleSheet. Got ${typeof styleConfig}`)
 }
 
 /**
@@ -280,10 +281,10 @@ export async function registerComponent(
     options?: ElementDefinitionOptions,
 ): Promise<void> {
     if (!isStr(name)) {
-        throw new TypeError(`Expected a string name. Got ${name} (${typeof name})`)
+        throw typeErr('name', 'a string', name)
     }
     if (!isFn(constructor)) {
-        throw new TypeError(`Expected a constructor function. Got ${constructor} (${typeof constructor})`)
+        throw typeErr('constructor', 'a function', constructor)
     }
     if (!customElements.get(name)) {
         customElements.define(name, constructor, options)

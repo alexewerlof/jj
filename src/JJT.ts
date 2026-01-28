@@ -1,5 +1,6 @@
 import { isA, isStr } from 'jty'
 import { JJN } from './JJN.js'
+import { typeErr } from './internal.js'
 
 /**
  * Wraps a DOM Text Node.
@@ -76,12 +77,15 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      *
      * @param text - The text to set. Set it to null or undefined to remove all text
      * @returns This instance for chaining.
-     * @throws {TypeError} If `text` is not a string.
+     * @throws {TypeError} If `text` is not a string, null, or undefined.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
     setText(text?: string | null): this {
         if (text === undefined) {
             text = null
+        }
+        if (text !== null && !isStr(text)) {
+            throw typeErr('text', 'a string or null or undefined', text)
         }
         this.ref.textContent = text
         return this
@@ -99,9 +103,16 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      *
      * @param text - The string to add to the existing contents. If null or undefined, nothing is added.
      * @returns This instance for chaining.
+     * @throws {TypeError} If `text` is not a string, null, or undefined.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
-    addText(text?: string | null) {
+    addText(text?: string | null): this {
+        if (text === undefined) {
+            text = null
+        }
+        if (text !== null && !isStr(text)) {
+            throw typeErr('text', 'a string or null or undefined', text)
+        }
         if (text) {
             this.ref.textContent += text
         }

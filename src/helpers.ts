@@ -2,6 +2,7 @@ import { isA, isStr } from 'jty'
 import { JJHE } from './JJHE.js'
 import { Wrappable } from './types.js'
 import { cssToStyle, fileExt } from './util.js'
+import { typeErr, errMsg } from './internal.js'
 
 /**
  * Hyperscript helper to create JJHE instances.
@@ -95,24 +96,24 @@ export function createLinkPre(
 ): JJHE {
     if (!isStr(href)) {
         if (!isA(href, URL)) {
-            throw new TypeError(`Expected a string or URL. Got ${href} (${typeof href})`)
+            throw typeErr('href', 'a string or URL', href)
         }
         href = href.toString()
     }
 
     if (!['prefetch', 'preload'].includes(rel)) {
-        throw new RangeError(`rel should be one of 'prefetch' or 'preload'. Got ${rel} (${typeof rel})`)
+        throw new RangeError(errMsg('rel', `'prefetch' or 'preload'`, rel))
     }
 
     if (!as) {
         as = linkAs(href)
         if (!as) {
-            throw new Error(`No 'as' attribute was specified and we failed to guess it from the URL: ${href}`)
+            throw new Error(`Could not guess 'as' attribute from URL: ${href}`)
         }
     }
 
     if (!['fetch', 'style', 'script'].includes(as)) {
-        throw new RangeError(`as should be one of 'fetch' or 'style'. Got ${as} (${typeof as})`)
+        throw new RangeError(errMsg('as', `'fetch', 'style', or 'script'`, as))
     }
 
     return JJHE.fromTag('link').setAttr({

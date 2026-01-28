@@ -1,7 +1,8 @@
-import { isA } from 'jty'
+import { isA, isStr } from 'jty'
 import { JJN } from './JJN.js'
 import { Wrapped } from './types.js'
 import { JJNx } from './JJNx.js'
+import { typeErr } from './internal.js'
 
 /**
  * Wraps a DocumentFragment (which is a descendant of Node).
@@ -82,9 +83,13 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
      * @param id - The ID to search for.
      * @param required - Whether to throw an error if not found. Defaults to false.
      * @returns The wrapped element, or null if not found and required is false.
+     * @throws {TypeError} If id is not a string or element not found and required is true.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/getElementById | DocumentFragment.getElementById}
      */
     byId(id: string, required = false): Wrapped | null {
+        if (!isStr(id)) {
+            throw typeErr('id', 'a string', id)
+        }
         const el = this.ref.getElementById(id)
         if (el) {
             return JJN.wrap(el)

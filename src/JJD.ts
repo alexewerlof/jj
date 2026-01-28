@@ -1,7 +1,8 @@
-import { isA } from 'jty'
+import { isA, isStr } from 'jty'
 import { JJN } from './JJN.js'
 import { Wrapped } from './types.js'
 import { JJNx } from './JJNx.js'
+import { typeErr } from './internal.js'
 
 /**
  * Wraps a Document (which is a descendant of Node).
@@ -64,10 +65,13 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
      * @param id - The ID to search for.
      * @param required - Whether to throw an error if not found. Defaults to false.
      * @returns The wrapped element, or null if not found and required is false.
-     * @throws {TypeError} If the element is not found and required is true.
+     * @throws {TypeError} If id is not a string or element not found and required is true.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById | Document.getElementById}
      */
     byId(id: string, required = false): Wrapped | null {
+        if (!isStr(id)) {
+            throw typeErr('id', 'a string', id)
+        }
         const el = this.ref.getElementById(id)
         if (el) {
             return JJN.wrap(el)
@@ -88,9 +92,13 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
      *
      * @param className - The class name to search for.
      * @returns An array of wrapped elements.
+     * @throws {TypeError} If className is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByClassName | Document.getElementsByClassName}
      */
     byClass(className: string): Wrapped[] {
+        if (!isStr(className)) {
+            throw typeErr('className', 'a string', className)
+        }
         return JJN.wrapAll(this.ref.getElementsByClassName(className))
     }
 
