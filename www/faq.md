@@ -9,6 +9,7 @@ A few reasons:
 - Having the source code in Typescript ensures that the typescript `.d.ts` files that are included in each deploy are always up to date
 - Typescript has its own place. In the context of this library's code, it facilitates refactoring
 - Another way to think about Typescript is just Javascript with types. Essentially it's not a different language. It is **just javascript** too!
+- No-build is not a religion! There are cases where the cost is justified by benefits. For example, would you rather rely on a 4kb gzipped library or 4000kb of JavaScript just to show a simple page?
 
 The **just javascript** motto refers to YOUR code: you can use plain javascript with no build process to implement most applications.
 
