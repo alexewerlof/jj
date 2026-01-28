@@ -6,13 +6,11 @@
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-
-        /* Emitting Files */
         "declaration": true,
         "sourceMap": true,
         "outDir": "lib",
         "newLine": "LF"
     },
     "include": ["src"],
-    "exclude": ["node_modules", "lib"]
+    "exclude": ["node_modules", "lib", "**/*.test.ts"]
 }
