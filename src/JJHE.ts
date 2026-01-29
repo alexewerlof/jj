@@ -35,8 +35,8 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      *
      * @example
      * ```ts
-     * const div = JJHE.fromTag('div')
-     * const input = JJHE.fromTag('input', { is: 'custom-input' })
+     * const div = JJHE.create('div')
+     * const input = JJHE.create('input', { is: 'custom-input' })
      * ```
      *
      * @param tagName - The tag name.
@@ -45,15 +45,15 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      * @throws {TypeError} If `tagName` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement | document.createElement}
      */
-    static fromTag<K extends keyof HTMLElementTagNameMap>(
+    static create<K extends keyof HTMLElementTagNameMap>(
         tagName: K,
         options?: ElementCreationOptions,
     ): JJHE<HTMLElementTagNameMap[K]>
-    static fromTag(tagName: string, options?: ElementCreationOptions): JJHE
-    static fromTag(tagName: string, options?: ElementCreationOptions): JJHE {
+    static create(tagName: string, options?: ElementCreationOptions): JJHE
+    static create(tagName: string, options?: ElementCreationOptions): JJHE {
         if (!isStr(tagName)) {
             throw new TypeError(
-                `JJHE.fromTag() expects tagName to be a string (e.g., 'div', 'button'). ` +
+                `JJHE.create() expects tagName to be a string (e.g., 'div', 'button'). ` +
                     `Got ${tagName} (${typeof tagName}). Did you mean to use a string literal like 'div'?`,
             )
         }
@@ -71,7 +71,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
             throw new TypeError(
                 `JJHE expects an HTMLElement. Got ${ref} (${typeof ref}). ` +
                     `If you have a DOM node, use JJHE.from(element). ` +
-                    `If creating a new element, use JJHE.fromTag('div').`,
+                    `If creating a new element, use JJHE.create('div').`,
             )
         }
         super(ref)

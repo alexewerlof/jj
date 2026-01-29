@@ -41,7 +41,7 @@ import { typeErr, errMsg } from './internal.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement | document.createElement}
  */
 export function h(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJHE {
-    const ret = JJHE.fromTag(tagName).append(...children)
+    const ret = JJHE.create(tagName).addChild(...children)
     if (attributes) {
         ret.setAttr(attributes)
     }
@@ -116,7 +116,7 @@ export function createLinkPre(
         throw new RangeError(errMsg('as', `'fetch', 'style', or 'script'`, as))
     }
 
-    return JJHE.fromTag('link').setAttr({
+    return JJHE.create('link').setAttr({
         href,
         rel,
         as,

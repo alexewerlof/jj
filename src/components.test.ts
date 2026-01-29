@@ -65,7 +65,7 @@ describe('components', () => {
             })
 
             it('resolves template from JJHE instance', async () => {
-                const el = JJHE.fromTag('div')
+                const el = JJHE.create('div')
                 el.setAttr('class', 'test')
                 el.ref.innerHTML = '<span>content</span>'
                 const sm = ShadowMaster.create()

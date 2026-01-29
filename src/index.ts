@@ -23,14 +23,14 @@ import { JJD } from './JJD.js'
  *
  * @example
  * ```ts
+ * import { doc } from 'jj'
  * const el = doc.byId('my-element') // A JJHE instance
  * const body = doc.body             // A JJHE instance
- * doc.append(JJHE.fromTag('script').setAttr('src', 'my-code.js'))
- * doc.head.append(JJHE.fromTag('link').setAttr({
+ * doc.addChild(JJHE.create('script').setAttr('src', 'my-code.js'))
+ * doc.head.addChild(JJHE.create('link').setAttr({
  *   rel: 'stylesheet',
  *   href: 'code.css'
  * }))
  * ```
  */
-const doc = JJD.from(document)
-export default doc
+export const doc = JJD.from(document)

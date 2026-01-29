@@ -13,7 +13,7 @@ npm i jj
 ```js
 import { JJHE } from 'jj'
 
-JJHE.fromTag('div')
+JJHE.create('div')
     .addClass('card')
     .setText('Hello World!')
     .on('click', () => console.log('Hi'))

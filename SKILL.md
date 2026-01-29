@@ -49,7 +49,7 @@ JJ is a minimal, imperative DOM manipulation library designed for modern web dev
 The easiest way to use JJ is the `h()` hyperscript helper:
 
 ```typescript
-import doc, { h, JJDF } from 'jj'
+import { doc, h, JJDF } from 'jj'
 
 // Create elements with h(tagName, attributes, ...children)
 const nav = h(
@@ -67,33 +67,33 @@ doc.body.ref.append(nav.ref)
 For batch DOM operations, use `JJDF` (DocumentFragment) to avoid multiple reflows:
 
 ```typescript
-import doc, { h, JJDF } from 'jj'
+import { doc, h, JJDF } from 'jj'
 
 // Create a fragment for batch operations
 const frag = JJDF.create()
 
 const items = ['Apple', 'Banana', 'Cherry']
-frag.append(...items.map((item) => h('li', { class: 'fruit-item' }, item)))
+frag.addChild(...items.map((item) => h('li', { class: 'fruit-item' }, item)))
 
 // Single DOM update - much faster than appending one by one
-doc.query('ul.fruit-list')?.append(frag.ref)
+doc.find('ul.fruit-list')?.addChild(frag.ref)
 ```
 
 If you need to map and append the children, there's a direct, shorter and more readable way to do it:
 
 ```typescript
-import doc, { h } from 'jj'
+import { doc, h } from 'jj'
 
 const items = ['Apple', 'Banana', 'Cherry']
 
 // Single DOM update - much shorter
-doc.query('ul.fruit-list')?.mapAppend(items, (item) => h('li', { class: 'fruit-item' }, item))
+doc.find('ul.fruit-list')?.addChildMap(items, (item) => h('li', { class: 'fruit-item' }, item))
 ```
 
 Combine both patterns for complex UIs:
 
 ```typescript
-import doc, { h, JJDF } from 'jj'
+import { doc, h, JJDF } from 'jj'
 
 // Build a card component
 const card = h(
@@ -104,7 +104,7 @@ const card = h(
     h('footer', null, h('a', { href: '/details', class: 'btn' }, 'Learn More')),
 )
 
-doc.body.append(card.ref)
+doc.body.addChild(card.ref)
 ```
 
 ## Accessing the Native Node: The `.ref` Property
@@ -144,7 +144,7 @@ const element = doc.create('div').ref
 element.textContent = 'hello'
 
 // Correct: chain operations before accessing .ref
-doc.create('div').setText('hello').addClass('greeting').append(childElement)
+doc.create('div').setText('hello').addClass('greeting').addChild(childElement)
 ```
 
 Common chainable operations:
@@ -160,11 +160,11 @@ el.style('background-color', 'blue').style('padding', '10px')
 JJ leverages TypeScript generics to ensure type safety and prevent LLM hallucinations:
 
 ```typescript
-// fromTag() infers the correct type automatically
-const input = JJHE.fromTag('input')
+// create() infers the correct type automatically
+const input = JJHE.create('input')
 // input.ref is HTMLInputElement, so input.ref.value exists
 
-const div = JJHE.fromTag('div')
+const div = JJHE.create('div')
 // div.ref is HTMLDivElement, so div.ref.value would be a type error
 ```
 
@@ -174,10 +174,10 @@ const div = JJHE.fromTag('div')
 const input = doc.create<HTMLInputElement>('input')
 ```
 
-**Correct**: Use `fromTag()` for type inference
+**Correct**: Use `create()` for type inference
 
 ```typescript
-const input = doc.fromTag('input') // Correctly typed as JJHE<HTMLInputElement>
+const input = doc.create('input') // Correctly typed as JJHE<HTMLInputElement>
 ```
 
 ### 4. Custom Components
@@ -394,7 +394,7 @@ $('.box').addClass('active').css('color', 'red')
 **JJ**: Similar chainable API with type safety
 
 ```typescript
-JJD.from(document).query('.box').addClass('active').style('color', 'red')
+JJD.from(document).find('.box').addClass('active').style('color', 'red')
 ```
 
 ### Vue to JJ
@@ -491,7 +491,7 @@ container.ref.appendChild(p.ref)
 doc.body.appendChild(container.ref)
 
 // Query and modify
-const element = doc.query('.container')
+const element = doc.find('.container')
 if (element) {
     element.addClass('active').attr('data-loaded', 'true')
 }
@@ -502,10 +502,10 @@ if (element) {
 For non-component template usage, use `JJET` to work with `<template>` elements:
 
 ```typescript
-import doc, { JJET } from 'jj'
+import { doc, JJET } from 'jj'
 
 // Get a template element from the DOM
-const templateEl = doc.query<HTMLTemplateElement>('#item-template')
+const templateEl = doc.find<HTMLTemplateElement>('#item-template')
 const wrapped = JJET.from(templateEl.ref)
 
 // Clone the template content
@@ -513,7 +513,7 @@ const items = ['Apple', 'Banana', 'Cherry']
 items.forEach((item) => {
     const clone = wrapped.createInstance()
     clone.byId('name')?.setText(item)
-    doc.query('#list')?.append(clone.ref)
+    doc.find('#list')?.addChild(clone.ref)
 })
 ```
 
@@ -586,7 +586,7 @@ Output: `doc/` folder with HTML documentation
 
 1. **Accessing the Native Node**: Always use `.ref` to access the underlying DOM node for operations not exposed by JJ
 2. **Event Listeners**: Use `.on()` and `.off()` for proper cleanup
-3. **Type Safety**: Use `fromTag()` for automatic type inference instead of generic parameters
+3. **Type Safety**: Use `JJHE.create()` for automatic type inference instead of generic parameters
 4. **Fragments**: Use JJDF for batch operations before appending
 5. **Error Messages**: Read them carefully—they suggest the correct approach
 
@@ -595,14 +595,14 @@ Output: `doc/` folder with HTML documentation
 ❌ **Don't** use `.ts` in imports
 ❌ **Don't** access `.ref` before chaining operations
 ❌ **Don't** ignore TypeScript errors about DOM types
-❌ **Don't** use `create<T>()` when `fromTag()` gives better inference
+❌ **Don't** use generic type parameters when `JJHE.create()` gives better inference
 ❌ **Don't** manually manage Shadow DOM when `ShadowMaster` can handle it
 ❌ **Don't** forget to await async initializations
 ❌ **Don't** forget `.ref` when passing to native APIs or third-party libraries
 
 ✅ **Do** use `.js` extensions in TypeScript imports
 ✅ **Do** chain operations before accessing `.ref`
-✅ **Do** use `fromTag()` for element creation with type inference
+✅ **Do** use `JJHE.create()` for element creation with type inference
 ✅ **Do** leverage the fluent API
 ✅ **Do** use `ShadowMaster` for Shadow DOM components
 ✅ **Do** handle errors explicitly

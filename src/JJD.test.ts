@@ -70,25 +70,6 @@ describe('JJD', () => {
         })
     })
 
-    describe('byClass()', () => {
-        it('finds elements by class name', () => {
-            const jjd = new JJD(document)
-            const results = jjd.byClass('test-class')
-            assert.strictEqual(results.length, 2)
-        })
-
-        it('returns empty array when not found', () => {
-            const jjd = new JJD(document)
-            const results = jjd.byClass('nonexistent')
-            assert.strictEqual(results.length, 0)
-        })
-
-        it('throws TypeError for non-string className', () => {
-            const jjd = new JJD(document)
-            assert.throws(() => jjd.byClass(null as any), TypeError)
-        })
-    })
-
     describe('head', () => {
         it('returns wrapped head element', () => {
             const jjd = new JJD(document)

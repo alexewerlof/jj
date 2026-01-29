@@ -1,4 +1,4 @@
-import doc, { JJHE } from '../../lib/bundle.js'
+import { doc, JJHE } from '../../lib/bundle.js'
 
 const GITHUB_BASE = 'https://github.com/alexewerlof/jj/tree/main/www/examples'
 
@@ -19,27 +19,27 @@ async function loadExamples() {
             const description = examples[folderName]
 
             // Create card container
-            const card = JJHE.fromTag('div').addClass('card')
+            const card = JJHE.create('div').addClass('card')
 
             // Create header section
-            const header = JJHE.fromTag('div').addClass('card-header')
+            const header = JJHE.create('div').addClass('card-header')
 
             // Create title
-            const title = JJHE.fromTag('h2').setText(folderName)
+            const title = JJHE.create('h2').setText(folderName)
 
             // Create description
-            const desc = JJHE.fromTag('p').setText(description)
+            const desc = JJHE.create('p').setText(description)
 
             // Create actions container
-            const actions = JJHE.fromTag('div').addClass('card-actions')
+            const actions = JJHE.create('div').addClass('card-actions')
 
             // Create view example link
-            const viewLink = JJHE.fromTag('a')
+            const viewLink = JJHE.create('a')
                 .setAttr('href', `${folderName}/`)
                 .setText('View Example →')
 
             // Create GitHub link
-            const githubLink = JJHE.fromTag('a')
+            const githubLink = JJHE.create('a')
                 .setAttr('href', `${GITHUB_BASE}/${folderName}/`)
                 .setAttr('target', '_blank')
                 .addClass('secondary')
@@ -65,8 +65,8 @@ async function loadExamples() {
         examplesContainer.ref.innerHTML = ''
 
         // Create error message
-        const errorDiv = JJHE.fromTag('div').addClass('error')
-        const errorMsg = JJHE.fromTag('p').setText(`Error loading examples: ${error.message}`)
+        const errorDiv = JJHE.create('div').addClass('error')
+        const errorMsg = JJHE.create('p').setText(`Error loading examples: ${error.message}`)
 
         errorDiv.ref.appendChild(errorMsg.ref)
         examplesContainer.ref.appendChild(errorDiv.ref)

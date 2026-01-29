@@ -31,15 +31,15 @@ describe('JJHE', () => {
         })
     })
 
-    describe('static fromTag()', () => {
+    describe('static create()', () => {
         it('creates JJHE from tag name', () => {
-            const jjhe = JJHE.fromTag('span')
+            const jjhe = JJHE.create('span')
             assert.ok(jjhe.ref instanceof HTMLElement)
             assert.strictEqual(jjhe.ref.tagName, 'SPAN')
         })
 
         it('throws TypeError for non-string tagName', () => {
-            assert.throws(() => JJHE.fromTag(123 as any), TypeError)
+            assert.throws(() => JJHE.create(123 as any), TypeError)
         })
     })
 
@@ -151,7 +151,7 @@ describe('JJHE', () => {
                 const jjhe = new JJHE(el)
                 assert.throws(() => jjhe.getValue(), {
                     name: 'Error',
-                    message: /Cannot get value from <div>/,
+                    message: /Cannot get value from <DIV>/,
                 })
             })
         })
@@ -176,7 +176,7 @@ describe('JJHE', () => {
                 const jjhe = new JJHE(el)
                 assert.throws(() => jjhe.setValue('test'), {
                     name: 'Error',
-                    message: /Cannot set value on <div>/,
+                    message: /Cannot set value on <DIV>/,
                 })
             })
         })

@@ -8,10 +8,10 @@ function pageLink(level, title, path) {
 
 function title(level, title, ...children) {
     return h('li')
-        .append(h(`h${level}`), h('ol', null, ...children))
+        .addChild(h(`h${level}`), h('ol', null, ...children))
         .setClass(`level-${level}`)
         .setText(title)
-        .mapAppend(children, (child) => child.addClass(`level-${level + 1}`))
+        .addChildMap(children, (child) => child.addClass(`level-${level + 1}`))
 }
 
 export default h(

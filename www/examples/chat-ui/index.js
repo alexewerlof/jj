@@ -1,6 +1,6 @@
 import { ChatMessage } from './components/chat-message.js'
 import { ChatThread } from './components/chat-thread.js'
-import doc, { JJHE } from '../../../../lib/bundle.js'
+import { doc, JJHE } from '../../../../lib/bundle.js'
 
 await ChatThread.register()
 await ChatMessage.register()
@@ -26,7 +26,7 @@ chatForm.on('submit', (event) => {
     // userChatMessage.ref.content = content
 
     console.log(userChatMessage.ref)
-    chatThread.append(userChatMessage)
+    chatThread.addChild(userChatMessage)
     promptInput.setValue('')
     // Add your submission logic here
 })

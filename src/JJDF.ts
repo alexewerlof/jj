@@ -16,11 +16,11 @@ import { typeErr } from './internal.js'
  * @example
  * ```ts
  * const frag = JJDF.create()
- * frag.append(
+ * frag.addChild(
  *   h('div', null, 'Item 1'),
  *   h('div', null, 'Item 2'),
  * )
- * doc.body.append(frag)
+ * doc.body.addChild(frag)
  * ```
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}

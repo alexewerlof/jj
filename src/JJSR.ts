@@ -9,7 +9,7 @@ import { JJDF } from './JJDF.js'
  * that is rendered separately from a document's main DOM tree.
  *
  * ShadowRoot inherits DocumentFragment and therefore has access to all its methods
- * most importantly `byId`, `query`, and `queryAll` which come handy to access and
+ * most importantly `byId`, `find`, and `findAll` which come handy to access and
  * update its children.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot | ShadowRoot}

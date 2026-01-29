@@ -10,7 +10,9 @@ import { typeErr } from './internal.js'
  * @remarks
  * This class provides a wrapper around the native `Document` interface, inheriting
  * the fluent API capabilities of `JJN`.
- * It also supports querying (`byId`, `query`) and manipulation (`append`, `prepend`) methods.
+ * It also supports querying (`byId`, `find`) and manipulation (`addChild`, `preChild`) methods.
+ *
+ * To find elements by class name, use: `doc.find('.my-class')`
  *
  * To set the document title, use: `doc.ref.title = 'New Title'`
  *
@@ -83,26 +85,6 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
             )
         }
         return null
-    }
-
-    /**
-     * Finds elements by class name in the Document.
-     *
-     * @example
-     * ```ts
-     * const items = byClass('list-item')
-     * ```
-     *
-     * @param className - The class name to search for.
-     * @returns An array of wrapped elements.
-     * @throws {TypeError} If className is not a string.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByClassName | Document.getElementsByClassName}
-     */
-    byClass(className: string): Wrapped[] {
-        if (!isStr(className)) {
-            throw typeErr('className', 'a string', className)
-        }
-        return JJN.wrapAll(this.ref.getElementsByClassName(className))
     }
 
     /**

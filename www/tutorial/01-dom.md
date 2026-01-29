@@ -11,13 +11,13 @@ document.createElement('div')
 In JJ, you write that as:
 
 ```js
-JJHE.fromTag('div')
+JJHE.create('div')
 ```
 
 Let's unpack that:
 
 - `JJHE`: Stands for Wrapped `HTMLElement`
-- `fromTag(string)` calls `document.createElement(string)` and assigns it to `.ref` of a newly created `JJHE`
+- `create(string)` calls `document.createElement(string)` and assigns it to `.ref` of a newly created `JJHE`
 
 ## Chaining
 
@@ -32,7 +32,7 @@ div.textContent = 'Hello world'
 With JJ, you write:
 
 ```js
-const divWrapper = JJHE.fromTag('div').setText('Hello world')
+const divWrapper = JJHE.create('div').setText('Hello world')
 ```
 
 This gives you:
@@ -60,12 +60,27 @@ document.body.appendChild(divWrapper.ref)
 
 The browsers provide a few native methods to query the DOM using the CSS selector syntax:
 
-- [`document.querySelectorAll()`](https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById): searches an entire document with a css query like (`.class` or `#id`)
-    - [`element.querySelectorÀll()](https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector): similar to the above but only seaches an element's
-- [`document.querySelector()]`: just like `.querySelectorAll()` but only returns the first matching element
-- [`document.getElementsByClassName()`](https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByClassName): searches an entire document for elements that have a given class name
-- [`document.getElementById()](https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById): returns an element with a specific id
--
+- [`document.querySelectorAll()`](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll): searches an entire document with a CSS query like (`.class` or `#id`)
+    - [`element.querySelectorAll()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll): similar to the above but only searches an element's descendants
+- [`document.querySelector()`](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector): just like `.querySelectorAll()` but only returns the first matching element
+- [`document.getElementById()`](https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById): returns an element with a specific id
+
+In JJ, these are wrapped as:
+
+- `.find(selector)` - finds the first element matching the selector (returns null if not found)
+- `.findAll(selector)` - finds all elements matching the selector
+- `.byId(id)` - finds an element by ID
+
+```js
+// Find element by class
+const card = doc.find('.card')
+
+// Find all list items
+const items = doc.findAll('li')
+
+// Find element by ID
+const header = doc.byId('header')
+```
 
 ## Chaining
 
@@ -73,7 +88,7 @@ Most methods return a reference to this which enables chaining.
 For example if you wanted to set a `'title'` attribute and add a `dominant` class to the element, you can write:
 
 ```js
-const divWrapper = JJHE.fromTag('div').setText('Hello world').setTitle('Hello world').addClass('dominant')
+const divWrapper = JJHE.create('div').setText('Hello world').setTitle('Hello world').addClass('dominant')
 ```
 
 This gives you:

@@ -7,8 +7,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * const span = el.query('span')  // Returns null if not found
-     * const span = el.query('span', true)  // Throws if not found
+     * const span = el.find('span')  // Returns null if not found
+     * const span = el.find('span', true)  // Throws if not found
      * ```
      *
      * @param selector - The CSS selector.
@@ -17,7 +17,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @throws {TypeError} If selector is not a string or element not found and required is true.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
      */
-    query(selector: string, required = false): Wrapped | null {
+    find(selector: string, required = false): Wrapped | null {
         const queryResult = this.ref.querySelector(selector)
         if (queryResult) {
             return JJN.wrap(queryResult)
@@ -25,7 +25,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
         if (required) {
             throw new TypeError(
                 `Element with selector "${selector}" not found. ` +
-                    `Did you mean to call .query("${selector}", false) to return null instead? `,
+                    `Did you mean to call .find("${selector}", false) to return null instead? `,
             )
         }
         return null
@@ -36,7 +36,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * const items = el.queryAll('li')
+     * const items = el.findAll('li')
      * ```
      *
      * @param selector - The CSS selector.
@@ -44,7 +44,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @throws {TypeError} If selector is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll | Element.querySelectorAll}
      */
-    queryAll(selector: string): Wrapped[] {
+    findAll(selector: string): Wrapped[] {
         return JJN.wrapAll(this.ref.querySelectorAll(selector))
     }
 
@@ -53,7 +53,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * el.append(h('span', null, 'hello'))
+     * el.addChild(h('span', null, 'hello'))
      * ```
      *
      * @remarks
@@ -63,7 +63,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/append | Element.append}
      */
-    append(...children: Wrappable[]): this {
+    addChild(...children: Wrappable[]): this {
         const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
         this.ref.append(...nodes)
         return this
@@ -74,7 +74,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * el.prepend(h('span', null, 'first'))
+     * el.preChild(h('span', null, 'first'))
      * ```
      *
      * @remarks
@@ -84,7 +84,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend | Element.prepend}
      */
-    prepend(...children: Wrappable[]): this {
+    preChild(...children: Wrappable[]): this {
         const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
         this.ref.prepend(...nodes)
         return this
@@ -95,7 +95,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * node.mapAppend(['a', 'b'], item => h('li', null, item))
+     * node.addChildMap(['a', 'b'], item => h('li', null, item))
      * ```
      *
      * @remarks
@@ -105,8 +105,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @param mapFn - The mapping function returning a Wrappable.
      * @returns This instance for chaining.
      */
-    mapAppend(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
-        return this.append(...array.map(mapFn))
+    addChildMap(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
+        return this.addChild(...array.map(mapFn))
     }
 
     /**
@@ -114,7 +114,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * node.mapPrepend(['a', 'b'], item => JJHE.fromTag('li').setText(item))
+     * node.preChildMap(['a', 'b'], item => JJHE.create('li').setText(item))
      * ```
      *
      * @remarks
@@ -124,8 +124,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @param mapFn - The mapping function.
      * @returns This instance for chaining.
      */
-    mapPrepend(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
-        return this.prepend(...array.map(mapFn))
+    preChildMap(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
+        return this.preChild(...array.map(mapFn))
     }
 
     /**
