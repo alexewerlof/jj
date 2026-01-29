@@ -31,6 +31,23 @@ JJHE.fromTag('div')
 
 **👉 [Visit the full site with tutorials, examples, and API docs](https://alexewerlof.github.io/jj)**
 
+## 🤖 AI-Optimized Development
+
+JJ is designed for AI-assisted development. Install the skill for intelligent code suggestions:
+
+```bash
+npx skills add alexewerlof/jj
+```
+
+Once installed, AI agents (GitHub Copilot, Cursor, Claude Code, Windsurf, etc.) will:
+
+- Follow JJ's patterns and conventions automatically
+- Know when to use `.ref` for native DOM access
+- Suggest correct framework translations (React/Vue/jQuery/Svelte → JJ)
+- Generate idiomatic, type-safe code
+
+The skill definition (`SKILL.md`) is also included in the npm package at `node_modules/jj/SKILL.md`.
+
 ## License
 
 MIT

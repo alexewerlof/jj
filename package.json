@@ -38,7 +38,7 @@
     },
     "files": [
         "lib",
-        "llms.txt"
+        "SKILL.md"
     ],
     "scripts": {
         "doc": "typedoc src/index.ts",
