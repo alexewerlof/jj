@@ -20,7 +20,7 @@ import { typeErr } from './internal.js'
  *   h('div', null, 'Item 1'),
  *   h('div', null, 'Item 2'),
  * )
- * document.body.appendChild(frag.ref)
+ * doc.body.append(frag)
  * ```
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}
