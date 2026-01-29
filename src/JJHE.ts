@@ -52,10 +52,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
     static create(tagName: string, options?: ElementCreationOptions): JJHE
     static create(tagName: string, options?: ElementCreationOptions): JJHE {
         if (!isStr(tagName)) {
-            throw new TypeError(
-                `JJHE.create() expects tagName to be a string (e.g., 'div', 'button'). ` +
-                    `Got ${tagName} (${typeof tagName}). Did you mean to use a string literal like 'div'?`,
-            )
+            throw typeErr('tagName', "a string like 'div' or 'button'", tagName)
         }
         return new JJHE(document.createElement(tagName, options))
     }
@@ -68,11 +65,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      */
     constructor(ref: T) {
         if (!isA(ref, HTMLElement)) {
-            throw new TypeError(
-                `JJHE expects an HTMLElement. Got ${ref} (${typeof ref}). ` +
-                    `If you have a DOM node, use JJHE.from(element). ` +
-                    `If creating a new element, use JJHE.create('div').`,
-            )
+            throw typeErr('ref', 'an HTMLElement', ref)
         }
         super(ref)
     }
@@ -86,11 +79,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      */
     getValue() {
         if (!hasProp(this.ref, 'value')) {
-            throw new Error(
-                `Cannot get value from <${this.ref.tagName}>. ` +
-                    `The value property only exists on form elements (input, textarea, select). ` +
-                    `If you need text content, try .getText() instead.`,
-            )
+            throw new ReferenceError(`${this.ref.tagName} has no value property.`)
         }
         return this.ref.value
     }
@@ -111,11 +100,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      */
     setValue(value: any): this {
         if (!hasProp(this.ref, 'value')) {
-            throw new Error(
-                `Cannot set value on <${this.ref.tagName}>. ` +
-                    `The value property only exists on form elements (input, textarea, select). ` +
-                    `If you need to set text content, try .setText() instead.`,
-            )
+            throw new ReferenceError(`${this.ref.tagName} has no value property.`)
         }
         this.ref.value = value
         return this

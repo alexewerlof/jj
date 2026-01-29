@@ -1,4 +1,5 @@
 import { isStr } from 'jty'
+import { typeErr } from './internal.js'
 
 /**
  * Returns the file extension
@@ -19,7 +20,7 @@ import { isStr } from 'jty'
  */
 export function fileExt(path: string): string {
     if (!isStr(path)) {
-        throw new TypeError(`Expected a string file path. Got ${path} (${typeof path})`)
+        throw typeErr('path', 'a string', path)
     }
     const lastDotIndex = path.lastIndexOf('.')
     if (lastDotIndex === -1) {

@@ -17,7 +17,7 @@
  * @param received - The actual value received
  * @returns Error message string
  */
-export function errMsg(varName: string, expected: string, received: unknown): string {
+export function errMsg(varName: string, expected: any, received: unknown): string {
     return `Expected '${varName}' to be ${expected}. Got ${received} (${typeof received})`
 }
 
@@ -31,6 +31,6 @@ export function errMsg(varName: string, expected: string, received: unknown): st
  * @param received - The actual value received
  * @returns A TypeError ready to be thrown
  */
-export function typeErr(varName: string, expected: string, received: unknown): TypeError {
+export function typeErr(varName: string, expected: any, received: unknown): TypeError {
     return new TypeError(errMsg(varName, expected, received))
 }

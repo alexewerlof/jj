@@ -66,7 +66,7 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
      */
     constructor(ref: T) {
         if (!isA(ref, DocumentFragment)) {
-            throw new TypeError(`Expected a DocumentFragment. Got ${ref} (${typeof ref})`)
+            throw typeErr('ref', 'a DocumentFragment', ref)
         }
         super(ref)
     }

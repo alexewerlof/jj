@@ -150,8 +150,8 @@ describe('JJHE', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
                 assert.throws(() => jjhe.getValue(), {
-                    name: 'Error',
-                    message: /Cannot get value from <DIV>/,
+                    name: 'ReferenceError',
+                    message: /has no value property/,
                 })
             })
         })
@@ -175,8 +175,8 @@ describe('JJHE', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
                 assert.throws(() => jjhe.setValue('test'), {
-                    name: 'Error',
-                    message: /Cannot set value on <DIV>/,
+                    name: 'ReferenceError',
+                    message: /has no value property/,
                 })
             })
         })

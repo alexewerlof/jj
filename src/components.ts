@@ -16,7 +16,7 @@ import { keb2cam } from './case.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML | Element.outerHTML}
  */
 async function templatePromise(templateConfig?: JJTemplateConfig): Promise<ShadowConfig['template']> {
-    if (!isDef(templateConfig)) {
+    if (templateConfig === undefined) {
         return undefined
     }
 
@@ -36,7 +36,7 @@ async function templatePromise(templateConfig?: JJTemplateConfig): Promise<Shado
         return templateConfig.outerHTML
     }
 
-    throw new TypeError(`Expected template to be a string, JJHE, or HTMLElement. Got ${typeof templateConfig}`)
+    throw typeErr('template', 'a string, JJHE, or HTMLElement', templateConfig)
 }
 
 /**
@@ -64,7 +64,7 @@ async function stylePromise(styleConfig?: JJStyleConfig): Promise<CSSStyleSheet>
         return await cssToStyle(styleConfig)
     }
 
-    throw new TypeError(`Expected style to be a CSS string or CSSStyleSheet. Got ${typeof styleConfig}`)
+    throw typeErr('style', 'a CSS string or CSSStyleSheet', styleConfig)
 }
 
 /**
@@ -231,9 +231,7 @@ export class ShadowMaster {
  */
 export function attr2prop(instance: HTMLElement, name: string, oldValue: any, newValue: any) {
     if (!isA(instance, HTMLElement)) {
-        throw new TypeError(
-            `Expected an HTMLElement or a custom element instance. Got ${instance} (${typeof instance})`,
-        )
+        throw typeErr('instance', 'an HTMLElement', instance)
     }
     // Called when observed attributes change.
     if (oldValue !== newValue) {

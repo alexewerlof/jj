@@ -79,10 +79,7 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
             return JJN.wrap(el)
         }
         if (required) {
-            throw new TypeError(
-                `Element with id "${id}" not found in the document. ` +
-                    `Did you mean to call .byId("${id}", false) to return null instead? `,
-            )
+            throw new TypeError(`Element with id "${id}" not found in the document.`)
         }
         return null
     }

@@ -1,4 +1,5 @@
 import { isStr } from 'jty'
+import { errMsg, typeErr } from './internal.js'
 
 /**
  * Converts a PascalCase, camelCase, or snake_case string to kebab-case.
@@ -21,10 +22,10 @@ import { isStr } from 'jty'
  */
 export function pas2keb(str: string): string {
     if (!isStr(str)) {
-        throw new TypeError(`Expected a string. Got ${str} (${typeof str})`)
+        throw typeErr('str', 'a string', str)
     }
     if (/[^a-zA-Z0-9_]/.test(str)) {
-        throw new TypeError(`Invalid characters in string. Only alphanumeric and underscores are allowed. Got: ${str}`)
+        throw new SyntaxError(errMsg('str', 'alphanumeric characters and underscores', str))
     }
     return str
         .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
@@ -55,7 +56,7 @@ export function pas2keb(str: string): string {
  */
 export function keb2pas(str: string): string {
     if (!isStr(str)) {
-        throw new TypeError(`Expected a string. Got ${str} (${typeof str})`)
+        throw typeErr('str', 'a string', str)
     }
     return (
         str
@@ -88,7 +89,7 @@ export function keb2pas(str: string): string {
  */
 export function keb2cam(str: string): string {
     if (!isStr(str)) {
-        throw new TypeError(`Expected a string. Got ${str} (${typeof str})`)
+        throw typeErr('str', 'a string', str)
     }
     return str
         .replace(/^-+|-+$/g, '') // Remove any leading or trailing hyphens

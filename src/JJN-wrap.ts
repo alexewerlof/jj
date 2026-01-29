@@ -1,4 +1,5 @@
 import { isA, isObj, isStr } from 'jty'
+import { typeErr } from './internal.js'
 import { JJHE } from './JJHE.js'
 import { JJE } from './JJE.js'
 import { JJDF } from './JJDF.js'
@@ -14,7 +15,7 @@ JJN.wrap = function wrap(raw: Wrappable): Wrapped {
         return JJT.fromStr(raw)
     }
     if (!isObj(raw)) {
-        throw new TypeError(`Expected an object to wrap. Got ${raw} (${typeof raw})`)
+        throw typeErr('raw', 'an object', raw)
     }
     if (isA(raw, JJN)) {
         return raw
@@ -43,5 +44,5 @@ JJN.wrap = function wrap(raw: Wrappable): Wrapped {
     if (isA(raw, Node)) {
         return JJN.from(raw)
     }
-    throw new TypeError(`Expected a Node to wrap. Got ${raw} (${typeof raw})`)
+    throw typeErr('raw', 'a Node', raw)
 }

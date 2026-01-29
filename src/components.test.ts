@@ -91,7 +91,7 @@ describe('components', () => {
                 sm.setTemplate(123 as any)
                 await assert.rejects(async () => await sm.getResolved(), {
                     name: 'TypeError',
-                    message: /Expected template to be a string, JJHE, or HTMLElement/,
+                    message: /Expected 'template' to be a string, JJHE, or HTMLElement/,
                 })
             })
         })
@@ -159,7 +159,7 @@ describe('components', () => {
                 sm.addStyles(123 as any)
                 await assert.rejects(async () => await sm.getResolved(), {
                     name: 'TypeError',
-                    message: /Expected style to be a CSS string or CSSStyleSheet/,
+                    message: /Expected 'style' to be a CSS string or CSSStyleSheet/,
                 })
             })
 
@@ -250,7 +250,7 @@ describe('components', () => {
         it('throws TypeError for non-HTMLElement instance', () => {
             assert.throws(() => attr2prop({} as any, 'test', null, 'value'), {
                 name: 'TypeError',
-                message: /Expected an HTMLElement/,
+                message: /Expected 'instance' to be an HTMLElement/,
             })
         })
 

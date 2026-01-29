@@ -23,10 +23,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
             return JJN.wrap(queryResult)
         }
         if (required) {
-            throw new TypeError(
-                `Element with selector "${selector}" not found. ` +
-                    `Did you mean to call .find("${selector}", false) to return null instead? `,
-            )
+            throw new TypeError(`No element matched query "${selector}"`)
         }
         return null
     }

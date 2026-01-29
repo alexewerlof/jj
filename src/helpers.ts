@@ -177,7 +177,7 @@ export function addLinkPre(...args: Parameters<typeof createLinkPre>) {
  */
 export async function fetchText(url: URL | string, mime: string = 'text/*') {
     if (!isStr(mime)) {
-        throw new TypeError(`Expected a string mime like 'text/html' or 'text/css'. Got ${mime} (${typeof mime})`)
+        throw typeErr('mime', 'a string', mime)
     }
     const response = await fetch(url, { headers: { Accept: mime } })
     if (!response.ok) {
