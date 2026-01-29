@@ -87,7 +87,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
     getValue() {
         if (!hasProp(this.ref, 'value')) {
             throw new Error(
-                `Cannot get value from <${this.ref.tagName.toLowerCase()}>. ` +
+                `Cannot get value from <${this.ref.tagName}>. ` +
                     `The value property only exists on form elements (input, textarea, select). ` +
                     `If you need text content, try .getText() instead.`,
             )
@@ -112,7 +112,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
     setValue(value: any): this {
         if (!hasProp(this.ref, 'value')) {
             throw new Error(
-                `Cannot set value on <${this.ref.tagName.toLowerCase()}>. ` +
+                `Cannot set value on <${this.ref.tagName}>. ` +
                     `The value property only exists on form elements (input, textarea, select). ` +
                     `If you need to set text content, try .setText() instead.`,
             )
