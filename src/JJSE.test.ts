@@ -32,15 +32,15 @@ describe('JJSE', () => {
         })
     })
 
-    describe('static fromTag()', () => {
+    describe('static create()', () => {
         it('creates SVG element from tag name', () => {
-            const jjse = JJSE.fromTag('circle')
+            const jjse = JJSE.create('circle')
             assert.ok(jjse.ref instanceof SVGElement)
             assert.strictEqual(jjse.ref.tagName, 'circle')
         })
 
         it('throws TypeError for non-string tagName', () => {
-            assert.throws(() => JJSE.fromTag(123 as any), TypeError)
+            assert.throws(() => JJSE.create(123 as any), TypeError)
         })
     })
 

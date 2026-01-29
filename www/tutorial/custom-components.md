@@ -533,10 +533,23 @@ export class ChatMessage extends HTMLElement {
 **Usage in JavaScript:**
 
 ```javascript
+import { ChatMessage } from './components/chat-message.js'
+
+// Wait till the component is registered and ready to use
+await ChatMessage.register()
+
+// Native Browser Syntax
 const msg = document.createElement('chat-message')
 msg.role = 'assistant'
 msg.content = 'Hello from code!'
 document.body.appendChild(msg)
+// JJ Syntax
+doc.body.addChild(
+    JJHE.create('chat-message').setAttr({
+        role: 'assistant',
+        content: 'Hello from code!',
+    }),
+)
 ```
 
 ### Component Without Shadow DOM

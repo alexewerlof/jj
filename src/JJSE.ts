@@ -38,7 +38,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      *
      * @example
      * ```ts
-     * const circle = JJSE.fromTag('circle')
+     * const circle = JJSE.create('circle')
      * ```
      *
      * @param tagName - The tag name.
@@ -47,7 +47,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      * @throws {TypeError} If `tagName` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS | document.createElementNS}
      */
-    static fromTag(tagName: string, options?: ElementCreationOptions): JJSE {
+    static create(tagName: string, options?: ElementCreationOptions): JJSE {
         if (!isStr(tagName)) {
             throw typeErr('tagName', 'a string like "circle" or "path"', tagName)
         }

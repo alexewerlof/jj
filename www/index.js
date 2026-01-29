@@ -4,7 +4,7 @@ import { CodeHighlight } from './components/code-highlight.js'
 
 await Promise.all([SimpleCounter.register(), RenderMarkdown.register(), CodeHighlight.register()])
 
-import doc from '../lib/bundle.js'
+import { doc } from '../lib/bundle.js'
 
 // 1. Handle Copy Button Logic
 const copyBtn = doc.byId('copy-btn').on('click', async () => {

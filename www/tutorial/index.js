@@ -1,4 +1,4 @@
-import doc, { fetchText } from '../../lib/bundle.js'
+import { doc, fetchText } from '../../lib/bundle.js'
 import { RenderMarkdown } from '../components/render-markdown.js'
 import toc from './toc.js'
 

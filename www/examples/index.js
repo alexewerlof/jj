@@ -46,17 +46,17 @@ async function loadExamples() {
                 .setText('View on GitHub →')
 
             // Assemble the structure
-            actions.ref.appendChild(viewLink.ref)
-            actions.ref.appendChild(githubLink.ref)
+            actions.addChild(viewLink)
+            actions.addChild(githubLink)
 
-            header.ref.appendChild(title.ref)
-            header.ref.appendChild(desc.ref)
+            header.addChild(title)
+            header.addChild(desc)
 
-            card.ref.appendChild(header.ref)
-            card.ref.appendChild(actions.ref)
+            card.addChild(header)
+            card.addChild(actions)
 
             // Append card to examples container
-            examplesContainer.ref.appendChild(card.ref)
+            examplesContainer.addChild(card)
         })
     } catch (error) {
         const examplesContainer = doc.byId('examples', true)
@@ -68,8 +68,8 @@ async function loadExamples() {
         const errorDiv = JJHE.create('div').addClass('error')
         const errorMsg = JJHE.create('p').setText(`Error loading examples: ${error.message}`)
 
-        errorDiv.ref.appendChild(errorMsg.ref)
-        examplesContainer.ref.appendChild(errorDiv.ref)
+        errorDiv.addChild(errorMsg)
+        examplesContainer.addChild(errorDiv)
 
         console.error('Failed to load examples:', error)
     }

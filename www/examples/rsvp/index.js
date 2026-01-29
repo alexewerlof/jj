@@ -1,5 +1,5 @@
 import { RSVPEngine } from './RSVPEngine.js'
-import doc, { sleep, fetchText } from '../../../lib/bundle.js'
+import { doc, sleep, fetchText } from '../../../lib/bundle.js'
 
 const inputTextArea = doc.byId('input-text')
 const leftSpan = doc.byId('left-side')

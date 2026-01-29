@@ -13,7 +13,7 @@ Instead, we can use a `DocumentFragment` to accumulate all the children and then
 Instead of:
 
 ```ts
-import doc, { JJHE } from 'jj'
+import { doc, JJHE } from 'jj'
 const contents = ['New York', 'Stockholm', 'Tokyo']
 const parent = doc.byId('#parent-ul')
 
@@ -25,7 +25,7 @@ for (const city of contents) {
 Write:
 
 ```ts
-import doc, { JJDF, JJHE } from 'jj'
+import { doc, JJDF, JJHE } from 'jj'
 const contents = ['New York', 'Stockholm', 'Tokyo']
 const parent = doc.byId('#parent-ul')
 
@@ -46,7 +46,7 @@ Instead, we can attach the event listener to a common parent and take advantage 
 Example, instead of:
 
 ```ts
-import doc from 'jj'
+import { doc } from 'jj'
 const parent = doc.byId('#parent-ul')
 for (const child of parent.getChildren()) {
     child.on('click', function () {
@@ -56,7 +56,7 @@ for (const child of parent.getChildren()) {
 ```
 
 ```ts
-import doc from 'jj'
+import { doc } from 'jj'
 const parent = doc.byId('#parent-ul')
 parent.on('click', function (evt) {
     if (evt.target?.tagName !== 'LI') return

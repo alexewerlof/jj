@@ -53,7 +53,10 @@ The `.ref` always points to the underlying DOM entity, be in a
 If you want to append the created `<div>` element to the body, all you have to do is:
 
 ```js
+// Native DOM
 document.body.appendChild(divWrapper.ref)
+// JJ
+document.body.addChild(divWrapper)
 ```
 
 ## Querying

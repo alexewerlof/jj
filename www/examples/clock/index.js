@@ -1,4 +1,4 @@
-import doc, { JJDF, JJSE } from '../../../lib/bundle.js'
+import { doc, JJDF, JJSE } from '../../../lib/bundle.js'
 
 const clock = doc.byId('clock')
 const secondHand = doc.byId('second-hand')
@@ -9,7 +9,7 @@ function createMinuteIndicators() {
     const frag = JJDF.create()
 
     for (let i = 0; i < 60; i++) {
-        const line = JJSE.fromTag('line')
+        const line = JJSE.create('line')
         line.addClass('minute-indicator')
         const fifth = i % 5 === 0
 
@@ -25,7 +25,7 @@ function createMinuteIndicators() {
             transform: `rotate(${i * 6} 50 50)`,
         })
 
-        frag.append(line)
+        frag.addChild(line)
     }
 
     return frag
