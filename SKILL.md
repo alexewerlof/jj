@@ -35,14 +35,16 @@ JJ is a minimal, imperative DOM manipulation library designed for modern web dev
 ## Main Classes
 
 - **JJET**: Wraps a DOM `EventTrigger` elements. Base wrapper for all other wrappers.
-- **JJN**: Wraps a DOM `Node`.
-- **JJD**: Wraps a DOM `Document`. For querying elements in a document
-- **JJE**: Wraps a DOM `Element`. Generic element wrapper
-- **JJHE**: Wraps a DOM `HTMLElement`. Extends JJE with HTML-specific methods
-- **JJT**: Wraps a DOM `Text`. Text node operations
-- **JJSE**: Wraps a DOM `SVGElements`. SVG-specific operations
-- **JJSR**: Wraps a DOM `ShadowRoot`. Shadow DOM operations. See **Custom Components** section.
-- **JJDF**: Wraps a DOM `DocumentFragment`. Fragment operations
+- **JJN**: Wraps a DOM `Node`. Extends `JJET`.
+- **JJNx**: Abstract wrapper for `Node`s that can have children and query selectors (`Element`, `Document`, `DocumentFragment`). Extends `JJN`.
+- **JJD**: Wraps a DOM `Document`. Extends `JJNx`.
+- **JJE**: Wraps a DOM `Element`. Generic element wrapper. Extends `JJNx`.
+- **JJEx**: Abstract wrapper for `Element`s that have dataset support (`HTMLElement`, `SVGElement`). Extends `JJE`.
+- **JJHE**: Wraps a DOM `HTMLElement`. Extends `JJEx`.
+- **JJT**: Wraps a DOM `Text`. Text node operations. Extends `JJN`.
+- **JJSE**: Wraps a DOM `SVGElements`. SVG-specific operations. Extends `JJEx`.
+- **JJSR**: Wraps a DOM `ShadowRoot`. Shadow DOM operations. Extends `JJDF`.
+- **JJDF**: Wraps a DOM `DocumentFragment`. Fragment operations. Extends `JJNx`.
 
 ## Quick Start
 
@@ -129,7 +131,7 @@ Use `.ref` when:
 All imports use `.js` extension even in TypeScript files:
 
 ```typescript
-import { JJD } from './index.js'
+import { h, doc, JJD } from './index.js'
 ```
 
 This is required by the project's ESM configuration. Never use `.ts` extensions in imports.
@@ -145,6 +147,13 @@ element.textContent = 'hello'
 
 // Correct: chain operations before accessing .ref
 doc.create('div').setText('hello').addClass('greeting').addChild(childElement)
+
+// Use .run() to execute code in the context of the wrapper
+doc.create('div').run(function () {
+    // `this` refers to the JJ wrapper instance
+    this.addClass('active')
+    console.log(this.ref) // Access native element
+})
 ```
 
 Common chainable operations:
@@ -153,6 +162,8 @@ Common chainable operations:
 el.addClass('active').removeClass('disabled').toggleClass('visible')
 el.attr('data-age', 42).prop('disabled', false)
 el.style('background-color', 'blue').style('padding', '10px')
+// ARIA helpers
+el.setAria('hidden', 'true').rmAria('label')
 ```
 
 ### 3. Type-Safe Element Creation
@@ -180,9 +191,18 @@ const input = doc.create<HTMLInputElement>('input')
 const input = doc.create('input') // Correctly typed as JJHE<HTMLInputElement>
 ```
 
-### 4. Custom Components
+### 4. Custom Elements
 
-JJ provides `ShadowMaster` for managing Shadow DOM configuration (templates and styles) with support for eager/lazy loading.
+JJ is not opnionated about custom elements. You should use the native lifecycle callbacks:
+Custom element lifecycle callbacks include (all of which can be `async`):
+
+- `connectedCallback()`: Called each time the element is added to the document. The specification recommends that, as far as possible, developers should implement custom element setup in this callback instead of the constructor. JJ provides `ShadowMaster` for managing Shadow DOM configuration (templates and styles) with support for eager/lazy loading.
+- `disconnectedCallback()`: Called each time the element is removed from the document.
+- `connectedMoveCallback()`: When defined, this is called instead of `connectedCallback()` and `disconnectedCallback()` each time the element is moved to a different place in the DOM via `Element.moveBefore()`. Use this to avoid running initialization/cleanup code in the `connectedCallback()` and `disconnectedCallback()` callbacks when the element is not actually being added to or removed from the DOM.
+- `adoptedCallback()`: Called each time the element is moved to a new document.
+- `attributeChangedCallback()`: Called when attributes are changed, added, removed, or replaced. See Responding to attribute changes for more details about this callback. JJ provides `attr2prop()` for converting attributes to properties.
+
+On top of those, JJ also provides `registerComponent()` for registering custom elements and awaiting till they are defined.
 
 **Basic pattern** - Create a shared `ShadowMaster` instance outside the class for caching:
 
@@ -323,22 +343,22 @@ The library uses explicit error handling:
 - Use type guards (`isElement`, `isHTMLElement`, etc.)
 - Validate inputs at boundaries
 
-### 8. Styling & CSS
+### 8. Styling, CSS & Resources
 
 Inject styles using helper functions:
 
 ```typescript
-import { fetchCss, cssToStyle } from 'jj'
+import { fetchCss, fetchStyle, cssToStyle, addLinkPre } from 'jj'
 
 // Fetch and inject external CSS
 document.adoptedStyleSheets.push(await fetchCss('/styles/theme.css'))
 
-// Or create inline styles
-const style = JJHE('style').setText(`
-  .card { padding: 1rem; }
-  .card:hover { background: #f0f0f0; }
-`)
-document.head.append(style)
+const cssPath = import.meta.resolve('./styles/theme.css')
+// Preload/Prefetch resources ASAP
+addLinkPre(cssPath, 'preload', 'style')
+// Helper for Constructable Stylesheets loading lazily
+const sheet = await fetchStyle(cssPath)
+document.adoptedStyleSheets = [sheet]
 ```
 
 ### 9. Accessing Native DOM with `.ref`
@@ -444,7 +464,7 @@ btn.on('click', () => {
 
 ### Creating a Custom Element
 
-See section **4. Custom Components** above for the full pattern. Here's a minimal example:
+See section **4. Custom Elements** above for the full pattern. Here's a minimal example:
 
 ```typescript
 import { attr2prop, fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from 'jj'
