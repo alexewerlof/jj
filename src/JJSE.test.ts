@@ -82,4 +82,17 @@ describe('JJSE', () => {
             assert.strictEqual(svg.textContent, 'true')
         })
     })
+
+    describe('empty()', () => {
+        it('removes all children', () => {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+            svg.appendChild(circle)
+            const jjse = new JJSE(svg)
+
+            assert.strictEqual(svg.childNodes.length, 1)
+            jjse.empty()
+            assert.strictEqual(svg.childNodes.length, 0)
+        })
+    })
 })

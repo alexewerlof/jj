@@ -61,17 +61,21 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      *
      * @example
      * ```ts
-     * shadow.setHTML('<p>Hello</p>', false)
+     * shadow.setHTML('<p>Hello</p>', true)
      * ```
      *
-     * @param value - The HTML string.
-     * @param unsafe - Reserved for future use (must be false).
+     * @param html - The HTML string to set, or null/undefined to clear.
+     * @param unsafe - explicit opt-in to set innerHTML. must be true if html is provided.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
      */
-    setHTML(value: string, unsafe: false): this {
-        // TODO: https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/setHTMLUnsafe
-        this.ref.innerHTML = value
+    setHTML(html: string | null | undefined, unsafe?: boolean): this {
+        if (html && unsafe !== true) {
+            throw new Error(
+                `Setting innerHTML is unsafe. Pass true as the second argument to confirm you know what you are doing.`,
+            )
+        }
+        this.ref.innerHTML = html ?? ''
         return this
     }
 

@@ -50,7 +50,7 @@ describe('JJSR', () => {
             const host = document.createElement('div')
             const shadowRoot = host.attachShadow({ mode: 'open' })
             const jjsr = new JJSR(shadowRoot)
-            jjsr.setHTML('<span>new</span>', false)
+            jjsr.setHTML('<span>new</span>', true)
             assert.strictEqual(shadowRoot.innerHTML, '<span>new</span>')
         })
     })

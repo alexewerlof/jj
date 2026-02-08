@@ -387,4 +387,38 @@ describe('JJE', () => {
             assert.strictEqual(el.hasAttribute('aria-hidden'), false)
         })
     })
+
+    describe('setHTML()', () => {
+        it('sets innerHTML when unsafe is true', () => {
+            const el = document.createElement('div')
+            const jje = new JJE(el)
+            jje.setHTML('<span>test</span>', true)
+            assert.strictEqual(el.innerHTML, '<span>test</span>')
+        })
+
+        it('throws when HTML provided but unsafe is not true', () => {
+            const el = document.createElement('div')
+            const jje = new JJE(el)
+            assert.throws(() => jje.setHTML('<span>test</span>'), /Setting innerHTML is unsafe/)
+            assert.throws(() => jje.setHTML('<span>test</span>', false), /Setting innerHTML is unsafe/)
+        })
+
+        it('allows clearing HTML without unsafe flag', () => {
+            const el = document.createElement('div')
+            el.innerHTML = '<span>test</span>'
+            const jje = new JJE(el)
+            jje.setHTML(null)
+            assert.strictEqual(el.innerHTML, '')
+
+            el.innerHTML = '<span>test</span>'
+            jje.setHTML(undefined)
+            assert.strictEqual(el.innerHTML, '')
+
+            el.innerHTML = '<span>test</span>'
+            jje.setHTML('') // Empty string is also considered "clearing" or safe enough?
+            // Wait, looking at implementation: `html` is falsy so it enters `if (html && ...)` check?
+            // if html is '', `html` is false, so check passes.
+            assert.strictEqual(el.innerHTML, '')
+        })
+    })
 })

@@ -112,22 +112,6 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
     }
 
     /**
-     * Clears the text content of the SVGElement.
-     *
-     * @example
-     * ```ts
-     * svg.empty()
-     * ```
-     *
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
-     */
-    empty(): this {
-        this.ref.textContent = ''
-        return this
-    }
-
-    /**
      * Sets the fill attribute.
      *
      * @param value - The fill color/value.

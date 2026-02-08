@@ -427,10 +427,16 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * Pass an empty string, `null`, or `undefined` to clear the content.
      *
      * @param html - The HTML string to set, or null/undefined to clear.
+     * @param unsafe - explicit opt-in to set innerHTML. must be true if html is provided.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
      */
-    setHTML(html?: string | null): this {
+    setHTML(html: string | null | undefined, unsafe?: boolean): this {
+        if (html && unsafe !== true) {
+            throw new Error(
+                `Setting innerHTML is unsafe. Pass true as the second argument to confirm you know what you are doing.`,
+            )
+        }
         this.ref.innerHTML = html ?? ''
         return this
     }
