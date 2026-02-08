@@ -5,9 +5,9 @@ import { doc, JJHE } from '../../../../lib/bundle.js'
 await ChatThread.register()
 await ChatMessage.register()
 
-const promptInput = doc.byId('prompt-input')
-const chatForm = doc.byId('chat-form')
-const chatThread = doc.byId('chat-thread')
+const promptInput = doc.find('#prompt-input')
+const chatForm = doc.find('#chat-form')
+const chatThread = doc.find('#chat-thread')
 
 promptInput.on('keydown', (event) => {
     if (event.key === 'Enter' && !event.ctrlKey && !event.isComposing) {

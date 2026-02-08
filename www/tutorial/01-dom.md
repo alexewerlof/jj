@@ -72,7 +72,6 @@ In JJ, these are wrapped as:
 
 - `.find(selector)` - finds the first element matching the selector (returns null if not found)
 - `.findAll(selector)` - finds all elements matching the selector
-- `.byId(id)` - finds an element by ID
 
 ```js
 // Find element by class
@@ -82,7 +81,10 @@ const card = doc.find('.card')
 const items = doc.findAll('li')
 
 // Find element by ID
-const header = doc.byId('header')
+const header = doc.find('#header')
+
+// If you are sure the element exists, pass true to throw if missing
+const app = doc.find('#app', true)
 ```
 
 ## Chaining

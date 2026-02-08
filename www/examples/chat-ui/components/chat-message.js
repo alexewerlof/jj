@@ -40,7 +40,7 @@ export class ChatMessage extends HTMLElement {
     }
 
     #renderRole() {
-        this.jjRoot?.shadow.byId('role').setText(this.role)
+        this.jjRoot?.shadow.find('#role').setText(this.role)
     }
 
     get content() {
@@ -53,7 +53,7 @@ export class ChatMessage extends HTMLElement {
     }
 
     #renderContent() {
-        this.jjRoot?.shadow.byId('content').setHTML(this.contentHtml)
+        this.jjRoot?.shadow.find('#content').setHTML(this.contentHtml)
     }
 
     async connectedCallback() {

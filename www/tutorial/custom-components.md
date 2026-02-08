@@ -92,7 +92,7 @@ async connectedCallback() {
     this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
 
     // Set up event listeners
-    this.jjRoot.shadow.byId('btn').on('click', () => this.#handleClick())
+    this.jjRoot.shadow.find('#btn').on('click', () => this.#handleClick())
 
     // Initial render
     this.#render()
@@ -226,8 +226,8 @@ class MyComponent extends HTMLElement {
 
     // Check for shadow existence - attributeChangedCallback fires BEFORE connectedCallback!
     #render() {
-        this.jjRoot?.shadow.byId('name').setText(this.userName)
-        this.jjRoot?.shadow.byId('count').setText(this.count)
+        this.jjRoot?.shadow.find('#name').setText(this.userName)
+        this.jjRoot?.shadow.find('#count').setText(this.count)
     }
 }
 ```
@@ -344,8 +344,12 @@ sm.setTemplate(await fetchHtml(import.meta.resolve('./template.html')))
 sm.setTemplate('<div id="root"><slot></slot></div>')
 
 // From existing <template> element
-const tmpl = document.querySelector('#my-template')
+const tmpl = document.querySelector('template#my-template')
 sm.setTemplate(tmpl.innerHTML)
+
+// From a JJ element
+sm.setTemplate(JJHE.from('template#my-template')) // Uses <template> innerHTML
+sm.setTemplate(JJHE.from('div#source')) // Uses outerHTML
 
 // From any element's HTML
 sm.setTemplate(document.getElementById('source').outerHTML)
@@ -444,13 +448,13 @@ export class SimpleCounter extends HTMLElement {
     async connectedCallback() {
         this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
 
-        this.jjRoot.shadow.byId('inc').on('click', () => this.#update(1))
-        this.jjRoot.shadow.byId('dec').on('click', () => this.#update(-1))
+        this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
+        this.jjRoot.shadow.find('#dec').on('click', () => this.#update(-1))
     }
 
     #update(delta) {
         this.#count += delta
-        this.jjRoot.shadow.byId('count').setText(this.#count)
+        this.jjRoot.shadow.find('#count').setText(this.#count)
     }
 }
 ```
@@ -517,8 +521,8 @@ export class ChatMessage extends HTMLElement {
     }
 
     #render() {
-        this.jjRoot?.shadow.byId('role').setText(this.#role)
-        this.jjRoot?.shadow.byId('content').setText(this.#content)
+        this.jjRoot?.shadow.find('#role').setText(this.#role)
+        this.jjRoot?.shadow.find('#content').setText(this.#content)
     }
 }
 ```

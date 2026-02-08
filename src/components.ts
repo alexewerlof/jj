@@ -10,7 +10,7 @@ import { keb2cam } from './case.js'
  *
  * Handles functions (sync/async), promises, strings, JJHE instances, and HTMLElements.
  *
- * @param templateConfig - The configuration to resolve.
+ * @param templateConfig - The template configuration to resolve.
  * @returns A promise resolving to the HTML string or undefined.
  * @throws {TypeError} If the resolved value is not a string, JJHE, or HTMLElement.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML | Element.outerHTML}
@@ -30,10 +30,10 @@ async function templatePromise(templateConfig?: JJTemplateConfig): Promise<Shado
         return templateConfig
     }
     if (isA(templateConfig, JJHE)) {
-        return templateConfig.getHTML()
+        templateConfig = templateConfig.ref
     }
     if (isA(templateConfig, HTMLElement)) {
-        return templateConfig.outerHTML
+        return templateConfig.tagName === 'TEMPLATE' ? templateConfig.innerHTML : templateConfig.outerHTML
     }
 
     throw typeErr('template', 'a string, JJHE, or HTMLElement', templateConfig)
@@ -45,7 +45,7 @@ async function templatePromise(templateConfig?: JJTemplateConfig): Promise<Shado
  * Handles functions (sync/async), promises, CSSStyleSheet instances, and strings.
  * Strings are converted to CSSStyleSheet using `cssToStyle`.
  *
- * @param styleConfig - The configuration to resolve.
+ * @param styleConfig - The style configuration to resolve.
  * @returns A promise resolving to a CSSStyleSheet.
  * @throws {TypeError} If the resolved value is not a string or CSSStyleSheet.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet | CSSStyleSheet}
@@ -215,8 +215,8 @@ export class ShadowMaster {
  *     #render() {
  *         const shadow = JJHE.from(this).shadow
  *         if (shadow) {
- *             shadow.byId('user').setText(this.userName)
- *             shadow.byId('counter').setText(this.counter)
+ *             shadow.find('#user').setText(this.userName)
+            shadow.find('#counter').setText(this.counter)
  *         }
  *     }
  * }

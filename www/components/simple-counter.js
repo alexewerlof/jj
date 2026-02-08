@@ -20,13 +20,13 @@ export class SimpleCounter extends HTMLElement {
         this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
 
         // Access elements inside Shadow DOM via this.jjRoot
-        this.countSpan = this.jjRoot.shadow.byId('count')
-        this.incBtn = this.jjRoot.shadow.byId('inc').on('click', () => this.#update(1))
-        this.decBtn = this.jjRoot.shadow.byId('dec').on('click', () => this.#update(-1))
+        this.countSpan = this.jjRoot.shadow.find('#count')
+        this.incBtn = this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
+        this.decBtn = this.jjRoot.shadow.find('#dec').on('click', () => this.#update(-1))
     }
 
     #update(delta) {
         this.#count += delta
-        this.jjRoot.shadow.byId('count').setText(this.#count)
+        this.jjRoot.shadow.find('#count').setText(this.#count)
     }
 }

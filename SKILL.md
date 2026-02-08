@@ -118,6 +118,13 @@ const wrapped = JJD.from(document).create('div')
 const nativeElement: HTMLDivElement = wrapped.ref
 ```
 
+**Tip**: If you are sure an element exists (e.g. static HTML), pass `true` as the second argument to `.find()` to throw if missing:
+
+```typescript
+// Throws TypeError if #app is missing
+const app = doc.find('#app', true)
+```
+
 Use `.ref` when:
 
 - Accessing properties not exposed by JJ wrappers
@@ -244,8 +251,8 @@ export class MyComponent extends HTMLElement {
         this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
 
         // Access elements inside Shadow DOM
-        this.jjRoot.shadow.byId('inc').on('click', () => this.#update(1))
-        this.jjRoot.shadow.byId('dec').on('click', () => this.#update(-1))
+        this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
+        this.jjRoot.shadow.find('#dec').on('click', () => this.#update(-1))
         this.#render()
     }
 
@@ -255,8 +262,8 @@ export class MyComponent extends HTMLElement {
     }
 
     #render() {
-        this.jjRoot?.shadow.byId('title').setText(this.#title)
-        this.jjRoot?.shadow.byId('count').setText(this.#count)
+        this.jjRoot?.shadow.find('#title').setText(this.#title)
+        this.jjRoot?.shadow.find('#count').setText(this.#count)
     }
 }
 ```
@@ -482,13 +489,13 @@ export class SimpleCounter extends HTMLElement {
 
     async connectedCallback() {
         this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
-        this.jjRoot.shadow.byId('inc').on('click', () => this.#update(1))
-        this.jjRoot.shadow.byId('dec').on('click', () => this.#update(-1))
+        this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
+        this.jjRoot.shadow.find('#dec').on('click', () => this.#update(-1))
     }
 
     #update(delta) {
         this.#count += delta
-        this.jjRoot.shadow.byId('count').setText(this.#count)
+        this.jjRoot.shadow.find('#count').setText(this.#count)
     }
 }
 ```
@@ -532,7 +539,7 @@ const wrapped = JJET.from(templateEl.ref)
 const items = ['Apple', 'Banana', 'Cherry']
 items.forEach((item) => {
     const clone = wrapped.createInstance()
-    clone.byId('name')?.setText(item)
+    clone.find('#name')?.setText(item)
     doc.find('#list')?.addChild(clone.ref)
 })
 ```

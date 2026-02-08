@@ -15,7 +15,7 @@ Instead of:
 ```ts
 import { doc, JJHE } from 'jj'
 const contents = ['New York', 'Stockholm', 'Tokyo']
-const parent = doc.byId('#parent-ul')
+const parent = doc.find('#parent-ul')
 
 for (const city of contents) {
     parent.append(JJHE.from('li').setText(city))
@@ -27,7 +27,7 @@ Write:
 ```ts
 import { doc, JJDF, JJHE } from 'jj'
 const contents = ['New York', 'Stockholm', 'Tokyo']
-const parent = doc.byId('#parent-ul')
+const parent = doc.find('#parent-ul')
 
 const docFrag = new JJDF()
 for (const city of contents) {
@@ -47,7 +47,7 @@ Example, instead of:
 
 ```ts
 import { doc } from 'jj'
-const parent = doc.byId('#parent-ul')
+const parent = doc.find('#parent-ul')
 for (const child of parent.getChildren()) {
     child.on('click', function () {
         alert('Hello world')
@@ -57,7 +57,7 @@ for (const child of parent.getChildren()) {
 
 ```ts
 import { doc } from 'jj'
-const parent = doc.byId('#parent-ul')
+const parent = doc.find('#parent-ul')
 parent.on('click', function (evt) {
     if (evt.target?.tagName !== 'LI') return
     alert('Hello world')

@@ -24,7 +24,7 @@ import { JJD } from './JJD.js'
  * @example
  * ```ts
  * import { doc } from 'jj'
- * const el = doc.byId('my-element') // A JJHE instance
+ * const el = doc.find('#my-element') // A JJHE instance
  * const body = doc.body             // A JJHE instance
  * doc.addChild(JJHE.create('script').setAttr('src', 'my-code.js'))
  * doc.head.addChild(JJHE.create('link').setAttr({

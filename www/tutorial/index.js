@@ -4,7 +4,7 @@ import toc from './toc.js'
 
 await RenderMarkdown.register()
 
-doc.byId('toc').append(toc)
+doc.find('#toc').append(toc)
 
 function getFrom(urlStr) {
     const url = new URL(urlStr)
@@ -16,7 +16,7 @@ function fetchFile(path) {
     return fetchText(url)
 }
 
-const contentRenderer = doc.byId('content-renderer')
+const contentRenderer = doc.find('#content-renderer')
 console.log(contentRenderer)
 console.log(contentRenderer.ref.content)
 const file = getFrom(window.location)

@@ -42,31 +42,26 @@ describe('JJD', () => {
         })
     })
 
-    describe('byId()', () => {
+    describe('find() by ID', () => {
         it('finds element by id', () => {
             const jjd = new JJD(document)
-            const result = jjd.byId('test-id')
+            const result = jjd.find('#test-id')
             assert.ok(result)
             assert.strictEqual((result.ref as HTMLElement).id, 'test-id')
         })
 
         it('returns null when not found', () => {
             const jjd = new JJD(document)
-            const result = jjd.byId('nonexistent')
+            const result = jjd.find('#nonexistent')
             assert.strictEqual(result, null)
         })
 
         it('throws when required and not found', () => {
             const jjd = new JJD(document)
-            assert.throws(() => jjd.byId('nonexistent', true), {
+            assert.throws(() => jjd.find('#nonexistent', true), {
                 name: 'TypeError',
-                message: /not found/,
+                message: /No element matched query "#nonexistent"/,
             })
-        })
-
-        it('throws TypeError for non-string id', () => {
-            const jjd = new JJD(document)
-            assert.throws(() => jjd.byId(123 as any), TypeError)
         })
     })
 

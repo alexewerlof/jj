@@ -7,7 +7,7 @@ await Promise.all([SimpleCounter.register(), RenderMarkdown.register(), CodeHigh
 import { doc } from '../lib/bundle.js'
 
 // 1. Handle Copy Button Logic
-const copyBtn = doc.byId('copy-btn').on('click', async () => {
+const copyBtn = doc.find('#copy-btn').on('click', async () => {
     try {
         await navigator.clipboard.writeText('npm i jj')
 

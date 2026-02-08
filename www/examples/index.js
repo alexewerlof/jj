@@ -10,7 +10,7 @@ async function loadExamples() {
         }
 
         const examples = await response.json()
-        const examplesContainer = doc.byId('examples', true)
+        const examplesContainer = doc.find('#examples', true)
 
         // Sort examples by key
         const sortedKeys = Object.keys(examples).sort()
@@ -34,9 +34,7 @@ async function loadExamples() {
             const actions = JJHE.create('div').addClass('card-actions')
 
             // Create view example link
-            const viewLink = JJHE.create('a')
-                .setAttr('href', `${folderName}/`)
-                .setText('View Example →')
+            const viewLink = JJHE.create('a').setAttr('href', `${folderName}/`).setText('View Example →')
 
             // Create GitHub link
             const githubLink = JJHE.create('a')
@@ -59,7 +57,7 @@ async function loadExamples() {
             examplesContainer.addChild(card)
         })
     } catch (error) {
-        const examplesContainer = doc.byId('examples', true)
+        const examplesContainer = doc.find('#examples', true)
 
         // Clear existing content
         examplesContainer.ref.innerHTML = ''

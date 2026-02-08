@@ -42,7 +42,7 @@ describe('JJDF', () => {
         })
     })
 
-    describe('byId()', () => {
+    describe('find() by ID', () => {
         it('finds element by id in fragment', () => {
             const frag = document.createDocumentFragment()
             const div = document.createElement('div')
@@ -50,7 +50,7 @@ describe('JJDF', () => {
             frag.appendChild(div)
 
             const jjdf = new JJDF(frag)
-            const result = jjdf.byId('test-id')
+            const result = jjdf.find('#test-id')
             assert.ok(result)
             assert.strictEqual((result.ref as HTMLElement).id, 'test-id')
         })
@@ -58,20 +58,14 @@ describe('JJDF', () => {
         it('returns null when not found', () => {
             const frag = document.createDocumentFragment()
             const jjdf = new JJDF(frag)
-            const result = jjdf.byId('nonexistent')
+            const result = jjdf.find('#nonexistent')
             assert.strictEqual(result, null)
         })
 
         it('throws when required and not found', () => {
             const frag = document.createDocumentFragment()
             const jjdf = new JJDF(frag)
-            assert.throws(() => jjdf.byId('nonexistent', true), TypeError)
-        })
-
-        it('throws TypeError for non-string id', () => {
-            const frag = document.createDocumentFragment()
-            const jjdf = new JJDF(frag)
-            assert.throws(() => jjdf.byId(123 as any), TypeError)
+            assert.throws(() => jjdf.find('#nonexistent', true), TypeError)
         })
     })
 })

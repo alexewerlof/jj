@@ -1,11 +1,11 @@
 import { RSVPEngine } from './RSVPEngine.js'
 import { doc, sleep, fetchText } from '../../../lib/bundle.js'
 
-const inputTextArea = doc.byId('input-text')
-const leftSpan = doc.byId('left-side')
-const pivotSpan = doc.byId('pivot-char')
-const rightSpan = doc.byId('right-side')
-const renderProgress = doc.byId('render-progress')
+const inputTextArea = doc.find('#input-text')
+const leftSpan = doc.find('#left-side')
+const pivotSpan = doc.find('#pivot-char')
+const rightSpan = doc.find('#right-side')
+const renderProgress = doc.find('#render-progress')
 
 inputTextArea.run(async function () {
     const defaultText = await fetchText('./default.txt')
