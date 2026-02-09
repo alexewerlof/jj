@@ -2,7 +2,7 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert'
 import { JSDOM } from 'jsdom'
 import { h, createLinkPre, addLinkPre } from './helpers.js'
-import { JJHE } from './JJHE.js'
+import { JJHE } from './wrappers/index.js'
 
 const { window } = new JSDOM()
 global.HTMLElement = window.HTMLElement

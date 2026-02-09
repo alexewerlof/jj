@@ -2,7 +2,7 @@ import { isA, isArr, isObj, isStr } from 'jty'
 import { JJSR } from './JJSR.js'
 import { ShadowConfig } from './types.js'
 import { JJNx } from './JJNx.js'
-import { typeErr } from './internal.js'
+import { typeErr } from '../internal.js'
 
 /**
  * Wraps a DOM Element (which is a descendant of Node).

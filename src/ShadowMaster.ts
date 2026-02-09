@@ -1,7 +1,5 @@
 import { isA, isArr, isFn, isStr } from 'jty'
-import { JJStyleConfig, JJTemplateConfig, ShadowConfig } from './types.js'
-import { JJHE } from './JJHE.js'
-import { JJDF } from './JJDF.js'
+import { JJStyleConfig, JJTemplateConfig, ShadowConfig, JJHE, JJDF } from './wrappers/index.js'
 import { cssToStyle } from './util.js'
 import { typeErr } from './internal.js'
 

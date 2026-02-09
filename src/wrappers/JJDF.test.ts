@@ -2,7 +2,7 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert'
 import { JSDOM } from 'jsdom'
 import { JJDF } from './JJDF.js'
-import './JJN-wrap.js' // Enable wrap() mixin
+import './JJN.js'
 
 const { window } = new JSDOM()
 global.DocumentFragment = window.DocumentFragment

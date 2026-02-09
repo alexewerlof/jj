@@ -1,8 +1,6 @@
-import { isA, isStr } from 'jty'
-import { JJN } from './JJN.js'
-import { Wrapped } from './types.js'
+import { isA } from 'jty'
 import { JJNx } from './JJNx.js'
-import { typeErr } from './internal.js'
+import { JJHE } from './JJHE.js'
 
 /**
  * Wraps a Document (which is a descendant of Node).
@@ -62,7 +60,7 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/head | Document.head}
      */
     get head() {
-        return JJN.wrap(this.ref.head)
+        return JJHE.from(this.ref.head)
     }
 
     /**
@@ -72,6 +70,6 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/body | Document.body}
      */
     get body() {
-        return JJN.wrap(this.ref.body)
+        return JJHE.from(this.ref.body)
     }
 }

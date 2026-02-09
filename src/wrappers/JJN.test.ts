@@ -2,7 +2,6 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert'
 import { JSDOM } from 'jsdom'
 import { JJN } from './JJN.js'
-import './JJN-wrap.js' // Enable wrap() mixin
 
 const { window } = new JSDOM()
 global.Node = window.Node

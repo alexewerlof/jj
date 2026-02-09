@@ -1,6 +1,5 @@
 import { isA, isStr } from 'jty'
-import { JJHE } from './JJHE.js'
-import { Wrappable } from './types.js'
+import { Wrappable, JJHE } from './wrappers/index.js'
 import { cssToStyle, fileExt } from './util.js'
 import { typeErr, errMsg } from './internal.js'
 

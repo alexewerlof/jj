@@ -1,22 +1,11 @@
-export * from './types.js'
 export * from './util.js'
 export * from './case.js'
-export * from './JJET.js'
-export * from './JJN.js'
-// Monkey patch the wrap() method which requires all the other JJ classes
-import './JJN-wrap.js'
-export * from './JJT.js'
-export * from './JJE.js'
-export * from './JJHE.js'
-export * from './JJSE.js'
-export * from './JJD.js'
-export * from './JJDF.js'
-export * from './JJSR.js'
+export * from './wrappers/index.js'
 export * from './helpers.js'
 export * from './components.js'
 export * from './ShadowMaster.js'
 
-import { JJD } from './JJD.js'
+import { JJD } from './wrappers/JJD.js'
 
 /**
  * A wrapped document for convenience.

@@ -1,8 +1,6 @@
-import { isA, isStr } from 'jty'
-import { JJN } from './JJN.js'
-import { Wrapped } from './types.js'
+import { isA } from 'jty'
 import { JJNx } from './JJNx.js'
-import { typeErr } from './internal.js'
+import { typeErr } from '../internal.js'
 
 /**
  * Wraps a DocumentFragment (which is a descendant of Node).

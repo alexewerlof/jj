@@ -1,8 +1,6 @@
 import { hasProp, isA, isStr } from 'jty'
-import { JJN } from './JJN.js'
-import { Wrapped } from './types.js'
 import { JJEx } from './JJEx.js'
-import { typeErr } from './internal.js'
+import { typeErr } from '../internal.js'
 
 /**
  * Wraps a DOM HTMLElement (which is a descendant of Element).

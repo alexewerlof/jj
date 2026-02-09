@@ -1,6 +1,6 @@
 import { hasProp, isObj, isStr } from 'jty'
 import { JJE } from './JJE.js'
-import { typeErr } from './internal.js'
+import { typeErr } from '../internal.js'
 
 export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
     /**

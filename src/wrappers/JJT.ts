@@ -1,6 +1,5 @@
-import { isA, isStr } from 'jty'
-import { JJN } from './JJN.js'
-import { typeErr } from './internal.js'
+import { isA } from 'jty'
+import { JJN } from './JJN-raw.js'
 
 /**
  * Wraps a DOM Text Node.

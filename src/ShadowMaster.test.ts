@@ -2,8 +2,7 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert'
 import { JSDOM } from 'jsdom'
 import { ShadowMaster } from './ShadowMaster.js'
-import { JJHE } from './JJHE.js'
-import { JJDF } from './JJDF.js'
+import { JJHE, JJDF } from './wrappers/index.js'
 
 const { window } = new JSDOM()
 global.HTMLElement = window.HTMLElement

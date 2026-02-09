@@ -1,6 +1,6 @@
 import { isA, isStr } from 'jty'
 import { JJEx } from './JJEx.js'
-import { typeErr } from './internal.js'
+import { typeErr } from '../internal.js'
 
 const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg'
 
