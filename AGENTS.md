@@ -2,6 +2,8 @@
 
 This repository contains `jj`, a minimal, imperative, no-build TypeScript library for DOM manipulation.
 Follow these rules strictly to generate idiomatic, type-safe, and secure code.
+ALWAYS prioritize security and correctness over performance.
+If you encounter contradicting instructions, pause and ask the user what to do.
 
 ## 1. Core Philosophy
 
@@ -80,14 +82,30 @@ class MyComponent extends HTMLElement {
 - **Formatting**: Strictly follow `.prettierrc.json`.
     - Single quotes, no semicolons, 4 spaces indent, trailing commas.
 - **Documentation**: All public methods and classes MUST have documentation in **TypeDoc** format.
-    - Use `@param`, `@returns`, `@example`, `@see`.
+    - Use `@param`, `@returns`, `@example`, etc.
+    - Use `@remarks` to mention any edge cases or nuances.
+    - Use `@throws` to mention any errors that may be thrown.
+    - Use `@see` to link to related documentation (especially MDN).
 
-## 8. Testing Requirements
+## 8 Error Handling
+
+- **Error closer to the source**: Throw errors as close to the usage as possible.
+- **Clear call to action**: When throwing an error, provide a clear call to action if relevant. The error should help guide the developer or AI agent to fix the issue.
+- **Internal Utilities**: Prefer using `typeErr` and `errMsg` from `src/internal.ts` instead of creating new Error objects manually. This helps reduce bundle size and maintains consistent error messaging.
+    ```typescript
+    import { typeErr } from './internal.js'
+    // ...
+    if (!isStr(name)) {
+        throw typeErr('name', 'a string', name)
+    }
+    ```
+
+## 9. Testing Requirements
 
 - **Mandatory Tests**: Every new feature or bugfix MUST include tests.
 - **Environment**: use `node --test` with `jsdom` for DOM simulation.
-- **Location**: Co-locate tests specific to a file (e.g., `src/JJE.test.ts` for `src/JJE.ts`).
+- **Location**: Co-locate tests specific to a file (e.g., `src/JJE.test.ts` for `src/JJE.ts`, `src/ShadowMaster.test.ts` for `src/ShadowMaster.ts`).
 
-## 9. Documentation Maintenance
+## 10. Documentation Maintenance
 
 **CRITICAL**: If you change the code or API surface of this library, you **MUST** update this file (`AGENTS.md`) to reflect the changes. This file is the source of truth for all agents working on this repo. Keeping it up-to-date is as important as writing tests.
