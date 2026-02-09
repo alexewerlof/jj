@@ -14,6 +14,7 @@ export * from './JJDF.js'
 export * from './JJSR.js'
 export * from './helpers.js'
 export * from './components.js'
+export * from './ShadowMaster.js'
 
 import { JJD } from './JJD.js'
 

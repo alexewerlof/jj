@@ -462,7 +462,11 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
             const { template, styles } = config
 
             if (template) {
-                shadowRoot.innerHTML = template
+                if (isStr(template)) {
+                    shadowRoot.innerHTML = template
+                } else {
+                    shadowRoot.appendChild(template)
+                }
             }
             if (isArr(styles) && styles.length) {
                 shadowRoot.adoptedStyleSheets.push(...styles)

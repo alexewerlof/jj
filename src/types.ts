@@ -44,9 +44,17 @@ export type Unwrapped = Node | Text | Element | HTMLElement | SVGElement | Docum
 export type JJTemplateConfig =
     | string
     | JJHE
+    | JJDF
     | HTMLElement
-    | Promise<string | JJHE | HTMLElement>
-    | (() => string | JJHE | HTMLElement | Promise<string | JJHE | HTMLElement>)
+    | DocumentFragment
+    | Promise<string | JJHE | JJDF | HTMLElement | DocumentFragment>
+    | (() =>
+          | string
+          | JJHE
+          | JJDF
+          | HTMLElement
+          | DocumentFragment
+          | Promise<string | JJHE | JJDF | HTMLElement | DocumentFragment>)
 
 /**
  * Configuration for the component's styles.
@@ -74,7 +82,7 @@ export type JJStyleConfig =
  */
 export interface ShadowConfig {
     /** Optional HTML content to set in the shadow root */
-    template?: string
+    template?: string | DocumentFragment
     /** Optional CSSStyleSheets to adopt in the shadow root */
     styles?: CSSStyleSheet[]
 }
