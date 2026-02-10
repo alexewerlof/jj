@@ -592,7 +592,7 @@ export class RenderMarkdown extends HTMLElement {
 
     #render() {
         if (this.#root) {
-            this.#root.setHTML(this.#parseMarkdown(this.#content))
+            this.#root.setHTML(this.#parseMarkdown(this.#content), true)
         }
     }
 

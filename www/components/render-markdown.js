@@ -48,7 +48,7 @@ export class RenderMarkdown extends HTMLElement {
     #render() {
         if (this.#root) {
             try {
-                this.#root.setHTML(md.render(this.#content))
+                this.#root.setHTML(md.render(this.#content), true)
             } catch (e) {
                 this.#root.setText(e.message)
             }

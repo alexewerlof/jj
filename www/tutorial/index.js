@@ -4,7 +4,7 @@ import toc from './toc.js'
 
 await RenderMarkdown.register()
 
-doc.find('#toc').append(toc)
+doc.find('#toc', true).addChild(toc)
 
 function getFrom(urlStr) {
     const url = new URL(urlStr)

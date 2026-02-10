@@ -53,7 +53,7 @@ export class ChatMessage extends HTMLElement {
     }
 
     #renderContent() {
-        this.jjRoot?.shadow.find('#content').setHTML(this.contentHtml)
+        this.jjRoot?.shadow.find('#content').setHTML(this.contentHtml, true)
     }
 
     async connectedCallback() {

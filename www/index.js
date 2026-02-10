@@ -14,10 +14,10 @@ const copyBtn = doc.find('#copy-btn').on('click', async () => {
         // Visual feedback using JJ
         // We temporarily change the icon color or add a tooltip
         const originalHtml = copyBtn.getHTML()
-        copyBtn.setHTML('✓')
+        copyBtn.setHTML('✓', true)
 
         setTimeout(() => {
-            copyBtn.setHTML(originalHtml)
+            copyBtn.setHTML(originalHtml, true)
         }, 1000)
     } catch (err) {
         console.error('Failed to copy', err)

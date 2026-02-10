@@ -44,6 +44,6 @@ function updateClock() {
     requestAnimationFrame(updateClock)
 }
 
-doc.find('#minute-indicators').append(createMinuteIndicators())
+doc.find('#minute-indicators').addChild(createMinuteIndicators())
 updateClock()
 clock.show()
