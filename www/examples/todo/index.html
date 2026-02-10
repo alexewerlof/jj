@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="index.css" />
+        <title>JJ Todo</title>
+    </head>
+    <body>
+        <main id="todo-root">
+            <section class="todo-shell">
+                <div class="hero">
+                    <h1>TODO</h1>
+                    <p>Nested web components, powered by native APIs and a tiny sugar layer.</p>
+                </div>
+                <section class="todo-card">
+                    <form id="todo-form" class="todo-form">
+                        <input
+                            id="todo-input"
+                            class="todo-input"
+                            type="text"
+                            placeholder='Add a task like "Design cosmic icons"'
+                            autocomplete="off"
+                            required
+                        />
+                        <button class="btn btn-primary" type="submit">Add Task</button>
+                    </form>
+                    <div class="controls">
+                        <div id="filters" class="filters">
+                            <button class="filter-btn is-active" data-filter="all" type="button">All</button>
+                            <button class="filter-btn" data-filter="active" type="button">Active</button>
+                            <button class="filter-btn" data-filter="done" type="button">Done</button>
+                        </div>
+                        <button class="filter-btn" type="button" id="clear-completed">Clear done</button>
+                        <div class="meta">
+                            <span id="todo-count">0 active</span>
+                            <progress id="todo-progress" max="1" value="0"></progress>
+                        </div>
+                    </div>
+                    <div id="empty-state" class="empty-state is-hidden">No tasks yet. Add one above.</div>
+                    <todo-list id="todo-list"></todo-list>
+                    <div class="footer-hint">
+                        Tip: click the checkbox to emit custom events from &lt;todo-item&gt; to the parent list.
+                    </div>
+                </section>
+            </section>
+        </main>
+        <script type="module" src="index.js"></script>
+    </body>
+</html>

@@ -1,0 +1,13 @@
+:host {
+    display: block;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+::slotted(todo-item) {
+    display: block;
+}
