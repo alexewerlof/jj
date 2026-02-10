@@ -7,17 +7,17 @@ await Promise.all([SimpleCounter.register(), RenderMarkdown.register(), CodeHigh
 import { doc } from '../lib/bundle.js'
 
 // 1. Handle Copy Button Logic
-const copyBtn = doc.find('#copy-btn').on('click', async () => {
+const copyBtn = doc.find('#copy-btn').on('click', async function () {
     try {
         await navigator.clipboard.writeText('npm i jj')
 
         // Visual feedback using JJ
-        // We temporarily change the icon color or add a tooltip
-        const originalHtml = copyBtn.getHTML()
-        copyBtn.setHTML('✓', true)
+        // `this` is the JJHET instance, so we can chain methods
+        const originalHtml = this.getHTML()
+        this.setHTML('✓', true)
 
         setTimeout(() => {
-            copyBtn.setHTML(originalHtml, true)
+            this.setHTML(originalHtml, true)
         }, 1000)
     } catch (err) {
         console.error('Failed to copy', err)

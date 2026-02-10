@@ -14,6 +14,7 @@ export class JJET<T extends EventTarget = EventTarget> {
     }
 
     #ref!: T
+    #boundHandlers = new WeakMap<EventListenerOrEventListenerObject, EventListenerOrEventListenerObject>()
 
     /**
      * Creates a JJET instance.
@@ -36,11 +37,45 @@ export class JJET<T extends EventTarget = EventTarget> {
     }
 
     /**
+     * Gets or creates a bound version of the handler.
+     *
+     * @remarks
+     * Bound handlers are cached in a WeakMap to ensure `off()` can properly remove listeners.
+     * When the original handler is garbage collected, the bound version is automatically removed.
+     *
+     * @param handler - The event handler to bind.
+     * @returns The bound handler, or null if the input is null.
+     */
+    #getBoundHandler(handler: EventListenerOrEventListenerObject | null): EventListenerOrEventListenerObject | null {
+        if (handler === null) return null
+
+        let bound = this.#boundHandlers.get(handler)
+        if (!bound) {
+            // Bind the handler to this JJET instance
+            if (typeof handler === 'function') {
+                bound = handler.bind(this)
+            } else {
+                // EventListenerObject with handleEvent method
+                bound = { handleEvent: handler.handleEvent.bind(this) }
+            }
+            this.#boundHandlers.set(handler, bound)
+        }
+        return bound
+    }
+
+    /**
      * Adds an event listener.
      *
-     *  * @example
+     * @remarks
+     * The handler is automatically bound to this JJET instance, so `this` inside the handler
+     * refers to the JJET instance, not the DOM element. To access the DOM element, use `this.ref`.
+     *
+     * @example
      * ```ts
-     * JJET.from(window).on('resize', () => console.log('resized'))
+     * JJET.from(window).on('resize', function() {
+     *   console.log(this) // JJET instance
+     *   console.log(this.ref) // window object
+     * })
      * ```
      * @param eventName - The name of the event.
      * @param handler - The event handler.
@@ -49,16 +84,22 @@ export class JJET<T extends EventTarget = EventTarget> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener | EventTarget.addEventListener}
      */
     on(eventName: string, handler: EventListenerOrEventListenerObject | null, options?: AddEventListenerOptions): this {
-        this.ref.addEventListener(eventName, handler, options)
+        const boundHandler = this.#getBoundHandler(handler)
+        this.ref.addEventListener(eventName, boundHandler, options)
         return this
     }
 
     /**
      * Removes an event listener.
      *
-     *  * @example
+     * @remarks
+     * Pass the same handler reference that was used in `on()` to properly remove the listener.
+     *
+     * @example
      * ```ts
-     * JJET.from(window).off('resize', previouslyAttachedHandler)
+     * const handler = function() { console.log(this) }
+     * JJET.from(window).on('resize', handler)
+     * JJET.from(window).off('resize', handler)
      * ```
      * @param eventName - The name of the event.
      * @param handler - The event handler.
@@ -71,7 +112,8 @@ export class JJET<T extends EventTarget = EventTarget> {
         handler: EventListenerOrEventListenerObject | null,
         options?: EventListenerOptions | boolean,
     ): this {
-        this.ref.removeEventListener(eventName, handler, options)
+        const boundHandler = this.#getBoundHandler(handler)
+        this.ref.removeEventListener(eventName, boundHandler, options)
         return this
     }
 

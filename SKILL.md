@@ -612,7 +612,7 @@ Output: `doc/` folder with HTML documentation
 ## Common Gotchas
 
 1. **Accessing the Native Node**: Always use `.ref` to access the underlying DOM node for operations not exposed by JJ
-2. **Event Listeners**: Use `.on()` and `.off()` for proper cleanup
+2. **Event Listeners**: Use `.on()` and `.off()` for proper cleanup. Event handlers are automatically bound to the JJ\* instance, so `this` refers to the wrapper, not the DOM element. Use `function` instead of arrow functions (`=>`) for `.bind()` to work correctly. Use `this.ref` to access the native element.
 3. **Type Safety**: Use `JJHE.create()` for automatic type inference instead of generic parameters
 4. **Fragments**: Use JJDF for batch operations before appending
 5. **Error Messages**: Read them carefully—they suggest the correct approach

@@ -55,14 +55,21 @@ for (const child of parent.getChildren()) {
 }
 ```
 
+Use event delegation:
+
 ```ts
 import { doc } from 'jj'
 const parent = doc.find('#parent-ul')
 parent.on('click', function (evt) {
+    // 'this' is the JJ* wrapper, access native element with this.ref
     if (evt.target?.tagName !== 'LI') return
     alert('Hello world')
 })
 ```
+
+Note: Event handlers are automatically bound to the JJET instance, so `this` inside the handler refers to the wrapper, not the DOM element.
+For this to work, you need to use `function` instead of arrow functions (`=>`).
+Use `this.ref` to access the underlying element.
 
 ## State management
 
