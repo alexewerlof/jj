@@ -1,5 +1,26 @@
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
 main {
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+aside#toc {
+    width: 25%;
+    border-right: 1px solid var(--divider-color);
+    padding: 0.5rem;
+    overflow-y: auto;
+}
+
+article {
+    flex: 1;
+    padding: 0.5rem;
+    overflow-y: auto;
 }

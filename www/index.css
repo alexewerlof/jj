@@ -13,6 +13,11 @@ body {
     overflow-x: hidden;
 }
 
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
 /* Nav */
 #main-nav {
     position: sticky;
@@ -24,8 +29,6 @@ body {
 }
 
 .nav-content {
-    max-width: 1200px;
-    margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -149,9 +152,8 @@ h1 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
-    max-width: 1200px;
-    margin: 4rem auto;
     padding: 0 2rem;
+    margin: 4rem auto;
 }
 
 .feature-card {
@@ -177,8 +179,6 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     gap: var(--gap4);
-    max-width: 1200px;
-    margin: 0 auto;
     padding: var(--gap4);
 }
 
@@ -261,11 +261,6 @@ h1 {
     padding: 4rem 2rem;
 }
 
-.showcase-content {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
 .code-split {
     display: grid;
     grid-template-columns: 1fr;
@@ -309,8 +304,6 @@ pre {
 .demo-section {
     padding: 4rem 2rem;
     text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
 }
 
 #demo-container {
