@@ -49,6 +49,7 @@
         "test": "npm run typecheck && node --import tsx --test",
         "test:watch": "npm run typecheck && node --import tsx --test --watch",
         "test:coverage": "npm run typecheck && node --import tsx --test --experimental-test-coverage",
+        "get-bundle-size": "gzip -9 -c lib/bundle.min.js | wc -c | numfmt --to=iec-i --suffix=B",
         "preversion": "npm run fmt && npm t",
         "prepublishOnly": "npm run build",
         "postversion": "git push && git push --tags"
