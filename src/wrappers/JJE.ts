@@ -1,8 +1,9 @@
 import { isA, isArr, isObj, isStr } from 'jty'
 import { JJSR } from './JJSR.js'
-import { ShadowConfig } from './types.js'
+import { ShadowConfig, Wrapped } from './types.js'
 import { JJNx } from './JJNx.js'
 import { typeErr } from '../internal.js'
+import { JJN } from './JJN-raw.js'
 
 /**
  * Wraps a DOM Element (which is a descendant of Node).
@@ -363,6 +364,34 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
         }
         this.ref.classList.replace(oldClassName, newClassName)
         return this
+    }
+
+    /**
+     * Finds the closest ancestor (or self) that matches a CSS selector.
+     *
+     * @remarks
+     * Returns `null` when no matching ancestor is found.
+     *
+     * @example
+     * ```ts
+     * const button = JJE.from(document.querySelector('button'))
+     * const card = button.closest('.card')
+     * if (card) {
+     *     card.addClass('has-action')
+     * }
+     * ```
+     *
+     * @param selector - The CSS selector to search for.
+     * @returns A JJE wrapping the closest match, or null when none exists.
+     * @throws {TypeError} If `selector` is not a string.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest | Element.closest}
+     */
+    closest(selector: string): Wrapped | null {
+        if (!isStr(selector)) {
+            throw typeErr('selector', 'a string', selector)
+        }
+        const match = this.ref.closest(selector)
+        return match ? JJN.wrap(match) : null
     }
 
     /**

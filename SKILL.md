@@ -131,6 +131,10 @@ Use `.ref` when:
 - Passing to third-party APIs
 - Using native DOM methods directly
 
+## Querying the DOM
+
+For the JJ-specific querying patterns (`find`, `findAll`, `closest`) and guidance on when to use each, see [guides/query.md](guides/query.md).
+
 ## Key Patterns & Conventions
 
 ### 1. ESM Import Style
@@ -656,6 +660,8 @@ Or use directly in browser:
 3. Ask the LLM to use `.ref` when accessing native properties not exposed by JJ
 4. Expect type errors to be self-documenting—they guide toward the correct API
 5. Remind the LLM that JJ is imperative, not declarative—no virtual DOM or automatic re-rendering
+6. Don't overuse the `h()` function. First and foremost try to keep as much of the static layout of the page in the HTML.
+7. Upon the start of the app, store references to key static elements using `JJHE.find('#element-id', true)`
 
 ## Resources
 

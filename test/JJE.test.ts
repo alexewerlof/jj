@@ -360,6 +360,36 @@ describe('JJE', () => {
         })
     })
 
+    describe('selector methods', () => {
+        describe('closest()', () => {
+            it('returns closest matching ancestor wrapped in JJE', () => {
+                const root = document.createElement('div')
+                root.className = 'root'
+                const child = document.createElement('span')
+                child.className = 'child'
+                root.appendChild(child)
+
+                const jje = new JJE(child)
+                const match = jje.closest('.root')
+
+                assert.ok(match instanceof JJE)
+                assert.strictEqual(match?.ref, root)
+            })
+
+            it('returns null when no match is found', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                assert.strictEqual(jje.closest('.missing'), null)
+            })
+
+            it('throws TypeError for non-string selector', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                assert.throws(() => jje.closest({} as any), TypeError)
+            })
+        })
+    })
+
     describe('visibility methods', () => {
         it('hide() sets hidden and aria-hidden', () => {
             const el = document.createElement('div')

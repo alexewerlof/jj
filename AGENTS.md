@@ -76,6 +76,7 @@ class MyComponent extends HTMLElement {
 - **Attributes**: Use `.setAttr('name', val)`, `.getAttr('name')`, `.rmAttr('name')`.
 - **Classes**: Use `.addClass()`, `.rmClass()`, `.toggleClass()`, `.setClass()`.
 - **Dataset**: Use `.setData()`, `.getData()` (on `JJHE`/`JJSE` only).
+- **Selectors**: Use `.closest(selector)` on `JJE` for ancestor lookup.
 
 ## 7. Code Style & Standards
 
