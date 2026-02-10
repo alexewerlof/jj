@@ -1,29 +1,15 @@
+import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JSDOM } from 'jsdom'
-import { JJD } from './JJD.js'
-import './JJN.js'
-
-const { window } = new JSDOM(`
-<!DOCTYPE html>
-<html>
-<head><title>Test</title></head>
-<body>
-    <div id="test-id">Test</div>
-    <div class="test-class">Item 1</div>
-    <div class="test-class">Item 2</div>
-</body>
-</html>
-`)
-
-global.Document = window.Document
-global.Element = window.Element
-global.HTMLElement = window.HTMLElement
-global.Node = window.Node
-global.EventTarget = window.EventTarget
-global.document = window.document
+import { JJD } from '../src/index.js'
 
 describe('JJD', () => {
+    // Set up specific HTML content for these tests
+    document.body.innerHTML = `
+        <div id="test-id">Test</div>
+        <div class="test-class">Item 1</div>
+        <div class="test-class">Item 2</div>
+    `
     describe('constructor', () => {
         it('wraps a Document', () => {
             const jjd = new JJD(document)

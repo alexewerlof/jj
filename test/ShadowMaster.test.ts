@@ -1,19 +1,7 @@
+import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JSDOM } from 'jsdom'
-import { ShadowMaster } from './ShadowMaster.js'
-import { JJHE, JJDF } from './wrappers/index.js'
-
-const { window } = new JSDOM()
-global.HTMLElement = window.HTMLElement
-global.CSSStyleSheet = window.CSSStyleSheet
-global.Element = window.Element
-global.Node = window.Node
-global.EventTarget = window.EventTarget
-global.document = window.document
-global.customElements = window.customElements
-global.DocumentFragment = window.DocumentFragment
-global.HTMLTemplateElement = window.HTMLTemplateElement
+import { JJHE, JJDF, ShadowMaster } from '../src/index.js'
 
 describe('ShadowMaster', () => {
     describe('create()', () => {

@@ -1,11 +1,7 @@
+import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JSDOM } from 'jsdom'
-import { JJET } from './JJET.js'
-
-const { window } = new JSDOM()
-global.EventTarget = window.EventTarget
-global.Event = window.Event
+import { JJET } from '../src/index.js'
 
 describe('JJET', () => {
     it('wraps an EventTarget', () => {

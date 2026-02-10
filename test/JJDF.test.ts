@@ -1,17 +1,7 @@
+import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JSDOM } from 'jsdom'
-import { JJDF } from './JJDF.js'
-import './JJN.js'
-
-const { window } = new JSDOM()
-global.DocumentFragment = window.DocumentFragment
-global.Element = window.Element
-global.HTMLElement = window.HTMLElement
-global.SVGElement = window.SVGElement
-global.Node = window.Node
-global.EventTarget = window.EventTarget
-global.document = window.document
+import { JJDF } from '../src/index.js'
 
 describe('JJDF', () => {
     describe('constructor', () => {

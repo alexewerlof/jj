@@ -1,16 +1,7 @@
+import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JSDOM } from 'jsdom'
-import { h, createLinkPre, addLinkPre } from './helpers.js'
-import { JJHE } from './wrappers/index.js'
-
-const { window } = new JSDOM()
-global.HTMLElement = window.HTMLElement
-global.Element = window.Element
-global.Node = window.Node
-global.EventTarget = window.EventTarget
-global.document = window.document
-global.URL = window.URL
+import { h, createLinkPre, addLinkPre, JJHE } from '../src/index.js'
 
 describe('helpers', () => {
     describe('h()', () => {

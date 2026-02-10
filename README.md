@@ -48,6 +48,17 @@ Once installed, AI agents (GitHub Copilot, Cursor, Claude Code, Windsurf, etc.) 
 
 The skill definition (`SKILL.md`) is also included in the npm package at `node_modules/jj/SKILL.md`.
 
+## ✅ Testing
+
+The entire public API is tested thoroghly.
+Tests live in the `test/` folder and mirror the source filenames (e.g., `test/JJE.test.ts` for `src/JJE.ts`) while importing the target from `./src/index.js`.
+
+Run tests with:
+
+```bash
+npm test
+```
+
 ## License
 
 MIT

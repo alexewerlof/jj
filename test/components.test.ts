@@ -1,16 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JSDOM } from 'jsdom'
-import { attr2prop, registerComponent } from './components.js'
-
-const { window } = new JSDOM()
-global.HTMLElement = window.HTMLElement
-global.CSSStyleSheet = window.CSSStyleSheet
-global.Element = window.Element
-global.Node = window.Node
-global.EventTarget = window.EventTarget
-global.document = window.document
-global.customElements = window.customElements
+import './attach-jsdom.js'
+import { attr2prop, registerComponent } from '../src/index.js'
 
 describe('components', () => {
     describe('attr2prop()', () => {

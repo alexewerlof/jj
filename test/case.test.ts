@@ -1,6 +1,7 @@
+import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { pas2keb, keb2pas, keb2cam } from './case.js'
+import { pas2keb, keb2pas, keb2cam } from '../src/index.js'
 
 describe('pas2keb()', () => {
     it('throws for non-string input', () => {

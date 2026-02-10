@@ -1,15 +1,7 @@
+import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JSDOM } from 'jsdom'
-import { JJE } from './JJE.js'
-
-const { window } = new JSDOM()
-global.Element = window.Element
-global.HTMLElement = window.HTMLElement
-global.SVGElement = window.SVGElement
-global.Node = window.Node
-global.EventTarget = window.EventTarget
-global.document = window.document
+import { JJE } from '../src/index.js'
 
 describe('JJE', () => {
     describe('constructor', () => {

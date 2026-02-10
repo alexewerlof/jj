@@ -1,13 +1,7 @@
+import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JSDOM } from 'jsdom'
-import { JJT } from './JJT.js'
-
-const { window } = new JSDOM()
-global.Text = window.Text
-global.document = window.document
-global.Node = window.Node
-global.EventTarget = window.EventTarget
+import { JJT } from '../src/index.js'
 
 describe('JJT', () => {
     it('wraps a Text node', () => {

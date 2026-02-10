@@ -1,6 +1,7 @@
+import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { fileExt } from './util.js'
+import { fileExt } from '../src/index.js'
 
 describe('fileExt()', () => {
     it('throws for input that is not a string or URL', () => {

@@ -13,4 +13,4 @@ The hierarchy is as follows:
 
 `JJN.wrap()` is attached to it in `./JJN.ts` because it imports all other wrapper classes. Otherwise there will be a dependency loop.
 
-The tests should `import { JJN } from './JJN.js` if they need `JJN`, otherwise just `import ./JJN.js` for `JJN.wrap()` to get attached.
+Tests live in the root `test/` folder. From there, import wrappers via `../src/index.js`.

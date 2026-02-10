@@ -557,7 +557,7 @@ For component templates, prefer `ShadowMaster` with `fetchHtml()` (see section 4
 
 ## Testing
 
-Tests are written using Node's built-in test runner:
+Tests are written using Node's built-in test runner and live in the root `test/` folder (mirroring source filenames):
 
 ```typescript
 import { describe, it } from 'node:test'
