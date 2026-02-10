@@ -42,8 +42,8 @@
     ],
     "scripts": {
         "doc": "typedoc src/index.ts",
-        "prebuild": "rm -rf lib docs",
-        "build": "tsc && node bundle.js && npm run doc",
+        "prebuild": "rm -rf lib doc",
+        "build": "tsup --dts && npm run doc",
         "typecheck": "tsc --noEmit",
         "fmt": "prettier --write .",
         "test": "npm run typecheck && node --import tsx --test",
@@ -62,9 +62,9 @@
     "devDependencies": {
         "@types/jsdom": "^27.0.0",
         "@types/node": "^24.7.2",
-        "esbuild": "^0.27.2",
         "jsdom": "^27.4.0",
         "prettier": "^3.6.2",
+        "tsup": "^8.5.1",
         "tsx": "^4.20.6",
         "typedoc": "^0.28.14",
         "typescript": "^5.9.3"
