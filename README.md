@@ -17,7 +17,6 @@ JJHE.create('div')
     .addClass('card')
     .setText('Hello World!')
     .on('click', () => console.log('Hi'))
-    .appendToBody()
 ```
 
 ## 🚀 Why JJ?
