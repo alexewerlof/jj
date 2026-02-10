@@ -13,7 +13,11 @@ const emptyState = doc.find('#empty-state', true)
 const countLabel = doc.find('#todo-count', true)
 const progress = doc.find('#todo-progress', true)
 
-let todos = [createTodo('Sketch glow cards', true), createTodo('Wire up custom events', false), createTodo('Polish interactions', false)]
+let todos = [
+    createTodo('Sketch glow cards', true),
+    createTodo('Wire up custom events', false),
+    createTodo('Polish interactions', false),
+]
 
 let currentFilter = 'all'
 
@@ -80,27 +84,27 @@ function render() {
 
 function getVisibleTodos() {
     switch (currentFilter) {
-    case 'active':
-        return todos.filter((todo) => !todo.done)
-    case 'done':
-        return todos.filter((todo) => todo.done)
-    default:        
-        return todos
+        case 'active':
+            return todos.filter((todo) => !todo.done)
+        case 'done':
+            return todos.filter((todo) => todo.done)
+        default:
+            return todos
     }
 }
 
 function renderItem(todo) {
     return JJHE.create('todo-item').setAttr({
         'item-id': todo.id,
-        'text': todo.text,
-        'done': todo.done,
+        text: todo.text,
+        done: todo.done,
     })
 }
 
 function updateFilterButtons() {
     filters.findAll('button').forEach((button) => {
         button.setClass({
-            'is-active': button.getAttr('data-filter') === currentFilter 
+            'is-active': button.getAttr('data-filter') === currentFilter,
         })
     })
 }
