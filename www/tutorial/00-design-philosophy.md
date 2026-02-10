@@ -13,3 +13,5 @@ JJ is an experiment to see how far we can get with the following FAB:
     - We don't need to compiler (transpile) an interpreted language
     - We don't need a thick abstraction layer (e.g. VDOM or dirty-checking) for most web applications
     - We don't mix different languages in the same file
+    - We don't monkey-patch the browser's API. e.g. `JJHE` has a `HTMLElement`. It is not a `HTMLElement`.
+    - In the age of AI agents, a library should be first optimized for agents to write idiomatic code and use the library efficiently, and second should be optimized for the developers that are responsible to verify the code.
