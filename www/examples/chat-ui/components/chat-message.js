@@ -6,22 +6,16 @@ const sm = ShadowMaster.create()
     .setTemplate(fetchHtml(import.meta.resolve('./chat-message.html')))
     .addStyles(fetchCss(import.meta.resolve('./chat-message.css')))
 
-// Test comment
 export class ChatMessage extends HTMLElement {
     static observedAttributes = ['role', 'content']
 
     static register() {
-        registerComponent('chat-message', ChatMessage)
+        return registerComponent('chat-message', ChatMessage)
     }
 
+    #jjThis
     #role = VALID_ROLES[0]
     #content = ''
-
-    constructor() {
-        super()
-        this.#role = VALID_ROLES[0]
-        this.#content = ''
-    }
 
     attributeChangedCallback(name, oldValue, newValue) {
         attr2prop(this, name, oldValue, newValue)
@@ -40,7 +34,7 @@ export class ChatMessage extends HTMLElement {
     }
 
     #renderRole() {
-        this.jjRoot?.shadow.find('#role').setText(this.role)
+        this.#jjThis?.shadow.find('#role').setText(this.role)
     }
 
     get content() {
@@ -48,26 +42,21 @@ export class ChatMessage extends HTMLElement {
     }
 
     set content(value) {
-        this.#content = value
+        this.#content = value ?? ''
         this.#renderContent()
     }
 
     #renderContent() {
-        this.jjRoot?.shadow.find('#content').setHTML(this.contentHtml, true)
+        this.#jjThis?.shadow.find('#content').setText(this.content)
     }
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.#jjThis = JJHE.from(this).initShadow('open', await sm.getResolved())
         this.#render()
-        console.debug('ChatMessage connectedCallback', this)
     }
 
     #render() {
         this.#renderRole()
         this.#renderContent()
-    }
-
-    get contentHtml() {
-        return `<p>${this.content}</p>`
     }
 }

@@ -3,16 +3,52 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Demo</title>
+        <title>Chat UI - OpenAI Compatible API Demo</title>
+        <link rel="stylesheet" href="../../variables.css" />
+        <link rel="stylesheet" href="../../ui.css" />
+        <link rel="stylesheet" href="style.css" />
     </head>
     <body>
-        <h1>Demo</h1>
-        <p>This is a demo of the chat message component</p>
-        <chat-thread id="chat-thread"></chat-thread>
-        <form id="chat-form">
-            <textarea id="prompt-input" placeholder="Type your prompt"></textarea>
-            <button id="send-prompt-btn" type="submit">Send</button>
-        </form>
+        <h1>Chat UI Demo</h1>
+
+        <div id="connection-panel" class="panel">
+            <h2>API Configuration</h2>
+            <label>
+                API Endpoint URL
+                <input type="text" id="api-url" placeholder="https://api.openai.com" required />
+            </label>
+            <label>
+                API Key
+                <input type="password" id="api-key" placeholder="sk-..." required />
+            </label>
+            <button id="connect-btn">Connect</button>
+        </div>
+
+        <div id="model-panel" class="panel">
+            <h2>Model Selection</h2>
+            <label>
+                Choose Model
+                <select id="model-select">
+                    <option value="">Loading models...</option>
+                </select>
+            </label>
+            <button id="test-btn">Test Connection</button>
+        </div>
+
+        <div id="status" class="hidden"></div>
+
+        <div id="chat-panel">
+            <section id="chat-thread" role="log" aria-live="polite"></section>
+            <div class="input-area">
+                <textarea
+                    id="prompt-input"
+                    placeholder="Type your message... (Enter to send, Shift+Enter for newline)"
+                    disabled
+                ></textarea>
+                <button id="send-btn" disabled>Send</button>
+            </div>
+        </div>
+
         <script type="module" src="index.js"></script>
     </body>
 </html>
