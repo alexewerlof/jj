@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>JJ Kanban Board Example</title>
+        <link rel="stylesheet" href="../../ui.css" />
+        <link rel="stylesheet" href="../../index.css" />
+        <link rel="stylesheet" href="../../code.css" />
+        <link rel="stylesheet" href="style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    </head>
+    <body>
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo-icon">JJ</div>
+                <h1 class="app-title">Kanban</h1>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search tasks..." />
+                </div>
+                <button id="add-task-btn" class="btn primary"><span>+</span> New Task</button>
+                <div class="user-profile">
+                    <div class="avatar">JD</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="kanban-container">
+            <div class="kanban-board">
+                <!-- Todo Column -->
+                <div class="kanban-column" data-status="todo">
+                    <div class="column-header">
+                        <h2>To Do <span class="count" id="count-todo">0</span></h2>
+                    </div>
+                    <div class="column-content" id="col-todo">
+                        <!-- Cards will be injected here -->
+                    </div>
+                </div>
+
+                <!-- In Progress Column -->
+                <div class="kanban-column" data-status="progress">
+                    <div class="column-header">
+                        <h2>In Progress <span class="count" id="count-progress">0</span></h2>
+                    </div>
+                    <div class="column-content" id="col-progress">
+                        <!-- Cards will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Done Column -->
+                <div class="kanban-column" data-status="done">
+                    <div class="column-header">
+                        <h2>Done <span class="count" id="count-done">0</span></h2>
+                    </div>
+                    <div class="column-content" id="col-done">
+                        <!-- Cards will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script type="module" src="index.js"></script>
+    </body>
+</html>

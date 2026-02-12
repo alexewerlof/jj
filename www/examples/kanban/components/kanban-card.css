@@ -1,0 +1,124 @@
+:host {
+    /* Box Model */
+    display: block;
+
+    /* Interaction */
+    user-select: none;
+}
+
+.card {
+    /* Box Model */
+    padding: var(--gap3);
+
+    /* Visual */
+    background: var(--background-lighter);
+    border: var(--bthick) solid var(--ui-border);
+    border-radius: var(--bradius2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    /* Interaction */
+    transition:
+        transform var(--animation-speed) ease,
+        box-shadow var(--animation-speed) ease,
+        border-color var(--animation-speed) ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        border-color: var(--primary-color);
+    }
+
+    & .card-header {
+        /* Box Model */
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: var(--gap2);
+    }
+
+    & .tag {
+        /* Box Model */
+        padding: var(--gap) var(--gap2);
+
+        /* Visual */
+        background: var(--background-darker);
+        border-radius: var(--bradius4);
+
+        /* Typography */
+        font-size: 0.7rem;
+        font-weight: 600;
+        font-family: var(--body-font-family);
+        text-transform: uppercase;
+        color: var(--disabled-color);
+
+        /* Priority color variants */
+        &.high {
+            background: rgba(248, 98, 98, 0.15);
+            color: var(--brand-red);
+        }
+
+        &.medium {
+            background: rgba(255, 188, 82, 0.15);
+            color: var(--brand-yellow);
+        }
+
+        &.low {
+            background: rgba(27, 197, 84, 0.15);
+            color: var(--brand-green);
+        }
+    }
+
+    & .text {
+        /* Box Model */
+        margin: 0 0 var(--gap3) 0;
+
+        /* Typography */
+        font-family: var(--body-font-family);
+        font-size: 0.95rem;
+        line-height: 1.4;
+        color: var(--foreground-color);
+        word-break: break-word;
+    }
+
+    & .delete-btn {
+        /* Box Model */
+        padding: 0 var(--gap);
+
+        /* Visual */
+        background: none;
+        border: none;
+        line-height: 1;
+
+        /* Typography */
+        font-size: 1.2rem;
+        color: var(--disabled-color);
+
+        /* Interaction */
+        cursor: pointer;
+        opacity: 0;
+        transition:
+            color var(--animation-speed) ease,
+            opacity var(--animation-speed) ease;
+
+        &:hover {
+            color: var(--brand-red);
+        }
+    }
+
+    &:hover .delete-btn {
+        opacity: 1;
+    }
+
+    & .card-footer {
+        /* Box Model */
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    & .id-label {
+        /* Typography */
+        font-family: var(--code-font-family);
+        font-size: 0.7rem;
+        color: var(--disabled-color);
+    }
+}

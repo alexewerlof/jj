@@ -2,5 +2,6 @@
     "clock": "A simple SVG clock",
     "chat-ui": "A simple chat UI",
     "rsvp": "Fast reading algorithm",
-    "todo": "Nested TODO list with web components"
+    "todo": "Nested TODO list with web components",
+    "kanban": "A drag-and-drop Kanban board"
 }

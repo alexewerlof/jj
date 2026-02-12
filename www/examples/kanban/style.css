@@ -1,0 +1,354 @@
+/* Kanban Board Specific Styles */
+
+.app-header {
+    /* Box Model */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--gap3) var(--gap6);
+
+    /* Visual */
+    background: var(--background-color);
+    border-bottom: var(--bthick) solid var(--ui-border);
+    backdrop-filter: blur(10px);
+
+    /* Layout */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    & .header-left {
+        display: flex;
+        align-items: center;
+        gap: var(--gap3);
+    }
+
+    & .logo-icon {
+        /* Box Model */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 36px;
+        height: 36px;
+
+        /* Visual */
+        background: linear-gradient(135deg, var(--primary-color), var(--brand-purple));
+        border-radius: var(--bradius3);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+
+        /* Typography */
+        font-weight: 800;
+        font-size: 1.2rem;
+        color: var(--background-color);
+    }
+
+    & .app-title {
+        /* Box Model */
+        margin: 0;
+
+        /* Typography */
+        font-family: var(--title-font-family);
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+        font-weight: 700;
+        background: linear-gradient(to right, var(--foreground-color), var(--primary-lighter));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    & .header-right {
+        display: flex;
+        align-items: center;
+        gap: var(--gap5);
+    }
+
+    & .search-bar input {
+        /* Box Model */
+        padding: var(--gap2) var(--gap3);
+        width: 200px;
+
+        /* Visual */
+        background: var(--background-lighter);
+        border: var(--bthick) solid var(--ui-border);
+        border-radius: var(--bradius5);
+
+        /* Typography */
+        color: var(--foreground-color);
+        font-family: var(--body-font-family);
+
+        /* Interaction */
+        transition: all var(--animation-speed);
+
+        &:focus {
+            width: 250px;
+            border-color: var(--primary-color);
+            outline: none;
+            background: var(--background-lighter);
+        }
+    }
+
+    & .user-profile {
+        /* Box Model */
+        padding-left: var(--gap5);
+        border-left: var(--bthick) solid var(--ui-border);
+    }
+
+    & .avatar {
+        /* Box Model */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 36px;
+        height: 36px;
+
+        /* Visual */
+        background: var(--background-lighter);
+        border: var(--bthick2) solid var(--ui-border);
+        border-radius: 50%;
+
+        /* Typography */
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--foreground-color);
+
+        /* Interaction */
+        cursor: pointer;
+        transition: border-color var(--animation-speed);
+
+        &:hover {
+            border-color: var(--primary-color);
+        }
+    }
+}
+
+/* Main Container Adjustments */
+.kanban-container {
+    padding: var(--gap6);
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.kanban-board {
+    /* Box Model */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--gap5);
+    padding-bottom: var(--gap3);
+    height: calc(100vh - 200px);
+    overflow-x: auto;
+
+    & .kanban-column {
+        /* Box Model */
+        display: flex;
+        flex-direction: column;
+        padding: var(--gap3);
+        min-height: 400px;
+        height: 100%;
+
+        /* Visual */
+        background: var(--background-lighter);
+        border: var(--bthick) solid var(--ui-border);
+        border-radius: var(--bradius3);
+
+        /* Interaction */
+        transition:
+            background var(--animation-speed) ease,
+            box-shadow var(--animation-speed) ease;
+
+        &.drag-over {
+            background: var(--background-color);
+            box-shadow: 0 0 0 var(--bthick2) var(--primary-color);
+        }
+    }
+
+    & .column-header {
+        /* Box Model */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--gap3);
+
+        /* Typography */
+        color: var(--foreground-color);
+        font-weight: 600;
+
+        h2 {
+            /* Box Model */
+            display: flex;
+            align-items: center;
+            margin: 0;
+            gap: var(--gap2);
+
+            /* Typography */
+            font-size: 1.1rem;
+            font-family: var(--title-font-family);
+        }
+    }
+
+    & .count {
+        /* Box Model */
+        padding: var(--gap) var(--gap2);
+
+        /* Visual */
+        background: var(--background-darker);
+        border-radius: var(--bradius4);
+
+        /* Typography */
+        font-size: 0.8rem;
+        color: var(--foreground-color);
+        opacity: 0.8;
+    }
+
+    & .column-content {
+        /* Box Model */
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: var(--gap2);
+        padding: var(--gap);
+        overflow-y: auto;
+
+        /* Scrollbar for columns */
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: var(--ui-border);
+            border-radius: var(--bradius2);
+        }
+    }
+}
+
+/* Card Styles (targeting the custom element host) */
+kanban-card {
+    /* Box Model */
+    display: block;
+
+    /* Interaction */
+    cursor: grab;
+    transition:
+        transform var(--animation-speed) ease,
+        opacity var(--animation-speed) ease;
+
+    &:active {
+        cursor: grabbing;
+    }
+
+    &.dragging {
+        opacity: 0.5;
+        transform: scale(0.98);
+    }
+}
+
+/* Placeholder for when dragging over a column */
+.drop-placeholder {
+    /* Box Model */
+    height: 80px;
+    margin-bottom: var(--gap2);
+
+    /* Visual */
+    border: var(--bthick2) dashed var(--ui-border);
+    border-radius: var(--bradius2);
+    background: transparent;
+
+    /* Interaction */
+    pointer-events: none;
+}
+
+/* Responsive Horizontal Lanes */
+@media (max-width: 900px) {
+    .kanban-container {
+        padding: var(--gap3);
+    }
+
+    .app-header {
+        padding: var(--gap3);
+        flex-direction: column;
+        gap: var(--gap3);
+        align-items: stretch;
+
+        & .header-left {
+            justify-content: center;
+        }
+
+        & .header-right {
+            flex-direction: column;
+            gap: var(--gap3);
+            align-items: stretch;
+            width: 100%;
+        }
+
+        & .search-bar {
+            display: block;
+            width: 100%;
+            order: -1;
+        }
+
+        & .search-bar input,
+        & .search-bar input:focus {
+            width: 100%;
+        }
+
+        & .user-profile {
+            display: none;
+        }
+
+        & #add-task-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    .kanban-board {
+        /* Box Model */
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        overflow-y: visible;
+        padding-bottom: var(--gap6);
+        gap: var(--gap5);
+
+        & .kanban-column {
+            /* Box Model */
+            height: auto;
+            min-height: auto;
+            margin-bottom: var(--gap5);
+            padding: var(--gap3);
+
+            /* Visual */
+            border-right: var(--bthick) solid var(--ui-border);
+        }
+
+        & .column-content {
+            /* Box Model */
+            flex-direction: row;
+            overflow-x: auto;
+            overflow-y: hidden;
+            align-items: flex-start;
+            padding-bottom: var(--gap3);
+
+            /* Scrollbar for horizontal view */
+            &::-webkit-scrollbar {
+                height: 6px;
+                width: auto;
+            }
+        }
+
+        & kanban-card {
+            /* Box Model */
+            flex: 0 0 280px;
+            width: 280px;
+            margin-bottom: 0;
+            margin-right: var(--gap5);
+        }
+
+        & .drop-placeholder {
+            /* Box Model */
+            flex: 0 0 280px;
+            height: 120px;
+            margin-bottom: 0;
+            margin-right: var(--gap5);
+        }
+    }
+}
