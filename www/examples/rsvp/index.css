@@ -1,4 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500&display=swap');
+@import url('../../variables.css');
+
+body {
+    background:
+        radial-gradient(1200px circle at 10% 10%, rgba(71, 169, 255, 0.2), transparent 55%),
+        radial-gradient(900px circle at 90% 20%, rgba(244, 105, 158, 0.18), transparent 40%),
+        radial-gradient(700px circle at 30% 80%, rgba(27, 197, 84, 0.14), transparent 45%),
+        var(--background-color);
+}
 
 .reader-container {
     font-family: 'Lexend', sans-serif;
@@ -7,19 +15,16 @@
 }
 
 :root {
-    --normal-text-color: #fff;
-    --emphasis-text-color: #f00;
-    --background-color: #000;
+    --normal-text-color: var(--foreground-color);
+    --emphasis-text-color: var(--brand-red);
+    --rsvp-background: var(--background-color);
     --guide-thickness: 0.1em;
 }
 
-#input-text {
-    width: 100%;
-    box-sizing: border-box;
-}
+/* Input styling is now global via ui.css */
 
 #word {
-    background-color: var(--background-color);
+    background-color: var(--rsvp-background);
     color: var(--normal-text-color);
     font-size: 400%;
     padding: 1em;

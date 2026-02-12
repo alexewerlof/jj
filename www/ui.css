@@ -27,3 +27,66 @@ a {
         opacity: 0.85;
     }
 }
+
+/* Global input styling - beautiful semi-transparent inputs */
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='search'],
+input[type='url'],
+input[type='tel'],
+input[type='number'],
+input[type='date'],
+input[type='time'],
+input[type='datetime-local'],
+select,
+textarea {
+    /* Box Model */
+    padding: var(--gap2);
+    width: 100%;
+    box-sizing: border-box;
+
+    /* Visual */
+    background: rgba(0, 12, 23, 0.8);
+    border: 1px solid rgba(71, 169, 255, 0.35);
+    border-radius: var(--bradius2);
+
+    /* Typography */
+    color: var(--foreground-color);
+    font-family: var(--body-font-family);
+    font-size: 1rem;
+    line-height: 1.5;
+
+    /* Interaction */
+    transition:
+        border-color var(--animation-speed) ease,
+        background var(--animation-speed) ease;
+
+    &:focus {
+        outline: none;
+        border-color: var(--brand-blue);
+        background: rgba(0, 12, 23, 0.95);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    &::placeholder {
+        color: rgba(255, 245, 230, 0.45);
+    }
+}
+
+select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,245,230,0.6)' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--gap3) center;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}

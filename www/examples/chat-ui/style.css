@@ -3,7 +3,11 @@ body {
     flex-direction: column;
     height: 100vh;
     margin: 0;
-    background: var(--background-color);
+    background:
+        radial-gradient(1200px circle at 10% 10%, rgba(71, 169, 255, 0.2), transparent 55%),
+        radial-gradient(900px circle at 90% 20%, rgba(244, 105, 158, 0.18), transparent 40%),
+        radial-gradient(700px circle at 30% 80%, rgba(27, 197, 84, 0.14), transparent 45%),
+        var(--background-color);
     color: var(--foreground-color);
     font-family: var(--body-font-family);
     overflow: hidden;
@@ -18,68 +22,12 @@ h1 {
     color: var(--primary-color);
 }
 
-.panel {
-    padding: var(--gap4);
-    background: var(--background-lighter);
-    border: var(--bthick) solid var(--ui-border);
-    border-radius: var(--bradius2);
-}
-
+/* Using shared panel and button styles from index.css */
 #connection-panel,
 #model-panel {
     display: flex;
     flex-direction: column;
     gap: var(--gap3);
-
-    & label {
-        display: flex;
-        flex-direction: column;
-        gap: var(--gap2);
-        font-weight: 500;
-    }
-
-    & input,
-    & select {
-        padding: var(--gap3);
-        background: var(--background-darker);
-        border: var(--bthick) solid var(--ui-border);
-        border-radius: var(--bradius);
-        color: var(--foreground-color);
-        font-family: var(--body-font-family);
-        font-size: 1rem;
-
-        &:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    }
-
-    & button {
-        padding: var(--gap3) var(--gap4);
-        background: var(--primary-color);
-        border: none;
-        border-radius: var(--bradius);
-        color: var(--background-color);
-        font-family: var(--body-font-family);
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background var(--animation-speed) ease;
-
-        &:hover:not(:disabled) {
-            background: var(--primary-lighter);
-        }
-
-        &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    }
 }
 
 #model-panel {
@@ -143,47 +91,11 @@ h1 {
             flex: 1;
             min-height: 60px;
             max-height: 200px;
-            padding: var(--gap3);
-            background: var(--background-lighter);
-            border: var(--bthick) solid var(--ui-border);
-            border-radius: var(--bradius);
-            color: var(--foreground-color);
-            font-family: var(--body-font-family);
-            font-size: 1rem;
             resize: vertical;
-
-            &:focus {
-                outline: none;
-                border-color: var(--primary-color);
-            }
-
-            &:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-            }
         }
 
         & button {
             align-self: normal;
-            padding: var(--gap3) var(--gap4);
-            background: var(--primary-color);
-            border: none;
-            border-radius: var(--bradius);
-            color: var(--background-color);
-            font-family: var(--body-font-family);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background var(--animation-speed) ease;
-
-            &:hover:not(:disabled) {
-                background: var(--primary-lighter);
-            }
-
-            &:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-            }
         }
     }
 }
@@ -194,21 +106,13 @@ h1 {
     }
 
     .panel {
-        padding: var(--gap3);
         margin: var(--gap3);
     }
 
     #chat-panel {
-        padding: var(--gap3);
         padding-bottom: 0;
 
-        & chat-thread {
-            padding: var(--gap3);
-        }
-
         & .input-area {
-            padding: var(--gap3);
-            padding-top: var(--gap2);
             flex-direction: column;
             align-items: stretch;
 
