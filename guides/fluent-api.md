@@ -146,3 +146,24 @@ watcher.on('add' /* addHndler */)
 watcher.on('change' /* changeHandler */)
 watcher.on('unlink' /* unlinkHandler */)
 ```
+
+# Document Fragments
+
+`DocumentFragment` (wrapped by `JJDF`) is a performance trick to aggregate some elements before adding them to DOM.
+
+However, when working with `jj`, you may not need them at all.
+
+```js
+const fruits = ['Apple', 'Orange', 'Pear']
+// ✅ GOOD - use the .mapAppend()
+const ul = JJHE.create('ul').mapAppend(fruits, (fruit) => JJHE.create('li').setText(fruit))
+// ✅ GOOD - even shorter
+const ul = JJHE.create('ul').mapAppend(fruits, (fruit) => h('li', null, fruit))
+// ❌ BAD - use unnecessary DocumentFragment
+const ul = JJHE.create('ul')
+const frag = JJDF.create()
+for (const fruit of fruits) {
+    frag.append(JJHE.create('li').setText(fruit)
+}
+ul.append(frag)
+```
