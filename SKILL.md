@@ -1,10 +1,6 @@
 ---
-name: jj-dom-helpers
-description: >
-    Minimal, imperative TypeScript DOM library for AI-assisted development. Use when
-    working with DOM manipulation, custom elements, or building lightweight web
-    components without frameworks. Triggers on tasks involving direct DOM manipulation,
-    Shadow DOM, document fragments, template handling, or converting from React/Vue/jQuery.
+name: jj
+description: Minimal, imperative TypeScript DOM library for AI-assisted development. Use when working with DOM manipulation, custom elements, or building lightweight web components without frameworks. Triggers on tasks involving direct DOM manipulation, Shadow DOM, document fragments, template handling, or converting from React/Vue/jQuery.
 license: MIT
 metadata:
     author: alexewerlof
