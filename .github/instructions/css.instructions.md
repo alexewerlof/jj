@@ -1,7 +1,7 @@
 ---
 name: CSS Instructions
 description: Makes sure CSS complies with best practices (variables-first, minimal, responsive, theme-aware).
-applyTo: "**/*.css"
+applyTo: '**/*.css'
 ---
 
 # CSS Instructions for AI Coding Agents
@@ -105,20 +105,20 @@ Keep nesting aligned with BEM so selectors remain flat and predictable.
 .card {
     padding: var(--gap3);
     background: var(--background-lighter);
-    
+
     &:hover {
         background-color: var(--background-color);
     }
-    
+
     .card-title {
         font-family: var(--title-font-family);
         color: var(--primary-color);
         margin-bottom: var(--gap2);
     }
-    
+
     .card-content {
         color: var(--foreground-color);
-        
+
         p {
             margin-bottom: var(--gap);
         }
@@ -199,13 +199,16 @@ Use these standard breakpoints only when necessary:
 /* Mobile-first: base styles apply to mobile */
 
 /* Tablet and up */
-@media (min-width: 768px) { }
+@media (min-width: 768px) {
+}
 
 /* Desktop and up */
-@media (min-width: 1024px) { }
+@media (min-width: 1024px) {
+}
 
 /* Large desktop */
-@media (min-width: 1440px) { }
+@media (min-width: 1440px) {
+}
 ```
 
 ### Best Practices
@@ -226,7 +229,7 @@ Use these standard breakpoints only when necessary:
 /* ✅ GOOD - Strategic media queries */
 .sidebar {
     display: none;
-    
+
     @media (min-width: 1024px) {
         display: block;
     }
@@ -238,19 +241,27 @@ Use these standard breakpoints only when necessary:
 }
 
 @media (min-width: 480px) {
-    .container { padding: 12px; }
+    .container {
+        padding: 12px;
+    }
 }
 
 @media (min-width: 768px) {
-    .container { padding: 16px; }
+    .container {
+        padding: 16px;
+    }
 }
 
 @media (min-width: 1024px) {
-    .container { padding: 20px; }
+    .container {
+        padding: 20px;
+    }
 }
 
 @media (min-width: 1440px) {
-    .container { padding: 24px; }
+    .container {
+        padding: 24px;
+    }
 }
 ```
 
@@ -323,7 +334,7 @@ Support both light and dark themes using `prefers-color-scheme` media query.
     background: var(--background-lighter);
     border-radius: var(--bradius2);
     border: var(--bthick) solid var(--ui-border);
-    
+
     &:hover {
         border-color: var(--primary-color);
         transition: border-color var(--animation-speed);
@@ -343,12 +354,12 @@ Support both light and dark themes using `prefers-color-scheme` media query.
     font-family: var(--body-font-family);
     cursor: pointer;
     transition: all var(--animation-speed);
-    
+
     &:hover:not(:disabled) {
         background: var(--primary-lighter);
         transform: translateY(-1px);
     }
-    
+
     &:disabled {
         background: var(--disabled-color);
         cursor: not-allowed;
@@ -373,7 +384,7 @@ Support both light and dark themes using `prefers-color-scheme` media query.
 - **Avoid absolute positioning**: Prefer flexbox/grid for layouts
 - **Use transforms for animations**: Better performance than animating layout properties
 - **Group related properties**: Box model → visual → typography
- - **Prefer class selectors**: Avoid tag, id, and attribute selectors unless required
+- **Prefer class selectors**: Avoid tag, id, and attribute selectors unless required
 
 ```css
 /* ✅ GOOD - Logical property order */
@@ -382,16 +393,16 @@ Support both light and dark themes using `prefers-color-scheme` media query.
     display: flex;
     padding: var(--gap2);
     margin-bottom: var(--gap);
-    
+
     /* Visual */
     background: var(--background-lighter);
     border: var(--bthick) solid var(--ui-border);
     border-radius: var(--bradius);
-    
+
     /* Typography */
     font-family: var(--body-font-family);
     color: var(--foreground-color);
-    
+
     /* Misc */
     transition: all var(--animation-speed);
 }
@@ -417,6 +428,7 @@ Rules:
 - Do not chain blocks (`.a .b`) to create dependencies.
 - Avoid element selectors without the block prefix (`.title`, `.content`).
 - Modifiers only adjust, never define a base style.
+- Avoid empty rules like `body {}`.
 
 Examples:
 

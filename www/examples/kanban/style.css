@@ -1,13 +1,5 @@
 /* Kanban Board Specific Styles */
 
-body {
-    background:
-        radial-gradient(1200px circle at 10% 10%, rgba(71, 169, 255, 0.2), transparent 55%),
-        radial-gradient(900px circle at 90% 20%, rgba(244, 105, 158, 0.18), transparent 40%),
-        radial-gradient(700px circle at 30% 80%, rgba(27, 197, 84, 0.14), transparent 45%),
-        var(--background-color);
-}
-
 .app-header {
     /* Box Model */
     display: flex;

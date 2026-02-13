@@ -10,29 +10,24 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-        radial-gradient(1200px circle at 10% 10%, rgba(71, 169, 255, 0.2), transparent 55%),
-        radial-gradient(900px circle at 90% 20%, rgba(244, 105, 158, 0.18), transparent 40%),
-        radial-gradient(700px circle at 30% 80%, rgba(27, 197, 84, 0.14), transparent 45%),
-        var(--background-color);
     color: var(--foreground-color);
     font-family: var(--body-font-family);
 }
 
 #todo-root {
     width: min(960px, 92vw);
-    padding: 48px 0;
+    padding: var(--gap6) 0;
 }
 
 .todo-shell {
     display: grid;
-    gap: 24px;
+    gap: var(--gap5);
 }
 
 .hero {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--gap2);
 }
 
 .hero h1 {
@@ -51,27 +46,27 @@ body {
 
 .todo-card {
     background: rgba(0, 20, 38, 0.7);
-    border: 1px solid rgba(71, 169, 255, 0.2);
-    border-radius: 28px;
-    padding: 28px;
+    border: var(--bthick) solid rgba(71, 169, 255, 0.2);
+    border-radius: var(--bradius5);
+    padding: var(--gap5);
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
     backdrop-filter: blur(18px);
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: var(--gap4);
 }
 
 .todo-form {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 12px;
+    gap: var(--gap3);
 }
 
 .todo-input {
     background: rgba(0, 12, 23, 0.8);
-    border: 1px solid rgba(71, 169, 255, 0.35);
-    border-radius: 16px;
-    padding: 14px 16px;
+    border: var(--bthick) solid rgba(71, 169, 255, 0.35);
+    border-radius: var(--bradius3);
+    padding: var(--gap3) var(--gap3);
     color: var(--foreground-color);
     font-family: var(--body-font-family);
     font-size: 1rem;
@@ -90,20 +85,20 @@ body {
 .controls {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: var(--gap3);
     align-items: center;
     justify-content: space-between;
 }
 
 .filters {
     display: flex;
-    gap: 10px;
+    gap: var(--gap2);
     flex-wrap: wrap;
 }
 
 .filter-btn {
     background: rgba(0, 12, 23, 0.8);
-    border: 1px solid rgba(71, 169, 255, 0.2);
+    border: var(--bthick) solid rgba(71, 169, 255, 0.2);
     color: rgba(255, 245, 230, 0.7);
     padding: var(--gap) var(--gap3);
     border-radius: 999px;
@@ -118,19 +113,21 @@ body {
 
     &:hover {
         border-color: rgba(71, 169, 255, 0.6);
-        color: #fff;
+        color: white;
     }
 
     &.is-active {
         background: rgba(71, 169, 255, 0.2);
-        color: #fff;
+        color: white;
         border-color: rgba(71, 169, 255, 0.6);
     }
 }
 
 .meta {
     display: flex;
-    align-irgba(255, 245, 230, 0.6);
+    align-items: center;
+    gap: var(--gap3);
+    color: rgba(255, 245, 230, 0.6);
     font-size: 0.9rem;
 }
 
@@ -140,12 +137,12 @@ body {
 }
 
 .empty-state {
-    padding: 20px;
-    border-radius: 18px;
+    padding: var(--gap4);
+    border-radius: var(--bradius3);
     background: rgba(0, 12, 23, 0.7);
     text-align: center;
     color: rgba(255, 245, 230, 0.6);
-    border: 1px dashed rgba(71, 169, 255, 0.2);
+    border: var(--bthick) dashed rgba(71, 169, 255, 0.2);
 }
 
 .empty-state.is-hidden {
@@ -153,13 +150,12 @@ body {
 }
 
 .footer-hint {
-    color: rgba(255, 245, 230, 0.5)
     color: var(--foreground-color);
     opacity: 0.5;
     font-size: 0.85rem;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
     .todo-form {
         grid-template-columns: 1fr;
     }
