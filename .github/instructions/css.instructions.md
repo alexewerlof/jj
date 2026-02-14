@@ -1,6 +1,6 @@
 ---
-name: CSS Instructions
-description: Makes sure CSS complies with best practices (variables-first, minimal, responsive, theme-aware).
+name: 'CSS Instructions'
+description: 'Makes sure CSS complies with best practices (variables-first, minimal, responsive, theme-aware).'
 applyTo: '**/*.css'
 ---
 

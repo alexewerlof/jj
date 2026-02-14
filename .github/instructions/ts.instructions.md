@@ -1,6 +1,6 @@
 ---
-name: TypeScript and JavaScript Instructions
-description: Makes sure TypeScript and JavaScript code complies with best practices.
+name: 'TypeScript and JavaScript Instructions'
+description: 'Makes sure TypeScript and JavaScript code complies with best practices.'
 applyTo: '**/*.ts, **/*.js'
 ---
 
