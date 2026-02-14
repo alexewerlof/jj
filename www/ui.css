@@ -93,3 +93,22 @@ textarea {
     min-height: 100px;
     resize: vertical;
 }
+
+/* Global scrollbar styling */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--brand-blue) var(--background-darker);
+}
+
+html::-webkit-scrollbar-track {
+    background: var(--background-darker);
+}
+
+html::-webkit-scrollbar-thumb {
+    background: var(--brand-blue);
+    border-radius: var(--bradius);
+}
+
+html::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--brand-blue), white 20%);
+}
