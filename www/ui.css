@@ -1,11 +1,25 @@
 @import url('variables.css');
 
-html,
-body {
+html {
+    background-color: var(--background-color);
     background:
-        radial-gradient(1200px circle at 10% 10%, rgba(71, 169, 255, 0.2), transparent 55%),
-        radial-gradient(900px circle at 90% 20%, rgba(244, 105, 158, 0.18), transparent 40%),
-        radial-gradient(700px circle at 30% 80%, rgba(27, 197, 84, 0.14), transparent 45%), var(--background-color);
+        radial-gradient(
+            1200px circle at 10% 10%,
+            color-mix(in srgb, var(--brand-blue) 20%, transparent),
+            transparent 55%
+        ),
+        radial-gradient(
+            900px circle at 90% 20%,
+            color-mix(in srgb, var(--brand-pink) 18%, transparent),
+            transparent 40%
+        ),
+        radial-gradient(
+            700px circle at 30% 80%,
+            color-mix(in srgb, var(--brand-green) 14%, transparent),
+            transparent 45%
+        ),
+        var(--background-color);
+    background-attachment: fixed;
     color: var(--foreground-color);
     font-family: var(--body-font-family);
 }
@@ -50,8 +64,8 @@ textarea {
     box-sizing: border-box;
 
     /* Visual */
-    background: rgba(0, 12, 23, 0.8);
-    border: 1px solid rgba(71, 169, 255, 0.35);
+    background: color-mix(in srgb, var(--background-darker) 80%, transparent);
+    border: 1px solid color-mix(in srgb, var(--brand-blue) 35%, transparent);
     border-radius: var(--bradius2);
 
     /* Typography */
@@ -68,7 +82,7 @@ textarea {
     &:focus {
         outline: none;
         border-color: var(--brand-blue);
-        background: rgba(0, 12, 23, 0.95);
+        background: color-mix(in srgb, var(--background-darker) 95%, transparent);
     }
 
     &:disabled {
@@ -77,14 +91,14 @@ textarea {
     }
 
     &::placeholder {
-        color: rgba(255, 245, 230, 0.45);
+        color: color-mix(in srgb, var(--foreground-color) 45%, transparent);
     }
 }
 
 select {
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,245,230,0.6)' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgb(255,245,230)' opacity='0.6' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right var(--gap3) center;
 }
