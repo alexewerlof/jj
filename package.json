@@ -19,8 +19,7 @@
     "unpkg": "./lib/bundle.js",
     "exports": {
         "import": "./lib/bundle.js",
-        "require": "./lib/bundle.cjs",
-        "types": "./lib/bundle.d.ts"
+        "require": "./lib/bundle.cjs"
     },
     "directories": {
         "lib": "lib",
