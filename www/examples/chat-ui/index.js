@@ -66,7 +66,6 @@ function hideStatus() {
     statusEl.addClass('hidden')
 }
 
-
 // Render chat messages
 function renderMessages() {
     chatThread.empty()
