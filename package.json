@@ -18,18 +18,9 @@
     "main": "./lib/index.js",
     "unpkg": "./lib/bundle.js",
     "exports": {
-        ".": {
-            "types": "./lib/index.d.ts",
-            "import": "./lib/index.js"
-        },
-        "./lib/bundle.js": {
-            "types": "./lib/index.d.ts",
-            "import": "./lib/bundle.js"
-        },
-        "./lib/bundle.min.js": {
-            "types": "./lib/index.d.ts",
-            "import": "./lib/bundle.min.js"
-        }
+        "import": "./lib/bundle.js",
+        "require": "./lib/bundle.cjs",
+        "types": "./lib/bundle.d.ts"
     },
     "directories": {
         "lib": "lib",
