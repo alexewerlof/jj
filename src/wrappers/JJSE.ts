@@ -106,8 +106,8 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
-    setText(text?: any): this {
-        this.ref.textContent = text ?? ''
+    setText(text?: unknown): this {
+        this.ref.textContent = text as string | null
         return this
     }
 

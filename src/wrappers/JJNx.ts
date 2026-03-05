@@ -61,7 +61,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/append | Element.append}
      */
     addChild(...children: Wrappable[]): this {
-        const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
+        const nodes = JJN.unwrapAll(children.filter(JJN.isWrappable))
         this.ref.append(...nodes)
         return this
     }
@@ -82,7 +82,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend | Element.prepend}
      */
     preChild(...children: Wrappable[]): this {
-        const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
+        const nodes = JJN.unwrapAll(children.filter(JJN.isWrappable))
         this.ref.prepend(...nodes)
         return this
     }
@@ -141,7 +141,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
      */
     setChildren(...children: Wrappable[]): this {
-        const nodes = JJN.unwrapAll(children.filter(JJN.isWrapable))
+        const nodes = JJN.unwrapAll(children.filter(JJN.isWrappable))
         this.ref.replaceChildren(...nodes)
         return this
     }

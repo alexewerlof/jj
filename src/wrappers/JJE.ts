@@ -89,14 +89,14 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @throws {TypeError} If arguments are invalid types.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute | Element.setAttribute}
      */
-    setAttr(name: string, value: any): this
-    setAttr(obj: Record<string, any>): this
-    setAttr(nameOrObj: string | Record<string, any>, value?: any): this {
+    setAttr(name: string, value: unknown): this
+    setAttr(obj: Record<string, unknown>): this
+    setAttr(nameOrObj: string | Record<string, unknown>, value?: unknown): this {
         if (typeof nameOrObj === 'string') {
-            this.ref.setAttribute(nameOrObj, value)
+            this.ref.setAttribute(nameOrObj, value as string)
         } else if (isObj(nameOrObj)) {
             for (const [k, v] of Object.entries(nameOrObj)) {
-                this.ref.setAttribute(k, v)
+                this.ref.setAttribute(k, v as string)
             }
         } else {
             throw typeErr('nameOrObj', 'a string or object', nameOrObj)
@@ -177,14 +177,14 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
-    setAria(name: string, value: any): this
-    setAria(obj: Record<string, any>): this
-    setAria(nameOrObj: string | Record<string, any>, value?: any): this {
+    setAria(name: string, value: unknown): this
+    setAria(obj: Record<string, unknown>): this
+    setAria(nameOrObj: string | Record<string, unknown>, value?: unknown): this {
         if (isStr(nameOrObj)) {
-            this.ref.setAttribute(`aria-${nameOrObj}`, value)
+            this.ref.setAttribute(`aria-${nameOrObj}`, value as string)
         } else if (isObj(nameOrObj)) {
             for (const [k, v] of Object.entries(nameOrObj)) {
-                this.ref.setAttribute(`aria-${k}`, v)
+                this.ref.setAttribute(`aria-${k}`, v as string)
             }
         } else {
             throw typeErr('nameOrObj', 'a string or object', nameOrObj)

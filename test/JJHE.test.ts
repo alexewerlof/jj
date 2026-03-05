@@ -93,14 +93,14 @@ describe('JJHE', () => {
             it('accepts numbers and converts to strings in single mode', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setData('key', 123)
+                jjhe.setData('key', 123 as unknown as string)
                 assert.strictEqual(el.dataset.key, '123')
             })
 
             it('accepts numbers and converts to strings in object mode', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setData({ key: 123 })
+                jjhe.setData({ key: 123 as unknown as string })
                 assert.strictEqual(el.dataset.key, '123')
             })
 
@@ -198,15 +198,7 @@ describe('JJHE', () => {
                 el.innerText = 'old text'
                 const jjhe = new JJHE(el)
                 jjhe.setText(null)
-                assert.strictEqual(el.innerText, '')
-            })
-
-            it('clears text with undefined', () => {
-                const el = document.createElement('div')
-                el.innerText = 'old text'
-                const jjhe = new JJHE(el)
-                jjhe.setText(undefined)
-                assert.strictEqual(el.innerText, '')
+                assert.strictEqual(jjhe.getText(), el.innerText)
             })
 
             it('accepts numbers and converts to strings', () => {

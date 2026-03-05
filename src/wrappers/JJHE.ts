@@ -96,7 +96,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      * @throws {Error} If the HTMLElement does not have a value property.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/value | HTMLInputElement.value}
      */
-    setValue(value: any): this {
+    setValue(value: unknown): this {
         if (!hasProp(this.ref, 'value')) {
             throw new ReferenceError(`${this.ref.tagName} has no value property.`)
         }
@@ -151,8 +151,8 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
      */
-    setText(text?: any): this {
-        this.ref.innerText = text ?? ''
+    setText(text?: unknown): this {
+        this.ref.innerText = text as string
         return this
     }
 }

@@ -31,14 +31,15 @@
         "SKILL.md"
     ],
     "scripts": {
-        "doc": "typedoc src/index.ts",
-        "prebuild": "rm -rf lib doc",
-        "build": "tsup --dts && npm run doc",
-        "typecheck": "tsc --noEmit",
         "fmt": "prettier --write .",
+        "lint": "eslint",
+        "typecheck": "tsc --noEmit",
         "test": "npm run typecheck && node --import tsx --test",
         "test:watch": "npm run typecheck && node --import tsx --test --watch",
         "test:coverage": "npm run typecheck && node --import tsx --test --experimental-test-coverage",
+        "doc": "typedoc src/index.ts",
+        "prebuild": "rm -rf lib doc",
+        "build": "tsup --dts && npm run doc",
         "get-bundle-size": "gzip -9 -c lib/bundle.min.js | wc -c | numfmt --to=iec-i --suffix=B",
         "preversion": "npm run fmt && npm t",
         "prepublishOnly": "npm run build",
@@ -51,14 +52,19 @@
     "author": "Alex Ewerlöf",
     "license": "MIT",
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
         "@types/jsdom": "^27.0.0",
         "@types/node": "^24.7.2",
+        "eslint": "^10.0.2",
+        "globals": "^17.4.0",
+        "jiti": "^2.6.1",
         "jsdom": "^27.4.0",
         "prettier": "^3.6.2",
         "tsup": "^8.5.1",
         "tsx": "^4.20.6",
         "typedoc": "^0.28.14",
-        "typescript": "^5.9.3"
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.56.1"
     },
     "dependencies": {
         "jty": "^4.0.0"

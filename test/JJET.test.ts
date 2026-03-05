@@ -54,6 +54,7 @@ describe('JJET', () => {
         let capturedThis: any
 
         jjet.on('test', function (this: JJET) {
+            // eslint-disable-next-line @typescript-eslint/no-this-alias
             capturedThis = this
         })
 
@@ -82,6 +83,7 @@ describe('JJET', () => {
 
         const listenerObj = {
             handleEvent: function (this: JJET) {
+                // eslint-disable-next-line @typescript-eslint/no-this-alias
                 capturedThis = this
             },
         }

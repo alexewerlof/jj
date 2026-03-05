@@ -81,8 +81,8 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
-    setText(text?: any): this {
-        this.ref.textContent = text ?? null
+    setText(text?: unknown): this {
+        this.ref.textContent = text as string | null
         return this
     }
 
@@ -96,14 +96,12 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * console.log(text.getText()) // 'hello world'
      * ```
      *
-     * @param text - The string to add to the existing contents. If null or undefined, nothing is added.
+     * @param textArr - The string to add to the existing contents. If null or undefined, nothing is added.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
      */
-    addText(text?: any): this {
-        if (text != null) {
-            this.ref.textContent += text
-        }
+    addText(...textArr: unknown[]): this {
+        this.setText(this.getText() + textArr.join(''))
         return this
     }
 

@@ -148,7 +148,7 @@ export class JJET<T extends EventTarget = EventTarget> {
      * @param args - Arguments to pass to the function.
      * @returns The return value of the function.
      */
-    run<R, Args extends any[]>(fn: (this: this, ...args: Args) => R, ...args: Args): R {
+    run<R, Args extends unknown[]>(fn: (this: this, ...args: Args) => R, ...args: Args): R {
         return fn.call(this, ...args)
     }
 }

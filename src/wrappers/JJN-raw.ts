@@ -1,6 +1,7 @@
 import { isA, isObj, isStr } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './types.js'
 import { JJET } from './JJET.js'
+import { typeErr } from '../internal.js'
 
 /**
  * Wraps a DOM Node.
@@ -35,9 +36,9 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * This is useful for filtering the array that is passed to `append()`, `prepend()` or `setChildren()`
      *
      * @param x an unknown value
-     * @returns true if `x` is a string, Node (or its descendents), JJN (or its descendents)
+     * @returns true if `x` is a string, Node (or its descendent), JJN (or its descendent)
      */
-    static isWrapable(x: unknown): x is Wrappable {
+    static isWrappable(x: unknown): x is Wrappable {
         return isStr(x) || isA(x, Node) || isA(x, JJN)
     }
 
@@ -47,6 +48,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @remarks
      * This function acts as a factory, inspecting the input type and returning the appropriate
      * subclass of `JJN` (e.g., `JJHE` for `HTMLElement`, `JJT` for `Text`).
+     * JJN.ts overrides this method to a richer version that handles all subclasses of JJN.
      *
      * @example
      * ```ts
@@ -59,7 +61,15 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @throws {TypeError} If the input is not a Node, string, or JJ wrapper.
      */
     static wrap(raw: Wrappable): Wrapped {
-        throw new ReferenceError(`The mixin is supposed to override this method.`)
+        if (isObj(raw)) {
+            if (isA(raw, JJN)) {
+                return raw
+            }
+            if (isA(raw, Node)) {
+                return new JJN(raw)
+            }
+        }
+        throw typeErr('raw', 'a Node', raw)
     }
 
     /**
@@ -171,9 +181,9 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createTextNode | document.createTextNode}
      */
-    addText(text?: string | null): this {
-        if (text) {
-            this.ref.appendChild(document.createTextNode(text))
+    addText(...textArr: unknown[]): this {
+        if (textArr) {
+            this.ref.appendChild(document.createTextNode(textArr.join('')))
         }
         return this
     }

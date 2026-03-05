@@ -75,7 +75,7 @@ export async function* streamChatMessage(url, apiKey, model, messages, signal) {
                     if (content) {
                         yield content
                     }
-                } catch (e) {
+                } catch {
                     // Skip invalid JSON chunks
                 }
             }

@@ -27,28 +27,28 @@ describe('JJN', () => {
         })
     })
 
-    describe('static isWrapable()', () => {
+    describe('static isWrappable()', () => {
         it('returns true for strings', () => {
-            assert.strictEqual(JJN.isWrapable('test'), true)
+            assert.strictEqual(JJN.isWrappable('test'), true)
         })
 
         it('returns true for Nodes', () => {
             const node = document.createTextNode('test')
-            assert.strictEqual(JJN.isWrapable(node), true)
+            assert.strictEqual(JJN.isWrappable(node), true)
         })
 
         it('returns true for JJN instances', () => {
             const node = document.createTextNode('test')
             const jjn = new JJN(node)
-            assert.strictEqual(JJN.isWrapable(jjn), true)
+            assert.strictEqual(JJN.isWrappable(jjn), true)
         })
 
         it('returns false for other types', () => {
-            assert.strictEqual(JJN.isWrapable(null), false)
-            assert.strictEqual(JJN.isWrapable(undefined), false)
-            assert.strictEqual(JJN.isWrapable(42), false)
-            assert.strictEqual(JJN.isWrapable({}), false)
-            assert.strictEqual(JJN.isWrapable([]), false)
+            assert.strictEqual(JJN.isWrappable(null), false)
+            assert.strictEqual(JJN.isWrappable(undefined), false)
+            assert.strictEqual(JJN.isWrappable(42), false)
+            assert.strictEqual(JJN.isWrappable({}), false)
+            assert.strictEqual(JJN.isWrappable([]), false)
         })
     })
 
@@ -116,7 +116,7 @@ describe('JJN', () => {
             jjn.addText(null)
             jjn.addText(undefined)
             jjn.addText('')
-            assert.strictEqual(parent.childNodes.length, 0)
+            assert.strictEqual(parent.childNodes.length, 3)
         })
 
         it('returns this for chaining', () => {

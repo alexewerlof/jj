@@ -1,4 +1,4 @@
-import { attr2prop, fetchCss, fetchHtml, fileExt, ShadowMaster, JJHE, registerComponent } from '../../lib/bundle.js'
+import { attr2prop, fetchCss, fetchHtml, ShadowMaster, JJHE, registerComponent } from '../../lib/bundle.js'
 import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
 import highlightJavascript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
 import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'

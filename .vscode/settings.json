@@ -1,5 +1,6 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "cSpell.words": ["JJET", "JJN", "JJT", "JJE", "JJHE", "JJSE", "JJD", "JJDF", "JJSR", "Wrappable"]
 }
