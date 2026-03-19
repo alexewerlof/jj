@@ -73,6 +73,9 @@ class MyComponent extends HTMLElement {
 ## 6. Common Gotchas
 
 - **`empty()`**: Use `el.empty()` to clear children. It uses `replaceChildren()` under the hood (fast & safe).
+- **`parent`**: Use `node.parent` to get the wrapped parent node. It returns `null` for detached nodes.
+- **`children`**: Use `node.children` to get wrapped child nodes. It always returns an array, including for text and document fragment children.
+- **`rm()`**: Use `node.rm()` to detach any wrapped node from its current parent. Detached nodes are ignored.
 - **Attributes**: Use `.setAttr('name', val)`, `.getAttr('name')`, `.rmAttr('name')`.
 - **Classes**: Use `.addClass()`, `.rmClass()`, `.toggleClass()`, `.setClass()`.
 - **Dataset**: Use `.setData()`, `.getData()` (on `JJHE`/`JJSE` only).

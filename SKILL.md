@@ -60,6 +60,8 @@ const nav = h(
 
 // Append to document body
 doc.body.ref.append(nav.ref)
+// Or using the wrapper API
+doc.body.addChild(nav.ref)
 ```
 
 For batch DOM operations, use `JJDF` (DocumentFragment) to avoid multiple reflows:
@@ -171,6 +173,20 @@ el.attr('data-age', 42).prop('disabled', false)
 el.style('background-color', 'blue').style('padding', '10px')
 // ARIA helpers
 el.setAria('hidden', 'true').rmAria('label')
+```
+
+Node traversal and detach helpers on `JJN`:
+
+```typescript
+const item = doc.find('#item', true)
+const parent = item.parent // wrapped parent or null
+const children = item.children // wrapped child nodes
+
+children.forEach((child) => {
+    console.log(child.ref)
+})
+
+item.rm() // detach from its current parent
 ```
 
 ### 3. Type-Safe Element Creation
@@ -614,8 +630,10 @@ Output: `doc/` folder with HTML documentation
 1. **Accessing the Native Node**: Always use `.ref` to access the underlying DOM node for operations not exposed by JJ
 2. **Event Listeners**: Use `.on()` and `.off()` for proper cleanup. Event handlers are automatically bound to the JJ\* instance, so `this` refers to the wrapper, not the DOM element. Use `function` instead of arrow functions (`=>`) for `.bind()` to work correctly. Use `this.ref` to access the native element.
 3. **Type Safety**: Use `JJHE.create()` for automatic type inference instead of generic parameters
-4. **Fragments**: Use JJDF for batch operations before appending
-5. **Error Messages**: Read them carefully—they suggest the correct approach
+4. **Tree Navigation**: Use `node.parent` and `node.children` to stay in JJ wrappers while traversing the DOM tree
+5. **Detaching Nodes**: Use `node.rm()` instead of reaching for native removal APIs unless you specifically need them
+6. **Fragments**: Use JJDF for batch operations before appending
+7. **Error Messages**: Read them carefully—they suggest the correct approach
 
 ## Anti-patterns to Avoid
 

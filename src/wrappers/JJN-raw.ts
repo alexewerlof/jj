@@ -155,6 +155,46 @@ export class JJN<T extends Node = Node> extends JJET<T> {
     }
 
     /**
+     * Gets the parent node wrapped in the most specific JJ wrapper available.
+     *
+     * @remarks
+     * Returns `null` when this node is detached and therefore has no parent.
+     *
+     * @example
+     * ```ts
+     * const text = JJT.fromStr('hello')
+     * JJHE.create('div').addChild(text)
+     * const parent = text.parent // JJHE
+     * ```
+     *
+     * @returns The wrapped parent node, or `null` if this node has no parent.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/parentNode | Node.parentNode}
+     */
+    get parent(): Wrapped | null {
+        const { parentNode } = this.ref
+        return parentNode ? JJN.wrap(parentNode) : null
+    }
+
+    /**
+     * Gets the child nodes wrapped in the most specific JJ wrappers available.
+     *
+     * @remarks
+     * Returns an empty array when this node has no children.
+     *
+     * @example
+     * ```ts
+     * const el = JJHE.create('div').addChild('hello', JJHE.create('span'))
+     * const children = el.children // [JJT, JJHE]
+     * ```
+     *
+     * @returns The wrapped child nodes.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/childNodes | Node.childNodes}
+     */
+    get children(): Wrapped[] {
+        return JJN.wrapAll(this.ref.childNodes)
+    }
+
+    /**
      * Clones the Node.
      *
      * @param deep - If true, clones the subtree.
@@ -163,6 +203,30 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      */
     clone(deep?: boolean): Wrapped {
         return JJN.wrap(this.ref.cloneNode(deep))
+    }
+
+    /**
+     * Removes this node from its parent.
+     *
+     * @remarks
+     * If the node has no parent, this method does nothing.
+     *
+     * @example
+     * ```ts
+     * const el = JJHE.create('div')
+     * doc.body.addChild(el)
+     * el.rm()
+     * ```
+     *
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild | Node.removeChild}
+     */
+    rm(): this {
+        const { parentNode } = this.ref
+        if (parentNode) {
+            parentNode.removeChild(this.ref)
+        }
+        return this
     }
 
     /**

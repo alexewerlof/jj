@@ -1,7 +1,8 @@
 import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JJN } from '../src/index.js'
+import { JJHE, JJN } from '../src/index.js'
+import { isA } from 'jty'
 
 describe('JJN', () => {
     describe('constructor', () => {
@@ -144,6 +145,111 @@ describe('JJN', () => {
             const jjn = new JJN(parent)
             const cloned = jjn.clone(false)
             assert.strictEqual(cloned.ref.childNodes.length, 0)
+        })
+    })
+
+    describe('parent', () => {
+        it('returns wrapped parent node', () => {
+            const parent = document.createElement('div')
+            const child = document.createElement('span')
+            parent.appendChild(child)
+
+            const jjn = JJN.from(child)
+            const wrappedParent = jjn.parent
+
+            assert.ok(wrappedParent)
+            assert.strictEqual(wrappedParent?.ref, parent)
+            assert.ok(isA(wrappedParent, JJHE)) // Should be the most specific wrapper, which is JJHE for HTMLElement
+        })
+
+        it('returns null for detached nodes', () => {
+            const child = document.createElement('span')
+            const jjn = JJN.from(child)
+
+            assert.strictEqual(jjn.parent, null)
+        })
+
+        it('returns the most specific wrapper for the parent', () => {
+            const parent = document.createElement('div')
+            const child = document.createTextNode('test')
+            parent.appendChild(child)
+
+            const jjn = JJN.from(child)
+            const wrappedParent = jjn.parent
+
+            assert.ok(wrappedParent)
+            assert.ok(isA(wrappedParent, JJHE)) // Should be the most specific wrapper, which is JJHE for HTMLElement
+        })
+    })
+
+    describe('children', () => {
+        it('returns wrapped child nodes', () => {
+            const parent = document.createElement('div')
+            const child1 = document.createElement('span')
+            const child2 = document.createTextNode('test')
+            parent.append(child1, child2)
+
+            const jjn = JJN.from(parent)
+            const children = jjn.children
+
+            assert.strictEqual(children.length, 2)
+            assert.strictEqual(children[0]?.ref, child1)
+            assert.strictEqual(children[1]?.ref, child2)
+        })
+
+        it('returns an empty array when there are no children', () => {
+            const parent = document.createElement('div')
+            const jjn = JJN.from(parent)
+
+            assert.deepStrictEqual(jjn.children, [])
+        })
+
+        it('returns the most specific wrappers for children', () => {
+            const parent = document.createElement('div')
+            const child1 = document.createElement('span')
+            const child2 = document.createTextNode('test')
+            parent.append(child1, child2)
+
+            const jjn = JJN.from(parent)
+            const children = jjn.children
+
+            assert.ok(isA(children[0], JJHE))
+            assert.strictEqual(children[1]?.constructor.name, 'JJT')
+        })
+    })
+
+    describe('rm()', () => {
+        it('removes node from parent', () => {
+            const parent = document.createElement('div')
+            const child = document.createElement('span')
+            parent.appendChild(child)
+
+            const jjn = JJN.from(child)
+            const result = jjn.rm()
+
+            assert.strictEqual(result, jjn)
+            assert.strictEqual(parent.childNodes.length, 0)
+            assert.strictEqual(child.parentNode, null)
+        })
+
+        it('does nothing for detached nodes', () => {
+            const child = document.createElement('span')
+            const jjn = JJN.from(child)
+
+            assert.doesNotThrow(() => jjn.rm())
+            assert.strictEqual(child.parentNode, null)
+        })
+
+        it('removes text nodes from their parent', () => {
+            const parent = document.createElement('div')
+            const child = document.createTextNode('test')
+            parent.appendChild(child)
+
+            const jjn = JJN.from(child)
+            jjn.rm()
+
+            assert.strictEqual(parent.textContent, '')
+            assert.strictEqual(child.parentNode, null)
         })
     })
 })
