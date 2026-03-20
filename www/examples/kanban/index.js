@@ -2,7 +2,7 @@ import { doc, JJHE } from '../../../lib/bundle.js'
 import { KanbanCard } from './components/kanban-card.js'
 
 // Register Custom Element
-KanbanCard.register()
+await KanbanCard.register()
 
 // Application State
 let tasks = [

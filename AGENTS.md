@@ -70,6 +70,36 @@ class MyComponent extends HTMLElement {
 }
 ```
 
+## 5.1 Async Component Registration
+
+`registerComponent()` is async and must be treated as async everywhere.
+
+For component classes, `static register()` must return the `registerComponent()` promise:
+
+```typescript
+class MyComponent extends HTMLElement {
+    static register() {
+        return registerComponent('my-component', MyComponent)
+    }
+}
+```
+
+Do not call `registerComponent()` without returning it from `static register()`, or importers will receive `undefined` and cannot reliably await component definition.
+
+For importers, always await registration before using the custom element:
+
+```typescript
+await MyComponent.register()
+```
+
+If multiple components are needed, await them in parallel:
+
+```typescript
+await Promise.all([MyComponent.register(), OtherComponent.register()])
+```
+
+Do not call `.register()` like a synchronous function, and prefer `registerComponent()` over direct `customElements.define()` when exposing a `static register()` helper.
+
 ## 6. Common Gotchas
 
 - **`empty()`**: Use `el.empty()` to clear children. It uses `replaceChildren()` under the hood (fast & safe).

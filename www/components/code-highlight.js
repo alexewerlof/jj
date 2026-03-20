@@ -42,7 +42,7 @@ const tempStyle = ShadowMaster.create()
 export class CodeHighlight extends HTMLElement {
     static observedAttributes = ['file', 'language']
     static register() {
-        registerComponent('code-highlight', CodeHighlight)
+        return registerComponent('code-highlight', CodeHighlight)
     }
 
     #fileContent

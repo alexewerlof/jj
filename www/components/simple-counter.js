@@ -6,7 +6,7 @@ const sm = ShadowMaster.create()
 
 export class SimpleCounter extends HTMLElement {
     static register() {
-        registerComponent('simple-counter', SimpleCounter)
+        return registerComponent('simple-counter', SimpleCounter)
     }
 
     // State

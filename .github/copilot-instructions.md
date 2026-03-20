@@ -67,7 +67,7 @@ export class KanbanCard extends HTMLElement {
     }
     // ...
     static register() {
-        customElements.define('kanban-card', KanbanCard)
+        return registerComponent('kanban-card', KanbanCard)
     }
 }
 ```

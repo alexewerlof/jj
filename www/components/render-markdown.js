@@ -15,7 +15,7 @@ md.renderer.rules.fence = (tokens, idx) => {
 
 export class RenderMarkdown extends HTMLElement {
     static register() {
-        registerComponent('render-markdown', RenderMarkdown)
+        return registerComponent('render-markdown', RenderMarkdown)
     }
 
     static observedAttributes = ['content']

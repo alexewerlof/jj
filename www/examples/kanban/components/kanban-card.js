@@ -1,4 +1,4 @@
-import { fetchCss, fetchHtml, JJHE, ShadowMaster } from '../../../../lib/bundle.js'
+import { fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from '../../../../lib/bundle.js'
 
 // Pre-compute styles for the shadow DOM
 const sm = ShadowMaster.create()
@@ -61,6 +61,6 @@ export class KanbanCard extends HTMLElement {
     }
 
     static register() {
-        customElements.define('kanban-card', KanbanCard)
+        return registerComponent('kanban-card', KanbanCard)
     }
 }

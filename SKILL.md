@@ -227,6 +227,13 @@ Custom element lifecycle callbacks include (all of which can be `async`):
 
 On top of those, JJ also provides `registerComponent()` for registering custom elements and awaiting till they are defined.
 
+`registerComponent()` is async, so treat registration as async everywhere:
+
+- In the component class, `static register()` must `return registerComponent(...)`
+- In the importer, always use `await MyComponent.register()` or `await Promise.all([...])`
+- Never call `.register()` like a synchronous function
+- Prefer `registerComponent()` over direct `customElements.define()` when exposing a `static register()` helper
+
 **Basic pattern** - Create a shared `ShadowMaster` instance outside the class for caching:
 
 ```typescript
@@ -674,7 +681,7 @@ Or use directly in browser:
 3. Ask the LLM to use `.ref` when accessing native properties not exposed by JJ
 4. Expect type errors to be self-documenting—they guide toward the correct API
 5. Remind the LLM that JJ is imperative, not declarative—no virtual DOM or automatic re-rendering
-6. Don't overuse the `h()` function. First and foremost try to keep as much of the static layout of the page in the HTML.
+6. Don't overuse the `h()` function. First and foremost try to keep as much of the static layout of the page in the HTML but if it's too small, you can use the `h()` function to eliminate dynamic content around a network request.
 7. Upon the start of the app, store references to key static elements using `JJHE.find('#element-id', true)`
 
 ## Resources

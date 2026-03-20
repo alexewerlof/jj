@@ -81,6 +81,17 @@ describe('components', () => {
             assert.ok(customElements.get('test-element-3'))
         })
 
+        it('can be returned from a component register method and awaited by importers', async () => {
+            class TestElement4 extends HTMLElement {
+                static register() {
+                    return registerComponent('test-element-4', TestElement4)
+                }
+            }
+
+            await TestElement4.register()
+            assert.strictEqual(customElements.get('test-element-4'), TestElement4)
+        })
+
         it('throws TypeError for non-string name', async () => {
             class TestElement extends HTMLElement {}
             await assert.rejects(async () => await registerComponent(123 as any, TestElement), {
@@ -90,7 +101,7 @@ describe('components', () => {
         })
 
         it('throws TypeError for non-function constructor', async () => {
-            await assert.rejects(async () => await registerComponent('test-element-4', 'not-a-function' as any), {
+            await assert.rejects(async () => await registerComponent('test-element-5', 'not-a-function' as any), {
                 name: 'TypeError',
                 message: /Expected 'constructor' to be a function/,
             })
