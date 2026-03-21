@@ -239,9 +239,12 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * ```ts
      * el.addText('Hello ')
      * el.addText('World')
+     * // Behaves like document.createTextNode('Hello World') and appends it to el
+     * // Falsy values are converted to their string representation, except for empty string which is added as is.
+     * el.addText('Hello', '', 'world', null, undefined, '!!!') // Adds 6 text nodes with content 'Hello', '', 'world', 'null', 'undefined', and '!!!' respectively.
      * ```
      *
-     * @param text - The text to add. If null or undefined, nothing is added.
+     * @param textArr - The text to add. The actual text that's added follows the rules in document.createTextNode() which is basically what you get from String()
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createTextNode | document.createTextNode}
      */
