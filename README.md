@@ -26,6 +26,8 @@ JJHE.create('div')
 - **Web Standards** – First-class Web Components support
 - **Fluent API** – Chainable methods for cleaner code
 
+JJ is **not** a reactive framework, template compiler, or state-management system.
+
 ## 📚 Learn More
 
 **👉 [Visit the full site with tutorials, examples, and API docs](https://alexewerlof.github.io/jj)**
