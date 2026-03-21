@@ -5,6 +5,7 @@
     "excludePrivate": true,
     "entryPoints": ["src/index.ts"],
     "customCss": "typedoc.css",
+    "titleLink": "https://alexewerlof.github.io/jj/",
     "hostedBaseUrl": "https://alexewerlof.github.io/jj/",
     "customFooterHtml": "Made with ❤️ by <a href='https://alexewerlof.com/'>Alex Ewerlöf</a>",
     "out": "./doc"
