@@ -107,7 +107,8 @@ describe('ShadowMaster', () => {
             sm.setTemplate(123 as any)
             await assert.rejects(async () => await sm.getResolved(), {
                 name: 'TypeError',
-                message: /Expected 'template' to be a string, JJHE, JJDF, HTMLElement, or DocumentFragment/,
+                message:
+                    "Expected 'template' to be a string, JJHE, JJDF, HTMLElement, HTMLTemplateElement, or DocumentFragment or a function that returns them (or a promise that resolves to them). Got 123 (number)",
             })
         })
     })

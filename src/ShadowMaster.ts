@@ -1,4 +1,4 @@
-import { isA, isArr, isFn, isStr } from 'jty'
+import { isA, isArr, isDef, isFn, isStr } from 'jty'
 import { JJStyleConfig, JJTemplateConfig, ShadowConfig, JJHE, JJDF } from './wrappers/index.js'
 import { cssToStyle } from './util.js'
 import { typeErr } from './internal.js'
@@ -13,11 +13,11 @@ import { typeErr } from './internal.js'
  *
  * @param templateConfig - The template configuration to resolve.
  * @returns A promise resolving to the HTML string, DocumentFragment, or undefined.
- * @throws {TypeError} If the resolved value is not a string, JJHE, JJDF, HTMLElement, or DocumentFragment.
+ * @throws {TypeError} If the resolved value is not a string, JJHE, JJDF, HTMLElement, HTMLTemplateElement, or DocumentFragment.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML | Element.outerHTML}
  */
 async function templatePromise(templateConfig?: JJTemplateConfig): Promise<ShadowConfig['template']> {
-    if (templateConfig === undefined) {
+    if (!isDef(templateConfig)) {
         return undefined
     }
 
@@ -38,18 +38,22 @@ async function templatePromise(templateConfig?: JJTemplateConfig): Promise<Shado
     }
     if (isA(templateConfig, JJHE)) {
         // If it's a <template> wrapper, return a clone of its content (DocumentFragment)
-        if (templateConfig.ref instanceof HTMLTemplateElement) {
+        if (isA(templateConfig.ref, HTMLTemplateElement)) {
             return templateConfig.ref.content.cloneNode(true) as DocumentFragment
         }
         return templateConfig.ref.outerHTML
     }
     if (isA(templateConfig, HTMLElement)) {
-        return templateConfig instanceof HTMLTemplateElement
+        return isA(templateConfig, HTMLTemplateElement)
             ? (templateConfig.content.cloneNode(true) as DocumentFragment)
             : templateConfig.outerHTML
     }
 
-    throw typeErr('template', 'a string, JJHE, JJDF, HTMLElement, or DocumentFragment', templateConfig)
+    throw typeErr(
+        'template',
+        'a string, JJHE, JJDF, HTMLElement, HTMLTemplateElement, or DocumentFragment or a function that returns one of these (or a promise that resolves to one of these)',
+        templateConfig,
+    )
 }
 
 /**
