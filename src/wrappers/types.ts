@@ -46,15 +46,17 @@ export type JJTemplateConfig =
     | JJHE
     | JJDF
     | HTMLElement
+    | HTMLTemplateElement
     | DocumentFragment
-    | Promise<string | JJHE | JJDF | HTMLElement | DocumentFragment>
+    | Promise<string | JJHE | JJDF | HTMLElement | HTMLTemplateElement | DocumentFragment>
     | (() =>
           | string
           | JJHE
           | JJDF
           | HTMLElement
+          | HTMLTemplateElement
           | DocumentFragment
-          | Promise<string | JJHE | JJDF | HTMLElement | DocumentFragment>)
+          | Promise<string | JJHE | JJDF | HTMLElement | HTMLTemplateElement | DocumentFragment>)
 
 /**
  * Configuration for the component's styles.
