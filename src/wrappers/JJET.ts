@@ -1,4 +1,4 @@
-import { isA } from 'jty'
+import { isInstance } from 'jty'
 
 /**
  * Wraps a DOM EventTarget.
@@ -23,7 +23,7 @@ export class JJET<T extends EventTarget = EventTarget> {
      * @throws {TypeError} If `ref` is not an EventTarget.
      */
     constructor(ref: T) {
-        if (!isA(ref, EventTarget)) {
+        if (!isInstance(ref, EventTarget)) {
             throw new TypeError(`JJET expects an EventTarget instance. Got ${ref} (${typeof ref}). `)
         }
         this.#ref = ref

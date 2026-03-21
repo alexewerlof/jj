@@ -1,4 +1,4 @@
-import { hasProp, isA, isStr } from 'jty'
+import { hasProp, isInstance, isStr } from 'jty'
 import { JJEx } from './JJEx.js'
 import { typeErr } from '../internal.js'
 
@@ -62,7 +62,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      * @throws {TypeError} If `ref` is not an HTMLElement.
      */
     constructor(ref: T) {
-        if (!isA(ref, HTMLElement)) {
+        if (!isInstance(ref, HTMLElement)) {
             throw typeErr('ref', 'an HTMLElement', ref)
         }
         super(ref)

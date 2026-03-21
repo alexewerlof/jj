@@ -1,4 +1,4 @@
-import { isA } from 'jty'
+import { isInstance } from 'jty'
 import { JJN } from './JJN-raw.js'
 
 /**
@@ -45,7 +45,7 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * @throws {TypeError} If `ref` is not a Text node or string.
      */
     constructor(ref: T) {
-        if (!isA(ref, Text)) {
+        if (!isInstance(ref, Text)) {
             throw new TypeError(
                 `JJT expects a Text node. Got ${ref} (${typeof ref}). ` +
                     `Create a Text node with JJT.fromStr() or document.createTextNode('text').`,

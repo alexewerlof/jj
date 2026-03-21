@@ -1,4 +1,4 @@
-import { isA, isStr } from 'jty'
+import { isInstance, isStr } from 'jty'
 import { JJEx } from './JJEx.js'
 import { typeErr } from '../internal.js'
 
@@ -63,7 +63,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      * @throws {TypeError} If `ref` is not an SVGElement.
      */
     constructor(ref: T) {
-        if (!isA(ref, SVGElement)) {
+        if (!isInstance(ref, SVGElement)) {
             throw typeErr('ref', 'an SVGElement', ref)
         }
         super(ref)

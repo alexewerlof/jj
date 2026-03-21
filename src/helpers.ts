@@ -1,4 +1,4 @@
-import { isA, isStr } from 'jty'
+import { isInstance, isStr } from 'jty'
 import { Wrappable, JJHE } from './wrappers/index.js'
 import { cssToStyle, fileExt } from './util.js'
 import { typeErr, errMsg } from './internal.js'
@@ -94,7 +94,7 @@ export function createLinkPre(
     as?: 'fetch' | 'style' | 'script',
 ): JJHE {
     if (!isStr(href)) {
-        if (!isA(href, URL)) {
+        if (!isInstance(href, URL)) {
             throw typeErr('href', 'a string or URL', href)
         }
         href = href.toString()

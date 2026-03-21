@@ -1,4 +1,4 @@
-import { isA } from 'jty'
+import { isInstance } from 'jty'
 import { JJNx } from './JJNx.js'
 import { JJHE } from './JJHE.js'
 
@@ -47,7 +47,7 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
      * @throws {TypeError} If `ref` is not a Document.
      */
     constructor(ref: T) {
-        if (!isA(ref, Document)) {
+        if (!isInstance(ref, Document)) {
             throw new TypeError(`JJD expects a Document instance. Got ${ref} (${typeof ref}). `)
         }
         super(ref)

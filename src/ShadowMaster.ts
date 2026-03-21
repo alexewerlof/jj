@@ -1,4 +1,4 @@
-import { isA, isArr, isDef, isFn, isStr } from 'jty'
+import { isInstance, isArr, isDef, isFn, isStr } from 'jty'
 import { JJStyleConfig, JJTemplateConfig, ShadowConfig, JJHE, JJDF } from './wrappers/index.js'
 import { cssToStyle } from './util.js'
 import { typeErr } from './internal.js'
@@ -30,21 +30,21 @@ async function templatePromise(templateConfig?: JJTemplateConfig): Promise<Shado
     if (isStr(templateConfig)) {
         return templateConfig
     }
-    if (isA(templateConfig, JJDF)) {
+    if (isInstance(templateConfig, JJDF)) {
         return templateConfig.ref.cloneNode(true) as DocumentFragment
     }
-    if (isA(templateConfig, DocumentFragment)) {
+    if (isInstance(templateConfig, DocumentFragment)) {
         return templateConfig.cloneNode(true) as DocumentFragment
     }
-    if (isA(templateConfig, JJHE)) {
+    if (isInstance(templateConfig, JJHE)) {
         // If it's a <template> wrapper, return a clone of its content (DocumentFragment)
-        if (isA(templateConfig.ref, HTMLTemplateElement)) {
+        if (isInstance(templateConfig.ref, HTMLTemplateElement)) {
             return templateConfig.ref.content.cloneNode(true) as DocumentFragment
         }
         return templateConfig.ref.outerHTML
     }
-    if (isA(templateConfig, HTMLElement)) {
-        return isA(templateConfig, HTMLTemplateElement)
+    if (isInstance(templateConfig, HTMLElement)) {
+        return isInstance(templateConfig, HTMLTemplateElement)
             ? (templateConfig.content.cloneNode(true) as DocumentFragment)
             : templateConfig.outerHTML
     }
@@ -74,7 +74,7 @@ async function stylePromise(styleConfig?: JJStyleConfig): Promise<CSSStyleSheet>
 
     styleConfig = await styleConfig
 
-    if (isA(styleConfig, CSSStyleSheet)) {
+    if (isInstance(styleConfig, CSSStyleSheet)) {
         return styleConfig
     }
     if (isStr(styleConfig)) {

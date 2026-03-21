@@ -1,4 +1,4 @@
-import { isA } from 'jty'
+import { isInstance } from 'jty'
 import { JJNx } from './JJNx.js'
 import { typeErr } from '../internal.js'
 
@@ -63,7 +63,7 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
      * @throws {TypeError} If `ref` is not a DocumentFragment.
      */
     constructor(ref: T) {
-        if (!isA(ref, DocumentFragment)) {
+        if (!isInstance(ref, DocumentFragment)) {
             throw typeErr('ref', 'a DocumentFragment', ref)
         }
         super(ref)

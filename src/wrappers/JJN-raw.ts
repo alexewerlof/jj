@@ -1,4 +1,4 @@
-import { isA, isObj, isStr } from 'jty'
+import { isInstance, isObj, isStr } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './types.js'
 import { JJET } from './JJET.js'
 import { typeErr } from '../internal.js'
@@ -39,7 +39,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @returns true if `x` is a string, Node (or its descendent), JJN (or its descendent)
      */
     static isWrappable(x: unknown): x is Wrappable {
-        return isStr(x) || isA(x, Node) || isA(x, JJN)
+        return isStr(x) || isInstance(x, Node) || isInstance(x, JJN)
     }
 
     /**
@@ -62,10 +62,10 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      */
     static wrap(raw: Wrappable): Wrapped {
         if (isObj(raw)) {
-            if (isA(raw, JJN)) {
+            if (isInstance(raw, JJN)) {
                 return raw
             }
-            if (isA(raw, Node)) {
+            if (isInstance(raw, Node)) {
                 return new JJN(raw)
             }
         }
@@ -95,10 +95,10 @@ export class JJN<T extends Node = Node> extends JJET<T> {
         if (!isObj(obj)) {
             throw new TypeError(`JJN.unwrap() expects a string, DOM Node, or JJ wrapper. Got ${obj} (${typeof obj}). `)
         }
-        if (isA(obj, Node)) {
+        if (isInstance(obj, Node)) {
             return obj
         }
-        if (isA(obj, JJN)) {
+        if (isInstance(obj, JJN)) {
             return obj.ref
         }
         throw new TypeError(
@@ -145,7 +145,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @throws {TypeError} If `ref` is not a Node.
      */
     constructor(ref: T) {
-        if (!isA(ref, Node)) {
+        if (!isInstance(ref, Node)) {
             throw new TypeError(
                 `JJN expects a Node instance. Got ${ref} (${typeof ref}). ` +
                     `Use JJN.from(node) with a DOM Node, or check that you're passing a valid DOM element.`,

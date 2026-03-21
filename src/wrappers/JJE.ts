@@ -1,4 +1,4 @@
-import { isA, isArr, isObj, isStr } from 'jty'
+import { isInstance, isArr, isObj, isStr } from 'jty'
 import { JJSR } from './JJSR.js'
 import { ShadowConfig, Wrapped } from './types.js'
 import { JJNx } from './JJNx.js'
@@ -37,7 +37,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @throws {TypeError} If `ref` is not an Element.
      */
     constructor(ref: T) {
-        if (!isA(ref, Element)) {
+        if (!isInstance(ref, Element)) {
             throw new TypeError(
                 `JJE expects an Element instance. Got ${ref} (${typeof ref}). ` +
                     `Use JJE.from(element) with a DOM Element, or use the specific wrapper (JJHE for HTMLElement, JJSE for SVGElement).`,

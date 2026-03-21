@@ -1,4 +1,4 @@
-import { isA, isObj, isStr } from 'jty'
+import { isInstance, isObj, isStr } from 'jty'
 import { typeErr } from '../internal.js'
 import { JJHE } from './JJHE.js'
 import { JJE } from './JJE.js'
@@ -17,31 +17,31 @@ JJN.wrap = function wrap(raw: Wrappable): Wrapped {
     if (!isObj(raw)) {
         throw typeErr('raw', 'an object', raw)
     }
-    if (isA(raw, JJN)) {
+    if (isInstance(raw, JJN)) {
         return raw
     }
-    if (isA(raw, HTMLElement)) {
+    if (isInstance(raw, HTMLElement)) {
         return JJHE.from(raw)
     }
-    if (isA(raw, SVGElement)) {
+    if (isInstance(raw, SVGElement)) {
         return JJSE.from(raw)
     }
-    if (isA(raw, Element)) {
+    if (isInstance(raw, Element)) {
         return JJE.from(raw)
     }
-    if (isA(raw, ShadowRoot)) {
+    if (isInstance(raw, ShadowRoot)) {
         return JJSR.from(raw)
     }
-    if (isA(raw, DocumentFragment)) {
+    if (isInstance(raw, DocumentFragment)) {
         return JJDF.from(raw)
     }
-    if (isA(raw, Document)) {
+    if (isInstance(raw, Document)) {
         return JJD.from(raw)
     }
-    if (isA(raw, Text)) {
+    if (isInstance(raw, Text)) {
         return JJT.from(raw)
     }
-    if (isA(raw, Node)) {
+    if (isInstance(raw, Node)) {
         return JJN.from(raw)
     }
     throw typeErr('raw', 'a Node', raw)

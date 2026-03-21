@@ -1,4 +1,4 @@
-import { hasProp, isA, isFn, isStr } from 'jty'
+import { hasProp, isInstance, isFn, isStr } from 'jty'
 import { typeErr } from './internal.js'
 import { keb2cam } from './case.js'
 
@@ -49,7 +49,7 @@ import { keb2cam } from './case.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes | Responding to attribute changes}
  */
 export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown, newValue: unknown) {
-    if (!isA(instance, HTMLElement)) {
+    if (!isInstance(instance, HTMLElement)) {
         throw typeErr('instance', 'an HTMLElement', instance)
     }
     // Called when observed attributes change.
