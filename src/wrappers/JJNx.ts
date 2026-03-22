@@ -126,7 +126,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
     }
 
     /**
-     * Replaces the existing children of an Element with a specified new set of children.
+     * Replaces the existing children of an Element with new children.
      *
      * @remarks
      * If no children are provided, it empties the Element.
@@ -134,15 +134,19 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * el.setChildren(h('p', null, 'New Content'))
+     * el.setChild(h('p', null, 'New Content'))
      * ```
      * @param children - The children to replace with.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
      */
-    setChildren(...children: Wrappable[]): this {
-        const nodes = JJN.unwrapAll(children.filter(JJN.isWrappable))
-        this.ref.replaceChildren(...nodes)
+    setChild(...children: Wrappable[]): this {
+        if (children.length === 0) {
+            this.ref.replaceChildren()
+        } else {
+            const nodes = JJN.unwrapAll(children.filter(JJN.isWrappable))
+            this.ref.replaceChildren(...nodes)
+        }
         return this
     }
 
@@ -158,7 +162,6 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.setChildren}
      */
     empty(): this {
-        this.setChildren()
-        return this
+        return this.setChild()
     }
 }

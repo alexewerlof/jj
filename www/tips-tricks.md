@@ -34,7 +34,7 @@ for (const city of contents) {
     docFrag.append(JJHE.from('li').setText(city))
 }
 
-parent.setChildren(docFrag)
+parent.setChil(docFrag)
 ```
 
 ## Attaching event listeners
