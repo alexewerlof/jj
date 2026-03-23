@@ -199,8 +199,8 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @returns A new wrapped instance of the clone.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode | Node.cloneNode}
      */
-    clone(deep?: boolean): Wrapped {
-        return JJN.wrap(this.ref.cloneNode(deep))
+    clone(deep?: boolean): typeof this {
+        return JJN.wrap(this.ref.cloneNode(deep)) as this
     }
 
     /**
