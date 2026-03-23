@@ -61,15 +61,13 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @throws {TypeError} If the input is not a Node, string, or JJ wrapper.
      */
     static wrap(raw: Wrappable): Wrapped {
-        if (isObj(raw)) {
-            if (isInstance(raw, JJN)) {
-                return raw
-            }
-            if (isInstance(raw, Node)) {
-                return new JJN(raw)
-            }
+        if (isInstance(raw, JJN)) {
+            return raw
         }
-        throw typeErr('raw', 'a Node', raw)
+        if (isInstance(raw, Node)) {
+            return new JJN(raw)
+        }
+        throw typeErr('raw', 'a Node or JJN instance', raw)
     }
 
     /**

@@ -1,4 +1,4 @@
-import { isInstance } from 'jty'
+import { isFn, isInstance } from 'jty'
 
 /**
  * Wraps a DOM EventTarget.
@@ -52,7 +52,7 @@ export class JJET<T extends EventTarget = EventTarget> {
         let bound = this.#boundHandlers.get(handler)
         if (!bound) {
             // Bind the handler to this JJET instance
-            if (typeof handler === 'function') {
+            if (isFn(handler)) {
                 bound = handler.bind(this)
             } else {
                 // EventListenerObject with handleEvent method

@@ -1,4 +1,4 @@
-import { isInstance, isStr } from 'jty'
+import { isInstance, isNum, isStr } from 'jty'
 import { JJEx } from './JJEx.js'
 import { typeErr } from '../internal.js'
 
@@ -161,7 +161,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox | viewBox}
      */
     setViewBox(p1: string | (string | number)[] | number, p2?: number, p3?: number, p4?: number): this {
-        if (typeof p1 === 'number' && p2 !== undefined && p3 !== undefined && p4 !== undefined) {
+        if (isNum(p1) && isNum(p2) && isNum(p3) && isNum(p4)) {
             return this.setAttr('viewBox', `${p1} ${p2} ${p3} ${p4}`)
         }
         const value = p1 as string | (string | number)[]

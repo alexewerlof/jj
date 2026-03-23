@@ -1,4 +1,4 @@
-import { isInstance, isArr, isObj, isStr } from 'jty'
+import { isInstance, isArr, isStr, isPOJO, isDef } from 'jty'
 import { JJSR } from './JJSR.js'
 import { ShadowConfig, Wrapped } from './types.js'
 import { JJNx } from './JJNx.js'
@@ -92,9 +92,9 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     setAttr(name: string, value: unknown): this
     setAttr(obj: Record<string, unknown>): this
     setAttr(nameOrObj: string | Record<string, unknown>, value?: unknown): this {
-        if (typeof nameOrObj === 'string') {
+        if (isStr(nameOrObj)) {
             this.ref.setAttribute(nameOrObj, value as string)
-        } else if (isObj(nameOrObj)) {
+        } else if (isPOJO(nameOrObj)) {
             for (const [k, v] of Object.entries(nameOrObj)) {
                 this.ref.setAttribute(k, v as string)
             }
@@ -182,7 +182,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     setAria(nameOrObj: string | Record<string, unknown>, value?: unknown): this {
         if (isStr(nameOrObj)) {
             this.ref.setAttribute(`aria-${nameOrObj}`, value as string)
-        } else if (isObj(nameOrObj)) {
+        } else if (isPOJO(nameOrObj)) {
             for (const [k, v] of Object.entries(nameOrObj)) {
                 this.ref.setAttribute(`aria-${k}`, v as string)
             }
@@ -249,7 +249,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     setClass(className: string): this
     setClass(classMap: Record<string, boolean | unknown>): this
     setClass(classNameOrMap: string | Record<string, boolean | unknown>): this {
-        if (typeof classNameOrMap === 'string') {
+        if (isStr(classNameOrMap)) {
             return this.setAttr('class', classNameOrMap)
         }
         // Conditional class object (Vue.js style)
@@ -487,7 +487,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      */
     initShadow(mode: ShadowRootMode = 'open', config?: ShadowConfig): this {
         const shadowRoot = this.ref.shadowRoot ?? this.ref.attachShadow({ mode })
-        if (isObj(config)) {
+        if (isDef(config)) {
             const { template, styles } = config
 
             if (template) {

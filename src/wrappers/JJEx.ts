@@ -1,4 +1,4 @@
-import { hasProp, isObj, isStr } from 'jty'
+import { hasProp, isPOJO, isStr } from 'jty'
 import { JJE } from './JJE.js'
 import { typeErr } from '../internal.js'
 
@@ -61,9 +61,9 @@ export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
     setData(name: string, value?: string): this
     setData(obj: Record<string, string | undefined>): this
     setData(nameOrObj: string | Record<string, string | undefined>, value?: string): this {
-        if (typeof nameOrObj === 'string') {
+        if (isStr(nameOrObj)) {
             this.ref.dataset[nameOrObj] = value
-        } else if (isObj(nameOrObj)) {
+        } else if (isPOJO(nameOrObj)) {
             for (const [k, v] of Object.entries(nameOrObj)) {
                 this.ref.dataset[k] = v
             }
