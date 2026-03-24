@@ -17,6 +17,8 @@ describe('fileExt()', () => {
         assert.strictEqual(fileExt('./file.txt'), 'txt')
         assert.strictEqual(fileExt('./path/to/file.txt'), 'txt')
         assert.strictEqual(fileExt('/path/to/file.txt'), 'txt')
+        assert.strictEqual(fileExt('https://www.alexewerlof.com/path/to/file.js'), 'js')
+        assert.strictEqual(fileExt('/.well-known/file.css'), 'css')
     })
 
     it('always returns lowercase', () => {
@@ -44,9 +46,11 @@ describe('fileExt()', () => {
         // Note: This implementation differs from Node.js path.extname for dotfiles (which returns '')
         assert.strictEqual(fileExt('.env'), 'env')
         assert.strictEqual(fileExt('.gitignore'), 'gitignore')
+        assert.strictEqual(fileExt('hidden/.file'), 'file')
 
         // Directories with dots should not be confused for extensions
         assert.strictEqual(fileExt('folder.v1/file'), '')
+        assert.strictEqual(fileExt('/some.path/file'), '')
 
         // Current behavior includes query parameters
         assert.strictEqual(fileExt('script.js?v=1'), 'js?v=1')

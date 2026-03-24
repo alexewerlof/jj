@@ -12,6 +12,10 @@ import { typeErr } from './internal.js'
  * ```ts
  * fileExt('file.txt') // => 'txt'
  * fileExt('https://www.alexewerlof.com/path/to/file.js') // => 'js'
+ * fileExt('/.well-known/file.css') // => 'css'
+ * fileExt('no-extension') // => ''
+ * fileExt('hidden/.file') // => '.file'
+ * fileExt('/some.path/file') // => ''
  * ```
  *
  * @param path - absolute, relative, or URL path to a file
