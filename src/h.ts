@@ -1,5 +1,6 @@
-import { isPOJO } from 'jty'
+import { isDef, isPOJO } from 'jty'
 import { Wrappable, JJHE } from './wrappers/index.js'
+import { typeErr } from './internal.js'
 
 /**
  * Hyperscript helper to create JJHE instances.
@@ -41,7 +42,7 @@ export function h(tagName: string, attributes?: Record<string, string> | null, .
     const ret = JJHE.create(tagName).addChild(...children)
     if (attributes) {
         if (!isPOJO(attributes)) {
-            throw new TypeError(`Expected attributes to be a plain object, got ${attributes} (${typeof attributes})`)
+            throw typeErr('attributes', 'a plain object', attributes)
         }
         ret.setAttr(attributes)
     }
@@ -49,20 +50,39 @@ export function h(tagName: string, attributes?: Record<string, string> | null, .
 }
 
 /**
- * Just like the `h()` function but without attributes.
+ * Similar to the `h()` function but:
+ * 1. Without attributes argument
+ * 2. Takes an array for children instead of the spread operator.
+ *
+ * It makes creating typical HTML/SVG snippets more concise and readable.
  *
  * @example
  * ```ts
- * // Create a simple div
- * hc('div', 'Hello World')
+ * hc('ul', [
+ *   hc('li', ['Item 1']),
+ *   hc('li', ['Item 2']),
+ * ])
  * // is the same as
- * h('div', null, 'Hello World')
+ * h('ul', null,
+ *   h('li', null, 'Item 1'),
+ *   h('li', null, 'Item 2'),
+ * )
+ *
+ * // It is especially useful when you have a list of items to render:
+ * // Create a simple div
+ * const fruits = ['Apple', 'Banana', 'Cherry']
+ * hc('ul', fruits.map(fruit => hc('li', [fruit])))
+ * // is the same as
+ * h('ul', null, ...fruits.map(fruit => h('li', null, fruit)))
  * ```
  * @param tagName The Element Tag Name
  * @param children The children to append (strings, nodes, or other JJHE instances)
  * @returns The created JJHE instance
  * @see {@link h}
  */
-export function hc(tagName: string, ...children: Wrappable[]): JJHE {
+export function hc(tagName: string, children: Wrappable[]): JJHE {
+    if (isDef(children) && !Array.isArray(children)) {
+        throw typeErr('children', 'an array', children)
+    }
     return h(tagName, null, ...children)
 }
