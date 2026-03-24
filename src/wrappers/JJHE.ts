@@ -2,7 +2,8 @@ import { hasProp, isInstance, isStr } from 'jty'
 import { JJEx } from './JJEx.js'
 import { errMsg, typeErr } from '../internal.js'
 
-const COMMON_SVG_TAGS = ['svg', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'path', 'text']
+const COMMON_SVG_TAGS = ['svg', 'rect', 'circle', 'line', 'path', 'text']
+const COMMON_MATHML_TAGS = ['math', 'mi', 'mn', 'mo', 'mtext']
 
 /**
  * Wraps a DOM HTMLElement (which is a descendant of Element).
@@ -56,10 +57,18 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
         }
         if (COMMON_SVG_TAGS.includes(tagName)) {
             throw errMsg(
-                `Tag name`,
+                `tagName`,
                 `a HTML tag name (not an SVG tag name)`,
                 tagName,
                 'For SVG elements, use JJSE.create("circle") instead of JJHE.create("circle").',
+            )
+        }
+        if (COMMON_MATHML_TAGS.includes(tagName)) {
+            throw errMsg(
+                `tagName`,
+                `a HTML tag name (not a MathML tag name)`,
+                tagName,
+                'For MathML elements, use JJME.create("mi") instead of JJHE.create("mi").',
             )
         }
         return new JJHE(document.createElement(tagName, options))

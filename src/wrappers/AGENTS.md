@@ -10,6 +10,7 @@ The hierarchy is as follows:
             - JJE -> JJEx (methods common by the wrappers that descend from JJE)
                 - JJEx -> JJHE
                 - JJEx -> JJSE
+                - JJEx -> JJME
 
 `JJN.wrap()` is attached to it in `./JJN.ts` because it imports all other wrapper classes. Otherwise there will be a dependency loop.
 

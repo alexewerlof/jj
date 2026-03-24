@@ -37,6 +37,20 @@ describe('JJHE', () => {
         it('throws TypeError for non-string tagName', () => {
             assert.throws(() => JJHE.create(123 as any), /Pass a valid HTML tag name/)
         })
+
+        it('throws for common SVG tag names and suggests JJSE', () => {
+            assert.throws(
+                () => JJHE.create('circle' as any),
+                /For SVG elements, use JJSE\.create\("circle"\) instead of JJHE\.create\("circle"\)\./,
+            )
+        })
+
+        it('throws for common MathML tag names and suggests JJME', () => {
+            assert.throws(
+                () => JJHE.create('mi' as any),
+                /For MathML elements, use JJME\.create\("mi"\) instead of JJHE\.create\("mi"\)\./,
+            )
+        })
     })
 
     describe('data attribute methods', () => {

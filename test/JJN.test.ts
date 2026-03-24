@@ -1,7 +1,7 @@
 import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JJHE, JJN } from '../src/index.js'
+import { JJHE, JJME, JJN } from '../src/index.js'
 import { isInstance, isOwnInstance } from 'jty'
 
 describe('JJN', () => {
@@ -25,6 +25,14 @@ describe('JJN', () => {
             const jjn = JJN.from(node)
             assert.ok(jjn instanceof JJN)
             assert.strictEqual(jjn.ref, node)
+        })
+    })
+
+    describe('static wrap()', () => {
+        it('wraps MathMLElement as JJME', () => {
+            const raw = document.createElementNS('http://www.w3.org/1998/Math/MathML', 'math')
+            const wrapped = JJN.wrap(raw)
+            assert.ok(wrapped instanceof JJME)
         })
     })
 

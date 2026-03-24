@@ -2,9 +2,15 @@ import { hasProp, isPOJO, isStr } from 'jty'
 import { JJE } from './JJE.js'
 import { typeErr } from '../internal.js'
 
-export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
+/**
+ * Base wrapper for elements that support `dataset`.
+ *
+ * @remarks
+ * This includes `HTMLElement`, `SVGElement`, and `MathMLElement`.
+ */
+export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> extends JJE<T> {
     /**
-     * Gets a data attribute from the HTMLElement.
+     * Gets a data attribute from the element.
      *
      * @example
      * ```ts
@@ -15,6 +21,8 @@ export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
      * @returns The value of the attribute, or undefined if not set.
      * @throws {TypeError} If `name` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
     getData(name: string): string | undefined {
         if (!isStr(name)) {
@@ -24,7 +32,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
     }
 
     /**
-     * Checks if a data attribute exists on the HTMLElement.
+     * Checks if a data attribute exists on the element.
      *
      * @example
      * ```ts
@@ -37,6 +45,8 @@ export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
      * @returns True if the attribute exists, false otherwise.
      * @throws {TypeError} If `name` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
     hasData(name: string): boolean {
         if (!isStr(name)) {
@@ -46,7 +56,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
     }
 
     /**
-     * Sets one or more data attributes on the HTMLElement.
+     * Sets one or more data attributes on the element.
      *
      * @example
      * ```ts
@@ -57,6 +67,8 @@ export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
      *
      * @throws {TypeError} If arguments are invalid types.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
     setData(name: string, value?: string): this
     setData(obj: Record<string, string | undefined>): this
@@ -79,7 +91,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
     }
 
     /**
-     * Removes one or more data attributes from the HTMLElement.
+     * Removes one or more data attributes from the element.
      *
      * @example
      * ```ts
@@ -91,6 +103,8 @@ export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
      * @returns This instance for chaining.
      * @throws {TypeError} If any name is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
     rmData(...names: string[]): this {
         for (const name of names) {

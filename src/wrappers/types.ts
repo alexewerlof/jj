@@ -3,6 +3,7 @@ import type { JJDF } from './JJDF.js'
 import type { JJE } from './JJE.js'
 import type { JJHE } from './JJHE.js'
 import type { JJN } from './JJN-raw.js'
+import type { JJME } from './JJME.js'
 import type { JJSE } from './JJSE.js'
 import type { JJSR } from './JJSR.js'
 import type { JJT } from './JJT.js'
@@ -17,13 +18,22 @@ export type Wrappable = string | Node | JJN
 /**
  * Union type of all possible JJ wrapper classes.
  */
-export type Wrapped = JJN | JJT | JJE | JJHE | JJSE | JJD | JJDF | JJSR
+export type Wrapped = JJN | JJT | JJE | JJHE | JJSE | JJME | JJD | JJDF | JJSR
 
 /**
  * Union type of all native DOM nodes that correspond to JJ wrappers.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node | Node}
  */
-export type Unwrapped = Node | Text | Element | HTMLElement | SVGElement | Document | DocumentFragment | ShadowRoot
+export type Unwrapped =
+    | Node
+    | Text
+    | Element
+    | HTMLElement
+    | SVGElement
+    | MathMLElement
+    | Document
+    | DocumentFragment
+    | ShadowRoot
 
 /**
  * Configuration for the component's template.

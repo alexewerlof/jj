@@ -35,10 +35,11 @@ JJ is a minimal, imperative DOM manipulation library designed for modern web dev
 - **JJNx**: Abstract wrapper for `Node`s that can have children and query selectors (`Element`, `Document`, `DocumentFragment`). Extends `JJN`.
 - **JJD**: Wraps a DOM `Document`. Extends `JJNx`.
 - **JJE**: Wraps a DOM `Element`. Generic element wrapper. Extends `JJNx`.
-- **JJEx**: Abstract wrapper for `Element`s that have dataset support (`HTMLElement`, `SVGElement`). Extends `JJE`.
+- **JJEx**: Abstract wrapper for `Element`s that have dataset support (`HTMLElement`, `SVGElement`, `MathMLElement`). Extends `JJE`.
 - **JJHE**: Wraps a DOM `HTMLElement`. Extends `JJEx`.
 - **JJT**: Wraps a DOM `Text`. Text node operations. Extends `JJN`.
 - **JJSE**: Wraps a DOM `SVGElements`. SVG-specific operations. Extends `JJEx`.
+- **JJME**: Wraps a DOM `MathMLElement`. MathML-specific operations. Extends `JJEx`.
 - **JJSR**: Wraps a DOM `ShadowRoot`. Shadow DOM operations. Extends `JJDF`.
 - **JJDF**: Wraps a DOM `DocumentFragment`. Fragment operations. Extends `JJNx`.
 
@@ -200,6 +201,9 @@ const input = JJHE.create('input')
 
 const div = JJHE.create('div')
 // div.ref is HTMLDivElement, so div.ref.value would be a type error
+
+const math = JJME.create('math')
+// math.ref is MathMLElement in the MathML namespace
 ```
 
 **Incorrect**: Generic on wrong method

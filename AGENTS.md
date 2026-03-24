@@ -13,13 +13,14 @@ If you encounter contradicting instructions, pause and ask the user what to do.
 
 ## 2. Type-Safe Element Creation
 
-**ALWAYS** use factory methods (e.g. `JJHE.create()`, `JJSE.create()`, `JJSR.from()`) instead of `new JJHE(...)` or `document.createElement`.
+**ALWAYS** use factory methods (e.g. `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR.from()`) instead of `new JJHE(...)` or `document.createElement`.
 
 ```typescript
 // ✅ GOOD
 const div = JJHE.create('div') // inferred as JJHE<HTMLDivElement>
 const input = JJHE.create('input').setAttr('type', 'text') // inferred as JJHE<HTMLInputElement>
 const svg = JJSE.create('svg') // Inferred as JJSE<SVGSVGElement>
+const math = JJME.create('math') // Inferred as JJME<MathMLElement>
 const myInput = JJHE.fromId('my-input') // inferred as JJHE<HTMLInputElement>
 
 // ❌ BAD
@@ -108,7 +109,7 @@ Do not call `.register()` like a synchronous function, and prefer `registerCompo
 - **`rm()`**: Use `node.rm()` to detach any wrapped node from its current parent. Detached nodes are ignored.
 - **Attributes**: Use `.setAttr('name', val)`, `.getAttr('name')`, `.rmAttr('name')`.
 - **Classes**: Use `.addClass()`, `.rmClass()`, `.toggleClass()`, `.setClass()`.
-- **Dataset**: Use `.setData()`, `.getData()` (on `JJHE`/`JJSE` only).
+- **Dataset**: Use `.setData()`, `.getData()` (on `JJHE`/`JJSE`/`JJME`).
 - **Selectors**: Use `.closest(selector)` on `JJE` for ancestor lookup.
 
 ## 7. Code Style & Standards

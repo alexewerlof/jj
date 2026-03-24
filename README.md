@@ -19,6 +19,15 @@ JJHE.create('div')
     .on('click', () => console.log('Hi'))
 ```
 
+Use namespace-aware wrappers for non-HTML elements:
+
+```js
+import { JJSE, JJME } from 'jj'
+
+const icon = JJSE.create('svg').setAttr('viewBox', '0 0 24 24')
+const formula = JJME.create('math').addChild(JJME.create('mi').setText('x'))
+```
+
 ## 🚀 Why JJ?
 
 - **Zero Build** – Runs directly in modern browsers
@@ -51,8 +60,8 @@ The skill definition (`SKILL.md`) is also included in the npm package at `node_m
 
 ## ✅ Testing
 
-The entire public API is tested thoroghly.
-Tests live in the `test/` folder and mirror the source filenames (e.g., `test/JJE.test.ts` for `src/JJE.ts`) while importing the target from `./src/index.js`.
+The entire public API is tested thoroughly.
+Tests live in the `test/` folder and mirror the source filenames (e.g., `test/JJE.test.ts` for `src/JJE.ts`, `test/JJME.test.ts` for `src/wrappers/JJME.ts`) while importing the target from `./src/index.js`.
 
 Run tests with:
 

@@ -10,6 +10,7 @@ global.Element = window.Element
 global.HTMLElement = window.HTMLElement
 global.HTMLTemplateElement = window.HTMLTemplateElement
 global.SVGElement = window.SVGElement
+global.MathMLElement = window.MathMLElement
 global.EventTarget = window.EventTarget
 global.Event = window.Event
 global.document = window.document

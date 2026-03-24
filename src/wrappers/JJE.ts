@@ -44,7 +44,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
                 'ref',
                 'an Element instance',
                 ref,
-                `Use JJE.from(element) with a DOM Element, or use the specific wrapper (JJHE for HTMLElement, JJSE for SVGElement).`,
+                `Use JJE.from(element) with a DOM Element, or use the specific wrapper (JJHE for HTMLElement, JJSE for SVGElement, JJME for MathMLElement).`,
             )
         }
         super(ref)

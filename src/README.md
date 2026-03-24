@@ -5,8 +5,10 @@ This directory contains three types of files:
     - JJN wraps a DOM Node element and extends JJET
     - JJT wraps a DOM Text and extends JJN
     - JJE wraps a DOM Element and extends JJN
-    - JJHE wraps a DOM HTMLElement and extends JJE
-    - JJSE wraps a DOM SVGElement and extends JJE
+    - JJEx wraps dataset-capable elements and extends JJE
+    - JJHE wraps a DOM HTMLElement and extends JJEx
+    - JJSE wraps a DOM SVGElement and extends JJEx
+    - JJME wraps a DOM MathMLElement and extends JJEx
     - JJD wraps a DOM Document and extends JJN
     - JJDF wraps a DOM DocumentFragment and extends JJN
     - JJSR wraps a DOM ShadowRoot and extends JJDF
