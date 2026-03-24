@@ -20,6 +20,7 @@ import { typeErr } from './internal.js'
  *
  * This is not exactly a replacement, but it roughly follows the same idea.
  *
+ * @category Wrappers
  * @example
  * ```ts
  * // Create a simple div
@@ -36,6 +37,7 @@ import { typeErr } from './internal.js'
  * @param attributes - Attributes to set on the element. Can be null or undefined.
  * @param children - Children to append (strings, nodes, or other JJHE instances).
  * @returns The created JJHE instance.
+ * @see {@link hc} for a version without attributes and with array of children.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement | document.createElement}
  */
 export function h(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJHE {
@@ -61,6 +63,7 @@ export function h(tagName: string, attributes?: Record<string, string> | null, .
  *
  * It makes creating typical HTML/SVG snippets more concise and readable.
  *
+ * @category Wrappers
  * @example
  * ```ts
  * hc('ul', [
@@ -83,7 +86,8 @@ export function h(tagName: string, attributes?: Record<string, string> | null, .
  * @param tagName The Element Tag Name
  * @param children The children to append (strings, nodes, or other JJHE instances)
  * @returns The created JJHE instance
- * @see {@link h}
+ * @see {@link h} for a version with attributes and spread children.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement | document.createElement}
  */
 export function hc(tagName: string, children: Wrappable[]): JJHE {
     if (isDef(children) && !Array.isArray(children)) {

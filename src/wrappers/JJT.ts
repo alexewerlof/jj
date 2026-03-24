@@ -10,11 +10,16 @@ import { typeErr } from '../internal.js'
  * If an element has no markup within its content, it has a single child implementing Text
  * that contains the element's text.
  *
+ * @category Wrappers
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Text | Text}
  */
 export class JJT<T extends Text = Text> extends JJN<Text> {
     /**
      * Creates a JJT instance from a Text node.
+     *
+     * @remarks
+     * Use {@link JJT.fromStr} to create a Text node from a string.
+     * For other Node types, use {@link JJN.from} or the specific wrapper type.
      *
      * @example
      * ```ts

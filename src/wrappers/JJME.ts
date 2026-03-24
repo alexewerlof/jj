@@ -11,14 +11,17 @@ const MATHML_NAMESPACE_URI = 'http://www.w3.org/1998/Math/MathML'
  * This class extends `JJE` to provide specific functionality for MathML elements,
  * including namespace-aware creation and text helpers.
  *
+ * @category Wrappers
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement | MathMLElement}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/MathML/Reference/Element/math | <math>}
  */
 export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
     /**
      * Creates a JJME instance from a MathMLElement reference.
-     *
-     * @example
+     *     * @remarks
+     * Use {@link JJME.create} to create new MathMLElements, or use this method to wrap existing ones.
+     * For HTMLElements, use {@link JJHE.from}, or {@link JJSE.from} for SVGElements.
+     *     * @example
      * ```ts
      * const mrow = JJME.from(myMrow)
      * ```
@@ -67,6 +70,8 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
      *
      * @param ref - The MathMLElement to wrap.
      * @throws {TypeError} If `ref` is not a MathMLElement.
+     * @see {@link JJME.from} to wrap existing MathMLElements
+     * @see {@link JJME.create} to create new MathMLElements
      */
     constructor(ref: T) {
         if (!isInstance(ref, Element) || ref.namespaceURI !== MATHML_NAMESPACE_URI) {
@@ -74,7 +79,7 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
                 'ref',
                 `an Element in the MathML namespace (${MATHML_NAMESPACE_URI})`,
                 ref,
-                'Wrap an existing MathML element with JJME.from(el) or create one with JJME.create("math").',
+                'Use JJME.from() or JJME.create().',
             )
         }
         super(ref)

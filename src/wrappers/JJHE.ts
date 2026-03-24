@@ -12,11 +12,16 @@ const COMMON_MATHML_TAGS = ['math', 'mi', 'mn', 'mo', 'mtext']
  * This class extends `JJE` to provide specific functionality for HTML elements,
  * such as access to `dataset`, `innerText`, and form values.
  *
+ * @category Wrappers
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement | HTMLElement}
  */
 export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
     /**
      * Creates a JJHE instance from an HTMLElement reference.
+     *
+     * @remarks
+     * Use {@link JJHE.create} to create new HTMLElements, or use this method to wrap existing ones.
+     * For other element types, use {@link JJSE.from} for SVGElements or {@link JJME.from} for MathMLElements.
      *
      * @example
      * ```ts
@@ -33,6 +38,10 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
 
     /**
      * Creates a JJHE instance from a tag name.
+     *
+     * @remarks
+     * For existing HTMLElements, use {@link JJHE.from} instead.
+     * For SVG or MathML elements, use {@link JJSE.create} or {@link JJME.create} respectively.
      *
      * @example
      * ```ts
@@ -60,7 +69,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
                 `tagName`,
                 `a HTML tag name (not an SVG tag name)`,
                 tagName,
-                'For SVG elements, use JJSE.create("circle") instead of JJHE.create("circle").',
+                `Use JJSE.create("${tagName}") for SVG elements.`,
             )
         }
         if (COMMON_MATHML_TAGS.includes(tagName)) {
@@ -68,7 +77,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
                 `tagName`,
                 `a HTML tag name (not a MathML tag name)`,
                 tagName,
-                'For MathML elements, use JJME.create("mi") instead of JJHE.create("mi").',
+                `Use JJME.create("${tagName}") for MathML elements.`,
             )
         }
         return new JJHE(document.createElement(tagName, options))
@@ -79,15 +88,12 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      *
      * @param ref - The HTMLElement to wrap.
      * @throws {TypeError} If `ref` is not an HTMLElement.
+     * @see {@link JJHE.from} to wrap existing HTMLElements
+     * @see {@link JJHE.create} to create new HTMLElements
      */
     constructor(ref: T) {
         if (!isInstance(ref, HTMLElement)) {
-            throw typeErr(
-                'ref',
-                'an HTMLElement',
-                ref,
-                'Wrap an existing element with JJHE.from(el) or create one with JJHE.create("div").',
-            )
+            throw typeErr('ref', 'an HTMLElement', ref, 'Use JJHE.from() or JJHE.create().')
         }
         super(ref)
     }

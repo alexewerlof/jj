@@ -11,17 +11,25 @@ import type { JJT } from './JJT.js'
 /**
  * Represents any value that can be wrapped by the library.
  * Can be a native Node, a string (which becomes a Text node), or an existing JJ wrapper.
+ * @category Wrappers
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node | Node}
+ * @see {@link JJN.wrap} to convert a Wrappable into a Wrapped type
  */
 export type Wrappable = string | Node | JJN
 
 /**
  * Union type of all possible JJ wrapper classes.
+ * Includes {@link JJN} (Node), {@link JJT} (Text), {@link JJE} (Element),
+ * {@link JJHE} (HTMLElement), {@link JJSE} (SVGElement), {@link JJME} (MathMLElement),
+ * {@link JJD} (Document), {@link JJDF} (DocumentFragment), and {@link JJSR} (ShadowRoot).
+ * @category Wrappers
  */
 export type Wrapped = JJN | JJT | JJE | JJHE | JJSE | JJME | JJD | JJDF | JJSR
 
 /**
  * Union type of all native DOM nodes that correspond to JJ wrappers.
+ * This is the inverse of {@link Wrapped} — represents the unwrapped native DOM types.
+ * @category Wrappers
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node | Node}
  */
 export type Unwrapped =

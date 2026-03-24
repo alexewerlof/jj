@@ -11,11 +11,16 @@ const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg'
  * This class extends `JJE` to provide specific functionality for SVG elements,
  * including namespace-aware creation and helper methods for common SVG attributes.
  *
+ * @category Wrappers
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement | SVGElement}
  */
 export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
     /**
      * Creates a JJSE instance from an SVGElement reference.
+     *
+     * @remarks
+     * Use {@link JJSE.create} to create new SVGElements, or use this method to wrap existing ones.
+     * For HTMLElements, use {@link JJHE.from}, or {@link JJME.from} for MathMLElements.
      *
      * @example
      * ```ts
@@ -35,6 +40,8 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      *
      * @remarks
      * Automatically uses the correct SVG namespace URI: `http://www.w3.org/2000/svg`.
+     * For existing SVGElements, use {@link JJSE.from} instead.
+     * For HTMLElements, use {@link JJHE.create} or {@link JJME.create} for MathMLElements.
      *
      * @example
      * ```ts

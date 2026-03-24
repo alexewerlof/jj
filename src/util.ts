@@ -8,6 +8,7 @@ import { typeErr } from './internal.js'
  * This convenience function is primarily used to guess the 'as' attribute of
  * a link preload/prefetch behind the scene.
  *
+ * @category Fetch
  * @example
  * ```ts
  * fileExt('file.txt') // => 'txt'
@@ -43,6 +44,7 @@ export function fileExt(path: string): string {
  * @remarks
  * Used to give the UI a moment to update.
  *
+ * @category Utilities
  * @example
  * ```ts
  * await nextAnimationFrame()
@@ -62,6 +64,7 @@ export function nextAnimationFrame(): Promise<number> {
  * Uses `setTimeout` to delay execution. When used with 0ms, it defers
  * execution to the next macro-task, allowing the event loop to cycle.
  *
+ * @category Utilities
  * @example
  * ```ts
  * await sleep(100)
@@ -82,6 +85,7 @@ export function sleep(ms: number = 0): Promise<void> {
  * @remarks
  * Suitable for attaching to ShadowRoot via `adoptedStyleSheets`.
  *
+ * @category Utilities
  * @example
  * ```ts
  * const sheet = await cssToStyle('p { color: red; }')

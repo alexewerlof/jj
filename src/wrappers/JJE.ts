@@ -14,11 +14,16 @@ import type { JJHE } from './JJHE.js'
  * This class provides a wrapper around the native `Element` interface, adding fluent API methods
  * for attribute manipulation, class handling, and event binding.
  *
+ * @category Wrappers
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element | Element}
  */
 export class JJE<T extends Element = Element> extends JJNx<T> {
     /**
      * Creates a JJE instance from an Element reference.
+     *
+     * @remarks
+     * Use this factory method to wrap an existing Element. For creating new Elements,
+     * use the specific wrapper type: {@link JJHE.create}, {@link JJSE.create}, or {@link JJME.create}.
      *
      * @example
      * ```ts
@@ -37,6 +42,9 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param ref - The Element to wrap.
      * @throws {TypeError} If `ref` is not an Element.
+     * @see {@link JJHE} for wrapping HTMLElements
+     * @see {@link JJSE} for wrapping SVGElements
+     * @see {@link JJME} for wrapping MathMLElements
      */
     constructor(ref: T) {
         if (!isInstance(ref, Element)) {
@@ -44,7 +52,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
                 'ref',
                 'an Element instance',
                 ref,
-                `Use JJE.from(element) with a DOM Element, or use the specific wrapper (JJHE for HTMLElement, JJSE for SVGElement, JJME for MathMLElement).`,
+                'Use JJHE.from(), JJSE.from(), or JJME.from() with the appropriate Element type.',
             )
         }
         super(ref)

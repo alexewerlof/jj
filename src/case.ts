@@ -8,6 +8,7 @@ import { errMsg, typeErr } from './internal.js'
  * This function is useful for converting JavaScript property names to CSS or HTML attribute names.
  * It strictly validates the input to contain only alphanumeric characters and underscores.
  *
+ * @category Utilities
  * @example
  * ```ts
  * pas2keb('backgroundColor') // 'background-color'
@@ -48,6 +49,7 @@ export function pas2keb(str: string): string {
  * This function splits the string by hyphens and capitalizes the first letter of each segment.
  * It handles multiple hyphens by ignoring empty segments.
  *
+ * @category Utilities
  * @example
  * ```ts
  * keb2pas('background-color') // 'BackgroundColor'
@@ -83,6 +85,7 @@ export function keb2pas(str: string): string {
  * This function is primarily useful for converting attributes to JavaScript property names.
  * Leading and trailing hyphens are removed before conversion.
  *
+ * @category Utilities
  * @example
  * ```ts
  * keb2cam('background-color') // 'backgroundColor'

@@ -6,6 +6,7 @@ import { isFn, isInstance } from 'jty'
  * @remarks
  * This is the base class for all JJ wrappers that wrap an EventTarget.
  *
+ * @category Wrappers
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget | EventTarget}
  */
 export class JJET<T extends EventTarget = EventTarget> {

@@ -10,6 +10,7 @@ import { JJD } from './wrappers/JJD.js'
  * A wrapped document for convenience.
  * It can be used instead of document
  *
+ * @category Wrappers
  * @example
  * ```ts
  * import { doc } from 'jj'

@@ -12,6 +12,7 @@ import { JJHE } from '../index.js'
  * isn't part of the active document tree structure, changes made to the fragment don't affect the document,
  * cause reflow, or incur any performance impact that can occur when changes are made.
  *
+ * @category Wrappers
  * @example
  * ```ts
  * const frag = JJDF.create()
@@ -27,6 +28,10 @@ import { JJHE } from '../index.js'
 export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T> {
     /**
      * Creates a JJDF instance from a DocumentFragment reference.
+     *
+     * @remarks
+     * Use {@link JJDF.create} to create a new empty DocumentFragment.
+     * For other Node types, use {@link JJN.from} or the specific wrapper type.
      *
      * @example
      * ```ts
@@ -44,6 +49,10 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
 
     /**
      * Creates a new empty JJDF instance (wraps a new DocumentFragment).
+     *
+     * @remarks
+     * To wrap an existing DocumentFragment, use {@link JJDF.from}.
+     * To create templates from HTML or other sources, use {@link JJDF.addTemplate}.
      *
      * @example
      * ```ts

@@ -10,12 +10,19 @@ import { typeErr } from '../internal.js'
  * This is the base class for all JJ wrappers. It provides common functionality for DOM manipulation,
  * traversal, and event handling.
  *
+ * @category Wrappers
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node | Node}
  */
 
 export class JJN<T extends Node = Node> extends JJET<T> {
     /**
      * Creates a JJN instance from a Node reference.
+     *
+     * @remarks
+     * For better type safety, use the specific wrapper type if you know the Node type:
+     * {@link JJHE} for HTMLElement, {@link JJSE} for SVGElement, {@link JJT} for Text, etc.
+     *
+     * Alternatively, use {@link JJN.wrap} to automatically determine and create the appropriate wrapper.
      *
      * @example
      * ```ts
@@ -24,6 +31,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      *
      * @param node - The Node instance.
      * @returns A new JJN instance.
+     * @see {@link JJN.wrap} for automatic wrapper selection
      */
     static from(node: Node): JJN {
         return new JJN(node)
@@ -33,7 +41,8 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * Checks if a value can be passed to the `wrap()` or `unwrap()` function.
      *
      * @remarks
-     * This is useful for filtering the array that is passed to `append()`, `prepend()` or `setChildren()`
+     * This is useful for filtering the array that is passed to `append()`, `prepend()` or `setChildren()`.
+     * See {@link Wrappable} type for the full definition.
      *
      * @param x an unknown value
      * @returns true if `x` is a string, Node (or its descendent), JJN (or its descendent)
@@ -46,14 +55,18 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * Wraps a native DOM node or string into the most specific JJ wrapper available.
      *
      * @remarks
-     * This function acts as a factory, inspecting the input type and returning the appropriate
-     * subclass of `JJN` (e.g., `JJHE` for `HTMLElement`, `JJT` for `Text`).
-     * JJN.ts overrides this method to a richer version that handles all subclasses of JJN.
+     * This factory function acts as an intelligent wrapper, inspecting the input type and returning the appropriate
+     * subclass of `JJN` (e.g., `JJHE` for `HTMLElement`, `JJT` for `Text`, `JJSE` for `SVGElement`, etc.).
+     * Strings are automatically converted to Text nodes wrapped in `JJT`.
+     *
+     * If the input is already a JJ wrapper, it is returned unchanged (no double-wrapping).
+     * See the full implementation in src/wrappers/JJN.ts which extends this with support for internal wrapper types.
      *
      * @example
      * ```ts
-     * const bodyWrapper = JJN.wrap(document.body) // Returns JJHE
+     * const bodyWrapper = JJN.wrap(document.body) // Returns JJHE<HTMLBodyElement>
      * const textWrapper = JJN.wrap('Hello') // Returns JJT wrapping a new Text node
+     * const existing = JJN.wrap(alreadyWrapped) // Returns alreadyWrapped unchanged
      * ```
      *
      * @param raw - The object to wrap. If it's already Wrapped, it'll be returned without any change. We don't double-wrap or clone it.

@@ -8,5 +8,8 @@
     "titleLink": "..",
     "hostedBaseUrl": "https://alexewerlof.github.io/jj/",
     "customFooterHtml": "Made with ❤️ by <a href='https://alexewerlof.com/'>Alex Ewerlöf</a>",
-    "out": "./doc"
+    "out": "./doc",
+    "navigation": {
+        "includeCategories": true
+    }
 }

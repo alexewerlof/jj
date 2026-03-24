@@ -13,11 +13,16 @@ import { typeErr } from '../internal.js'
  * most importantly `find`, and `findAll` which come handy to access and
  * update its children.
  *
+ * @category Wrappers
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot | ShadowRoot}
  */
 export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
     /**
      * Creates a JJSR instance from a ShadowRoot reference.
+     *
+     * @remarks
+     * Typically created via `element.attachShadow({ mode: 'open' })` and passed here to be wrapped.
+     * Inherits from {@link JJDF} (DocumentFragment), so you can use all fragment methods like `find()`, `findAll()`, etc.
      *
      * @example
      * ```ts
@@ -36,6 +41,7 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      *
      * @param shadowRoot - The ShadowRoot to wrap.
      * @throws {TypeError} If `shadowRoot` is not a ShadowRoot.
+     * @see {@link JJSR.from} to wrap an existing ShadowRoot
      */
     constructor(shadowRoot: T) {
         if (!isInstance(shadowRoot, ShadowRoot)) {
@@ -43,7 +49,7 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
                 'shadowRoot',
                 'a ShadowRoot instance',
                 shadowRoot,
-                'Call element.attachShadow({ mode: "open" }) and wrap the returned shadow root.',
+                'Use JJHE.initShadow() or element.attachShadow({ mode: "open" }).',
             )
         }
         super(shadowRoot)

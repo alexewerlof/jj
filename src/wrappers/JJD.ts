@@ -15,6 +15,7 @@ import { typeErr } from '../internal.js'
  *
  * To set the document title, use: `doc.ref.title = 'New Title'`
  *
+ * @category Wrappers
  * @example
  * ```ts
  * const doc = JJD.from(document)
@@ -27,6 +28,10 @@ import { typeErr } from '../internal.js'
 export class JJD<T extends Document = Document> extends JJNx<T> {
     /**
      * Creates a JJD instance from a Document reference.
+     *
+     * @remarks
+     * Typically, you'll use this to wrap the global `document` object.
+     * Use {@link JJHE.from} to wrap individual elements, and {@link JJHE} for the head/body elements.
      *
      * @example
      * ```ts
@@ -46,6 +51,7 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
      *
      * @param ref - The Document instance to wrap.
      * @throws {TypeError} If `ref` is not a Document.
+     * @see {@link JJD.from} to wrap a Document
      */
     constructor(ref: T) {
         if (!isInstance(ref, Document)) {
@@ -57,6 +63,9 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
     /**
      * Gets the `<head>` element of the document wrapped in a `JJHE` instance.
      *
+     * @remarks
+     * Returns the wrapped head element from the document. See {@link JJHE} for element manipulation.
+     *
      * @returns The wrapped head element.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/head | Document.head}
      */
@@ -66,6 +75,9 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
 
     /**
      * Gets the `<body>` element of the document wrapped in a `JJHE` instance.
+     *
+     * @remarks
+     * Returns the wrapped body element from the document. See {@link JJHE} for element manipulation.
      *
      * @returns The wrapped body element.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/body | Document.body}

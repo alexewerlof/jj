@@ -34,6 +34,7 @@ function linkAs(href: string): 'fetch' | 'style' | 'script' {
  * This function validates the input arguments and returns a wrapped `JJHE` instance.
  * It does not append the element to the document.
  *
+ * @category Fetch
  * @param href - The URL of the resource.
  * @param rel - The relationship of the linked resource ('prefetch' or 'preload').
  * @param as - The type of content being loaded ('fetch' for HTML, 'style' for CSS, or 'script' for JavaScript files).
@@ -102,6 +103,7 @@ export function createLinkPre(
  *
  * Please refer to {@link createLinkPre} for more details.
  *
+ * @category Fetch
  * @example
  * ```ts
  * // Preload a script
@@ -115,7 +117,7 @@ export function createLinkPre(
  * @returns The JJHE instance representing the link element.
  * @throws {TypeError} If `href` is not a string or URL.
  * @throws {RangeError} If `rel` or `as` are not valid values.
- * @see {@link createLinkPre}
+ * @see {@link createLinkPre} to create link elements
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload | Link types: preload}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/prefetch | Link types: prefetch}
  */
@@ -132,6 +134,7 @@ export function addLinkPre(...args: Parameters<typeof createLinkPre>) {
  * This is a wrapper around the native `fetch` API that handles the response status check
  * and text extraction. It sets the `Accept` header based on the provided mime type.
  *
+ * @category Fetch
  * @example
  * ```ts
  * const text = await fetchText('https://example.com/data.txt')
@@ -163,6 +166,7 @@ export async function fetchText(url: URL | string, mime: string = 'text/*') {
  * Useful for loading HTML templates dynamically.
  * You can use `import.meta.resolve('./relative-path-to.html')` to resolve paths relative to the current module.
  *
+ * @category Fetch
  * @example
  * ```ts
  * const template = await fetchHtml('./template.html')
@@ -183,6 +187,7 @@ export async function fetchHtml(url: URL | string): Promise<string> {
  * @remarks
  * You can use `import.meta.resolve('./relative-path-to.css')` inside components to resolve relative paths.
  *
+ * @category Fetch
  * @example
  * ```ts
  * const css = await fetchCss('./style.css')
@@ -209,6 +214,7 @@ export async function fetchCss(url: URL | string): Promise<string> {
  *
  * The returned `JJDF` is suitable for both Shadow DOM and Light DOM flows.
  *
+ * @category Fetch
  * @example
  * ```ts
  * // Eager loading: fetch once at module scope, then reuse
@@ -246,7 +252,7 @@ export async function fetchCss(url: URL | string): Promise<string> {
  * @param url - The HTML file location.
  * @returns A `JJDF` wrapping a `DocumentFragment` parsed from the fetched HTML.
  * @throws {Error} If the fetch fails or the response is not ok.
- * @see {@link fetchHtml}
+ * @see {@link fetchHtml} for fetching HTML content
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Range/createContextualFragment | Range.createContextualFragment}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}
  */
@@ -261,6 +267,7 @@ export async function fetchTemplate(url: URL | string): Promise<JJDF> {
  * @remarks
  * This is particularly useful for Constructable Stylesheets, which can be shared across Shadow DOM boundaries.
  *
+ * @category Fetch
  * @example
  * ```ts
  * const sheet = await fetchStyle('./component.css')
@@ -286,6 +293,7 @@ export async function fetchStyle(url: URL | string): Promise<CSSStyleSheet> {
  * Your custom component class MUST define `static observedAttributes[]` otherwise `attributeChangedCallback` won't trigger.
  * `observedAttributes` should contain kebab-based attribute names.
  *
+ * @category Components
  * @example
  * ```ts
  * class MyComponent extends HTMLElement {
@@ -346,6 +354,7 @@ export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown
 /**
  * Registers the custom element with the browser and waits till it is defined.
  *
+ * @category Components
  * @example
  * ```ts
  * class MyComponent extends HTMLElement {}
@@ -367,6 +376,7 @@ export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown
  *     YourComponent.register(),
  *     TheirComponent.register(),
  * ])
+ * ```
  *
  * @throws {TypeError} If name is not a string or constructor is not a function
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define | customElements.define}
