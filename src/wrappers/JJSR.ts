@@ -86,14 +86,22 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      * ```ts
      * const sheet = new CSSStyleSheet()
      * sheet.replaceSync('p { color: red; }')
-     * shadow.addStyleSheets(sheet)
+     * shadow.addStyle(sheet)
      * ```
      *
      * @param styleSheets - The stylesheets to add.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets | ShadowRoot.adoptedStyleSheets}
      */
-    addStyleSheets(...styleSheets: CSSStyleSheet[]): this {
+    addStyle(...styleSheets: CSSStyleSheet[]): this {
+        for (const sheet of styleSheets) {
+            if (!isInstance(sheet, CSSStyleSheet)) {
+                throw new TypeError(
+                    `addStyle expects CSSStyleSheet instances. Got ${sheet} (${typeof sheet}). ` +
+                        'Create a stylesheet using `new CSSStyleSheet()` or use `fetchStyle()` instead.',
+                )
+            }
+        }
         this.ref.adoptedStyleSheets.push(...styleSheets)
         return this
     }

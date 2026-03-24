@@ -1,7 +1,8 @@
-import { isInstance, isStr } from 'jty'
-import { Wrappable, JJHE } from './wrappers/index.js'
+import { isInstance, isFn, hasProp, isStr } from 'jty'
+import { Wrappable, JJHE, JJDF } from './wrappers/index.js'
 import { cssToStyle, fileExt } from './util.js'
 import { typeErr, errMsg } from './internal.js'
+import { keb2cam } from './case.js'
 
 /**
  * Hyperscript helper to create JJHE instances.
@@ -226,6 +227,65 @@ export async function fetchCss(url: URL | string): Promise<string> {
 }
 
 /**
+ * Fetches an HTML template and returns it as a wrapped `DocumentFragment`.
+ *
+ * @remarks
+ * This helper combines {@link fetchHtml} with `Range.createContextualFragment()` and wraps the
+ * resulting fragment in `JJDF`.
+ *
+ * Because it returns a detached fragment, you can load templates:
+ * - eagerly (fetch once, reuse many times)
+ * - lazily (fetch only when a component connects)
+ *
+ * The returned `JJDF` is suitable for both Shadow DOM and Light DOM flows.
+ *
+ * @example
+ * ```ts
+ * // Eager loading: fetch once at module scope, then reuse
+ * const templatePromise = fetchTemplate(import.meta.resolve('./my-card.html'))
+ *
+ * class MyCard extends HTMLElement {
+ *     #root
+ *
+ *     async connectedCallback() {
+ *         this.#root = JJHE.from(this).initShadow('open').shadow
+ *         this.#root.addTemplate(await templatePromise)
+ *     }
+ * }
+ * ```
+ *
+ * @example
+ * ```ts
+ * // Lazy loading: initialize once on first connection
+ * class MyLazyCard extends HTMLElement {
+ *     static #templatePromise
+ *     #root
+ *
+ *     async connectedCallback() {
+ *         this.#root = JJHE.from(this).initShadow('open').shadow
+ *
+ *         if (!MyLazyCard.#templatePromise) {
+ *             MyLazyCard.#templatePromise = fetchTemplate(import.meta.resolve('./my-lazy-card.html'))
+ *         }
+ *
+ *         this.#root.addTemplate(await MyLazyCard.#templatePromise)
+ *     }
+ * }
+ * ```
+ *
+ * @param url - The HTML file location.
+ * @returns A `JJDF` wrapping a `DocumentFragment` parsed from the fetched HTML.
+ * @throws {Error} If the fetch fails or the response is not ok.
+ * @see {@link fetchHtml}
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Range/createContextualFragment | Range.createContextualFragment}
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}
+ */
+export async function fetchTemplate(url: URL | string): Promise<JJDF> {
+    const html = await fetchHtml(url)
+    return JJDF.from(document.createRange().createContextualFragment(html))
+}
+
+/**
  * Fetches a CSS file and constructs a CSSStyleSheet.
  *
  * @remarks
@@ -245,4 +305,111 @@ export async function fetchCss(url: URL | string): Promise<string> {
  */
 export async function fetchStyle(url: URL | string): Promise<CSSStyleSheet> {
     return await cssToStyle(await fetchCss(url))
+}
+
+/**
+ * A helper to bridge the attribute world (kebab-case) to the property world (camelCase).
+ * It works in tandem with browser's `observedAttributes` feature which triggers
+ * `attributeChangedCallback`.
+ *
+ * @remarks
+ * Your custom component class MUST define `static observedAttributes[]` otherwise `attributeChangedCallback` won't trigger.
+ * `observedAttributes` should contain kebab-based attribute names.
+ *
+ * @example
+ * ```ts
+ * class MyComponent extends HTMLElement {
+ *     static observedAttributes = ['user-name', 'counter']
+ *     userName = '' // Property MUST exist on the instance (or prototype setter)
+ *     #counter = 0  // You can also use private properties together with getter/setters
+ *
+ *     attributeChangedCallback(name, oldValue, newValue) {
+ *         attr2prop(this, name, oldValue, newValue)
+ *     }
+ *
+ *     get counter() {
+ *         return this.#counter
+ *     }
+ *
+ *     set counter(value) {
+ *         this.#counter = value
+ *         this.#render() // You can call your render function to update the DOM
+ *     }
+ *
+ *     #render() {
+ *         const shadow = JJHE.from(this).shadow
+ *         if (shadow) {
+ *              shadow.find('#user').setText(this.userName)
+ *              shadow.find('#counter').setText(this.counter)
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ * @param instance - A reference to the common component instance
+ * @param name - kebab-case and in lower case exactly as it appears in `observedAttributes`.
+ * @param oldValue - The previous value of the attribute.
+ * @param newValue - The new value of the attribute.
+ * @returns `true` if it tried to set the attribute; otherwise `false`.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes | Responding to attribute changes}
+ */
+export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown, newValue: unknown) {
+    if (!isInstance(instance, HTMLElement)) {
+        throw typeErr('instance', 'an HTMLElement', instance)
+    }
+    // Called when observed attributes change.
+    if (oldValue !== newValue) {
+        const propName = keb2cam(name)
+        if (hasProp(instance, propName)) {
+            instance[propName] = newValue
+            return true
+        }
+    }
+    return false
+}
+
+/**
+ * Registers the custom element with the browser and waits till it is defined.
+ *
+ * @example
+ * ```ts
+ * class MyComponent extends HTMLElement {}
+ * await registerComponent('my-component', MyComponent)
+ * ```
+ * Another convention is to have a `static async register()` function in the Custom Component.
+ * ```ts
+ * export class MyComponent extends HTMLElement {
+ *     static async register() {
+ *         return registerComponent('my-component', MyComponent)
+ *     }
+ * }
+ * ```
+ * That way, you can import multiple components and do a `Promise.all()` on all their `.register()`s.
+ * ```ts
+ * import { MyComponent, YourComponent, TheirComponent } ...
+ * await Promise.all([
+ *     MyComponent.register(),
+ *     YourComponent.register(),
+ *     TheirComponent.register(),
+ * ])
+ *
+ * @throws {TypeError} If name is not a string or constructor is not a function
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define | customElements.define}
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/whenDefined | customElements.whenDefined}
+ */
+export async function registerComponent(
+    name: string,
+    constructor: CustomElementConstructor,
+    options?: ElementDefinitionOptions,
+): Promise<void> {
+    if (!isStr(name)) {
+        throw typeErr('name', 'a string', name)
+    }
+    if (!isFn(constructor)) {
+        throw typeErr('constructor', 'a function', constructor)
+    }
+    if (!customElements.get(name)) {
+        customElements.define(name, constructor, options)
+        await customElements.whenDefined(name)
+    }
 }

@@ -1,7 +1,7 @@
 import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { h, createLinkPre, addLinkPre, JJHE } from '../src/index.js'
+import { h, createLinkPre, addLinkPre, JJHE, JJSR } from '../src/index.js'
 
 describe('helpers', () => {
     describe('h()', () => {
@@ -119,6 +119,26 @@ describe('helpers', () => {
             const lastChild = document.head.lastChild as HTMLLinkElement
             assert.strictEqual(lastChild.tagName, 'LINK')
             assert.strictEqual(lastChild.getAttribute('href'), '/test.html')
+        })
+    })
+
+    describe('JJSR.addStyle()', () => {
+        it('adopts constructable stylesheets on a shadow root', async () => {
+            const host = document.createElement('div')
+            const shadow = host.attachShadow({ mode: 'open' })
+            const sheet = new CSSStyleSheet()
+
+            if (!('adoptedStyleSheets' in shadow)) {
+                Object.defineProperty(shadow, 'adoptedStyleSheets', {
+                    value: [],
+                    writable: true,
+                })
+            }
+
+            await sheet.replace(':host { display: block; }')
+            JJSR.from(shadow).addStyle(sheet)
+
+            assert.strictEqual(shadow.adoptedStyleSheets.includes(sheet), true)
         })
     })
 })

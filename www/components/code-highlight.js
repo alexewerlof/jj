@@ -1,4 +1,4 @@
-import { attr2prop, fetchCss, fetchHtml, ShadowMaster, JJHE, registerComponent } from '../../lib/bundle.js'
+import { attr2prop, JJHE, registerComponent, fetchTemplate } from '../../lib/bundle.js'
 import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
 import highlightJavascript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
 import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'
@@ -35,9 +35,7 @@ async function loadFile(filePath) {
     }
 }
 
-const tempStyle = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./code-highlight.html')))
-    .addStyles(fetchCss(import.meta.resolve('../code.css')))
+const templatePromise = fetchTemplate(import.meta.resolve('./code-highlight.html'))
 
 export class CodeHighlight extends HTMLElement {
     static observedAttributes = ['file', 'language']
@@ -47,6 +45,7 @@ export class CodeHighlight extends HTMLElement {
 
     #fileContent
     #language
+    #root
 
     constructor() {
         super()
@@ -71,10 +70,8 @@ export class CodeHighlight extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await tempStyle.getResolved())
+        this.#root = JJHE.from(this).initShadow('open', await templatePromise).shadow
         const codeText = this.#fileContent ? await this.#fileContent : this.innerText
-        this.jjRoot.shadow
-            .find('#code')
-            .setHTML(this.#language ? highlightCode(codeText, this.#language) : codeText, true)
+        this.#root.find('#code').setHTML(this.#language ? highlightCode(codeText, this.#language) : codeText, true)
     }
 }

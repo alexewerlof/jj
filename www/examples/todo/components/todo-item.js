@@ -1,8 +1,7 @@
-import { attr2prop, fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from '../../../../lib/bundle.js'
+import { attr2prop, fetchStyle, fetchTemplate, JJHE, registerComponent } from '../../../../lib/bundle.js'
 
-const sm = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./todo-item.html')))
-    .addStyles(fetchCss(import.meta.resolve('./todo-item.css')))
+const templatePromise = fetchTemplate(import.meta.resolve('./todo-item.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./todo-item.css'))
 
 export class TodoItem extends HTMLElement {
     static observedAttributes = ['item-id', 'text', 'done']
@@ -47,7 +46,7 @@ export class TodoItem extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
         const check = this.jjRoot.shadow.find('#check')
         const remove = this.jjRoot.shadow.find('#remove')
 

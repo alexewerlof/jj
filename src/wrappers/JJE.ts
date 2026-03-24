@@ -1,9 +1,11 @@
-import { isInstance, isArr, isStr, isPOJO, isDef } from 'jty'
+import { isInstance, isStr, isPOJO } from 'jty'
 import { JJSR } from './JJSR.js'
-import { ShadowConfig, Wrapped } from './types.js'
+import { Wrapped } from './types.js'
 import { JJNx } from './JJNx.js'
 import { typeErr } from '../internal.js'
 import { JJN } from './JJN-raw.js'
+import type { JJDF } from './JJDF.js'
+import type { JJHE } from './JJHE.js'
 
 /**
  * Wraps a DOM Element (which is a descendant of Node).
@@ -471,35 +473,38 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
-     * Attaches a Shadow DOM to the Element and optionally sets its content and styles.
+     * Attaches a Shadow DOM to the Element if it's not already attached.
      *
      * @remarks
-     * We prevent FOUC by assigning the template and CSS in one go.
-     * **Note:** You can't attach a shadow root to every type of element. There are some that can't have a
+     * You can't attach a shadow root to every type of element. There are some that can't have a
      * shadow DOM for security reasons (for example `<a>`).
      *
      * @param mode - The encapsulation mode ('open' or 'closed'). Defaults to 'open'.
-     * @param config - Optional configuration object containing `template` (HTML string) and `styles` (array of CSSStyleSheet).
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow | Element.attachShadow}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets | ShadowRoot.adoptedStyleSheets}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/adoptedStyleSheets | Document.adoptedStyleSheets}
      */
-    initShadow(mode: ShadowRootMode = 'open', config?: ShadowConfig): this {
-        const shadowRoot = this.ref.shadowRoot ?? this.ref.attachShadow({ mode })
-        if (isDef(config)) {
-            const { template, styles } = config
-
-            if (template) {
-                if (isStr(template)) {
-                    shadowRoot.innerHTML = template
-                } else {
-                    shadowRoot.appendChild(template)
-                }
-            }
-            if (isArr(styles) && styles.length) {
-                shadowRoot.adoptedStyleSheets.push(...styles)
-            }
+    initShadow(
+        mode: ShadowRootMode = 'open',
+        template:
+            | string
+            | DocumentFragment
+            | HTMLTemplateElement
+            | HTMLElement
+            | JJHE<HTMLTemplateElement>
+            | JJHE<HTMLElement>
+            | JJDF<DocumentFragment>,
+        ...styles: CSSStyleSheet[]
+    ): this {
+        if (!this.ref.shadowRoot) {
+            this.ref.attachShadow({ mode })
+        }
+        if (template) {
+            this.shadow?.addTemplate(template)
+        }
+        if (styles.length > 0) {
+            this.shadow?.addStyle(...styles)
         }
         return this
     }

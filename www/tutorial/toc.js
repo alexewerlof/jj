@@ -29,5 +29,6 @@ export default h(
             pageLink(2, 'DOM', '01-dom.md'),
             pageLink(2, 'State Management', '02-state-management.md'),
         ),
+        title(1, 'Components', pageLink(2, 'Custom Components', 'custom-components.md')),
     ),
 )

@@ -6,15 +6,13 @@ We try to avoid mixing different language in the same file. Each component has:
 - HTML file containing the structure (usually loaded in the Shadow DOM)
 - CSS file containing the styles (usually attached to the Shadow DOM)
 
-### ShadowMaster
+### Shared template and style promises
 
-`ShadowMaster` is a utility class that helps with this structure and supports hard coded Template/Styles (not recommended for large chunks of code), greedy or lazy loading.
+Keep shadow resources at module scope and pass them directly to `initShadow()`. This preserves one-time loading without an extra helper.
 
 ```js
-/** You only need one instance of ShadowMaster per component that's shared by all component instances */
-const sm = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./my-component.html')))
-    .addStyles(fetchCss(import.meta.resolve('./my-component.css')))
+const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 
 class MyComponent extends HTMLElement {
     /** Keeps a reference to this component's root element */
@@ -23,19 +21,28 @@ class MyComponent extends HTMLElement {
     async connectedCallback() {
         if (this.#root) return
 
-        // Initialize Shadow DOM efficiently
-        this.#root = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
     }
 }
 ```
 
 ### CSS variables
 
-It is a common use case to want to use CSS variables from a central file into the Shadow DOM for layout consistency. You can easily achieve this using `ShadowMaster`:
+It is a common use case to want to use CSS variables from a central file inside Shadow DOM for layout consistency. You can do that by passing multiple stylesheets to `initShadow()`:
 
 ```js
-const sm = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./my-component.html')))
-    .addStyles(fetchCss(import.meta.resolve('./../path/to/variables.css')))
-    .addStyles(fetchCss(import.meta.resolve('./my-component.css')))
+const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
+const sharedStylePromise = fetchStyle(import.meta.resolve('./../path/to/variables.css'))
+const componentStylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
+
+class MyComponent extends HTMLElement {
+    async connectedCallback() {
+        this.#root = JJHE.from(this).initShadow(
+            'open',
+            await templatePromise,
+            await sharedStylePromise,
+            await componentStylePromise,
+        )
+    }
+}
 ```

@@ -1,10 +1,9 @@
-import { attr2prop, fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from '../../../../lib/bundle.js'
+import { attr2prop, fetchStyle, fetchTemplate, JJHE, registerComponent } from '../../../../lib/bundle.js'
 
 const VALID_ROLES = ['user', 'system', 'assistant']
 
-const sm = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./chat-message.html')))
-    .addStyles(fetchCss(import.meta.resolve('./chat-message.css')))
+const templatePromise = fetchTemplate(import.meta.resolve('./chat-message.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./chat-message.css'))
 
 export class ChatMessage extends HTMLElement {
     static observedAttributes = ['role', 'content']
@@ -13,7 +12,7 @@ export class ChatMessage extends HTMLElement {
         return registerComponent('chat-message', ChatMessage)
     }
 
-    #jjThis
+    #root
     #role = VALID_ROLES[0]
     #content = ''
 
@@ -34,7 +33,7 @@ export class ChatMessage extends HTMLElement {
     }
 
     #renderRole() {
-        this.#jjThis?.shadow.find('#role').setText(this.role)
+        this.#root?.shadow.find('#role').setText(this.role)
     }
 
     get content() {
@@ -47,11 +46,11 @@ export class ChatMessage extends HTMLElement {
     }
 
     #renderContent() {
-        this.#jjThis?.shadow.find('#content').setText(this.content)
+        this.#root?.shadow.find('#content').setText(this.content)
     }
 
     async connectedCallback() {
-        this.#jjThis = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
         this.#render()
     }
 

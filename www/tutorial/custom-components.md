@@ -6,7 +6,7 @@ This guide covers how to create [Custom Elements](https://developer.mozilla.org/
 
 JJ provides three main utilities for building custom components:
 
-- **`ShadowMaster`** - Manages Shadow DOM configuration (templates and styles)
+- **`fetchTemplate()` + `fetchStyle()`** - Load reusable shadow resources at module scope
 - **`registerComponent()`** - Registers and waits for the custom element definition
 - **`attr2prop()`** - Bridges HTML attributes to JavaScript properties
 
@@ -15,14 +15,11 @@ JJ provides three main utilities for building custom components:
 Here's the recommended pattern for creating a custom component:
 
 ```javascript
-import { attr2prop, fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from 'jj'
+import { attr2prop, fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
 
-// 1. Create ShadowMaster (shared across all instances).
-// By convention it's defined at the top level but you can define it as a static class member
-const sm = ShadowMaster.create()
-    // import.meta.resolve() helps you look up resources relative to the current file
-    .setTemplate(fetchHtml(import.meta.resolve('./my-component.html')))
-    .addStyles(fetchCss(import.meta.resolve('./my-component.css')))
+// 1. Create shared resource promises at module scope.
+const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 
 // 2. Define the component class
 export class MyComponent extends HTMLElement {
@@ -33,7 +30,7 @@ export class MyComponent extends HTMLElement {
 
     // 4. Initialize shadow root in connectedCallback
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
     }
 }
 ```
@@ -89,7 +86,7 @@ Called when the element is inserted into the DOM. This is where most initializat
 ```javascript
 async connectedCallback() {
     // Initialize Shadow DOM
-    this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
+    this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
 
     // Set up event listeners
     this.jjRoot.shadow.find('#btn').on('click', () => this.#handleClick())
@@ -317,73 +314,182 @@ set count(value) {
 }
 ```
 
-## ShadowMaster
+## Templates & Styles
 
-`ShadowMaster` manages the resolution of templates and styles for Shadow DOM. It supports eager and lazy loading.
+JJ promotes separating behavior, style, and layout into JavaScript, CSS, and HTML respectively — no CSS-in-JS, no JSX/TSX. The JavaScript file is the entry point; the HTML template and CSS stylesheet are separate resources you control completely.
 
-### Creating a ShadowMaster
+### Encapsulation
 
-Always create it **outside** the class so it's shared across all instances:
+#### Shadow DOM
+
+Shadow DOM is the native browser mechanism for component encapsulation. Attaching a shadow root to your element creates an isolated DOM subtree, shielding its contents from styles and DOM queries that originate outside.
 
 ```javascript
-const sm = ShadowMaster.create().setTemplate(/* template config */).addStyles(/* style configs */)
+async connectedCallback() {
+    this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+}
 ```
+
+Shadow DOM is initialized in one of two modes:
+
+- **`'open'`** — The host page can reach the shadow root via `element.shadowRoot`. Useful for DevTools, testing, and legitimate external interaction.
+- **`'closed'`** — `element.shadowRoot` returns `null`. You hold the only reference, so all interaction must go through your public API.
+
+Read more: [Using Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM)
+
+**Notable exception:** Shadow DOM blocks non-inherited properties like `background`, `border`, and `padding`. However, inherited properties — `color`, `font-family`, `font-size`, `line-height` — still cascade across the shadow boundary from the host page. CSS custom properties (variables) also pierce the boundary, which is why `variables.css` values work seamlessly inside Shadow DOM components.
+
+#### Light DOM
+
+Light DOM is the default in most JavaScript frameworks. React, Vue, Svelte, and Angular all render into the regular DOM — though Vue, Angular, and Svelte can opt into Shadow DOM when needed.
+
+In JJ, skip `initShadow` and manipulate the element's children directly:
+
+```javascript
+connectedCallback() {
+    JJHE.from(this)
+        .empty()
+        .addChild(
+            JJHE.create('p').setText(this.content),
+        )
+}
+```
+
+The trade-off: page styles bleed in (helpful or harmful depending on your needs), and `querySelector` from the parent can reach your internals.
+
+### Loading Eagerness
+
+You have full control over when the HTML and CSS resources are fetched.
+
+#### 1. Eager Fetching
+
+Start the network requests as soon as the module is imported. This is the standard JJ pattern:
+
+```javascript
+import { fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
+
+const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
+
+export class MyComponent extends HTMLElement {
+    static register() {
+        return registerComponent('my-component', MyComponent)
+    }
+
+    async connectedCallback() {
+        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+    }
+}
+```
+
+The fetch starts the moment the module loads — before any instance is mounted. All instances share the same promises, so the resources are downloaded only once.
+
+If you want to **block module loading** until resources are ready, use top-level `await`:
+
+```javascript
+const [template, style] = await Promise.all([
+    fetchTemplate(import.meta.resolve('./my-component.html')),
+    fetchStyle(import.meta.resolve('./my-component.css')),
+])
+
+export class MyComponent extends HTMLElement {
+    async connectedCallback() {
+        this.jjRoot = JJHE.from(this).initShadow('open', template, style)
+    }
+}
+```
+
+> **Trade-off:** Any file that imports this module will also wait for these resources to load before it can proceed.
+
+#### 2. Lazy Fetching
+
+Defer resource loading until the first time a component instance is mounted. Useful when the component may never appear on the page.
+
+```javascript
+import { fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
+
+let templatePromise
+let stylePromise
+
+export class MyComponent extends HTMLElement {
+    static register() {
+        return registerComponent('my-component', MyComponent)
+    }
+
+    async connectedCallback() {
+        templatePromise ??= fetchTemplate(import.meta.resolve('./my-component.html'))
+        stylePromise ??= fetchStyle(import.meta.resolve('./my-component.css'))
+        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+    }
+}
+```
+
+The nullish assignment (`??=`) ensures the fetch is only triggered once, even when multiple instances are mounted simultaneously.
+
+#### 3. Inlining
+
+For small or tightly coupled components, skip the fetch entirely and define the template and styles directly in JavaScript:
+
+```javascript
+import { cssToStyle, h, JJHE, registerComponent } from 'jj'
+
+const template = h('div', { id: 'root' }, h('p', { id: 'content' }, 'Hello, World!'))
+const style = cssToStyle(`
+    #root {
+        border: 1px solid var(--ui-border);
+        padding: var(--gap3);
+    }
+`)
+
+export class MyComponent extends HTMLElement {
+    static register() {
+        return registerComponent('my-component', MyComponent)
+    }
+
+    async connectedCallback() {
+        this.jjRoot = JJHE.from(this).initShadow('open', template, await style)
+    }
+}
+```
+
+Use this pattern sparingly. Mixing HTML structure and CSS into JavaScript increases cognitive load. That said, when layout and behavior are genuinely inseparable, inlining can improve cohesion by keeping tightly coupled things together.
+
+> **Tip:** `initShadow` also accepts a raw CSS string, so `cssToStyle` is optional here — it just pre-processes the sheet at module load time instead of on first mount.
 
 ### Template Sources
 
-`setTemplate()` accepts various inputs:
+`initShadow()` accepts several template types directly:
 
 ```javascript
-// From external HTML file (fetched immediately, resolved lazily)
-sm.setTemplate(fetchHtml(import.meta.resolve('./template.html')))
-
-// From external HTML file (fetched immediately, blocks execution, bad for performance)
-sm.setTemplate(await fetchHtml(import.meta.resolve('./template.html')))
+// From external HTML file
+const templatePromise = fetchTemplate(import.meta.resolve('./template.html'))
 
 // From inline string
-sm.setTemplate('<div id="root"><slot></slot></div>')
+const template = '<div id="root"><slot></slot></div>'
 
 // From existing <template> element
-const tmpl = document.querySelector('template#my-template')
-sm.setTemplate(tmpl.innerHTML)
+const template = document.querySelector('template#my-template')
 
 // From a JJ element
-sm.setTemplate(JJHE.from('template#my-template')) // Uses <template> innerHTML
-sm.setTemplate(JJHE.from('div#source')) // Uses outerHTML
+const template = JJHE.from('template#my-template')
 
-// From any element's HTML
-sm.setTemplate(document.getElementById('source').outerHTML)
-
-// Lazy loading with function (called on first getResolved())
-sm.setTemplate(() => myOwnFetcher('./lazy-template.html'))
+// From any HTMLElement or DocumentFragment
+const template = document.getElementById('source')
 ```
 
 ### Style Sources
 
-`addStyles()` accepts one or more style configurations:
+Use `fetchStyle()` for external stylesheets, or pass a `CSSStyleSheet` directly:
 
 ```javascript
-// From external CSS file
-sm.addStyles(fetchCss(import.meta.resolve('./styles.css')))
-
-// From inline CSS string
-sm.addStyles('.container { padding: 1rem; }')
-
-// Multiple styles at once
-sm.addStyles('p { color: red; }', fetchCss('./base.css'), fetchCss('./theme.css'))
-
-// Lazy loading with function which returns a CSS string or
-// CSSStyleSheet instance (you can use `cssToStyle()` to help with conversion)
-sm.addStyles(() => myOwnFetcher('./optional-styles.css'))
+const baseStylePromise = fetchStyle(import.meta.resolve('./base.css'))
+const themeStylePromise = fetchStyle(import.meta.resolve('./theme.css'))
 ```
 
-### Using in connectedCallback
+`initShadow` also accepts a raw CSS string or a `cssToStyle()` promise, letting you pre-process the sheet at module load time:
 
 ```javascript
-async connectedCallback() {
-    // getResolved() returns cached result after first call
-    this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
-}
+const style = cssToStyle('p { color: var(--foreground-color); }')
 ```
 
 ## Registering Components
@@ -432,11 +538,10 @@ await Promise.all([MyComponent.register(), OtherComponent.register(), ThirdCompo
 **simple-counter.js:**
 
 ```javascript
-import { fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from 'jj'
+import { fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
 
-const sm = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./simple-counter.html')))
-    .addStyles(fetchCss(import.meta.resolve('./simple-counter.css')))
+const templatePromise = fetchTemplate(import.meta.resolve('./simple-counter.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./simple-counter.css'))
 
 export class SimpleCounter extends HTMLElement {
     static register() {
@@ -446,7 +551,7 @@ export class SimpleCounter extends HTMLElement {
     #count = 0
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
 
         this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
         this.jjRoot.shadow.find('#dec').on('click', () => this.#update(-1))
@@ -474,13 +579,12 @@ export class SimpleCounter extends HTMLElement {
 **chat-message.js:**
 
 ```javascript
-import { attr2prop, fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from 'jj'
+import { attr2prop, fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
 
 const VALID_ROLES = ['user', 'system', 'assistant']
 
-const sm = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./chat-message.html')))
-    .addStyles(fetchCss(import.meta.resolve('./chat-message.css')))
+const templatePromise = fetchTemplate(import.meta.resolve('./chat-message.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./chat-message.css'))
 
 export class ChatMessage extends HTMLElement {
     static observedAttributes = ['role', 'content']
@@ -516,7 +620,7 @@ export class ChatMessage extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
         this.#render()
     }
 
@@ -607,7 +711,7 @@ export class RenderMarkdown extends HTMLElement {
 
 ### Do's ✅
 
-- Create `ShadowMaster` outside the class for caching
+- Create template and style promises at module scope for reuse
 - Use `static register()` method convention
 - Initialize Shadow DOM in `connectedCallback()`, not `constructor()`
 - Use private fields (`#field`) for internal state
@@ -618,7 +722,7 @@ export class RenderMarkdown extends HTMLElement {
 ### Don'ts ❌
 
 - Don't access attributes or children in `constructor()`
-- Don't create `ShadowMaster` inside `constructor()` or `connectedCallback()`
+- Don't fetch template or stylesheet resources inside every `connectedCallback()` run
 - Don't forget to call `super()` first in `constructor()`
 - Don't forget `static observedAttributes` when using `attributeChangedCallback`
 - Don't mutate DOM in `constructor()`

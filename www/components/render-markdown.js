@@ -28,7 +28,7 @@ export class RenderMarkdown extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.#root = JJHE.from(this)
+        this.#root = JJHE.from(this).initShadow('open').shadow
         this.#render()
     }
 

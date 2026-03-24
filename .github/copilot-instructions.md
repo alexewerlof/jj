@@ -49,20 +49,19 @@ input.ref.focus() // Use .ref only when wrapper lacks method
 
 All custom components follow a **three-file pattern** (HTML/CSS/JS separate):
 
-1. **Template + Styles** — used via `ShadowMaster`
+1. **Template + Styles** — loaded at module scope via `fetchTemplate()` / `fetchStyle()`
 2. **Component Class** — extends `HTMLElement`, initializes shadow DOM via `JJHE.initShadow()`
 3. **Registration** — static async `.register()` method
 
 **Pattern example** (`www/examples/kanban/components/kanban-card.js`):
 
 ```typescript
-const sm = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./kanban-card.html')))
-    .addStyles(fetchCss(import.meta.resolve('./kanban-card.css')))
+const templatePromise = fetchTemplate(import.meta.resolve('./kanban-card.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./kanban-card.css'))
 
 export class KanbanCard extends HTMLElement {
     async connectedCallback() {
-        this.#root = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
         this.#render()
     }
     // ...
@@ -74,8 +73,8 @@ export class KanbanCard extends HTMLElement {
 
 Key points:
 
-- `ShadowMaster` is created **once** and reused (caches efficiently)
-- Use `fetchHtml()` and `fetchCss()` with `import.meta.resolve()` for module-relative paths
+- Module-scope promises are created once and reused by every component instance
+- Use `fetchTemplate()` and `fetchStyle()` with `import.meta.resolve()` for module-relative paths
 - Store shadow root as `this.#root` and use `.shadow` property to query within shadow DOM
 - Public `setData(data)` method for imperative updates (no data-binding)
 
@@ -137,7 +136,7 @@ Key points:
 **Every feature, bugfix, or API change MUST include tests.** Tests live in `test/` and mirror source structure:
 
 - `src/JJE.ts` → `test/JJE.test.ts`
-- `src/ShadowMaster.ts` → `test/ShadowMaster.test.ts`
+- `src/wrappers/JJHE.ts` → `test/JJHE.test.ts`
 
 Tests use Node's `--test` runner with `jsdom` for DOM simulation. Example pattern:
 

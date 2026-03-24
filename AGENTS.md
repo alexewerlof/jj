@@ -57,15 +57,15 @@ btn.setText('Click me')
 
 ## 5. Shadow DOM Pattern
 
-Use `ShadowMaster` to manage templates and styles efficiently (caches resolved configs).
+Keep template and style resources at module scope, then pass them directly to `JJHE.initShadow()`.
 
 ```typescript
-const sm = ShadowMaster.create().setTemplate('<div><slot></slot></div>').addStyles('div { color: red; }')
+const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 
 class MyComponent extends HTMLElement {
     async connectedCallback() {
-        // Efficiently reuses the processed template/styles
-        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
     }
 }
 ```
@@ -138,7 +138,7 @@ Do not call `.register()` like a synchronous function, and prefer `registerCompo
 
 - **Mandatory Tests**: Every new feature or bugfix MUST include tests.
 - **Environment**: use `node --test` with `jsdom` for DOM simulation.
-- **Location**: Tests live in the root `test/` folder and mirror source filenames (e.g., `test/JJE.test.ts` for `src/JJE.ts`, `test/ShadowMaster.test.ts` for `src/ShadowMaster.ts`).
+- **Location**: Tests live in the root `test/` folder and mirror source filenames (e.g., `test/JJE.test.ts` for `src/JJE.ts`, `test/JJHE.test.ts` for `src/wrappers/JJHE.ts`).
 
 ## 10. Documentation Maintenance
 

@@ -1,14 +1,15 @@
-import { attr2prop, fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from '../../lib/bundle.js'
+import { attr2prop, fetchStyle, fetchHtml, JJHE, registerComponent } from '../../lib/bundle.js'
 
-const sm = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./simple-counter.html')))
-    .addStyles(fetchCss(import.meta.resolve('./simple-counter.css')))
+const templatePromise = fetchHtml(import.meta.resolve('./simple-counter.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./simple-counter.css'))
 
 export class SimpleCounter extends HTMLElement {
     static register() {
         return registerComponent('simple-counter', SimpleCounter)
     }
 
+    #root
+    #countSpan
     // State
     #count = 0
 
@@ -17,16 +18,20 @@ export class SimpleCounter extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
+        if (this.#root) {
+            return
+        }
 
-        // Access elements inside Shadow DOM via this.jjRoot
-        this.countSpan = this.jjRoot.shadow.find('#count')
-        this.incBtn = this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
-        this.decBtn = this.jjRoot.shadow.find('#dec').on('click', () => this.#update(-1))
+        this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise).shadow
+
+        // Access elements inside Shadow DOM via this.#root
+        this.#countSpan = this.#root.find('#count', true)
+        this.#root.find('#inc', true).on('click', () => this.#update(1))
+        this.#root.find('#dec', true).on('click', () => this.#update(-1))
     }
 
     #update(delta) {
         this.#count += delta
-        this.jjRoot.shadow.find('#count').setText(this.#count)
+        this.#countSpan.setText(this.#count)
     }
 }

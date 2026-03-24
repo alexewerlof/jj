@@ -219,7 +219,7 @@ const input = doc.create('input') // Correctly typed as JJHE<HTMLInputElement>
 JJ is not opnionated about custom elements. You should use the native lifecycle callbacks:
 Custom element lifecycle callbacks include (all of which can be `async`):
 
-- `connectedCallback()`: Called each time the element is added to the document. The specification recommends that, as far as possible, developers should implement custom element setup in this callback instead of the constructor. JJ provides `ShadowMaster` for managing Shadow DOM configuration (templates and styles) with support for eager/lazy loading.
+- `connectedCallback()`: Called each time the element is added to the document. The specification recommends that, as far as possible, developers should implement custom element setup in this callback instead of the constructor. In JJ, keep shadow templates and styles at module scope and pass them directly to `initShadow()`.
 - `disconnectedCallback()`: Called each time the element is removed from the document.
 - `connectedMoveCallback()`: When defined, this is called instead of `connectedCallback()` and `disconnectedCallback()` each time the element is moved to a different place in the DOM via `Element.moveBefore()`. Use this to avoid running initialization/cleanup code in the `connectedCallback()` and `disconnectedCallback()` callbacks when the element is not actually being added to or removed from the DOM.
 - `adoptedCallback()`: Called each time the element is moved to a new document.
@@ -234,15 +234,13 @@ On top of those, JJ also provides `registerComponent()` for registering custom e
 - Never call `.register()` like a synchronous function
 - Prefer `registerComponent()` over direct `customElements.define()` when exposing a `static register()` helper
 
-**Basic pattern** - Create a shared `ShadowMaster` instance outside the class for caching:
+**Basic pattern** - Create shared template/style promises outside the class for caching:
 
 ```typescript
-import { attr2prop, fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from 'jj'
+import { attr2prop, fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
 
-// ShadowMaster is created OUTSIDE the class - config is resolved once and cached
-const sm = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./my-component.html')))
-    .addStyles(fetchCss(import.meta.resolve('./my-component.css')))
+const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 
 export class MyComponent extends HTMLElement {
     static observedAttributes = ['title', 'count']
@@ -270,8 +268,7 @@ export class MyComponent extends HTMLElement {
     }
 
     async connectedCallback() {
-        // Initialize shadow root with resolved config
-        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
 
         // Access elements inside Shadow DOM
         this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
@@ -291,39 +288,30 @@ export class MyComponent extends HTMLElement {
 }
 ```
 
-**Template sources** - `setTemplate()` accepts various inputs:
+**Template sources** - `initShadow()` accepts various template inputs:
 
 ```typescript
-// From external HTML file (eager loading)
-sm.setTemplate(fetchHtml('./template.html'))
+// From external HTML file
+const templatePromise = fetchTemplate('./template.html')
 
 // From inline string
-sm.setTemplate('<div id="root"><slot></slot></div>')
+const template = '<div id="root"><slot></slot></div>'
 
 // From existing <template> element
-sm.setTemplate(document.querySelector<HTMLTemplateElement>('#my-template')?.innerHTML)
+const template = document.querySelector<HTMLTemplateElement>('#my-template')
 
 // From existing element's HTML
-sm.setTemplate(document.getElementById('template-source')?.outerHTML)
-
-// Lazy loading with function (called on first getResolved())
-sm.setTemplate(() => fetchHtml('./lazy-template.html'))
+const template = document.getElementById('template-source')
 ```
 
-**Style sources** - `addStyles()` accepts multiple styles:
+**Style sources** - Pass one or more `CSSStyleSheet` instances after the template:
 
 ```typescript
 // From external CSS file
-sm.addStyles(fetchCss('./styles.css'))
-
-// From inline CSS string
-sm.addStyles('.container { padding: 1rem; }')
+const baseStylePromise = fetchStyle('./styles.css')
 
 // Multiple sources at once
-sm.addStyles('p { color: red; }', fetchCss('./base.css'), fetchCss('./theme.css'))
-
-// Lazy loading (function called on first getResolved())
-sm.addStyles(() => fetchCss('./lazy-styles.css'))
+const themeStylePromise = fetchStyle('./theme.css')
 ```
 
 **Register multiple components** with `Promise.all()`:
@@ -497,11 +485,10 @@ btn.on('click', () => {
 See section **4. Custom Elements** above for the full pattern. Here's a minimal example:
 
 ```typescript
-import { attr2prop, fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from 'jj'
+import { fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
 
-const sm = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./simple-counter.html')))
-    .addStyles(fetchCss(import.meta.resolve('./simple-counter.css')))
+const templatePromise = fetchTemplate(import.meta.resolve('./simple-counter.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./simple-counter.css'))
 
 export class SimpleCounter extends HTMLElement {
     static register() {
@@ -511,7 +498,7 @@ export class SimpleCounter extends HTMLElement {
     #count = 0
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
         this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
         this.jjRoot.shadow.find('#dec').on('click', () => this.#update(-1))
     }
@@ -567,7 +554,7 @@ items.forEach((item) => {
 })
 ```
 
-For component templates, prefer `ShadowMaster` with `fetchHtml()` (see section 4).
+For component templates, prefer module-scope `fetchTemplate()` and `fetchStyle()` promises (see section 4).
 
 ## Code Style Notes
 
@@ -648,7 +635,7 @@ Output: `doc/` folder with HTML documentation
 ❌ **Don't** access `.ref` before chaining operations
 ❌ **Don't** ignore TypeScript errors about DOM types
 ❌ **Don't** use generic type parameters when `JJHE.create()` gives better inference
-❌ **Don't** manually manage Shadow DOM when `ShadowMaster` can handle it
+❌ **Don't** fetch template and stylesheet resources inside every `connectedCallback()` run
 ❌ **Don't** forget to await async initializations
 ❌ **Don't** forget `.ref` when passing to native APIs or third-party libraries
 
@@ -656,7 +643,7 @@ Output: `doc/` folder with HTML documentation
 ✅ **Do** chain operations before accessing `.ref`
 ✅ **Do** use `JJHE.create()` for element creation with type inference
 ✅ **Do** leverage the fluent API
-✅ **Do** use `ShadowMaster` for Shadow DOM components
+✅ **Do** keep reusable shadow resources at module scope and pass them to `initShadow()`
 ✅ **Do** handle errors explicitly
 ✅ **Do** use `.ref` when accessing native properties like `.value`, `.checked`, etc.
 

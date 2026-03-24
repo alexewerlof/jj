@@ -1,9 +1,7 @@
-import { fetchCss, fetchHtml, JJHE, registerComponent, ShadowMaster } from '../../../../lib/bundle.js'
+import { fetchStyle, fetchTemplate, JJHE, registerComponent } from '../../../../lib/bundle.js'
 
-// Pre-compute styles for the shadow DOM
-const sm = ShadowMaster.create()
-    .setTemplate(fetchHtml(import.meta.resolve('./kanban-card.html')))
-    .addStyles(fetchCss(import.meta.resolve('./kanban-card.css')))
+const templatePromise = fetchTemplate(import.meta.resolve('./kanban-card.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./kanban-card.css'))
 
 export class KanbanCard extends HTMLElement {
     /** @type {JJHE} */
@@ -13,8 +11,7 @@ export class KanbanCard extends HTMLElement {
     async connectedCallback() {
         if (this.#root) return
 
-        // Initialize Shadow DOM efficiently
-        this.#root = JJHE.from(this).initShadow('open', await sm.getResolved())
+        this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
 
         // Render initial data
         this.#render()

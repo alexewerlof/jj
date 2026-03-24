@@ -2,8 +2,6 @@ export * from './util.js'
 export * from './case.js'
 export * from './wrappers/index.js'
 export * from './helpers.js'
-export * from './components/helpers.js'
-export * from './ShadowMaster.js'
 
 import { JJD } from './wrappers/JJD.js'
 

@@ -1,6 +1,7 @@
-import { isInstance } from 'jty'
+import { isInstance, isStr } from 'jty'
 import { JJNx } from './JJNx.js'
-import { typeErr } from '../internal.js'
+import { errMsg, typeErr } from '../internal.js'
+import { JJHE } from '../index.js'
 
 /**
  * Wraps a DocumentFragment (which is a descendant of Node).
@@ -54,6 +55,47 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
      */
     static create(): JJDF<DocumentFragment> {
         return new JJDF(document.createDocumentFragment())
+    }
+
+    /**
+     * Create a JJDF by cloning various template sources.
+     *
+     * @param template - The template source, which can be a string, HTMLTemplateElement, DocumentFragment, HTMLElement, or JJDF.
+     * @returns A JJDF<DocumentFragment> representing the template content.
+     * @throws {TypeError} If the template type is unsupported.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createRange | Document.createRange}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLTemplateElement | HTMLTemplateElement}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement | HTMLElement}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode | Node.cloneNode}
+     */
+    addTemplate(
+        template:
+            | string
+            | HTMLTemplateElement
+            | DocumentFragment
+            | HTMLElement
+            | JJHE<HTMLTemplateElement>
+            | JJHE<HTMLElement>
+            | JJDF,
+    ): this {
+        if (isStr(template)) {
+            // Using Range for faster parsing than innerHTML
+            return this.addChild(document.createRange().createContextualFragment(template))
+        }
+        if (isInstance(template, DocumentFragment) || isInstance(template, HTMLElement)) {
+            return this.addChild(
+                isInstance(template, HTMLTemplateElement)
+                    ? (template.content.cloneNode(true) as DocumentFragment)
+                    : (template.cloneNode(true) as DocumentFragment),
+            )
+        }
+        if (isInstance(template, JJDF) || isInstance(template, JJHE)) {
+            return this.addTemplate(template.ref)
+        }
+        throw new TypeError(
+            errMsg('Template source', 'a string, DocumentFragment, HTMLElement, JJDF, or JJHE', template),
+        )
     }
 
     /**
