@@ -73,33 +73,36 @@ class MyComponent extends HTMLElement {
 
 ## 5.1 Async Component Registration
 
-`registerComponent()` is async and must be treated as async everywhere.
+`defineComponent()` is async and must be treated as async everywhere.
 
-For component classes, `static register()` must return the `registerComponent()` promise:
+For component classes, expose a static `defined` promise:
 
 ```typescript
 class MyComponent extends HTMLElement {
-    static register() {
-        return registerComponent('my-component', MyComponent)
-    }
+    static defined = defineComponent('my-component', MyComponent)
 }
 ```
 
-Do not call `registerComponent()` without returning it from `static register()`, or importers will receive `undefined` and cannot reliably await component definition.
-
-For importers, always await registration before using the custom element:
+For importers, always await definition readiness before using the custom element:
 
 ```typescript
-await MyComponent.register()
+await MyComponent.defined
 ```
 
 If multiple components are needed, await them in parallel:
 
 ```typescript
-await Promise.all([MyComponent.register(), OtherComponent.register()])
+await Promise.all([MyComponent.defined, OtherComponent.defined])
 ```
 
-Do not call `.register()` like a synchronous function, and prefer `registerComponent()` over direct `customElements.define()` when exposing a `static register()` helper.
+The promise resolves to:
+
+- `false` when the component is newly defined by this call.
+- `true` when the same constructor was already defined.
+
+This explicit definition step is critical for reliability. Without it, markup may be parsed before the element is defined, which can lead to timing-sensitive or flaky upgrades.
+
+Do not call `.defined` like a synchronous function, and prefer `defineComponent()` over direct `customElements.define()` when exposing a component readiness contract.
 
 ## 6. Common Gotchas
 

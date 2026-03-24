@@ -2,7 +2,7 @@ import { isInstance, isFn, hasProp, isStr } from 'jty'
 import { JJHE, JJDF } from './wrappers/index.js'
 import { cssToStyle, fileExt } from './util.js'
 import { typeErr, errMsg } from './internal.js'
-import { keb2cam } from './case.js'
+import { keb2cam, pas2keb } from './case.js'
 
 /**
  * Tries to find the best match for the link.as attribute when it's omitted
@@ -354,52 +354,88 @@ export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown
 /**
  * Registers the custom element with the browser and waits till it is defined.
  *
+ * @remarks
+ * This helper accepts either kebab-case names (`my-widget`) or PascalCase names (`MyWidget`).
+ * PascalCase input is normalized to kebab-case internally before registration.
+ *
+ * The returned promise resolves to:
+ * - `false` when the element was newly defined by this call.
+ * - `true` when the same constructor had already been defined for the normalized name.
+ *
+ * Defining components before usage is important for reliability. If markup is rendered before
+ * the browser knows the custom element definition, upgrade timing can become race-prone and
+ * appear flaky across environments.
+ *
  * @category Components
+ * @param name - The custom element name. Supports kebab-case or PascalCase and normalizes to kebab-case.
+ * @param constructor - The custom element constructor/class.
+ * @param options - Optional native `customElements.define` options.
+ * @returns A promise resolving to `true` if already defined, `false` if defined by this call.
  * @example
  * ```ts
  * class MyComponent extends HTMLElement {}
- * await registerComponent('my-component', MyComponent)
+ * await defineComponent('my-component', MyComponent)
  * ```
- * Another convention is to have a `static async register()` function in the Custom Component.
+ * A common pattern is exposing a static `defined` promise on the component class.
  * ```ts
  * export class MyComponent extends HTMLElement {
- *     static async register() {
- *         return registerComponent('my-component', MyComponent)
- *     }
+ *     static defined = defineComponent('my-component', MyComponent)
  * }
  * ```
- * That way, you can import multiple components and do a `Promise.all()` on all their `.register()`s.
+ * That way, importers can await readiness declaratively and in parallel.
  * ```ts
  * import { MyComponent, YourComponent, TheirComponent } ...
  * await Promise.all([
- *     MyComponent.register(),
- *     YourComponent.register(),
- *     TheirComponent.register(),
+ *     MyComponent.defined,
+ *     YourComponent.defined,
+ *     TheirComponent.defined,
  * ])
  * ```
  *
- * @throws {TypeError} If name is not a string or constructor is not a function
+ * @throws {TypeError} If name is not a string or constructor is not a function.
+ * @throws {SyntaxError} If the normalized name is not a valid custom-element name.
+ * @throws {ReferenceError} If another constructor is already defined for the same normalized name.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define | customElements.define}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/whenDefined | customElements.whenDefined}
  */
-export async function registerComponent(
+export async function defineComponent(
     name: string,
     constructor: CustomElementConstructor,
     options?: ElementDefinitionOptions,
-): Promise<void> {
+): Promise<boolean> {
     if (!isStr(name)) {
-        throw typeErr('name', 'a string', name, 'Use a custom-element tag name like "my-widget".')
+        throw typeErr('name', 'a string', name, 'Use a custom-element tag name like "my-widget" or "MyWidget".')
+    }
+    // If already kebab-case (contains hyphen), accept as-is; otherwise normalize via pas2keb
+    const normalizedName = name.includes('-') ? name : pas2keb(name)
+    if (!normalizedName.includes('-')) {
+        throw new SyntaxError(
+            errMsg(
+                'name',
+                'a custom-element name containing a hyphen',
+                name,
+                'Use kebab-case like "my-widget" or PascalCase like "MyWidget".',
+            ),
+        )
     }
     if (!isFn(constructor)) {
         throw typeErr(
             'constructor',
             'a function',
             constructor,
-            'Pass the custom element class itself, e.g. registerComponent("my-widget", MyWidget).',
+            'Pass the custom element class itself, e.g. defineComponent("my-widget", MyWidget).',
         )
     }
-    if (!customElements.get(name)) {
-        customElements.define(name, constructor, options)
-        await customElements.whenDefined(name)
+    const definedConstructor = customElements.get(normalizedName)
+    if (definedConstructor) {
+        if (definedConstructor !== constructor) {
+            throw new ReferenceError(
+                `A different constructor is already defined for the custom element "${normalizedName}".`,
+            )
+        }
+    } else {
+        customElements.define(normalizedName, constructor, options)
+        await customElements.whenDefined(normalizedName)
     }
+    return Boolean(definedConstructor)
 }

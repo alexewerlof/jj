@@ -37,6 +37,27 @@ const formula = JJME.create('math').addChild(JJME.create('mi').setText('x'))
 
 JJ is **not** a reactive framework, template compiler, or state-management system.
 
+## 🧩 Custom Elements Readiness
+
+Use `defineComponent(name, constructor, options?)` and expose a static `defined` promise on each custom element class:
+
+```js
+import { defineComponent } from 'jj'
+
+export class MyWidget extends HTMLElement {
+    static defined = defineComponent('my-widget', MyWidget)
+}
+
+await MyWidget.defined
+```
+
+`defineComponent()` resolves a `Promise<boolean>`:
+
+- `false`: this call registered the component.
+- `true`: it was already registered with the same constructor.
+
+This explicit definition step is important for reliability. If markup is parsed before the element is defined, upgrades can race with rendering and produce flaky behavior.
+
 ## 📚 Learn More
 
 **👉 [Visit the full site with tutorials, examples, and API docs](https://alexewerlof.github.io/jj)**

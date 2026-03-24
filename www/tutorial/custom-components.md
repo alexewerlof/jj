@@ -7,7 +7,7 @@ This guide covers how to create [Custom Elements](https://developer.mozilla.org/
 JJ provides three main utilities for building custom components:
 
 - **`fetchTemplate()` + `fetchStyle()`** - Load reusable shadow resources at module scope
-- **`registerComponent()`** - Registers and waits for the custom element definition
+- **`defineComponent()`** - Registers and waits for the custom element definition
 - **`attr2prop()`** - Bridges HTML attributes to JavaScript properties
 
 ## Basic Component Structure
@@ -15,7 +15,7 @@ JJ provides three main utilities for building custom components:
 Here's the recommended pattern for creating a custom component:
 
 ```javascript
-import { attr2prop, fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
+import { attr2prop, fetchStyle, fetchTemplate, JJHE, defineComponent } from 'jj'
 
 // 1. Create shared resource promises at module scope.
 const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
@@ -23,10 +23,8 @@ const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 
 // 2. Define the component class
 export class MyComponent extends HTMLElement {
-    // 3. Static register method (convention)
-    static async register() {
-        return await registerComponent('my-component', MyComponent)
-    }
+    // 3. Expose a static readiness promise
+    static defined = defineComponent('my-component', MyComponent)
 
     // 4. Initialize shadow root in connectedCallback
     async connectedCallback() {
@@ -40,18 +38,25 @@ Then in another file you can import and use the component like this:
 ```javascript
 import { MyComponent } from './path/to/MyComponent.js'
 
-await MyComponent.register()
+await MyComponent.defined
 ```
 
-If you import multiple components, you can `await` their registration in parallel:
+If you import multiple components, you can await readiness in parallel:
 
 ```javascript
 import { Component1 } from './path/to/Component1.js'
 import { Component2 } from './path/to/Component2.js'
 import { Component3 } from './path/to/Component3.js'
 
-await Promise.all([Component1.register(), Component2.register(), Component3.register()])
+await Promise.all([Component1.defined, Component2.defined, Component3.defined])
 ```
+
+`defineComponent(name, constructor, options?)` resolves a `Promise<boolean>`:
+
+- `false` means this call defined the component.
+- `true` means the same constructor was already defined.
+
+Explicitly defining and awaiting `.defined` is important. Without it, markup can be parsed before the browser has the component definition, which can cause timing-sensitive or flaky upgrades.
 
 ## Custom Element Lifecycle
 
@@ -60,7 +65,7 @@ Browsers support several lifecycle callbacks for custom components. Here's when 
 ### `constructor()`
 
 Called when an custom element is created (via `document.createElement()` or the HTML parser).
-**Make sure that the element is defined and ready. Use the `registerComponent()` helper function for both.**
+**Make sure that the element is defined and ready. Use the `defineComponent()` helper function for both.**
 
 ```javascript
 constructor() {
@@ -366,15 +371,13 @@ You have full control over when the HTML and CSS resources are fetched.
 Start the network requests as soon as the module is imported. This is the standard JJ pattern:
 
 ```javascript
-import { fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
+import { fetchStyle, fetchTemplate, JJHE, defineComponent } from 'jj'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 
 export class MyComponent extends HTMLElement {
-    static register() {
-        return registerComponent('my-component', MyComponent)
-    }
+    static defined = defineComponent('my-component', MyComponent)
 
     async connectedCallback() {
         this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
@@ -406,15 +409,13 @@ export class MyComponent extends HTMLElement {
 Defer resource loading until the first time a component instance is mounted. Useful when the component may never appear on the page.
 
 ```javascript
-import { fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
+import { fetchStyle, fetchTemplate, JJHE, defineComponent } from 'jj'
 
 let templatePromise
 let stylePromise
 
 export class MyComponent extends HTMLElement {
-    static register() {
-        return registerComponent('my-component', MyComponent)
-    }
+    static defined = defineComponent('my-component', MyComponent)
 
     async connectedCallback() {
         templatePromise ??= fetchTemplate(import.meta.resolve('./my-component.html'))
@@ -431,7 +432,7 @@ The nullish assignment (`??=`) ensures the fetch is only triggered once, even wh
 For small or tightly coupled components, skip the fetch entirely and define the template and styles directly in JavaScript:
 
 ```javascript
-import { cssToStyle, h, JJHE, registerComponent } from 'jj'
+import { cssToStyle, h, JJHE, defineComponent } from 'jj'
 
 const template = h('div', { id: 'root' }, h('p', { id: 'content' }, 'Hello, World!'))
 const style = cssToStyle(`
@@ -442,9 +443,7 @@ const style = cssToStyle(`
 `)
 
 export class MyComponent extends HTMLElement {
-    static register() {
-        return registerComponent('my-component', MyComponent)
-    }
+    static defined = defineComponent('my-component', MyComponent)
 
     async connectedCallback() {
         this.jjRoot = JJHE.from(this).initShadow('open', template, await style)
@@ -494,39 +493,45 @@ const style = cssToStyle('p { color: var(--foreground-color); }')
 
 ## Registering Components
 
-Use `registerComponent()` to define your custom element:
+Use `defineComponent(name, constructor, options?)` to define your custom element:
 
 ```javascript
-import { registerComponent } from 'jj'
+import { defineComponent } from 'jj'
 
-// Basic registration
-await registerComponent('my-component', MyComponent)
+// Basic registration (kebab-case)
+await defineComponent('my-component', MyComponent)
+
+// Ergonomic registration (PascalCase gets normalized to kebab-case)
+await defineComponent('MyComponent', MyComponent)
 
 // With options (extending built-in elements)
-await registerComponent('fancy-button', FancyButton, { extends: 'button' })
+await defineComponent('fancy-button', FancyButton, { extends: 'button' })
 ```
 
-### Convention: Static `register()` Method
+Return value semantics:
 
-Add a static `register()` method to each component:
+- `false`: this call registered the component.
+- `true`: it was already registered with the same constructor.
+
+### Convention: Static `defined` Promise
+
+Add a static `defined` promise to each component:
 
 ```javascript
 export class MyComponent extends HTMLElement {
-    static register() {
-        return registerComponent('my-component', MyComponent)
-    }
+    static defined = defineComponent('my-component', MyComponent)
 }
 ```
 
-This enables clean registration of multiple components:
+This enables clean readiness handling for multiple components:
 
 ```javascript
 import { MyComponent } from './my-component.js'
 import { OtherComponent } from './other-component.js'
 import { ThirdComponent } from './third-component.js'
 
-// Register all components in parallel
-await Promise.all([MyComponent.register(), OtherComponent.register(), ThirdComponent.register()])
+// Await all component definitions in parallel
+await Promise.all([MyComponent.defined, OtherComponent.defined, ThirdComponent.defined])
 ```
 
 > 📚 [MDN: customElements.define()](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define)
@@ -538,15 +543,13 @@ await Promise.all([MyComponent.register(), OtherComponent.register(), ThirdCompo
 **simple-counter.js:**
 
 ```javascript
-import { fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
+import { fetchStyle, fetchTemplate, JJHE, defineComponent } from 'jj'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./simple-counter.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./simple-counter.css'))
 
 export class SimpleCounter extends HTMLElement {
-    static register() {
-        return registerComponent('simple-counter', SimpleCounter)
-    }
+    static defined = defineComponent('simple-counter', SimpleCounter)
 
     #count = 0
 
@@ -579,7 +582,7 @@ export class SimpleCounter extends HTMLElement {
 **chat-message.js:**
 
 ```javascript
-import { attr2prop, fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
+import { attr2prop, fetchStyle, fetchTemplate, JJHE, defineComponent } from 'jj'
 
 const VALID_ROLES = ['user', 'system', 'assistant']
 
@@ -589,9 +592,7 @@ const stylePromise = fetchStyle(import.meta.resolve('./chat-message.css'))
 export class ChatMessage extends HTMLElement {
     static observedAttributes = ['role', 'content']
 
-    static register() {
-        return registerComponent('chat-message', ChatMessage)
-    }
+    static defined = defineComponent('chat-message', ChatMessage)
 
     #role = 'user'
     #content = ''
@@ -643,8 +644,8 @@ export class ChatMessage extends HTMLElement {
 ```javascript
 import { ChatMessage } from './components/chat-message.js'
 
-// Wait till the component is registered and ready to use
-await ChatMessage.register()
+// Wait until the component is defined and ready to use
+await ChatMessage.defined
 
 // Native Browser Syntax
 const msg = document.createElement('chat-message')
@@ -665,14 +666,12 @@ doc.body.addChild(
 Some components don't need Shadow DOM encapsulation:
 
 ```javascript
-import { attr2prop, JJHE, registerComponent } from 'jj'
+import { attr2prop, JJHE, defineComponent } from 'jj'
 
 export class RenderMarkdown extends HTMLElement {
     static observedAttributes = ['content']
 
-    static register() {
-        return registerComponent('render-markdown', RenderMarkdown)
-    }
+    static defined = defineComponent('render-markdown', RenderMarkdown)
 
     #root
     #content = ''
@@ -712,7 +711,7 @@ export class RenderMarkdown extends HTMLElement {
 ### Do's ✅
 
 - Create template and style promises at module scope for reuse
-- Use `static register()` method convention
+- Use the `static defined = defineComponent('my-component', MyComponent)` convention
 - Initialize Shadow DOM in `connectedCallback()`, not `constructor()`
 - Use private fields (`#field`) for internal state
 - Validate property values in setters

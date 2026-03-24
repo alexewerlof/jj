@@ -1,4 +1,4 @@
-import { attr2prop, JJHE, registerComponent, h } from '../../lib/bundle.js'
+import { attr2prop, JJHE, defineComponent, h } from '../../lib/bundle.js'
 import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
 import highlightJavascript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
 import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'
@@ -37,9 +37,7 @@ async function loadFile(filePath) {
 
 export class CodeHighlight extends HTMLElement {
     static observedAttributes = ['file', 'language']
-    static register() {
-        return registerComponent('code-highlight', CodeHighlight)
-    }
+    static defined = defineComponent('code-highlight', CodeHighlight)
 
     #fileContent
     #language

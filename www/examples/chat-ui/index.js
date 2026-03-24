@@ -3,7 +3,7 @@ import { fetchModels, runEchoTest, streamChatMessage } from './api.js'
 import { doc, JJHE } from '../../../lib/bundle.js'
 
 // Register components
-await ChatMessage.register()
+await ChatMessage.defined
 
 // State
 const STORAGE_KEYS = {

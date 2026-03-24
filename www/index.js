@@ -2,7 +2,7 @@ import { SimpleCounter } from './components/simple-counter.js'
 import { RenderMarkdown } from './components/render-markdown.js'
 import { CodeHighlight } from './components/code-highlight.js'
 
-await Promise.all([SimpleCounter.register(), RenderMarkdown.register(), CodeHighlight.register()])
+await Promise.all([SimpleCounter.defined, RenderMarkdown.defined, CodeHighlight.defined])
 
 import { doc } from '../lib/bundle.js'
 

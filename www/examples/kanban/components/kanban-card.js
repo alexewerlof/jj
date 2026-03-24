@@ -1,4 +1,4 @@
-import { fetchStyle, fetchTemplate, JJHE, registerComponent } from '../../../../lib/bundle.js'
+import { fetchStyle, fetchTemplate, JJHE, defineComponent } from '../../../../lib/bundle.js'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./kanban-card.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./kanban-card.css'))
@@ -57,7 +57,5 @@ export class KanbanCard extends HTMLElement {
         tag.rmClass('low', 'medium', 'high').addClass(priority)
     }
 
-    static register() {
-        return registerComponent('kanban-card', KanbanCard)
-    }
+    static defined = defineComponent('kanban-card', KanbanCard)
 }

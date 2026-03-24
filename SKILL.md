@@ -229,19 +229,22 @@ Custom element lifecycle callbacks include (all of which can be `async`):
 - `adoptedCallback()`: Called each time the element is moved to a new document.
 - `attributeChangedCallback()`: Called when attributes are changed, added, removed, or replaced. See Responding to attribute changes for more details about this callback. JJ provides `attr2prop()` for converting attributes to properties.
 
-On top of those, JJ also provides `registerComponent()` for registering custom elements and awaiting till they are defined.
+On top of those, JJ also provides `defineComponent()` for registering custom elements and waiting until they are defined.
 
-`registerComponent()` is async, so treat registration as async everywhere:
+`defineComponent()` is async, so treat definition as async everywhere:
 
-- In the component class, `static register()` must `return registerComponent(...)`
-- In the importer, always use `await MyComponent.register()` or `await Promise.all([...])`
-- Never call `.register()` like a synchronous function
-- Prefer `registerComponent()` over direct `customElements.define()` when exposing a `static register()` helper
+- In the component class, expose `static defined = defineComponent('my-component', MyComponent)`
+- In the importer, always use `await MyComponent.defined` or `await Promise.all([...])`
+- Never call `.defined` like a synchronous function
+- Prefer `defineComponent()` over direct `customElements.define()` when exposing a readiness contract
+- Promise semantics: resolves to `false` for a new definition and `true` when already defined with the same constructor
+
+Defining components before usage is important for reliability. Without an explicit await on `.defined`, custom element upgrades can race with rendering and become flaky.
 
 **Basic pattern** - Create shared template/style promises outside the class for caching:
 
 ```typescript
-import { attr2prop, fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
+import { attr2prop, fetchStyle, fetchTemplate, JJHE, defineComponent } from 'jj'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
@@ -249,9 +252,7 @@ const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 export class MyComponent extends HTMLElement {
     static observedAttributes = ['title', 'count']
 
-    static register() {
-        return registerComponent('my-component', MyComponent)
-    }
+    static defined = defineComponent('my-component', MyComponent)
 
     // Private state
     #title = ''
@@ -324,7 +325,7 @@ const themeStylePromise = fetchStyle('./theme.css')
 import { MyComponent } from './my-component.js'
 import { OtherComponent } from './other-component.js'
 
-await Promise.all([MyComponent.register(), OtherComponent.register()])
+await Promise.all([MyComponent.defined, OtherComponent.defined])
 ```
 
 ### 5. Event Handling
@@ -489,15 +490,13 @@ btn.on('click', () => {
 See section **4. Custom Elements** above for the full pattern. Here's a minimal example:
 
 ```typescript
-import { fetchStyle, fetchTemplate, JJHE, registerComponent } from 'jj'
+import { fetchStyle, fetchTemplate, JJHE, defineComponent } from 'jj'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./simple-counter.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./simple-counter.css'))
 
 export class SimpleCounter extends HTMLElement {
-    static register() {
-        return registerComponent('simple-counter', SimpleCounter)
-    }
+    static defined = defineComponent('simple-counter', SimpleCounter)
 
     #count = 0
 

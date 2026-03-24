@@ -1,14 +1,11 @@
-import { attr2prop, fetchStyle, fetchTemplate, JJHE, registerComponent } from '../../../../lib/bundle.js'
+import { attr2prop, fetchStyle, fetchTemplate, JJHE, defineComponent } from '../../../../lib/bundle.js'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./todo-item.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./todo-item.css'))
 
 export class TodoItem extends HTMLElement {
     static observedAttributes = ['item-id', 'text', 'done']
-
-    static register() {
-        return registerComponent('todo-item', TodoItem)
-    }
+    static defined = defineComponent('todo-item', TodoItem)
 
     #itemId = ''
     #text = ''

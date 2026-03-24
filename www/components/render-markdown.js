@@ -1,8 +1,8 @@
-import { attr2prop, JJHE, registerComponent } from '../../lib/bundle.js'
+import { attr2prop, JJHE, defineComponent } from '../../lib/bundle.js'
 import markdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
 import { CodeHighlight } from './code-highlight.js'
 
-await CodeHighlight.register()
+await CodeHighlight.defined
 
 const md = markdownIt()
 
@@ -14,9 +14,7 @@ md.renderer.rules.fence = (tokens, idx) => {
 }
 
 export class RenderMarkdown extends HTMLElement {
-    static register() {
-        return registerComponent('render-markdown', RenderMarkdown)
-    }
+    static defined = defineComponent('render-markdown', RenderMarkdown)
 
     static observedAttributes = ['content']
 

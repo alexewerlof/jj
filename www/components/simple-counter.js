@@ -1,12 +1,10 @@
-import { attr2prop, fetchStyle, fetchHtml, JJHE, registerComponent } from '../../lib/bundle.js'
+import { attr2prop, fetchStyle, fetchHtml, JJHE, defineComponent } from '../../lib/bundle.js'
 
 const templatePromise = fetchHtml(import.meta.resolve('./simple-counter.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./simple-counter.css'))
 
 export class SimpleCounter extends HTMLElement {
-    static register() {
-        return registerComponent('simple-counter', SimpleCounter)
-    }
+    static defined = defineComponent('simple-counter', SimpleCounter)
 
     #root
     #countSpan

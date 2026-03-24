@@ -51,7 +51,7 @@ All custom components follow a **three-file pattern** (HTML/CSS/JS separate):
 
 1. **Template + Styles** — loaded at module scope via `fetchTemplate()` / `fetchStyle()`
 2. **Component Class** — extends `HTMLElement`, initializes shadow DOM via `JJHE.initShadow()`
-3. **Registration** — static async `.register()` method
+3. **Registration** — static `.defined` promise via `defineComponent()`
 
 **Pattern example** (`www/examples/kanban/components/kanban-card.js`):
 
@@ -60,14 +60,13 @@ const templatePromise = fetchTemplate(import.meta.resolve('./kanban-card.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./kanban-card.css'))
 
 export class KanbanCard extends HTMLElement {
+    static defined = defineComponent('kanban-card', KanbanCard)
+
     async connectedCallback() {
         this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
         this.#render()
     }
     // ...
-    static register() {
-        return registerComponent('kanban-card', KanbanCard)
-    }
 }
 ```
 

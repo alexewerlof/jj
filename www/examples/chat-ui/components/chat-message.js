@@ -1,4 +1,4 @@
-import { attr2prop, fetchStyle, fetchTemplate, JJHE, registerComponent } from '../../../../lib/bundle.js'
+import { attr2prop, fetchStyle, fetchTemplate, JJHE, defineComponent } from '../../../../lib/bundle.js'
 
 const VALID_ROLES = ['user', 'system', 'assistant']
 
@@ -7,10 +7,7 @@ const stylePromise = fetchStyle(import.meta.resolve('./chat-message.css'))
 
 export class ChatMessage extends HTMLElement {
     static observedAttributes = ['role', 'content']
-
-    static register() {
-        return registerComponent('chat-message', ChatMessage)
-    }
+    static defined = defineComponent('chat-message', ChatMessage)
 
     #root
     #role = VALID_ROLES[0]

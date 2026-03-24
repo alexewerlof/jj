@@ -2,7 +2,7 @@ import { doc, JJHE } from '../../../lib/bundle.js'
 import { TodoItem } from './components/todo-item.js'
 import { TodoList } from './components/todo-list.js'
 
-await Promise.all([TodoItem.register(), TodoList.register()])
+await Promise.all([TodoItem.defined, TodoList.defined])
 
 const form = doc.find('#todo-form', true)
 const input = doc.find('#todo-input', true)
