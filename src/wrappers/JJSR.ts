@@ -38,10 +38,7 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      */
     constructor(shadowRoot: T) {
         if (!isInstance(shadowRoot, ShadowRoot)) {
-            throw new TypeError(
-                `JJSR expects a ShadowRoot instance. Got ${shadowRoot} (${typeof shadowRoot}). ` +
-                    `Access a shadow root using element.shadowRoot after calling element.attachShadow().`,
-            )
+            throw new TypeError(`JJSR expects a ShadowRoot instance. Got ${shadowRoot} (${typeof shadowRoot}).`)
         }
         super(shadowRoot)
     }
