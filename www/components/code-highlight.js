@@ -1,4 +1,4 @@
-import { attr2prop, JJHE, registerComponent, fetchTemplate } from '../../lib/bundle.js'
+import { attr2prop, JJHE, registerComponent, h } from '../../lib/bundle.js'
 import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
 import highlightJavascript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
 import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'
@@ -35,8 +35,6 @@ async function loadFile(filePath) {
     }
 }
 
-const templatePromise = fetchTemplate(import.meta.resolve('./code-highlight.html'))
-
 export class CodeHighlight extends HTMLElement {
     static observedAttributes = ['file', 'language']
     static register() {
@@ -70,8 +68,11 @@ export class CodeHighlight extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.#root = JJHE.from(this).initShadow('open', await templatePromise).shadow
+        this.#root = JJHE.from(this)
         const codeText = this.#fileContent ? await this.#fileContent : this.innerText
-        this.#root.find('#code').setHTML(this.#language ? highlightCode(codeText, this.#language) : codeText, true)
+        if (this.#language) {
+            const codeElement = h('code').setHTML(highlightCode(codeText, this.#language), true)
+            this.#root.setChild(codeElement)
+        }
     }
 }
