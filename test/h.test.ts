@@ -48,6 +48,10 @@ describe('helpers', () => {
             assert.strictEqual(el.ref.childNodes[0].textContent, 'Item 1')
             assert.strictEqual(el.ref.childNodes[1].textContent, 'Item 2')
         })
+
+        it('throws when attributes is not a plain object', () => {
+            assert.throws(() => h('div', 'not-an-object' as any), /Pass null\/undefined or an object like/)
+        })
     })
 
     describe('hc()', () => {
@@ -82,7 +86,7 @@ describe('helpers', () => {
         it('throws when children is not an array', () => {
             assert.throws(() => {
                 hc('div', 'not-an-array' as unknown as [])
-            }, /children/i)
+            }, /Use hc\(tag, \[child1, child2\]\) or h\(tag, null, child1, child2\)/)
         })
     })
 })

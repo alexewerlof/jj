@@ -15,7 +15,7 @@ JJN.wrap = function wrap(raw: Wrappable): Wrapped {
         return JJT.fromStr(raw)
     }
     if (!isObj(raw)) {
-        throw typeErr('raw', 'an object', raw)
+        throw typeErr('raw', 'an object', raw, 'Pass a string, DOM node, or JJ wrapper.')
     }
     if (isInstance(raw, JJN)) {
         return raw
@@ -44,7 +44,7 @@ JJN.wrap = function wrap(raw: Wrappable): Wrapped {
     if (isInstance(raw, Node)) {
         return JJN.from(raw)
     }
-    throw typeErr('raw', 'a Node', raw)
+    throw typeErr('raw', 'a Node', raw, 'Pass a DOM node, or use JJT.fromStr(text) for plain text.')
 }
 
 export { JJN }

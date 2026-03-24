@@ -42,7 +42,12 @@ export function h(tagName: string, attributes?: Record<string, string> | null, .
     const ret = JJHE.create(tagName).addChild(...children)
     if (attributes) {
         if (!isPOJO(attributes)) {
-            throw typeErr('attributes', 'a plain object', attributes)
+            throw typeErr(
+                'attributes',
+                'a plain object',
+                attributes,
+                'Pass null/undefined or an object like { id: "app" }.',
+            )
         }
         ret.setAttr(attributes)
     }
@@ -82,7 +87,12 @@ export function h(tagName: string, attributes?: Record<string, string> | null, .
  */
 export function hc(tagName: string, children: Wrappable[]): JJHE {
     if (isDef(children) && !Array.isArray(children)) {
-        throw typeErr('children', 'an array', children)
+        throw typeErr(
+            'children',
+            'an array',
+            children,
+            'Use hc(tag, [child1, child2]) or h(tag, null, child1, child2).',
+        )
     }
     return h(tagName, null, ...children)
 }

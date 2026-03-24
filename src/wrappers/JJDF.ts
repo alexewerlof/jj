@@ -1,6 +1,6 @@
 import { isInstance, isStr } from 'jty'
 import { JJNx } from './JJNx.js'
-import { errMsg, typeErr } from '../internal.js'
+import { typeErr } from '../internal.js'
 import { JJHE } from '../index.js'
 
 /**
@@ -93,8 +93,11 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
         if (isInstance(template, JJDF) || isInstance(template, JJHE)) {
             return this.addTemplate(template.ref)
         }
-        throw new TypeError(
-            errMsg('Template source', 'a string, DocumentFragment, HTMLElement, JJDF, or JJHE', template),
+        throw typeErr(
+            'template',
+            'a string, DocumentFragment, HTMLElement, JJDF, or JJHE',
+            template,
+            'Pass an HTML string, a DOM template/fragment/element, or a JJ wrapper.',
         )
     }
 
@@ -106,7 +109,7 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
      */
     constructor(ref: T) {
         if (!isInstance(ref, DocumentFragment)) {
-            throw typeErr('ref', 'a DocumentFragment', ref)
+            throw typeErr('ref', 'a DocumentFragment', ref, 'Use JJDF.from(documentFragment) to create an instance.')
         }
         super(ref)
     }

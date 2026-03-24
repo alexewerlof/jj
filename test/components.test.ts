@@ -39,7 +39,7 @@ describe('components', () => {
         it('throws TypeError for non-HTMLElement instance', () => {
             assert.throws(() => attr2prop({} as any, 'test', null, 'value'), {
                 name: 'TypeError',
-                message: /Expected 'instance' to be an HTMLElement/,
+                message: /Call attr2prop\(this, \.\.\.\) from attributeChangedCallback on a custom element instance/,
             })
         })
 
@@ -96,14 +96,14 @@ describe('components', () => {
             class TestElement extends HTMLElement {}
             await assert.rejects(async () => await registerComponent(123 as any, TestElement), {
                 name: 'TypeError',
-                message: /Expected 'name' to be a string/,
+                message: /Use a custom-element tag name like/,
             })
         })
 
         it('throws TypeError for non-function constructor', async () => {
             await assert.rejects(async () => await registerComponent('test-element-5', 'not-a-function' as any), {
                 name: 'TypeError',
-                message: /Expected 'constructor' to be a function/,
+                message: /Pass the custom element class itself, e\.g\. registerComponent/,
             })
         })
     })

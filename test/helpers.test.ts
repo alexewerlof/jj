@@ -39,21 +39,21 @@ describe('helpers', () => {
         it('throws TypeError for non-string/non-URL href', () => {
             assert.throws(() => createLinkPre(123 as any, 'prefetch'), {
                 name: 'TypeError',
-                message: /Expected 'href' to be a string or URL/,
+                message: /Pass a URL object or a path string like/,
             })
         })
 
         it('throws RangeError for invalid rel', () => {
             assert.throws(() => createLinkPre('/page.html', 'invalid' as any, 'fetch'), {
                 name: 'RangeError',
-                message: /Expected 'rel'/,
+                message: /Use "prefetch" for future navigation or "preload" for current-page resources/,
             })
         })
 
         it('throws RangeError for invalid as', () => {
             assert.throws(() => createLinkPre('/page.html', 'prefetch', 'invalid' as any), {
                 name: 'RangeError',
-                message: /Expected 'as'/,
+                message: /Use a valid value or omit it to auto-detect from the URL/,
             })
         })
 

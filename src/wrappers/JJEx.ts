@@ -68,7 +68,12 @@ export abstract class JJEx<T extends HTMLElement | SVGElement> extends JJE<T> {
                 this.ref.dataset[k] = v
             }
         } else {
-            throw typeErr('nameOrObj', 'a string or object', nameOrObj)
+            throw typeErr(
+                'nameOrObj',
+                'a string or object',
+                nameOrObj,
+                'Pass a single data key or an object like { userId: "42" }.',
+            )
         }
         return this
     }

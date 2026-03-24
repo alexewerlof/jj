@@ -40,9 +40,11 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      */
     constructor(ref: T) {
         if (!isInstance(ref, Element)) {
-            throw new TypeError(
-                `JJE expects an Element instance. Got ${ref} (${typeof ref}). ` +
-                    `Use JJE.from(element) with a DOM Element, or use the specific wrapper (JJHE for HTMLElement, JJSE for SVGElement).`,
+            throw typeErr(
+                'ref',
+                'an Element instance',
+                ref,
+                `Use JJE.from(element) with a DOM Element, or use the specific wrapper (JJHE for HTMLElement, JJSE for SVGElement).`,
             )
         }
         super(ref)
@@ -101,7 +103,12 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
                 this.ref.setAttribute(k, v as string)
             }
         } else {
-            throw typeErr('nameOrObj', 'a string or object', nameOrObj)
+            throw typeErr(
+                'nameOrObj',
+                'a string or object',
+                nameOrObj,
+                'Pass a single attribute name or an object like { id: "app" }.',
+            )
         }
         return this
     }
@@ -189,7 +196,12 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
                 this.ref.setAttribute(`aria-${k}`, v as string)
             }
         } else {
-            throw typeErr('nameOrObj', 'a string or object', nameOrObj)
+            throw typeErr(
+                'nameOrObj',
+                'a string or object',
+                nameOrObj,
+                'Pass an ARIA name like "label" or an object like { hidden: "true" }.',
+            )
         }
         return this
     }

@@ -133,6 +133,24 @@ Do not call `.register()` like a synchronous function, and prefer `registerCompo
         throw typeErr('name', 'a string', name)
     }
     ```
+- **`typeErr()`**: Use `typeErr(varName, expected, received, extra?)` for `TypeError`s. The optional `extra` argument should be a short fix hint only when the base message and stack trace are not enough.
+- **`errMsg()`**: Use `errMsg(varName, expected, received, extra?)` when you need the same standardized message for another error type like `RangeError` or `SyntaxError`.
+- **When to use `extra`**: Add it for overloaded APIs, wrapper constructors/factories, or ambiguous validation failures where the caller may not know the correct replacement.
+- **When to skip `extra`**: Skip it for obvious scalar checks like "expected string" when the stack trace already points at the exact misuse. Keep the library small.
+- **How to write `extra`**: Keep it brief and actionable. It should tell the caller what went wrong and how to fix it in one sentence.
+
+    ```typescript
+    throw typeErr(
+        'ref',
+        'a Text node',
+        ref,
+        "Create a Text node with JJT.fromStr() or document.createTextNode('text').",
+    )
+
+    throw new RangeError(
+        errMsg('as', `'fetch', 'style', or 'script'`, as, 'Use a valid value or omit it to auto-detect from the URL.'),
+    )
+    ```
 
 ## 9. Testing Requirements
 

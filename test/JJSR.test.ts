@@ -13,7 +13,7 @@ describe('JJSR', () => {
         })
 
         it('throws if not ShadowRoot', () => {
-            assert.throws(() => new JJSR({} as any), TypeError)
+            assert.throws(() => new JJSR({} as any), /attachShadow\(\{ mode: "open" \}\)/)
         })
     })
 

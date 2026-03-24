@@ -52,13 +52,20 @@ export function createLinkPre(
 ): JJHE {
     if (!isStr(href)) {
         if (!isInstance(href, URL)) {
-            throw typeErr('href', 'a string or URL', href)
+            throw typeErr('href', 'a string or URL', href, 'Pass a URL object or a path string like "/page.html".')
         }
         href = href.toString()
     }
 
     if (!['prefetch', 'preload'].includes(rel)) {
-        throw new RangeError(errMsg('rel', `'prefetch' or 'preload'`, rel))
+        throw new RangeError(
+            errMsg(
+                'rel',
+                `'prefetch' or 'preload'`,
+                rel,
+                'Use "prefetch" for future navigation or "preload" for current-page resources.',
+            ),
+        )
     }
 
     if (!as) {
@@ -69,7 +76,14 @@ export function createLinkPre(
     }
 
     if (!['fetch', 'style', 'script'].includes(as)) {
-        throw new RangeError(errMsg('as', `'fetch', 'style', or 'script'`, as))
+        throw new RangeError(
+            errMsg(
+                'as',
+                `'fetch', 'style', or 'script'`,
+                as,
+                'Use a valid value or omit it to auto-detect from the URL.',
+            ),
+        )
     }
 
     return JJHE.create('link').setAttr({
@@ -311,7 +325,12 @@ export async function fetchStyle(url: URL | string): Promise<CSSStyleSheet> {
  */
 export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown, newValue: unknown) {
     if (!isInstance(instance, HTMLElement)) {
-        throw typeErr('instance', 'an HTMLElement', instance)
+        throw typeErr(
+            'instance',
+            'an HTMLElement',
+            instance,
+            'Call attr2prop(this, ...) from attributeChangedCallback on a custom element instance.',
+        )
     }
     // Called when observed attributes change.
     if (oldValue !== newValue) {
@@ -359,10 +378,15 @@ export async function registerComponent(
     options?: ElementDefinitionOptions,
 ): Promise<void> {
     if (!isStr(name)) {
-        throw typeErr('name', 'a string', name)
+        throw typeErr('name', 'a string', name, 'Use a custom-element tag name like "my-widget".')
     }
     if (!isFn(constructor)) {
-        throw typeErr('constructor', 'a function', constructor)
+        throw typeErr(
+            'constructor',
+            'a function',
+            constructor,
+            'Pass the custom element class itself, e.g. registerComponent("my-widget", MyWidget).',
+        )
     }
     if (!customElements.get(name)) {
         customElements.define(name, constructor, options)

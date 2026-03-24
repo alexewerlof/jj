@@ -13,7 +13,10 @@ describe('JJSE', () => {
 
         it('throws if not SVGElement', () => {
             const div = document.createElement('div')
-            assert.throws(() => new JJSE(div as any), TypeError)
+            assert.throws(
+                () => new JJSE(div as any),
+                /Wrap an existing SVG element with JJSE\.from\(el\) or create one with JJSE\.create/,
+            )
         })
     })
 
@@ -33,7 +36,7 @@ describe('JJSE', () => {
         })
 
         it('throws TypeError for non-string tagName', () => {
-            assert.throws(() => JJSE.create(123 as any), TypeError)
+            assert.throws(() => JJSE.create(123 as any), /Pass a valid SVG tag name like/)
         })
     })
 

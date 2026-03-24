@@ -5,7 +5,7 @@ import { typeErr } from '../internal.js'
 const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg'
 
 /**
- * Wraps a DOM SVGElement.
+ * Wraps a DOM SVGElement like <svg>, <rect>, <circle>, <path>, etc.
  *
  * @remarks
  * This class extends `JJE` to provide specific functionality for SVG elements,
@@ -49,7 +49,12 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      */
     static create(tagName: string, options?: ElementCreationOptions): JJSE {
         if (!isStr(tagName)) {
-            throw typeErr('tagName', 'a string like "circle" or "path"', tagName)
+            throw typeErr(
+                'tagName',
+                'a string like "circle" or "path"',
+                tagName,
+                'Pass a valid SVG tag name like "svg", "circle", or "path".',
+            )
         }
         // SVG elements must be created with the SVG namespace
         const element = document.createElementNS(SVG_NAMESPACE_URI, tagName, options)
@@ -64,7 +69,12 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      */
     constructor(ref: T) {
         if (!isInstance(ref, SVGElement)) {
-            throw typeErr('ref', 'an SVGElement', ref)
+            throw typeErr(
+                'ref',
+                'an SVGElement',
+                ref,
+                'Wrap an existing SVG element with JJSE.from(el) or create one with JJSE.create("svg").',
+            )
         }
         super(ref)
     }

@@ -1,6 +1,8 @@
 import { hasProp, isInstance, isStr } from 'jty'
 import { JJEx } from './JJEx.js'
-import { typeErr } from '../internal.js'
+import { errMsg, typeErr } from '../internal.js'
+
+const COMMON_SVG_TAGS = ['svg', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'path', 'text']
 
 /**
  * Wraps a DOM HTMLElement (which is a descendant of Element).
@@ -50,7 +52,15 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
     static create(tagName: string, options?: ElementCreationOptions): JJHE
     static create(tagName: string, options?: ElementCreationOptions): JJHE {
         if (!isStr(tagName)) {
-            throw typeErr('tagName', "a string like 'div' or 'button'", tagName)
+            throw typeErr('tagName', "a string like 'div' or 'button'", tagName, 'Pass a valid HTML tag name.')
+        }
+        if (COMMON_SVG_TAGS.includes(tagName)) {
+            throw errMsg(
+                `Tag name`,
+                `a HTML tag name (not an SVG tag name)`,
+                tagName,
+                'For SVG elements, use JJSE.create("circle") instead of JJHE.create("circle").',
+            )
         }
         return new JJHE(document.createElement(tagName, options))
     }
@@ -63,7 +73,12 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      */
     constructor(ref: T) {
         if (!isInstance(ref, HTMLElement)) {
-            throw typeErr('ref', 'an HTMLElement', ref)
+            throw typeErr(
+                'ref',
+                'an HTMLElement',
+                ref,
+                'Wrap an existing element with JJHE.from(el) or create one with JJHE.create("div").',
+            )
         }
         super(ref)
     }

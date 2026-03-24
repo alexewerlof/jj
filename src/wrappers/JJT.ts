@@ -1,5 +1,6 @@
 import { isInstance } from 'jty'
 import { JJN } from './JJN-raw.js'
+import { typeErr } from '../internal.js'
 
 /**
  * Wraps a DOM Text Node.
@@ -46,9 +47,11 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      */
     constructor(ref: T) {
         if (!isInstance(ref, Text)) {
-            throw new TypeError(
-                `JJT expects a Text node. Got ${ref} (${typeof ref}). ` +
-                    `Create a Text node with JJT.fromStr() or document.createTextNode('text').`,
+            throw typeErr(
+                'ref',
+                'a Text node',
+                ref,
+                "Create a Text node with JJT.fromStr() or document.createTextNode('text').",
             )
         }
         super(ref)

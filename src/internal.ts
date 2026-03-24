@@ -15,10 +15,12 @@
  * @param varName - The name of the variable
  * @param expected - Description of expected type
  * @param received - The actual value received
+ * @param extra - Optional short hint explaining what went wrong or how to fix it.
  * @returns Error message string
  */
-export function errMsg(varName: string, expected: unknown, received: unknown): string {
-    return `Expected '${varName}' to be ${expected}. Got ${received} (${typeof received})`
+export function errMsg(varName: string, expected: unknown, received: unknown, extra?: string): string {
+    const ret = `Expected '${varName}' to be ${expected}. Got ${received} (${typeof received})`
+    return extra ? `${ret}.\n${extra}` : ret
 }
 
 /**
@@ -29,8 +31,9 @@ export function errMsg(varName: string, expected: unknown, received: unknown): s
  * @param varName - The name of the variable
  * @param expected - Description of expected type
  * @param received - The actual value received
+ * @param extra - Optional short hint explaining what went wrong or how to fix it.
  * @returns A TypeError ready to be thrown
  */
-export function typeErr(varName: string, expected: unknown, received: unknown): TypeError {
-    return new TypeError(errMsg(varName, expected, received))
+export function typeErr(varName: string, expected: unknown, received: unknown, extra?: string): TypeError {
+    return new TypeError(errMsg(varName, expected, received, extra))
 }

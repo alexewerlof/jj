@@ -1,6 +1,7 @@
 import { isInstance } from 'jty'
 import { JJNx } from './JJNx.js'
 import { JJHE } from './JJHE.js'
+import { typeErr } from '../internal.js'
 
 /**
  * Wraps a Document (which is a descendant of Node).
@@ -48,7 +49,7 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
      */
     constructor(ref: T) {
         if (!isInstance(ref, Document)) {
-            throw new TypeError(`JJD expects a Document instance. Got ${ref} (${typeof ref}). `)
+            throw typeErr('ref', 'a Document instance', ref, 'Use JJD.from(document) to create an instance.')
         }
         super(ref)
     }

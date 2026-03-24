@@ -12,7 +12,10 @@ describe('JJHE', () => {
         })
 
         it('throws if not HTMLElement', () => {
-            assert.throws(() => new JJHE({} as any), TypeError)
+            assert.throws(
+                () => new JJHE({} as any),
+                /Wrap an existing element with JJHE\.from\(el\) or create one with JJHE\.create/,
+            )
         })
     })
 
@@ -32,7 +35,7 @@ describe('JJHE', () => {
         })
 
         it('throws TypeError for non-string tagName', () => {
-            assert.throws(() => JJHE.create(123 as any), TypeError)
+            assert.throws(() => JJHE.create(123 as any), /Pass a valid HTML tag name/)
         })
     })
 

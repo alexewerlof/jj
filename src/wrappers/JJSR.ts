@@ -1,5 +1,6 @@
 import { isInstance } from 'jty'
 import { JJDF } from './JJDF.js'
+import { typeErr } from '../internal.js'
 
 /**
  * Wraps a DOM ShadowRoot (which is a descendant of DocumentFragment).
@@ -38,7 +39,12 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      */
     constructor(shadowRoot: T) {
         if (!isInstance(shadowRoot, ShadowRoot)) {
-            throw new TypeError(`JJSR expects a ShadowRoot instance. Got ${shadowRoot} (${typeof shadowRoot}).`)
+            throw typeErr(
+                'shadowRoot',
+                'a ShadowRoot instance',
+                shadowRoot,
+                'Call element.attachShadow({ mode: "open" }) and wrap the returned shadow root.',
+            )
         }
         super(shadowRoot)
     }
@@ -93,9 +99,11 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
     addStyle(...styleSheets: CSSStyleSheet[]): this {
         for (const sheet of styleSheets) {
             if (!isInstance(sheet, CSSStyleSheet)) {
-                throw new TypeError(
-                    `addStyle expects CSSStyleSheet instances. Got ${sheet} (${typeof sheet}). ` +
-                        'Create a stylesheet using `new CSSStyleSheet()` or use `fetchStyle()` instead.',
+                throw typeErr(
+                    'styleSheets',
+                    'CSSStyleSheet instances',
+                    sheet,
+                    'Create a stylesheet using `new CSSStyleSheet()`, `cssToStyle()` or use `fetchStyle()` instead.',
                 )
             }
         }

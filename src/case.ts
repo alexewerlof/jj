@@ -25,7 +25,14 @@ export function pas2keb(str: string): string {
         throw typeErr('str', 'a string', str)
     }
     if (/[^a-zA-Z0-9_]/.test(str)) {
-        throw new SyntaxError(errMsg('str', 'alphanumeric characters and underscores', str))
+        throw new SyntaxError(
+            errMsg(
+                'str',
+                'alphanumeric characters and underscores',
+                str,
+                'Remove spaces or punctuation before converting to kebab-case.',
+            ),
+        )
     }
     return str
         .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
