@@ -327,7 +327,12 @@ JJ promotes separating behavior, style, and layout into JavaScript, CSS, and HTM
 
 #### Shadow DOM
 
-Shadow DOM is the native browser mechanism for component encapsulation. Attaching a shadow root to your element creates an isolated DOM subtree, shielding its contents from styles and DOM queries that originate outside.
+Shadow DOM is the native browser mechanism for component encapsulation. Attaching a shadow root to your element creates an isolated DOM subtree, shielding its contents from styles and DOM queries that originate outside. A big advantage of shadow DOM is that the query mechanism stops at their boundary:
+
+- When a parent page looks for `#user-name-field` or `.accordion`, it doesn't peek into shadow root
+- Similarly when the code inside the component queries a particular element like `#info`, it only receives elements inside that shadow DOM
+
+This means the same template can be used in multiple shadow dom structures in the same page without worrying about id-duplication or leaking from shadow or collision with the parent page.
 
 ```javascript
 async connectedCallback() {
