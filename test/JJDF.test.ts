@@ -55,7 +55,7 @@ describe('JJDF', () => {
         it('throws when required and not found', () => {
             const frag = document.createDocumentFragment()
             const jjdf = new JJDF(frag)
-            assert.throws(() => jjdf.find('#nonexistent', true), TypeError)
+            assert.throws(() => jjdf.find('#nonexistent', true), ReferenceError)
         })
     })
 })

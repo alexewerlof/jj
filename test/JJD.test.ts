@@ -45,7 +45,7 @@ describe('JJD', () => {
         it('throws when required and not found', () => {
             const jjd = new JJD(document)
             assert.throws(() => jjd.find('#nonexistent', true), {
-                name: 'TypeError',
+                name: 'ReferenceError',
                 message: /No element matched query "#nonexistent"/,
             })
         })

@@ -103,20 +103,15 @@ export class JJN<T extends Node = Node> extends JJET<T> {
         if (isStr(obj)) {
             return document.createTextNode(obj)
         }
-        if (!isObj(obj)) {
-            throw new TypeError(`JJN.unwrap() expects a string, DOM Node, or JJ wrapper. Got ${obj} (${typeof obj}). `)
+        if (isObj(obj)) {
+            if (isInstance(obj, Node)) {
+                return obj
+            }
+            if (isInstance(obj, JJN)) {
+                return obj.ref
+            }
         }
-        if (isInstance(obj, Node)) {
-            return obj
-        }
-        if (isInstance(obj, JJN)) {
-            return obj.ref
-        }
-        throw new TypeError(
-            `Could not unwrap ${obj} (${typeof obj}). ` +
-                `Expected a string, Node, or JJ wrapper. ` +
-                `Make sure you're passing a valid DOM element or JJ wrapper.`,
-        )
+        throw typeErr('obj', 'a string, Node, or JJ wrapper', obj)
     }
 
     /**
@@ -157,10 +152,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      */
     constructor(ref: T) {
         if (!isInstance(ref, Node)) {
-            throw new TypeError(
-                `JJN expects a Node instance. Got ${ref} (${typeof ref}). ` +
-                    `Use JJN.from(node) with a DOM Node, or check that you're passing a valid DOM element.`,
-            )
+            throw typeErr('ref', 'a DOM Node instance', ref)
         }
         super(ref)
     }

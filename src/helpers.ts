@@ -38,7 +38,7 @@ function linkAs(href: string): 'fetch' | 'style' | 'script' {
  * @param href - The URL of the resource.
  * @param rel - The relationship of the linked resource ('prefetch' or 'preload').
  * @param as - The type of content being loaded ('fetch' for HTML, 'style' for CSS, or 'script' for JavaScript files).
- * If it's not provided or set to a falsy value, it runs heuristics to find the best match from the href parameter.
+ * If it's not provided or set to a falsy value, it is set automatically based on the file extension of the href parameter.
  *
  * @returns The JJHE instance representing the link element. The `<link>` is accessible via `.ref`
  * @throws {TypeError} If `href` is not a string or URL.
@@ -251,14 +251,18 @@ export async function fetchCss(url: URL | string): Promise<string> {
  *
  * @param url - The HTML file location.
  * @returns A `JJDF` wrapping a `DocumentFragment` parsed from the fetched HTML.
- * @throws {Error} If the fetch fails or the response is not ok.
+ * @throws {Error} If the fetch fails or the response is not ok or the retrieved content cannot be parsed as HTML.
  * @see {@link fetchHtml} for fetching HTML content
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Range/createContextualFragment | Range.createContextualFragment}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}
  */
 export async function fetchTemplate(url: URL | string): Promise<JJDF> {
-    const html = await fetchHtml(url)
-    return JJDF.from(document.createRange().createContextualFragment(html))
+    try {
+        const html = await fetchHtml(url)
+        return JJDF.from(document.createRange().createContextualFragment(html))
+    } catch (err) {
+        throw new Error(`Failed to fetch or process HTML from ${url}`, { cause: err })
+    }
 }
 
 /**
@@ -276,12 +280,16 @@ export async function fetchTemplate(url: URL | string): Promise<JJDF> {
  *
  * @param url - The CSS file location.
  * @returns The CSSStyleSheet object constructed from the CSS contents.
- * @throws {Error} If the fetch fails.
+ * @throws {Error} If the fetch fails or the retrieved content cannot be converted to a CSSStyleSheet.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet | CSSStyleSheet}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets | adoptedStyleSheets}
  */
 export async function fetchStyle(url: URL | string): Promise<CSSStyleSheet> {
-    return await cssToStyle(await fetchCss(url))
+    try {
+        return await cssToStyle(await fetchCss(url))
+    } catch (err) {
+        throw new Error(`Failed to fetch or convert CSS string to CSSStyleSheet from ${url}`, { cause: err })
+    }
 }
 
 /**
@@ -329,6 +337,8 @@ export async function fetchStyle(url: URL | string): Promise<CSSStyleSheet> {
  * @param oldValue - The previous value of the attribute.
  * @param newValue - The new value of the attribute.
  * @returns `true` if it tried to set the attribute; otherwise `false`.
+ * @throws {TypeError} if the instance is not an HTMLElement or if the property corresponding to the attribute does not exist on the instance.
+ * @throws {Error} if setting the property throws an error for any reason.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes | Responding to attribute changes}
  */
 export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown, newValue: unknown) {
@@ -342,10 +352,17 @@ export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown
     }
     // Called when observed attributes change.
     if (oldValue !== newValue) {
-        const propName = keb2cam(name)
-        if (hasProp(instance, propName)) {
-            instance[propName] = newValue
-            return true
+        try {
+            const propName = keb2cam(name)
+            if (hasProp(instance, propName)) {
+                instance[propName] = newValue
+                return true
+            }
+        } catch (err) {
+            throw new Error(
+                `Failed to set property using attribute change event ${name}. Old value: ${oldValue}, New value: ${newValue}.`,
+                { cause: err },
+            )
         }
     }
     return false
