@@ -13,10 +13,7 @@ describe('JJME', () => {
 
         it('throws if not MathMLElement', () => {
             const div = document.createElement('div')
-            assert.throws(
-                () => new JJME(div as any),
-                /Wrap an existing MathML element with JJME\.from\(el\) or create one with JJME\.create/,
-            )
+            assert.throws(() => new JJME(div as any), /Expected 'ref' to be a MathML element/)
         })
     })
 

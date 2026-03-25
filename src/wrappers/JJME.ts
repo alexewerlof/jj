@@ -75,12 +75,7 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
      */
     constructor(ref: T) {
         if (!isInstance(ref, Element) || ref.namespaceURI !== MATHML_NAMESPACE_URI) {
-            throw typeErr(
-                'ref',
-                `an Element in the MathML namespace (${MATHML_NAMESPACE_URI})`,
-                ref,
-                'Use JJME.from() or JJME.create().',
-            )
+            throw typeErr('ref', `a MathML element (${MATHML_NAMESPACE_URI})`, ref, 'Use JJME.from() or JJME.create().')
         }
         super(ref)
     }

@@ -12,10 +12,7 @@ describe('JJHE', () => {
         })
 
         it('throws if not HTMLElement', () => {
-            assert.throws(
-                () => new JJHE({} as any),
-                /Wrap an existing element with JJHE\.from\(el\) or create one with JJHE\.create/,
-            )
+            assert.throws(() => new JJHE({} as any), /Use JJHE\.from\(\) or JJHE\.create\(\)\./)
         })
     })
 
@@ -39,17 +36,11 @@ describe('JJHE', () => {
         })
 
         it('throws for common SVG tag names and suggests JJSE', () => {
-            assert.throws(
-                () => JJHE.create('circle' as any),
-                /For SVG elements, use JJSE\.create\("circle"\) instead of JJHE\.create\("circle"\)\./,
-            )
+            assert.throws(() => JJHE.create('circle' as any), /Use JJSE\.create\("circle"\) for SVG elements\./)
         })
 
         it('throws for common MathML tag names and suggests JJME', () => {
-            assert.throws(
-                () => JJHE.create('mi' as any),
-                /For MathML elements, use JJME\.create\("mi"\) instead of JJHE\.create\("mi"\)\./,
-            )
+            assert.throws(() => JJHE.create('mi' as any), /Use JJME\.create\("mi"\) for MathML elements\./)
         })
     })
 
