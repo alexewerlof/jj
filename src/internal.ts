@@ -1,3 +1,5 @@
+import { isStr } from 'jty'
+
 /**
  * Internal utilities for the JJ library.
  * These are not part of the public API.
@@ -36,4 +38,30 @@ export function errMsg(varName: string, expected: unknown, received: unknown, ex
  */
 export function typeErr(varName: string, expected: unknown, received: unknown, extra?: string): TypeError {
     return new TypeError(errMsg(varName, expected, received, extra))
+}
+
+/**
+ * Internal shared implementation for creating custom events.
+ *
+ * @internal
+ * @param eventName - The event type name.
+ * @param detail - Optional event payload stored on `event.detail`.
+ * @param options - Additional `CustomEvent` options excluding `detail`.
+ * @returns A configured `CustomEvent` instance.
+ */
+export function createCustomEventInternal<T = unknown>(
+    eventName: string,
+    detail?: T,
+    options?: Omit<CustomEventInit<T>, 'detail'>,
+): CustomEvent<T> {
+    if (!isStr(eventName)) {
+        throw typeErr('eventName', 'a string', eventName, 'Pass an event name like "todo-toggle".')
+    }
+
+    return new CustomEvent<T>(eventName, {
+        bubbles: true,
+        composed: true,
+        ...options,
+        detail,
+    })
 }

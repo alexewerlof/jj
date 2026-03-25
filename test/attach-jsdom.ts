@@ -15,6 +15,7 @@ class MathMLElement extends window.HTMLElement {}
 global.MathMLElement = MathMLElement
 global.EventTarget = window.EventTarget
 global.Event = window.Event
+global.CustomEvent = window.CustomEvent
 global.document = window.document
 global.customElements = window.customElements
 global.CSSStyleSheet = window.CSSStyleSheet

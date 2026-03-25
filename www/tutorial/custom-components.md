@@ -345,6 +345,41 @@ Shadow DOM is initialized in one of two modes:
 - **`'open'`** — The host page can reach the shadow root via `element.shadowRoot`. Useful for DevTools, testing, and legitimate external interaction.
 - **`'closed'`** — `element.shadowRoot` returns `null`. You hold the only reference, so all interaction must go through your public API.
 
+#### Event handling across the shadow boundary
+
+Shadow DOM changes how events cross the component boundary, but it does not disable events.
+
+- Native UI events like `click`, `input`, and `change` are usually **composed** already, so they can leave the shadow root.
+- Custom events are **not composed by default** in the browser, so they stop at the shadow boundary unless you opt in.
+- In JJ, `customEvent()` defaults to `bubbles: true` and `composed: true` because component-to-parent communication is the common case.
+- `open` versus `closed` does **not** change event propagation rules. It only changes whether outside code can directly read `element.shadowRoot`.
+
+That means a component using Shadow DOM should usually dispatch outward-facing custom events from the host element, not from an internal node, and those events should be composed if the parent page needs to hear them.
+
+```javascript
+import { customEvent, JJHE } from 'jj'
+
+JJHE.from(this).triggerCustomEvent('todo-toggle', {
+    id: this.itemId,
+    done: true,
+})
+```
+
+If the event is internal implementation detail and should stay inside the component, override the defaults:
+
+```javascript
+this.dispatchEvent(
+    customEvent('panel-ready', undefined, {
+        bubbles: false,
+        composed: false,
+    }),
+)
+```
+
+In Light DOM, there is no shadow boundary, so `composed` does not matter in practice. Events bubble through the regular DOM tree as usual, and parent queries can also reach internal nodes directly.
+
+For a deeper explanation of retargeting, composed paths, and framework comparisons, see [guides/events.md](../../guides/events.md).
+
 Read more: [Using Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM)
 
 **Notable exception:** Shadow DOM blocks non-inherited properties like `background`, `border`, and `padding`. However, inherited properties — `color`, `font-family`, `font-size`, `line-height` — still cascade across the shadow boundary from the host page. CSS custom properties (variables) also pierce the boundary, which is why `variables.css` values work seamlessly inside Shadow DOM components.

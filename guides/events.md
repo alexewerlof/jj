@@ -145,11 +145,47 @@ class XPanel extends HTMLElement {
 ## Quick reference
 
 - **Need to notify outside listeners?**
-    - Use `new CustomEvent(..., { bubbles: true, composed: true })`.
+    - Native DOM: use `new CustomEvent(..., { bubbles: true, composed: true })`.
+    - JJ: use `customEvent(name, detail)` or `triggerCustomEvent(name, detail)`.
 - **Need to listen inside shadow from outside?**
     - Listen on the host and forward, or expose a method.
 - **Why is `event.target` the host?**
     - Retargeting hides internal implementation details.
+
+---
+
+## JJ helper defaults
+
+JJ provides a `customEvent()` helper that defaults to `bubbles: true` and `composed: true`.
+
+That differs from the native `CustomEvent` constructor, which defaults both to `false`.
+JJ picks the more ergonomic default for component-to-parent communication because that is the most common case in this library's custom element examples.
+
+### Example: JJ helper with default cross-boundary behavior
+
+```js
+import { customEvent } from 'jj'
+
+element.dispatchEvent(
+    customEvent('todo-toggle', {
+        id: '123',
+        done: true,
+    }),
+)
+```
+
+### Example: JJ helper for a local-only event
+
+```js
+import { customEvent } from 'jj'
+
+element.dispatchEvent(
+    customEvent('panel-ready', undefined, {
+        bubbles: false,
+        composed: false,
+    }),
+)
+```
 
 ---
 
@@ -158,14 +194,10 @@ class XPanel extends HTMLElement {
 Even with jj, it’s still the same DOM rules.
 
 ```js
+import { customEvent } from 'jj'
+
 // Inside a custom element class
-this.dispatchEvent(
-    new CustomEvent('todo-toggle', {
-        detail: { id: this.itemId, done: true },
-        bubbles: true,
-        composed: true,
-    }),
-)
+this.dispatchEvent(customEvent('todo-toggle', { id: this.itemId, done: true }))
 ```
 
 If you prefer jj wrappers, you can trigger on the host wrapper instead:
@@ -173,11 +205,8 @@ If you prefer jj wrappers, you can trigger on the host wrapper instead:
 ```js
 import { JJHE } from 'jj'
 
-JJHE.from(this).trigger(
-    new CustomEvent('todo-toggle', {
-        detail: { id: this.itemId, done: true },
-        bubbles: true,
-        composed: true,
-    }),
-)
+JJHE.from(this).triggerCustomEvent('todo-toggle', {
+    id: this.itemId,
+    done: true,
+})
 ```

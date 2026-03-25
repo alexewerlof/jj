@@ -1,4 +1,4 @@
-import { fetchStyle, fetchTemplate, JJHE, defineComponent } from '../../../../lib/bundle.js'
+import { customEvent, fetchStyle, fetchTemplate, JJHE, defineComponent } from '../../../../lib/bundle.js'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./kanban-card.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./kanban-card.css'))
@@ -19,13 +19,7 @@ export class KanbanCard extends HTMLElement {
         // Setup event listeners
         this.#root.shadow.find('.delete-btn').on('click', (e) => {
             e.stopPropagation()
-            this.dispatchEvent(
-                new CustomEvent('card-delete', {
-                    bubbles: true,
-                    composed: true,
-                    detail: { id: this.#data.id },
-                }),
-            )
+            this.dispatchEvent(customEvent('card-delete', { id: this.#data.id }))
         })
     }
 

@@ -1,7 +1,7 @@
 import { isInstance, isStr } from 'jty'
 import { JJHE } from './wrappers/index.js'
 import { fileExt } from './util.js'
-import { typeErr, errMsg } from './internal.js'
+import { createCustomEventInternal, typeErr, errMsg } from './internal.js'
 
 /**
  * Tries to find the best match for the link.as attribute when it's omitted
@@ -24,6 +24,45 @@ function autoAs(href: string): 'fetch' | 'style' | 'script' {
         default:
             throw new Error(`No heuristic exists to deduce the 'as' attribute for the URL: ${href}`)
     }
+}
+
+/**
+ * Creates a `CustomEvent` with JJ's default bubbling and Shadow DOM settings.
+ *
+ * @remarks
+ * Native `CustomEvent` defaults to `bubbles: false` and `composed: false`.
+ * JJ defaults both to `true` because cross-component custom events commonly need
+ * to bubble out of Shadow DOM boundaries.
+ *
+ * Pass `options` to override those defaults when you need a local-only event.
+ *
+ * @category Events
+ * @param eventName - The event type name.
+ * @param detail - Optional payload exposed as `event.detail`.
+ * @param options - Additional `CustomEvent` options excluding `detail`.
+ * @returns A configured `CustomEvent` instance.
+ * @throws {TypeError} If `eventName` is not a string.
+ * @example
+ * ```ts
+ * const event = customEvent('todo-toggle', { id: '123', done: true })
+ * element.dispatchEvent(event)
+ * ```
+ *
+ * @example
+ * ```ts
+ * const localOnly = customEvent('panel-ready', undefined, {
+ *     bubbles: false,
+ *     composed: false,
+ * })
+ * ```
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent | CustomEvent()}
+ */
+export function customEvent<T = unknown>(
+    eventName: string,
+    detail?: T,
+    options?: Omit<CustomEventInit<T>, 'detail'>,
+): CustomEvent<T> {
+    return createCustomEventInternal(eventName, detail, options)
 }
 
 /**

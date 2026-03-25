@@ -1,5 +1,5 @@
 import { isFn, isInstance } from 'jty'
-import { typeErr } from '../internal.js'
+import { createCustomEventInternal, typeErr } from '../internal.js'
 
 /**
  * Wraps a DOM EventTarget.
@@ -129,6 +129,43 @@ export class JJET<T extends EventTarget = EventTarget> {
     trigger(event: Event): this {
         this.ref.dispatchEvent(event)
         return this
+    }
+
+    /**
+     * Creates and dispatches a `CustomEvent` on the wrapped target.
+     *
+     * @remarks
+     * This is a convenience wrapper around {@link trigger} for the common case of
+     * dispatching a payload-bearing custom event.
+     *
+     * The created event defaults to `bubbles: true` and `composed: true`.
+     * Pass `options` to override those defaults.
+     *
+     * @param eventName - The event type name.
+     * @param detail - Optional payload exposed as `event.detail`.
+     * @param options - Additional `CustomEvent` options excluding `detail`.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `eventName` is not a string.
+     * @example
+     * ```ts
+     * JJET.from(window).triggerCustomEvent('panel-ready', { id: '123' })
+     * ```
+     *
+     * @example
+     * ```ts
+     * JJET.from(this).triggerCustomEvent('todo-toggle', {
+     *     id: '123',
+     *     done: true,
+     * })
+     * ```
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent | CustomEvent()}
+     */
+    triggerCustomEvent<T = unknown>(
+        eventName: string,
+        detail?: T,
+        options?: Omit<CustomEventInit<T>, 'detail'>,
+    ): this {
+        return this.trigger(createCustomEventInternal(eventName, detail, options))
     }
 
     /**

@@ -116,6 +116,9 @@ Do not call `.defined` like a synchronous function, and prefer `defineComponent(
 - **Classes**: Use `.addClass()`, `.rmClass()`, `.toggleClass()`, `.setClass()`, `.setClassMulti()`.
 - **Dataset**: Use `.setData()`, `.setDataMulti()`, `.getData()` (on `JJHE`/`JJSE`/`JJME`).
 - **ARIA**: Use `.setAria()`, `.setAriaMulti()`, `.getAria()`, `.rmAria()`.
+- **Custom events**: Prefer `customEvent(name, detail?, options?)` for payload-bearing DOM events instead of spelling out `new CustomEvent(...)` each time.
+- **Fluent custom dispatch**: Use `triggerCustomEvent(name, detail?, options?)` on `JJET` descendants when you want JJ-style chaining.
+- **Shadow DOM defaults**: JJ's `customEvent()` defaults to `bubbles: true` and `composed: true`. Override them explicitly when the event should stay local.
 - **Selectors**: Use `.closest(selector)` on `JJE` for ancestor lookup.
 - **Namespaces**: Use `MATHML_NS` and `SVG_NS` from `src/ns.ts` for `document.createElementNS(...)` calls; avoid duplicating namespace URI strings.
 

@@ -370,6 +370,25 @@ container.on('click', (e) => {
 })
 ```
 
+For custom events with payloads, prefer JJ's helper and wrapper method:
+
+```typescript
+import { customEvent, JJHE } from 'jj'
+
+this.dispatchEvent(
+    customEvent('todo-toggle', {
+        id: this.itemId,
+        done: true,
+    }),
+)
+
+JJHE.from(this).triggerCustomEvent('todo-remove', {
+    id: this.itemId,
+})
+```
+
+`customEvent()` defaults to `bubbles: true` and `composed: true`, which is usually what you want when dispatching from within Shadow DOM to outside listeners. Override those defaults with the third argument when the event should stay local.
+
 ### 6. Case Conversion Utilities
 
 The library provides case conversion helpers:

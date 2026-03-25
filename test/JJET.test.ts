@@ -48,6 +48,48 @@ describe('JJET', () => {
         assert.strictEqual(event2.defaultPrevented, true)
     })
 
+    it('triggers a custom event from a name and detail payload', () => {
+        const et = new EventTarget()
+        const jjet = new JJET(et)
+        let received: CustomEvent<{ id: string; done: boolean }> | undefined
+
+        jjet.on('todo-toggle', (event: Event) => {
+            received = event as CustomEvent<{ id: string; done: boolean }>
+        })
+
+        const result = jjet.triggerCustomEvent('todo-toggle', { id: '123', done: true })
+
+        assert.strictEqual(result, jjet)
+        assert.ok(received instanceof CustomEvent)
+        assert.deepStrictEqual(received.detail, { id: '123', done: true })
+        assert.strictEqual(received.bubbles, true)
+        assert.strictEqual(received.composed, true)
+    })
+
+    it('passes custom event option overrides through triggerCustomEvent()', () => {
+        const et = new EventTarget()
+        const jjet = new JJET(et)
+        let received: CustomEvent<string> | undefined
+
+        jjet.on('panel-ready', (event: Event) => {
+            received = event as CustomEvent<string>
+            received.preventDefault()
+        })
+
+        jjet.triggerCustomEvent('panel-ready', 'ready', {
+            bubbles: false,
+            composed: false,
+            cancelable: true,
+        })
+
+        assert.ok(received instanceof CustomEvent)
+        assert.strictEqual(received.detail, 'ready')
+        assert.strictEqual(received.bubbles, false)
+        assert.strictEqual(received.composed, false)
+        assert.strictEqual(received.cancelable, true)
+        assert.strictEqual(received.defaultPrevented, true)
+    })
+
     it('binds handler to JJET instance', () => {
         const et = new EventTarget()
         const jjet = new JJET(et)
