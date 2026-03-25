@@ -1,6 +1,7 @@
 import { isInstance, isNum, isStr } from 'jty'
 import { typeErr } from '../internal.js'
 import { SVG_NS } from '../xmlns.js'
+import { Wrappable } from './types.js'
 import { JJEx } from './JJEx.js'
 
 /**
@@ -70,6 +71,43 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
         // SVG elements must be created with the SVG namespace
         const element = document.createElementNS(SVG_NS, tagName, options)
         return new JJSE(element as SVGElement)
+    }
+
+    /**
+     * Builds an SVG element tree with optional attributes and children.
+     *
+     * @remarks
+     * A concise declarative way to build SVG DOM snippets. All elements are created in the SVG namespace.
+     * Chain further JJ methods on the return value. Pass `null` or omit `attributes` when no attributes are needed.
+     *
+     * If you prefer a shorter alias compatible with hyperscript conventions, you can use:
+     * ```ts
+     * const h = JJSE.tree
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Simple SVG icon
+     * JJSE.tree('svg', { viewBox: '0 0 24 24', width: '24', height: '24' },
+     *   JJSE.tree('circle', { cx: '12', cy: '12', r: '10', fill: 'currentColor' }),
+     * )
+     *
+     * // No attributes
+     * JJSE.tree('g', null, JJSE.tree('rect', { x: '0', y: '0', width: '10', height: '10' }))
+     * ```
+     *
+     * @param tagName - The SVG tag name.
+     * @param attributes - Attributes to set. Pass `null` or `undefined` to skip.
+     * @param children - Children to append (strings, nodes, or JJ wrappers).
+     * @returns A new JJSE instance.
+     * @throws {TypeError} If `attributes` is not a plain object.
+     * @see {@link JJSE.create} for a type-narrowed single-element factory.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS | document.createElementNS}
+     */
+    static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJSE {
+        return JJSE.create(tagName)
+            .setAttrMulti(attributes)
+            .addChild(...children)
     }
 
     /**

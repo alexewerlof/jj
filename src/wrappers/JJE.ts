@@ -88,34 +88,61 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
-     * Sets one or more attributes on the Element.
+     * Sets a single attribute on the Element.
      *
      * @example
      * ```ts
-     * el.setAttr('id', 'my-id')  // Single attribute
-     * el.setAttr({ id: 'my-id', class: 'my-class' })  // Multiple attributes
+     * el.setAttr('id', 'my-id')
      * el.setAttr('x', 50)  // Numbers are automatically converted
      * ```
      *
      * @throws {TypeError} If arguments are invalid types.
+     * @see {@link setAttrMulti} for setting multiple attributes at once.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute | Element.setAttribute}
      */
-    setAttr(name: string, value: unknown): this
-    setAttr(obj: Record<string, unknown>): this
-    setAttr(nameOrObj: string | Record<string, unknown>, value?: unknown): this {
-        if (isStr(nameOrObj)) {
-            this.ref.setAttribute(nameOrObj, value as string)
-        } else if (isPOJO(nameOrObj)) {
-            for (const [k, v] of Object.entries(nameOrObj)) {
-                this.ref.setAttribute(k, v as string)
-            }
-        } else {
+    setAttr(name: string, value: unknown): this {
+        if (!isStr(name)) {
+            throw typeErr('name', 'a string', name)
+        }
+
+        this.ref.setAttribute(name, value as string)
+        return this
+    }
+
+    /**
+     * Sets multiple attributes from an object, or no-ops for nullish input.
+     *
+     * @remarks
+     * This helper is useful for optional attribute bags in builder APIs.
+     * - `null` or `undefined`: does nothing and returns `this`
+     * - plain object: sets each attribute on the element
+     * - anything else: throws `TypeError`
+     *
+     * @example
+     * ```ts
+     * el.setAttrMulti({ id: 'app', role: 'main' })
+     * el.setAttrMulti(null) // no-op
+     * ```
+     *
+     * @param attributes - Attributes object or nullish to skip.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `attributes` is not nullish and not a plain object.
+     * @see {@link setAttr} for setting a single attribute.
+     */
+    setAttrMulti(attributes?: Record<string, unknown> | null): this {
+        if (attributes == null) {
+            return this
+        }
+        if (!isPOJO(attributes)) {
             throw typeErr(
-                'nameOrObj',
-                'a string or object',
-                nameOrObj,
-                'Pass a single attribute name or an object like { id: "app" }.',
+                'attributes',
+                'a plain object',
+                attributes,
+                'Pass null/undefined or an object like { id: "app" }.',
             )
+        }
+        for (const [name, value] of Object.entries(attributes)) {
+            this.setAttr(name, value)
         }
         return this
     }

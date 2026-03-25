@@ -1,4 +1,4 @@
-import { attr2prop, JJHE, defineComponent, h } from '../../lib/bundle.js'
+import { attr2prop, JJHE, defineComponent } from '../../lib/bundle.js'
 import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
 import highlightJavascript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
 import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'
@@ -69,7 +69,7 @@ export class CodeHighlight extends HTMLElement {
         this.#root = JJHE.from(this)
         const codeText = this.#fileContent ? await this.#fileContent : this.innerText
         if (this.#language) {
-            const codeElement = h('code').setHTML(highlightCode(codeText, this.#language), true)
+            const codeElement = JJHE.tree('code').setHTML(highlightCode(codeText, this.#language), true)
             this.#root.setChild(codeElement)
         }
     }

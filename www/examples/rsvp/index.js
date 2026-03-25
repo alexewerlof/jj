@@ -22,7 +22,7 @@ inputTextArea.on('keydown', (event) => {
 async function startRendering(abortController) {
     const engine = new RSVPEngine(300) // 300 WPM
     const queue = engine.processText(inputTextArea.getValue())
-    renderProgress.setAttr({
+    renderProgress.setAttrMulti({
         min: 0,
         max: queue.length,
         value: 0,

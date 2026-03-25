@@ -1,4 +1,6 @@
-import { h } from '../../lib/bundle.js'
+import { JJHE } from '../../lib/bundle.js'
+
+const h = JJHE.tree
 
 function pageLink(level, title, path) {
     const href = new URL(window.location)

@@ -5,7 +5,6 @@ export * from './wrappers/index.js'
 export * from './helpers.js'
 export * from './fetchers.js'
 export * from './components.js'
-export * from './h.js'
 
 import { JJD } from './wrappers/JJD.js'
 
@@ -20,7 +19,7 @@ import { JJD } from './wrappers/JJD.js'
  * const el = doc.find('#my-element') // A JJHE instance
  * const body = doc.body             // A JJHE instance
  * doc.addChild(JJHE.create('script').setAttr('src', 'my-code.js'))
- * doc.head.addChild(JJHE.create('link').setAttr({
+ * doc.head.addChild(JJHE.create('link').setAttrMulti({
  *   rel: 'stylesheet',
  *   href: 'code.css'
  * }))

@@ -56,7 +56,7 @@ Use an object to set multiple attributes in one call:
 
 ```js
 // ✅ GOOD - set multiple attributes at once (common in examples)
-progress.setAttr({
+progress.setAttrMulti({
     min: 0,
     max: 100,
 })
@@ -157,8 +157,8 @@ However, when working with `jj`, you may not need them at all.
 const fruits = ['Apple', 'Orange', 'Pear']
 // ✅ GOOD - use the .mapAppend()
 const ul = JJHE.create('ul').mapAppend(fruits, (fruit) => JJHE.create('li').setText(fruit))
-// ✅ GOOD - even shorter
-const ul = JJHE.create('ul').mapAppend(fruits, (fruit) => h('li', null, fruit))
+// ✅ GOOD - another way
+const ul = JJHE.tree('ul', null, ...fruits.map(fruit) => JJHE.tree('li', null, fruit))
 // ❌ BAD - use unnecessary DocumentFragment
 const ul = JJHE.create('ul')
 const frag = JJDF.create()

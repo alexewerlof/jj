@@ -17,8 +17,8 @@ import { JJHE } from './JJHE.js'
  * ```ts
  * const frag = JJDF.create()
  * frag.addChild(
- *   h('div', null, 'Item 1'),
- *   h('div', null, 'Item 2'),
+ *   JJHE.tree('div', null, 'Item 1'),
+ *   JJHE.tree('div', null, 'Item 2'),
  * )
  * doc.body.addChild(frag)
  * ```

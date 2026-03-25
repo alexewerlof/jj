@@ -105,4 +105,63 @@ describe('JJME', () => {
             assert.strictEqual(math.childNodes.length, 0)
         })
     })
+
+    describe('static tree()', () => {
+        it('creates MathML element from tag name', () => {
+            const el = JJME.tree('math')
+            assert.ok(el instanceof JJME)
+            assert.strictEqual(el.ref.tagName, 'math')
+            assert.strictEqual(el.ref.namespaceURI, 'http://www.w3.org/1998/Math/MathML')
+        })
+
+        it('sets attributes', () => {
+            const el = JJME.tree('math', { display: 'block' })
+            assert.strictEqual(el.ref.getAttribute('display'), 'block')
+        })
+
+        it('handles null attributes', () => {
+            const el = JJME.tree('mrow', null)
+            assert.ok(el instanceof JJME)
+        })
+
+        it('handles undefined attributes', () => {
+            const el = JJME.tree('mrow', undefined)
+            assert.ok(el instanceof JJME)
+        })
+
+        it('appends string children (text nodes)', () => {
+            const el = JJME.tree('mi', null, 'x')
+            assert.strictEqual(el.ref.textContent, 'x')
+        })
+
+        it('appends native MathML element children', () => {
+            const mi = document.createElementNS('http://www.w3.org/1998/Math/MathML', 'mi')
+            const el = JJME.tree('mrow', null, mi)
+            assert.strictEqual(el.ref.childNodes.length, 1)
+            assert.strictEqual(el.ref.firstChild, mi)
+        })
+
+        it('appends JJME children', () => {
+            const child = JJME.tree('mi', null, 'x')
+            const el = JJME.tree('mrow', null, child)
+            assert.strictEqual(el.ref.childNodes.length, 1)
+            assert.strictEqual(el.ref.firstChild, child.ref)
+        })
+
+        it('creates nested MathML structure (fraction)', () => {
+            const frac = JJME.tree('mfrac', null, JJME.tree('mi', null, 'x'), JJME.tree('mi', null, 'y'))
+            assert.strictEqual(frac.ref.childNodes.length, 2)
+            assert.strictEqual(frac.ref.childNodes[0].textContent, 'x')
+            assert.strictEqual(frac.ref.childNodes[1].textContent, 'y')
+        })
+
+        it('creates children in MathML namespace', () => {
+            const child = JJME.tree('mi')
+            assert.strictEqual(child.ref.namespaceURI, 'http://www.w3.org/1998/Math/MathML')
+        })
+
+        it('throws when attributes is not a plain object', () => {
+            assert.throws(() => JJME.tree('math', 'not-an-object' as any), /Pass null\/undefined or an object like/)
+        })
+    })
 })

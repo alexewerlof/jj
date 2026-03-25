@@ -1,6 +1,7 @@
 import { isInstance, isStr } from 'jty'
 import { typeErr } from '../internal.js'
 import { MATHML_NS } from '../xmlns.js'
+import { Wrappable } from './types.js'
 import { JJEx } from './JJEx.js'
 
 /**
@@ -69,6 +70,51 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
         // MathML elements must be created with the MathML namespace
         const element = document.createElementNS(MATHML_NS, tagName, options)
         return new JJME(element as MathMLElement)
+    }
+
+    /**
+     * Builds a MathML element tree with optional attributes and children.
+     *
+     * @remarks
+     * A concise declarative way to build MathML DOM snippets. All elements are created in the MathML namespace.
+     * Chain further JJ methods on the return value. Pass `null` or omit `attributes` when no attributes are needed.
+     *
+     * If you prefer a shorter alias compatible with hyperscript conventions, you can use:
+     * ```ts
+     * const h = JJME.tree
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Fraction: x/y
+     * JJME.tree('math', null,
+     *   JJME.tree('mfrac', null,
+     *     JJME.tree('mi', null, 'x'),
+     *     JJME.tree('mi', null, 'y'),
+     *   ),
+     * )
+     *
+     * // Subscript: a_n
+     * JJME.tree('math', null,
+     *   JJME.tree('msub', null,
+     *     JJME.tree('mi', null, 'a'),
+     *     JJME.tree('mi', null, 'n'),
+     *   ),
+     * )
+     * ```
+     *
+     * @param tagName - The MathML tag name.
+     * @param attributes - Attributes to set. Pass `null` or `undefined` to skip.
+     * @param children - Children to append (strings, nodes, or JJ wrappers).
+     * @returns A new JJME instance.
+     * @throws {TypeError} If `attributes` is not a plain object.
+     * @see {@link JJME.create} for a type-narrowed single-element factory.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS | document.createElementNS}
+     */
+    static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJME {
+        return JJME.create(tagName)
+            .setAttrMulti(attributes)
+            .addChild(...children)
     }
 
     /**

@@ -91,4 +91,67 @@ describe('JJSE', () => {
             assert.strictEqual(svg.childNodes.length, 0)
         })
     })
+
+    describe('static tree()', () => {
+        it('creates SVG element from tag name', () => {
+            const el = JJSE.tree('svg')
+            assert.ok(el instanceof JJSE)
+            assert.strictEqual(el.ref.tagName, 'svg')
+            assert.strictEqual(el.ref.namespaceURI, 'http://www.w3.org/2000/svg')
+        })
+
+        it('sets attributes', () => {
+            const el = JJSE.tree('svg', { viewBox: '0 0 24 24', width: '24' })
+            assert.strictEqual(el.ref.getAttribute('viewBox'), '0 0 24 24')
+            assert.strictEqual(el.ref.getAttribute('width'), '24')
+        })
+
+        it('handles null attributes', () => {
+            const el = JJSE.tree('g', null)
+            assert.ok(el instanceof JJSE)
+        })
+
+        it('handles undefined attributes', () => {
+            const el = JJSE.tree('g', undefined)
+            assert.ok(el instanceof JJSE)
+        })
+
+        it('appends string children', () => {
+            const el = JJSE.tree('text', null, 'label')
+            assert.strictEqual(el.ref.textContent, 'label')
+        })
+
+        it('appends native SVG element children', () => {
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+            const el = JJSE.tree('g', null, circle)
+            assert.strictEqual(el.ref.childNodes.length, 1)
+            assert.strictEqual(el.ref.firstChild, circle)
+        })
+
+        it('appends JJSE children', () => {
+            const child = JJSE.tree('circle')
+            const el = JJSE.tree('g', null, child)
+            assert.strictEqual(el.ref.childNodes.length, 1)
+            assert.strictEqual(el.ref.firstChild, child.ref)
+        })
+
+        it('creates nested SVG structure', () => {
+            const el = JJSE.tree(
+                'svg',
+                { viewBox: '0 0 10 10' },
+                JJSE.tree('rect', { x: '0', y: '0', width: '10', height: '10' }),
+                JJSE.tree('circle', { cx: '5', cy: '5', r: '5' }),
+            )
+            assert.strictEqual(el.ref.childNodes.length, 2)
+        })
+
+        it('creates children in SVG namespace', () => {
+            const child = JJSE.tree('circle')
+            assert.strictEqual(child.ref.namespaceURI, 'http://www.w3.org/2000/svg')
+        })
+
+        it('throws when attributes is not a plain object', () => {
+            assert.throws(() => JJSE.tree('svg', 'not-an-object' as any), /Pass null\/undefined or an object like/)
+        })
+    })
 })

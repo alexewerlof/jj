@@ -80,14 +80,6 @@ describe('JJE', () => {
                 assert.strictEqual(el.getAttribute('data-test'), 'value')
             })
 
-            it('sets multiple attributes from object', () => {
-                const el = document.createElement('div')
-                const jje = new JJE(el)
-                jje.setAttr({ id: 'my-id', 'data-test': 'value' })
-                assert.strictEqual(el.getAttribute('id'), 'my-id')
-                assert.strictEqual(el.getAttribute('data-test'), 'value')
-            })
-
             it('returns this for chaining', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
@@ -109,18 +101,46 @@ describe('JJE', () => {
                 assert.strictEqual(el.getAttribute('enabled'), 'true')
             })
 
-            it('accepts numbers in object mode', () => {
+            it('throws TypeError for invalid name type', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.setAttr({ x: 10, y: 20 })
-                assert.strictEqual(el.getAttribute('x'), '10')
-                assert.strictEqual(el.getAttribute('y'), '20')
+                assert.throws(() => jje.setAttr(123 as any, 'value'), TypeError)
             })
 
-            it('throws TypeError for invalid nameOrObj type', () => {
+            it('throws TypeError when passed an object', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.setAttr(123 as any), TypeError)
+                assert.throws(() => jje.setAttr({ id: 'my-id' } as any, 2), TypeError)
+            })
+        })
+
+        describe('setAttrMulti()', () => {
+            it('sets multiple attributes from object', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                jje.setAttrMulti({ id: 'my-id', role: 'main' })
+                assert.strictEqual(el.getAttribute('id'), 'my-id')
+                assert.strictEqual(el.getAttribute('role'), 'main')
+            })
+
+            it('is a no-op for null and undefined', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                jje.setAttrMulti(null).setAttrMulti(undefined)
+                assert.strictEqual(el.attributes.length, 0)
+            })
+
+            it('returns this for chaining', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                const result = jje.setAttrMulti({ 'data-test': 'ok' })
+                assert.strictEqual(result, jje)
+            })
+
+            it('throws TypeError for non-object values', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                assert.throws(() => jje.setAttrMulti('not-an-object' as any), TypeError)
             })
         })
 

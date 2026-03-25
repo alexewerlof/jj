@@ -1,5 +1,6 @@
 import { hasProp, isInstance, isStr } from 'jty'
 import { errMsg, typeErr } from '../internal.js'
+import { Wrappable } from './types.js'
 import { JJEx } from './JJEx.js'
 
 const COMMON_SVG_TAGS = ['svg', 'rect', 'circle', 'line', 'path', 'text']
@@ -81,6 +82,49 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
             )
         }
         return new JJHE(document.createElement(tagName, options))
+    }
+
+    /**
+     * Builds an HTML element tree with optional attributes and children.
+     *
+     * @remarks
+     * A concise declarative way to build HTML DOM snippets. Chain further JJ methods on the return value.
+     * Pass `null` or omit `attributes` when no attributes are needed. Pass children as additional arguments.
+     * Unlike `create()`, the return type is always `JJHE` (not the specific subtype), which is fine for
+     * snippet construction where precise inference is not needed.
+     *
+     * If you prefer a shorter alias compatible with hyperscript conventions, you can use:
+     * ```ts
+     * const h = JJHE.tree
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Simple element with text
+     * JJHE.tree('p', { class: 'intro' }, 'Hello World')
+     *
+     * // Nested structure
+     * JJHE.tree('nav', { class: 'main-nav' },
+     *   JJHE.tree('a', { href: '/' }, 'Home'),
+     *   JJHE.tree('a', { href: '/about' }, 'About'),
+     * )
+     *
+     * // No attributes
+     * JJHE.tree('section', null, JJHE.tree('h1', null, 'Title'), JJHE.tree('p', null, 'Body'))
+     * ```
+     *
+     * @param tagName - The HTML tag name.
+     * @param attributes - Attributes to set. Pass `null` or `undefined` to skip.
+     * @param children - Children to append (strings, nodes, or JJ wrappers).
+     * @returns A new JJHE instance.
+     * @throws {TypeError} If `attributes` is not a plain object.
+     * @see {@link JJHE.create} for a type-narrowed single-element factory.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement | document.createElement}
+     */
+    static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJHE {
+        return JJHE.create(tagName)
+            .setAttrMulti(attributes)
+            .addChild(...children)
     }
 
     /**

@@ -111,6 +111,7 @@ Do not call `.defined` like a synchronous function, and prefer `defineComponent(
 - **`children`**: Use `node.children` to get wrapped child nodes. It always returns an array, including for text and document fragment children.
 - **`rm()`**: Use `node.rm()` to detach any wrapped node from its current parent. Detached nodes are ignored.
 - **Attributes**: Use `.setAttr('name', val)`, `.getAttr('name')`, `.rmAttr('name')`.
+- **Optional attribute objects**: Use `.setAttrMulti(attrs)` for builder-style APIs; it no-ops for `null`/`undefined` and validates POJO input.
 - **Classes**: Use `.addClass()`, `.rmClass()`, `.toggleClass()`, `.setClass()`.
 - **Dataset**: Use `.setData()`, `.getData()` (on `JJHE`/`JJSE`/`JJME`).
 - **Selectors**: Use `.closest(selector)` on `JJE` for ancestor lookup.

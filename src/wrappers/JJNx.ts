@@ -50,7 +50,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * el.addChild(h('span', null, 'hello'))
+     * el.addChild(JJHE.tree('span', null, 'hello'))
      * ```
      *
      * @remarks
@@ -71,7 +71,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * el.preChild(h('span', null, 'first'))
+     * el.preChild(JJHE.tree('span', null, 'first'))
      * ```
      *
      * @remarks
@@ -92,7 +92,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * node.addChildMap(['a', 'b'], item => h('li', null, item))
+     * node.addChildMap(['a', 'b'], item => JJHE.tree('li', null, item))
      * ```
      *
      * @remarks
@@ -134,7 +134,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @example
      * ```ts
-     * el.setChild(h('p', null, 'New Content'))
+     * el.setChild(JJHE.tree('p', null, 'New Content'))
      * ```
      * @param children - The children to replace with.
      * @returns This instance for chaining.

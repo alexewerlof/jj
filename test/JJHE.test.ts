@@ -248,4 +248,60 @@ describe('JJHE', () => {
             assert.strictEqual(clicked, true)
         })
     })
+
+    describe('static tree()', () => {
+        it('creates element from tag name', () => {
+            const el = JJHE.tree('div')
+            assert.ok(el instanceof JJHE)
+            assert.strictEqual(el.ref.tagName, 'DIV')
+        })
+
+        it('sets attributes', () => {
+            const el = JJHE.tree('div', { id: 'test', class: 'foo' })
+            assert.strictEqual(el.ref.id, 'test')
+            assert.strictEqual(el.ref.className, 'foo')
+        })
+
+        it('handles null attributes', () => {
+            const el = JJHE.tree('div', null, 'text')
+            assert.ok(el instanceof JJHE)
+            assert.strictEqual(el.ref.textContent, 'text')
+        })
+
+        it('handles undefined attributes', () => {
+            const el = JJHE.tree('div', undefined, 'text')
+            assert.ok(el instanceof JJHE)
+            assert.strictEqual(el.ref.textContent, 'text')
+        })
+
+        it('appends string children', () => {
+            const el = JJHE.tree('div', null, 'hello', ' world')
+            assert.strictEqual(el.ref.textContent, 'hello world')
+        })
+
+        it('appends native element children', () => {
+            const child = document.createElement('span')
+            const el = JJHE.tree('div', null, child)
+            assert.strictEqual(el.ref.childNodes.length, 1)
+            assert.strictEqual(el.ref.firstChild, child)
+        })
+
+        it('appends JJHE children', () => {
+            const child = JJHE.tree('span')
+            const el = JJHE.tree('div', null, child)
+            assert.strictEqual(el.ref.childNodes.length, 1)
+            assert.strictEqual(el.ref.firstChild, child.ref)
+        })
+
+        it('creates nested structure', () => {
+            const el = JJHE.tree('ul', null, JJHE.tree('li', null, 'Item 1'), JJHE.tree('li', null, 'Item 2'))
+            assert.strictEqual(el.ref.childNodes.length, 2)
+            assert.strictEqual(el.ref.childNodes[0].textContent, 'Item 1')
+            assert.strictEqual(el.ref.childNodes[1].textContent, 'Item 2')
+        })
+
+        it('throws when attributes is not a plain object', () => {
+            assert.throws(() => JJHE.tree('div', 'not-an-object' as any), /Pass null\/undefined or an object like/)
+        })
+    })
 })

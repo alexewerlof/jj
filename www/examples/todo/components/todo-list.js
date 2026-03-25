@@ -1,6 +1,6 @@
-import { fetchStyle, h, JJHE, defineComponent } from '../../../../lib/bundle.js'
+import { fetchStyle, JJHE, defineComponent } from '../../../../lib/bundle.js'
 
-const template = h('section', { class: 'list' }, h('slot'))
+const template = JJHE.tree('section', { class: 'list' }, JJHE.tree('slot'))
 const stylePromise = fetchStyle(import.meta.resolve('./todo-list.css'))
 
 export class TodoList extends HTMLElement {

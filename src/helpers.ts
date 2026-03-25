@@ -95,7 +95,7 @@ export function createLinkPre(
         )
     }
 
-    return JJHE.create('link').setAttr({
+    return JJHE.create('link').setAttrMulti({
         href,
         rel,
         as,

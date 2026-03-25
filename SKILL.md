@@ -45,12 +45,13 @@ JJ is a minimal, imperative DOM manipulation library designed for modern web dev
 
 ## Quick Start
 
-The easiest way to use JJ is the `h()` hyperscript helper:
+For declarative HTML snippet construction, use `JJHE.tree()`. For SVG use `JJSE.tree()`, for MathML use `JJME.tree()`. All three share the same call shape: `tree(tagName, attributes?, ...children)`. Users familiar with hyperscript can alias it: `const h = JJHE.tree`.
 
 ```typescript
-import { doc, h, JJDF } from 'jj'
+import { doc, JJHE, JJDF } from 'jj'
 
-// Create elements with h(tagName, attributes, ...children)
+// Create elements with JJHE.tree(tagName, attributes, ...children)
+const h = JJHE.tree
 const nav = h(
     'nav',
     { class: 'main-nav', 'aria-label': 'Main navigation' },
@@ -68,13 +69,13 @@ doc.body.addChild(nav.ref)
 For batch DOM operations, use `JJDF` (DocumentFragment) to avoid multiple reflows:
 
 ```typescript
-import { doc, h, JJDF } from 'jj'
+import { doc, JJHE, JJDF } from 'jj'
 
 // Create a fragment for batch operations
 const frag = JJDF.create()
 
 const items = ['Apple', 'Banana', 'Cherry']
-frag.addChild(...items.map((item) => h('li', { class: 'fruit-item' }, item)))
+frag.addChild(...items.map((item) => JJHE.tree('li', { class: 'fruit-item' }, item)))
 
 // Single DOM update - much faster than appending one by one
 doc.find('ul.fruit-list')?.addChild(frag.ref)
@@ -83,20 +84,21 @@ doc.find('ul.fruit-list')?.addChild(frag.ref)
 If you need to map and append the children, there's a direct, shorter and more readable way to do it:
 
 ```typescript
-import { doc, h } from 'jj'
+import { doc, JJHE } from 'jj'
 
 const items = ['Apple', 'Banana', 'Cherry']
 
 // Single DOM update - much shorter
-doc.find('ul.fruit-list')?.addChildMap(items, (item) => h('li', { class: 'fruit-item' }, item))
+doc.find('ul.fruit-list')?.addChildMap(items, (item) => JJHE.tree('li', { class: 'fruit-item' }, item))
 ```
 
 Combine both patterns for complex UIs:
 
 ```typescript
-import { doc, h, JJDF } from 'jj'
+import { doc, JJHE } from 'jj'
 
 // Build a card component
+const h = JJHE.tree
 const card = h(
     'article',
     { class: 'card' },
@@ -141,7 +143,7 @@ For the JJ-specific querying patterns (`find`, `findAll`, `closest`) and guidanc
 All imports use `.js` extension even in TypeScript files:
 
 ```typescript
-import { h, doc, JJD } from './index.js'
+import { JJHE, doc, JJD } from './index.js'
 ```
 
 This is required by the project's ESM configuration. Never use `.ts` extensions in imports.
@@ -671,7 +673,7 @@ Or use directly in browser:
 3. Ask the LLM to use `.ref` when accessing native properties not exposed by JJ
 4. Expect type errors to be self-documenting—they guide toward the correct API
 5. Remind the LLM that JJ is imperative, not declarative—no virtual DOM or automatic re-rendering
-6. Don't overuse the `h()` function. First and foremost try to keep as much of the static layout of the page in the HTML but if it's too small, you can use the `h()` function to eliminate dynamic content around a network request.
+6. Don't overuse the `.tree()` static methods. First and foremost try to keep as much of the static layout of the page in the HTML, but if it's too small use `JJHE.tree()` / `JJSE.tree()` / `JJME.tree()` where declarative snippet construction is clearer than `create().addChild()` chains.
 7. Upon the start of the app, store references to key static elements using `JJHE.find('#element-id', true)`
 
 ## Resources

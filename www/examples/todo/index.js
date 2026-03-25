@@ -94,7 +94,7 @@ function getVisibleTodos() {
 }
 
 function renderItem(todo) {
-    return JJHE.create('todo-item').setAttr({
+    return JJHE.create('todo-item').setAttrMulti({
         'item-id': todo.id,
         text: todo.text,
         done: todo.done,
@@ -113,7 +113,7 @@ function updateStats() {
     const activeCount = todos.filter((todo) => !todo.done).length
     const doneCount = todos.length - activeCount
     countLabel.setText(`${activeCount} active · ${doneCount} done`)
-    progress.setAttr({
+    progress.setAttrMulti({
         max: Math.max(1, todos.length),
         value: doneCount,
     })

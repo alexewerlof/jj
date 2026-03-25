@@ -437,8 +437,9 @@ The nullish assignment (`??=`) ensures the fetch is only triggered once, even wh
 For small or tightly coupled components, skip the fetch entirely and define the template and styles directly in JavaScript:
 
 ```javascript
-import { cssToStyle, h, JJHE, defineComponent } from 'jj'
+import { cssToStyle, JJHE, defineComponent } from 'jj'
 
+const h = JJHE.tree
 const template = h('div', { id: 'root' }, h('p', { id: 'content' }, 'Hello, World!'))
 const style = cssToStyle(`
     #root {
@@ -659,7 +660,7 @@ msg.content = 'Hello from code!'
 document.body.appendChild(msg)
 // JJ Syntax
 doc.body.addChild(
-    JJHE.create('chat-message').setAttr({
+    JJHE.create('chat-message').setAttrMulti({
         role: 'assistant',
         content: 'Hello from code!',
     }),
