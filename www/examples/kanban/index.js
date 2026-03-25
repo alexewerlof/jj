@@ -1,5 +1,7 @@
-import { doc, JJHE } from '../../../lib/bundle.js'
+import { JJD, JJHE } from '../../../lib/bundle.js'
 import { KanbanCard } from './components/kanban-card.js'
+
+const doc = JJD.from(document)
 
 // Register Custom Element
 await KanbanCard.defined

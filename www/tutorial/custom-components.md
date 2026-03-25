@@ -648,10 +648,13 @@ export class ChatMessage extends HTMLElement {
 **Usage in JavaScript:**
 
 ```javascript
+import { JJD, JJHE } from 'jj'
 import { ChatMessage } from './components/chat-message.js'
 
 // Wait until the component is defined and ready to use
 await ChatMessage.defined
+
+const doc = JJD.from(document)
 
 // Native Browser Syntax
 const msg = document.createElement('chat-message')

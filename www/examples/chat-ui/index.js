@@ -1,6 +1,8 @@
 import { ChatMessage } from './components/chat-message.js'
 import { fetchModels, runEchoTest, streamChatMessage } from './api.js'
-import { doc, JJHE } from '../../../lib/bundle.js'
+import { JJD, JJHE } from '../../../lib/bundle.js'
+
+const doc = JJD.from(document)
 
 // Register components
 await ChatMessage.defined

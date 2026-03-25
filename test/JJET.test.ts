@@ -137,4 +137,42 @@ describe('JJET', () => {
         et.dispatchEvent(new Event('test'))
         assert.strictEqual(callCount, 1, 'handler should not be called after off()')
     })
+
+    it('runs synchronously and returns this for chaining', () => {
+        const et = new EventTarget()
+        const jjet = new JJET(et)
+        const calls: string[] = []
+
+        const result = jjet.run(function (ref) {
+            calls.push('run')
+            assert.strictEqual(this, jjet)
+            assert.strictEqual(ref, jjet)
+            return 'ignored' as unknown as void
+        })
+
+        calls.push('after')
+
+        assert.deepStrictEqual(calls, ['run', 'after'])
+        assert.strictEqual(result, jjet)
+    })
+
+    it('wraps errors thrown inside run()', () => {
+        const et = new EventTarget()
+        const jjet = new JJET(et)
+        const cause = new Error('boom')
+
+        assert.throws(
+            () => {
+                jjet.run(() => {
+                    throw cause
+                })
+            },
+            (error: unknown) => {
+                assert(error instanceof Error)
+                assert.strictEqual(error.message, 'Failed to run the function')
+                assert.strictEqual(error.cause, cause)
+                return true
+            },
+        )
+    })
 })

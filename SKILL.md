@@ -48,7 +48,9 @@ JJ is a minimal, imperative DOM manipulation library designed for modern web dev
 For declarative HTML snippet construction, use `JJHE.tree()`. For SVG use `JJSE.tree()`, for MathML use `JJME.tree()`. All three share the same call shape: `tree(tagName, attributes?, ...children)`. Users familiar with hyperscript can alias it: `const h = JJHE.tree`.
 
 ```typescript
-import { doc, JJHE, JJDF } from 'jj'
+import { JJD, JJHE, JJDF } from 'jj'
+
+const doc = JJD.from(document)
 
 // Create elements with JJHE.tree(tagName, attributes, ...children)
 const h = JJHE.tree
@@ -69,7 +71,9 @@ doc.body.addChild(nav.ref)
 For batch DOM operations, use `JJDF` (DocumentFragment) to avoid multiple reflows:
 
 ```typescript
-import { doc, JJHE, JJDF } from 'jj'
+import { JJD, JJHE, JJDF } from 'jj'
+
+const doc = JJD.from(document)
 
 // Create a fragment for batch operations
 const frag = JJDF.create()
@@ -84,7 +88,9 @@ doc.find('ul.fruit-list')?.addChild(frag.ref)
 If you need to map and append the children, there's a direct, shorter and more readable way to do it:
 
 ```typescript
-import { doc, JJHE } from 'jj'
+import { JJD, JJHE } from 'jj'
+
+const doc = JJD.from(document)
 
 const items = ['Apple', 'Banana', 'Cherry']
 
@@ -95,7 +101,9 @@ doc.find('ul.fruit-list')?.addChildMap(items, (item) => JJHE.tree('li', { class:
 Combine both patterns for complex UIs:
 
 ```typescript
-import { doc, JJHE } from 'jj'
+import { JJD, JJHE } from 'jj'
+
+const doc = JJD.from(document)
 
 // Build a card component
 const h = JJHE.tree
@@ -123,6 +131,7 @@ const nativeElement: HTMLDivElement = wrapped.ref
 
 ```typescript
 // Throws TypeError if #app is missing
+const doc = JJD.from(document)
 const app = doc.find('#app', true)
 ```
 
@@ -143,7 +152,9 @@ For the JJ-specific querying patterns (`find`, `findAll`, `closest`) and guidanc
 All imports use `.js` extension even in TypeScript files:
 
 ```typescript
-import { JJHE, doc, JJD } from './index.js'
+import { JJHE, JJD } from './index.js'
+
+const doc = JJD.from(document)
 ```
 
 This is required by the project's ESM configuration. Never use `.ts` extensions in imports.
@@ -153,6 +164,8 @@ This is required by the project's ESM configuration. Never use `.ts` extensions 
 Most operations return wrapped instances for chaining:
 
 ```typescript
+const doc = JJD.from(document)
+
 // Incorrect: accessing .ref too early
 const element = doc.create('div').ref
 element.textContent = 'hello'
@@ -160,12 +173,14 @@ element.textContent = 'hello'
 // Correct: chain operations before accessing .ref
 doc.create('div').setText('hello').addClass('greeting').addChild(childElement)
 
-// Use .run() to execute code in the context of the wrapper
-doc.create('div').run(function () {
-    // `this` refers to the JJ wrapper instance
-    this.addClass('active')
-    console.log(this.ref) // Access native element
-})
+// Use .run() for synchronous in-chain adjustments
+doc.create('div')
+    .run(function (ref) {
+        // `this` and `ref` both refer to the JJ wrapper instance
+        this.addClass('active')
+        console.log(ref.ref) // Access native element
+    })
+    .setText('hello')
 ```
 
 Common chainable operations:
@@ -183,6 +198,8 @@ el.setAria('hidden', 'true').setAriaMulti({ label: 'Dialog', modal: 'true' }).rm
 Node traversal and detach helpers on `JJN`:
 
 ```typescript
+const doc = JJD.from(document)
+
 const item = doc.find('#item', true)
 const parent = item.parent // wrapped parent or null
 const children = item.children // wrapped child nodes
@@ -213,12 +230,16 @@ const math = JJME.create('math')
 **Incorrect**: Generic on wrong method
 
 ```typescript
+const doc = JJD.from(document)
+
 const input = doc.create<HTMLInputElement>('input')
 ```
 
 **Correct**: Use `create()` for type inference
 
 ```typescript
+const doc = JJD.from(document)
+
 const input = doc.create('input') // Correctly typed as JJHE<HTMLInputElement>
 ```
 
@@ -546,7 +567,9 @@ if (element) {
 For non-component template usage, use `JJET` to work with `<template>` elements:
 
 ```typescript
-import { doc, JJET } from 'jj'
+import { JJD, JJET } from 'jj'
+
+const doc = JJD.from(document)
 
 // Get a template element from the DOM
 const templateEl = doc.find<HTMLTemplateElement>('#item-template')
@@ -676,7 +699,7 @@ Or use directly in browser:
 4. Expect type errors to be self-documenting—they guide toward the correct API
 5. Remind the LLM that JJ is imperative, not declarative—no virtual DOM or automatic re-rendering
 6. Don't overuse the `.tree()` static methods. First and foremost try to keep as much of the static layout of the page in the HTML, but if it's too small use `JJHE.tree()` / `JJSE.tree()` / `JJME.tree()` where declarative snippet construction is clearer than `create().addChild()` chains.
-7. Upon the start of the app, store references to key static elements using `JJHE.find('#element-id', true)`
+7. Upon the start of the app, initialize `const doc = JJD.from(document)` and store references to key static elements with `doc.find('#element-id', true)`
 
 ## Resources
 

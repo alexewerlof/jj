@@ -12,6 +12,14 @@ JJ wraps the browser's querying APIs into a small set of fluent methods. These m
 
 This means you can query from any wrapper that represents an element, document, or document fragment.
 
+When you want to query the document, initialize a local wrapper first:
+
+```js
+import { JJD } from 'jj'
+
+const doc = JJD.from(document)
+```
+
 ## `.find(selector, required?)`
 
 Finds the first matching descendant using a CSS selector.

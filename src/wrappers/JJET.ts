@@ -136,21 +136,27 @@ export class JJET<T extends EventTarget = EventTarget> {
      *
      * @example
      * ```ts
-     * node.run(function() {
-     *   console.log(this.ref)
-     * })
+     * node
+     *   .run(function (ref) {
+     *     console.log(this.ref)
+     *     console.log(ref.ref)
+     *   })
+     *   .trigger(new Event('ready'))
      * ```
      * @remarks
-     * If you want to access the current JJ* instance using `this` keyword, you SHOULD use a `function` not an arrow function.
-     * If the function throws, `run()` doesn't swallow the exception.
-     * So if you're expecting an error, make sure to wrap it in a `try..catch` block and handle the exception.
-     * If the function returns a promise, you can `await` on the response.
+     * Use this to make synchronous adjustments while staying in a fluent chain.
+     * The callback return value is ignored.
+     * If you want to access the current JJ* instance using `this`, use a `function` rather than an arrow function.
      *
-     * @param fn - The function to run. `this` inside the function will refer to this JJET instance.
-     * @param args - Arguments to pass to the function.
-     * @returns The return value of the function.
+     * @param fn - The synchronous function to run. `this` inside the function will refer to this JJET instance, and the wrapped instance is also passed as the first argument.
+     * @returns This instance for chaining.
      */
-    run<R, Args extends unknown[]>(fn: (this: this, ...args: Args) => R, ...args: Args): R {
-        return fn.call(this, ...args)
+    run(fn: (this: this, ref: this) => void): this {
+        try {
+            fn.call(this, this)
+        } catch (cause) {
+            throw new Error(`Failed to run the function`, { cause })
+        }
+        return this
     }
 }

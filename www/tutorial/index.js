@@ -1,8 +1,10 @@
-import { doc, fetchText } from '../../lib/bundle.js'
+import { JJD, fetchText } from '../../lib/bundle.js'
 import { RenderMarkdown } from '../components/render-markdown.js'
 import toc from './toc.js'
 
 await RenderMarkdown.defined
+
+const doc = JJD.from(document)
 
 doc.find('#toc', true).addChild(toc)
 

@@ -1,4 +1,6 @@
-import { doc, JJHE } from '../../lib/bundle.js'
+import { JJD, JJHE } from '../../lib/bundle.js'
+
+const doc = JJD.from(document)
 
 const GITHUB_BASE = 'https://github.com/alexewerlof/jj/tree/main/www/examples'
 

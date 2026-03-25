@@ -15,6 +15,7 @@ import { JJHE } from './JJHE.js'
  * @category Wrappers
  * @example
  * ```ts
+ * const doc = JJD.from(document)
  * const frag = JJDF.create()
  * frag.addChild(
  *   JJHE.tree('div', null, 'Item 1'),

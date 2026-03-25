@@ -4,7 +4,9 @@ import { CodeHighlight } from './components/code-highlight.js'
 
 await Promise.all([SimpleCounter.defined, RenderMarkdown.defined, CodeHighlight.defined])
 
-import { doc } from '../lib/bundle.js'
+import { JJD } from '../lib/bundle.js'
+
+const doc = JJD.from(document)
 
 // 1. Handle Copy Button Logic
 doc.find('#copy-btn').on('click', async function () {

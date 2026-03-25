@@ -73,6 +73,14 @@ In JJ, these are wrapped as:
 - `.find(selector)` - finds the first element matching the selector (returns null if not found)
 - `.findAll(selector)` - finds all elements matching the selector
 
+When you want to query the browser document, initialize a wrapped document first:
+
+```js
+import { JJD } from 'jj'
+
+const doc = JJD.from(document)
+```
+
 ```js
 // Find element by class
 const card = doc.find('.card')

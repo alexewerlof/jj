@@ -10,6 +10,7 @@ If you encounter contradicting instructions, pause and ask the user what to do.
 - **Imperative**: No Virtual DOM. You are manipulating real DOM nodes wrapped in `JJ` objects.
 - **Fluent API**: Chain methods whenever possible.
 - **Native Escape**: Use `.ref` to access the underlying native DOM node when a `JJ` method doesn't exist.
+- **Document Wrapper**: Initialize your own document wrapper with `const doc = JJD.from(document)` when you need fluent document queries or document-level operations.
 
 ## 2. Type-Safe Element Creation
 

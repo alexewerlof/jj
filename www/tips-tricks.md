@@ -13,7 +13,9 @@ Instead, we can use a `DocumentFragment` to accumulate all the children and then
 Instead of:
 
 ```ts
-import { doc, JJHE } from 'jj'
+import { JJD, JJHE } from 'jj'
+
+const doc = JJD.from(document)
 const contents = ['New York', 'Stockholm', 'Tokyo']
 const parent = doc.find('#parent-ul')
 
@@ -25,7 +27,9 @@ for (const city of contents) {
 Write:
 
 ```ts
-import { doc, JJDF, JJHE } from 'jj'
+import { JJD, JJDF, JJHE } from 'jj'
+
+const doc = JJD.from(document)
 const contents = ['New York', 'Stockholm', 'Tokyo']
 const parent = doc.find('#parent-ul')
 
@@ -46,7 +50,9 @@ Instead, we can attach the event listener to a common parent and take advantage 
 Example, instead of:
 
 ```ts
-import { doc } from 'jj'
+import { JJD } from 'jj'
+
+const doc = JJD.from(document)
 const parent = doc.find('#parent-ul')
 for (const child of parent.getChildren()) {
     child.on('click', function () {
@@ -58,7 +64,9 @@ for (const child of parent.getChildren()) {
 Use event delegation:
 
 ```ts
-import { doc } from 'jj'
+import { JJD } from 'jj'
+
+const doc = JJD.from(document)
 const parent = doc.find('#parent-ul')
 parent.on('click', function (evt) {
     // 'this' is the JJ* wrapper, access native element with this.ref

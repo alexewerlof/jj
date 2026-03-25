@@ -1,6 +1,8 @@
-import { doc, JJHE } from '../../../lib/bundle.js'
+import { JJD, JJHE } from '../../../lib/bundle.js'
 import { TodoItem } from './components/todo-item.js'
 import { TodoList } from './components/todo-list.js'
+
+const doc = JJD.from(document)
 
 await Promise.all([TodoItem.defined, TodoList.defined])
 

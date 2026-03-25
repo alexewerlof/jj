@@ -216,6 +216,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      *
      * @example
      * ```ts
+    * const doc = JJD.from(document)
      * const el = JJHE.create('div')
      * doc.body.addChild(el)
      * el.rm()

@@ -1,4 +1,6 @@
-import { doc, JJDF, JJSE } from '../../../lib/bundle.js'
+import { JJD, JJDF, JJSE } from '../../../lib/bundle.js'
+
+const doc = JJD.from(document)
 
 const clock = doc.find('#clock')
 const secondHand = doc.find('#second-hand')
