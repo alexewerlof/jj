@@ -1,6 +1,6 @@
 import { hasProp, isInstance, isStr } from 'jty'
-import { JJEx } from './JJEx.js'
 import { errMsg, typeErr } from '../internal.js'
+import { JJEx } from './JJEx.js'
 
 const COMMON_SVG_TAGS = ['svg', 'rect', 'circle', 'line', 'path', 'text']
 const COMMON_MATHML_TAGS = ['math', 'mi', 'mn', 'mo', 'mtext']

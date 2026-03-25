@@ -1,7 +1,7 @@
 import { isInstance, isNum, isStr } from 'jty'
-import { JJEx } from './JJEx.js'
 import { typeErr } from '../internal.js'
 import { SVG_NS } from '../xmlns.js'
+import { JJEx } from './JJEx.js'
 
 /**
  * Wraps a DOM SVGElement like <svg>, <rect>, <circle>, <path>, etc.

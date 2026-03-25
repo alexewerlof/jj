@@ -1,7 +1,7 @@
 import { isInstance, isStr } from 'jty'
-import { JJNx } from './JJNx.js'
 import { typeErr } from '../internal.js'
-import { JJHE } from '../index.js'
+import { JJNx } from './JJNx.js'
+import { JJHE } from './JJHE.js'
 
 /**
  * Wraps a DocumentFragment (which is a descendant of Node).
@@ -37,7 +37,6 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
      * ```ts
      * const frag = JJDF.from(myFrag)
      * ```
-     *
      *
      * @param ref - The DocumentFragment instance.
      * @returns A new JJDF instance.

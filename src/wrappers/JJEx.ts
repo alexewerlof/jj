@@ -1,6 +1,6 @@
 import { hasProp, isPOJO, isStr } from 'jty'
-import { JJE } from './JJE.js'
 import { typeErr } from '../internal.js'
+import { JJE } from './JJE.js'
 
 /**
  * Base wrapper for elements that support `dataset`.

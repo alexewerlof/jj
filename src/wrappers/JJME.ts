@@ -1,7 +1,7 @@
 import { isInstance, isStr } from 'jty'
-import { JJEx } from './JJEx.js'
 import { typeErr } from '../internal.js'
 import { MATHML_NS } from '../xmlns.js'
+import { JJEx } from './JJEx.js'
 
 /**
  * Wraps a DOM MathMLElement like <math>, <mrow>, <mi>, <mn>, <mo>, etc.

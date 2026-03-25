@@ -1,7 +1,7 @@
 import { isInstance, isObj, isStr } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './types.js'
-import { JJET } from './JJET.js'
 import { typeErr } from '../internal.js'
+import { JJET } from './JJET.js'
 
 /**
  * Wraps a DOM Node.

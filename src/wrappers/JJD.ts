@@ -1,7 +1,7 @@
 import { isInstance } from 'jty'
+import { typeErr } from '../internal.js'
 import { JJNx } from './JJNx.js'
 import { JJHE } from './JJHE.js'
-import { typeErr } from '../internal.js'
 
 /**
  * Wraps a Document (which is a descendant of Node).

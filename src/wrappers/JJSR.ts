@@ -1,6 +1,6 @@
 import { isInstance } from 'jty'
-import { JJDF } from './JJDF.js'
 import { typeErr } from '../internal.js'
+import { JJDF } from './JJDF.js'
 
 /**
  * Wraps a DOM ShadowRoot (which is a descendant of DocumentFragment).

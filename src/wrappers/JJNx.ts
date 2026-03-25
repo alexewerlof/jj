@@ -1,5 +1,5 @@
-import { JJN } from './JJN-raw.js'
 import { Wrappable, Wrapped } from './types.js'
+import { JJN } from './JJN-raw.js'
 
 export abstract class JJNx<T extends Element | Document | DocumentFragment> extends JJN<T> {
     /**

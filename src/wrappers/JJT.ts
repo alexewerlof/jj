@@ -1,6 +1,6 @@
 import { isInstance } from 'jty'
-import { JJN } from './JJN-raw.js'
 import { typeErr } from '../internal.js'
+import { JJN } from './JJN-raw.js'
 
 /**
  * Wraps a DOM Text Node.

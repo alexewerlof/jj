@@ -1,9 +1,8 @@
 import { isInstance, isStr, isPOJO } from 'jty'
-import { JJSR } from './JJSR.js'
 import { Wrapped } from './types.js'
-import { JJNx } from './JJNx.js'
 import { typeErr } from '../internal.js'
-import { JJN } from './JJN-raw.js'
+import { JJSR } from './JJSR.js'
+import { JJNx } from './JJNx.js'
 import type { JJDF } from './JJDF.js'
 import type { JJHE } from './JJHE.js'
 
@@ -413,7 +412,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
             throw typeErr('selector', 'a string', selector)
         }
         const match = this.ref.closest(selector)
-        return match ? JJN.wrap(match) : null
+        return match ? JJE.wrap(match) : null
     }
 
     /**
