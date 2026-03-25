@@ -53,6 +53,11 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      * @throws {TypeError} If `tagName` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS | document.createElementNS}
      */
+    static create<K extends keyof SVGElementTagNameMap>(
+        tagName: K,
+        options?: ElementCreationOptions,
+    ): JJSE<SVGElementTagNameMap[K]>
+    static create(tagName: string, options?: ElementCreationOptions): JJSE
     static create(tagName: string, options?: ElementCreationOptions): JJSE {
         if (!isStr(tagName)) {
             throw typeErr(

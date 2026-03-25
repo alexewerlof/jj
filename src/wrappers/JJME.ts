@@ -52,6 +52,11 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
      * @throws {TypeError} If `tagName` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS | document.createElementNS}
      */
+    static create<K extends keyof MathMLElementTagNameMap>(
+        tagName: K,
+        options?: ElementCreationOptions,
+    ): JJME<MathMLElementTagNameMap[K]>
+    static create(tagName: string, options?: ElementCreationOptions): JJME
     static create(tagName: string, options?: ElementCreationOptions): JJME {
         if (!isStr(tagName)) {
             throw typeErr(
