@@ -1,8 +1,7 @@
 import { isInstance, isStr } from 'jty'
 import { JJEx } from './JJEx.js'
 import { typeErr } from '../internal.js'
-
-const MATHML_NAMESPACE_URI = 'http://www.w3.org/1998/Math/MathML'
+import { MATHML_NS } from '../xmlns.js'
 
 /**
  * Wraps a DOM MathMLElement like <math>, <mrow>, <mi>, <mn>, <mo>, etc.
@@ -18,10 +17,12 @@ const MATHML_NAMESPACE_URI = 'http://www.w3.org/1998/Math/MathML'
 export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
     /**
      * Creates a JJME instance from a MathMLElement reference.
-     *     * @remarks
+     *
+     * @remarks
      * Use {@link JJME.create} to create new MathMLElements, or use this method to wrap existing ones.
      * For HTMLElements, use {@link JJHE.from}, or {@link JJSE.from} for SVGElements.
-     *     * @example
+     *
+     * @example
      * ```ts
      * const mrow = JJME.from(myMrow)
      * ```
@@ -38,7 +39,7 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
      * Creates a JJME instance from a tag name (in the MathML namespace).
      *
      * @remarks
-     * Automatically uses the MathML namespace URI: `http://www.w3.org/1998/Math/MathML`.
+     * Automatically uses {@link MATHML_NS} for namespace-aware element creation.
      *
      * @example
      * ```ts
@@ -61,7 +62,7 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
             )
         }
         // MathML elements must be created with the MathML namespace
-        const element = document.createElementNS(MATHML_NAMESPACE_URI, tagName, options)
+        const element = document.createElementNS(MATHML_NS, tagName, options)
         return new JJME(element as MathMLElement)
     }
 
@@ -74,8 +75,8 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
      * @see {@link JJME.create} to create new MathMLElements
      */
     constructor(ref: T) {
-        if (!isInstance(ref, Element) || ref.namespaceURI !== MATHML_NAMESPACE_URI) {
-            throw typeErr('ref', `a MathML element (${MATHML_NAMESPACE_URI})`, ref, 'Use JJME.from() or JJME.create().')
+        if (!isInstance(ref, Element) || ref.namespaceURI !== MATHML_NS) {
+            throw typeErr('ref', `a MathML element (${MATHML_NS})`, ref, 'Use JJME.from() or JJME.create().')
         }
         super(ref)
     }

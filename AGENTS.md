@@ -114,6 +114,7 @@ Do not call `.defined` like a synchronous function, and prefer `defineComponent(
 - **Classes**: Use `.addClass()`, `.rmClass()`, `.toggleClass()`, `.setClass()`.
 - **Dataset**: Use `.setData()`, `.getData()` (on `JJHE`/`JJSE`/`JJME`).
 - **Selectors**: Use `.closest(selector)` on `JJE` for ancestor lookup.
+- **Namespaces**: Use `MATHML_NS` and `SVG_NS` from `src/ns.ts` for `document.createElementNS(...)` calls; avoid duplicating namespace URI strings.
 
 ## 7. Code Style & Standards
 

@@ -1,5 +1,6 @@
 export * from './util.js'
 export * from './case.js'
+export * from './xmlns.js'
 export * from './wrappers/index.js'
 export * from './helpers.js'
 export * from './h.js'

@@ -11,8 +11,6 @@ import { JJME } from './JJME.js'
 import { JJSE } from './JJSE.js'
 import { Wrappable, Wrapped } from './types.js'
 
-const MATHML_NAMESPACE_URI = 'http://www.w3.org/1998/Math/MathML'
-
 JJN.wrap = function wrap(raw: Wrappable): Wrapped {
     if (isStr(raw)) {
         return JJT.fromStr(raw)
@@ -29,7 +27,7 @@ JJN.wrap = function wrap(raw: Wrappable): Wrapped {
     if (isInstance(raw, SVGElement)) {
         return JJSE.from(raw)
     }
-    if (isInstance(raw, Element) && raw.namespaceURI === MATHML_NAMESPACE_URI) {
+    if (isInstance(raw, MathMLElement)) {
         return JJME.from(raw as MathMLElement)
     }
     if (isInstance(raw, Element)) {

@@ -1,8 +1,7 @@
 import { isInstance, isNum, isStr } from 'jty'
 import { JJEx } from './JJEx.js'
 import { typeErr } from '../internal.js'
-
-const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg'
+import { SVG_NS } from '../xmlns.js'
 
 /**
  * Wraps a DOM SVGElement like <svg>, <rect>, <circle>, <path>, etc.
@@ -39,7 +38,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      * Creates a JJSE instance from a tag name (in the SVG namespace).
      *
      * @remarks
-     * Automatically uses the correct SVG namespace URI: `http://www.w3.org/2000/svg`.
+     * Automatically uses {@link SVG_NS} for namespace-aware element creation.
      * For existing SVGElements, use {@link JJSE.from} instead.
      * For HTMLElements, use {@link JJHE.create} or {@link JJME.create} for MathMLElements.
      *
@@ -64,7 +63,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
             )
         }
         // SVG elements must be created with the SVG namespace
-        const element = document.createElementNS(SVG_NAMESPACE_URI, tagName, options)
+        const element = document.createElementNS(SVG_NS, tagName, options)
         return new JJSE(element as SVGElement)
     }
 

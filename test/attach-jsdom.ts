@@ -10,7 +10,9 @@ global.Element = window.Element
 global.HTMLElement = window.HTMLElement
 global.HTMLTemplateElement = window.HTMLTemplateElement
 global.SVGElement = window.SVGElement
-global.MathMLElement = window.MathMLElement
+// MathMLElement is not defined in jsdom, but we can use HTMLElement as a stand-in for type checking
+class MathMLElement extends window.HTMLElement {}
+global.MathMLElement = MathMLElement
 global.EventTarget = window.EventTarget
 global.Event = window.Event
 global.document = window.document
