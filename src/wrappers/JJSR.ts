@@ -1,4 +1,4 @@
-import { isInstance } from 'jty'
+import { isInstance, isStr } from 'jty'
 import { typeErr } from '../internal.js'
 import { JJDF } from './JJDF.js'
 
@@ -98,22 +98,33 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      * shadow.addStyle(sheet)
      * ```
      *
-     * @param styleSheets - The stylesheets to add.
+     * @param styles - The stylesheets to add.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets | ShadowRoot.adoptedStyleSheets}
      */
-    addStyle(...styleSheets: CSSStyleSheet[]): this {
-        for (const sheet of styleSheets) {
-            if (!isInstance(sheet, CSSStyleSheet)) {
-                throw typeErr(
-                    'styleSheets',
-                    'CSSStyleSheet instances',
-                    sheet,
-                    'Create a stylesheet using `new CSSStyleSheet()`, `cssToStyle()` or use `fetchStyle()` instead.',
-                )
+    addStyle(...styles: (string | CSSStyleSheet)[]): this {
+        const cssStyleSheets: CSSStyleSheet[] = []
+        try {
+            for (const sheet of styles) {
+                if (isInstance(sheet, CSSStyleSheet)) {
+                    cssStyleSheets.push(sheet)
+                } else if (isStr(sheet)) {
+                    const cssSheet = new CSSStyleSheet()
+                    cssSheet.replaceSync(sheet)
+                    cssStyleSheets.push(cssSheet)
+                } else {
+                    throw typeErr(
+                        'styleSheets',
+                        'CSSStyleSheet instances or CSS strings',
+                        sheet,
+                        'Pass a CSS string or a stylesheet created with `new CSSStyleSheet()`.',
+                    )
+                }
             }
+        } catch (cause) {
+            throw new Error(`Failed to create CSSStyleSheet from provided styles.`, { cause })
         }
-        this.ref.adoptedStyleSheets.push(...styleSheets)
+        this.ref.adoptedStyleSheets.push(...cssStyleSheets)
         return this
     }
 }

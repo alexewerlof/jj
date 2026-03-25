@@ -1,4 +1,4 @@
-import { isInstance, isStr } from 'jty'
+import { isInstance, isPromise, isStr } from 'jty'
 import { typeErr } from '../internal.js'
 import { JJNx } from './JJNx.js'
 import { JJHE } from './JJHE.js'
@@ -100,6 +100,14 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
         }
         if (isInstance(template, JJDF) || isInstance(template, JJHE)) {
             return this.addTemplate(template.ref)
+        }
+        if (isPromise(template)) {
+            throw typeErr(
+                'template',
+                'not a Promise',
+                template,
+                'Templates must be provided synchronously. Did you forget to await?',
+            )
         }
         throw typeErr(
             'template',

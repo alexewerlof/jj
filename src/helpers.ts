@@ -9,7 +9,7 @@ import { typeErr, errMsg } from './internal.js'
  * @returns a valid value for the link.as attribute
  * @throws {TypeError} if it cannot guess a valid value for the 'link.as' attribute
  */
-function linkAs(href: string): 'fetch' | 'style' | 'script' {
+function autoAs(href: string): 'fetch' | 'style' | 'script' {
     switch (fileExt(href)) {
         case 'html':
         case 'htm':
@@ -22,7 +22,7 @@ function linkAs(href: string): 'fetch' | 'style' | 'script' {
         case 'cjs':
             return 'script'
         default:
-            throw new Error(`No 'as' attribute was specified and we failed to guess it from the URL: ${href}`)
+            throw new Error(`No heuristic exists to deduce the 'as' attribute for the URL: ${href}`)
     }
 }
 
@@ -69,9 +69,18 @@ export function createLinkPre(
     }
 
     if (!as) {
-        as = linkAs(href)
-        if (!as) {
-            throw new Error(`Could not guess 'as' attribute from URL: ${href}`)
+        try {
+            as = autoAs(href)
+        } catch (cause) {
+            throw new Error(
+                errMsg(
+                    'as',
+                    `'fetch', 'style', or 'script'`,
+                    as,
+                    `Failed to guess the 'as' attribute from the URL: ${href}. Please provide it explicitly.`,
+                ),
+                { cause },
+            )
         }
     }
 
@@ -116,12 +125,17 @@ export function createLinkPre(
  * @returns The JJHE instance representing the link element.
  * @throws {TypeError} If `href` is not a string or URL.
  * @throws {RangeError} If `rel` or `as` are not valid values.
+ * @throws {Error} If it fails to create the link element or append it to the document head.
  * @see {@link createLinkPre} to create link elements
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload | Link types: preload}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/prefetch | Link types: prefetch}
  */
 export function addLinkPre(...args: Parameters<typeof createLinkPre>) {
-    const link = createLinkPre(...args)
-    document.head.append(link.ref)
-    return link
+    try {
+        const link = createLinkPre(...args)
+        document.head.append(link.ref)
+        return link
+    } catch (cause) {
+        throw new Error(`Failed to create or add <link> to document head`, { cause })
+    }
 }

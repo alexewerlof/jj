@@ -60,7 +60,7 @@ describe('helpers', () => {
         it('throws Error when cannot guess as attribute', () => {
             assert.throws(() => createLinkPre('/file.unknown', 'prefetch'), {
                 name: 'Error',
-                message: /failed to guess/,
+                message: /failed to guess/i,
             })
         })
     })

@@ -499,7 +499,11 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * shadow DOM for security reasons (for example `<a>`).
      *
      * @param mode - The encapsulation mode ('open' or 'closed'). Defaults to 'open'.
+     * @param template - Optional content to initialize the shadow DOM, which can be a string, DocumentFragment, HTMLTemplateElement, HTMLElement, or JJ wrapper.
+     * @param styles - Optional styles to add to the shadow DOM, which can be strings or CSSStyleSheet instances.
      * @returns This instance for chaining.
+     * @throws {TypeError} If the element cannot have a shadow root, or if arguments are of invalid types.
+     * @throws {Error} If it fails to initialize the shadow DOM with the provided template or styles.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow | Element.attachShadow}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets | ShadowRoot.adoptedStyleSheets}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/adoptedStyleSheets | Document.adoptedStyleSheets}
@@ -514,16 +518,20 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
             | JJHE<HTMLTemplateElement>
             | JJHE<HTMLElement>
             | JJDF<DocumentFragment>,
-        ...styles: CSSStyleSheet[]
+        ...styles: (string | CSSStyleSheet)[]
     ): this {
         if (!this.ref.shadowRoot) {
             this.ref.attachShadow({ mode })
         }
-        if (template) {
-            this.shadow?.addTemplate(template)
-        }
-        if (styles.length > 0) {
-            this.shadow?.addStyle(...styles)
+        try {
+            if (template) {
+                this.shadow?.addTemplate(template)
+            }
+            if (styles.length > 0) {
+                this.shadow?.addStyle(...styles)
+            }
+        } catch (cause) {
+            throw new Error(`Failed to initialize shadow DOM`, { cause })
         }
         return this
     }
