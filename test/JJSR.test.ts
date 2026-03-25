@@ -45,4 +45,24 @@ describe('JJSR', () => {
             assert.strictEqual(shadowRoot.innerHTML, '<span>new</span>')
         })
     })
+
+    describe('addStyle()', () => {
+        it('adopts constructable stylesheets on a shadow root', async () => {
+            const host = document.createElement('div')
+            const shadowRoot = host.attachShadow({ mode: 'open' })
+            const sheet = new CSSStyleSheet()
+
+            if (!('adoptedStyleSheets' in shadowRoot)) {
+                Object.defineProperty(shadowRoot, 'adoptedStyleSheets', {
+                    value: [],
+                    writable: true,
+                })
+            }
+
+            await sheet.replace(':host { display: block; }')
+            JJSR.from(shadowRoot).addStyle(sheet)
+
+            assert.strictEqual(shadowRoot.adoptedStyleSheets.includes(sheet), true)
+        })
+    })
 })

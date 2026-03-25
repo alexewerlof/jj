@@ -3,6 +3,8 @@ export * from './case.js'
 export * from './xmlns.js'
 export * from './wrappers/index.js'
 export * from './helpers.js'
+export * from './fetchers.js'
+export * from './components.js'
 export * from './h.js'
 
 import { JJD } from './wrappers/JJD.js'
