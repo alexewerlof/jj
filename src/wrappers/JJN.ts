@@ -28,7 +28,7 @@ JJN.wrap = function wrap(raw: Wrappable): Wrapped {
         return JJSE.from(raw)
     }
     if (isInstance(raw, MathMLElement)) {
-        return JJME.from(raw as MathMLElement)
+        return JJME.from(raw)
     }
     if (isInstance(raw, Element)) {
         return JJE.from(raw)
