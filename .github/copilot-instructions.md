@@ -43,7 +43,7 @@ const input = JJHE.create('input')
 input.ref.focus() // Use .ref only when wrapper lacks method
 ```
 
-**Common methods:** `.setText()`, `.setHTML(el, true)`, `.setAttr()`, `.getAttr()`, `.addClass()`, `.rmClass()`, `.on()`, `.empty()`, `.addChild()`, `.find()`, `.findAll()`, `.closest()`, `.setData()`, `.getData()`.
+**Common methods:** `.setText()`, `.setHTML(el, true)`, `.setAttr()`, `.setAttrMulti()`, `.getAttr()`, `.setAria()`, `.setAriaMulti()`, `.addClass()`, `.rmClass()`, `.setClass()`, `.setClassMulti()`, `.on()`, `.empty()`, `.addChild()`, `.find()`, `.findAll()`, `.closest()`, `.setData()`, `.setDataMulti()`, `.getData()`.
 
 ### Custom Components (Web Components)
 

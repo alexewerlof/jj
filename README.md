@@ -37,6 +37,15 @@ const formula = JJME.create('math').addChild(JJME.create('mi').setText('x'))
 
 JJ is **not** a reactive framework, template compiler, or state-management system.
 
+## API Notes
+
+Batch setter helpers use explicit `Multi` methods:
+
+- `setAttrMulti({...})`
+- `setAriaMulti({...})`
+- `setDataMulti({...})`
+- `setClassMulti({...})`
+
 ## 🧩 Custom Elements Readiness
 
 Use `defineComponent(name, constructor, options?)` and expose a static `defined` promise on each custom element class:

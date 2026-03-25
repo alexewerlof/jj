@@ -90,14 +90,6 @@ describe('JJHE', () => {
                 assert.strictEqual(el.dataset.testKey, 'value')
             })
 
-            it('sets multiple data attributes from object', () => {
-                const el = document.createElement('div')
-                const jjhe = new JJHE(el)
-                jjhe.setData({ key1: 'val1', key2: 'val2' })
-                assert.strictEqual(el.dataset.key1, 'val1')
-                assert.strictEqual(el.dataset.key2, 'val2')
-            })
-
             it('accepts numbers and converts to strings in single mode', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
@@ -105,17 +97,41 @@ describe('JJHE', () => {
                 assert.strictEqual(el.dataset.key, '123')
             })
 
+            it('throws TypeError for invalid name type', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                assert.throws(() => jjhe.setData(123 as any, 'value'), TypeError)
+            })
+        })
+
+        describe('setDataMulti()', () => {
+            it('sets multiple data attributes from object', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setDataMulti({ key1: 'val1', key2: 'val2' })
+                assert.strictEqual(el.dataset.key1, 'val1')
+                assert.strictEqual(el.dataset.key2, 'val2')
+            })
+
             it('accepts numbers and converts to strings in object mode', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setData({ key: 123 as unknown as string })
+                jjhe.setDataMulti({ key: 123 as unknown as string })
                 assert.strictEqual(el.dataset.key, '123')
+            })
+
+            it('no-ops for nullish input', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                assert.strictEqual(jjhe.setDataMulti(null), jjhe)
+                assert.strictEqual(jjhe.setDataMulti(undefined), jjhe)
+                assert.strictEqual(el.dataset.key, undefined)
             })
 
             it('throws TypeError for invalid type', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.throws(() => jjhe.setData(123 as any), TypeError)
+                assert.throws(() => jjhe.setDataMulti(123 as any), TypeError)
             })
         })
 

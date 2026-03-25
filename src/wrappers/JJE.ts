@@ -209,33 +209,70 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
-     * Sets one or more ARIA attributes on the Element.
+     * Sets a single ARIA attribute on the Element.
      *
      * @example
      * ```ts
-     * el.setAria('hidden', 'true')  // Single: sets aria-hidden="true"
-     * el.setAria({ label: 'Close', hidden: 'false' })  // Multiple
-     * el.setAria('level', 2)  // Numbers are automatically converted
+     * el.setAria('hidden', 'true')
+     * el.setAria('level', 2)
      * ```
      *
+     * @param name - The ARIA attribute suffix.
+     * @param value - The value to assign.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `name` is not a string.
+     * @see {@link setAriaMulti} for setting multiple ARIA attributes at once.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
-    setAria(name: string, value: unknown): this
-    setAria(obj: Record<string, unknown>): this
-    setAria(nameOrObj: string | Record<string, unknown>, value?: unknown): this {
-        if (isStr(nameOrObj)) {
-            this.ref.setAttribute(`aria-${nameOrObj}`, value as string)
-        } else if (isPOJO(nameOrObj)) {
-            for (const [k, v] of Object.entries(nameOrObj)) {
-                this.ref.setAttribute(`aria-${k}`, v as string)
-            }
-        } else {
+    setAria(name: string, value: unknown): this {
+        if (!isStr(name)) {
+            throw typeErr('name', 'a string', name)
+        }
+
+        this.ref.setAttribute(`aria-${name}`, value as string)
+        return this
+    }
+
+    /**
+     * Sets multiple ARIA attributes from an object, or no-ops for nullish input.
+     *
+     * @remarks
+     * This helper is useful for optional ARIA attribute bags in builder APIs.
+     * - `null` or `undefined`: does nothing and returns `this`
+     * - plain object: sets each ARIA attribute on the element
+     * - anything else: throws `TypeError`
+     *
+     * @example
+     * ```ts
+     * el.setAriaMulti({ label: 'Close', hidden: 'false' })
+     * el.setAriaMulti(null) // no-op
+     * ```
+     *
+     * @param attributes - ARIA attributes object or nullish to skip.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `attributes` is not nullish and not a plain object.
+     * @see {@link setAria} for setting a single ARIA attribute.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
+     */
+    setAriaMulti(attributes?: Record<string, unknown> | null): this {
+        if (attributes == null) {
+            return this
+        }
+        if (!isPOJO(attributes)) {
             throw typeErr(
-                'nameOrObj',
-                'a string or object',
-                nameOrObj,
-                'Pass an ARIA name like "label" or an object like { hidden: "true" }.',
+                'attributes',
+                'a plain object',
+                attributes,
+                'Pass null/undefined or an object like { hidden: "true" }.',
             )
+        }
+
+        try {
+            for (const [name, value] of Object.entries(attributes)) {
+                this.setAria(name, value)
+            }
+        } catch (cause) {
+            throw new Error(`Failed to set some ARIA attributes from object: ${JSON.stringify(attributes)}.`, { cause })
         }
         return this
     }
@@ -254,11 +291,15 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @throws {TypeError} If any name is not a string.
      */
     rmAria(...names: string[]): this {
-        for (const name of names) {
-            if (!isStr(name)) {
-                throw typeErr('name', 'a string', name)
+        try {
+            for (const name of names) {
+                if (!isStr(name)) {
+                    throw typeErr('name', 'a string', name)
+                }
+                this.ref.removeAttribute(`aria-${name}`)
             }
-            this.ref.removeAttribute(`aria-${name}`)
+        } catch (cause) {
+            throw new Error(`Failed to remove some ARIA attributes: ${JSON.stringify(names)}.`, { cause })
         }
         return this
     }
@@ -274,39 +315,78 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
-     * Sets the class attribute or conditionally adds/removes classes.
+     * Sets the class attribute.
      *
      * @remarks
-     * - Pass a string to replace the entire class attribute
-     * - Pass an object with class names as keys and boolean values to conditionally add/remove classes
-     * - To remove all classes, pass an empty string: `setClass('')`
+     * To remove all classes, pass an empty string: `setClass('')`
      *
      * @example
      * ```ts
-     * el.setClass('btn btn-primary')  // Set classes as string
-     * el.setClass({                   // Conditional classes (Vue.js style)
-     *   'active': true,               // adds 'active'
-     *   'disabled': false,            // removes 'disabled'
-     *   'highlight': isHighlighted    // adds/removes based on condition
-     * })
+     * el.setClass('btn btn-primary')
+     * el.setClass('')
      * ```
      *
+     * @param className - The full class attribute value.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `className` is not a string.
+     * @see {@link setClassMulti} for conditional class maps.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/className | Element.className}
+     */
+    setClass(className: string): this {
+        if (!isStr(className)) {
+            throw typeErr('className', 'a string', className)
+        }
+
+        return this.setAttr('class', className)
+    }
+
+    /**
+     * Conditionally adds or removes classes from an object map, or no-ops for nullish input.
+     *
+     * @remarks
+     * - `null` or `undefined`: does nothing and returns `this`
+     * - plain object: truthy values add a class, falsy values remove it
+     * - anything else: throws `TypeError`
+     *
+     * @example
+     * ```ts
+     * el.setClassMulti({
+     *   active: true,
+     *   disabled: false,
+     *   highlight: isHighlighted,
+     * })
+     * el.setClassMulti(null) // no-op
+     * ```
+     *
+     * @param classMap - Conditional class map or nullish to skip.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `classMap` is not nullish and not a plain object.
+     * @see {@link setClass} for replacing the full class attribute.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      */
-    setClass(className: string): this
-    setClass(classMap: Record<string, boolean | unknown>): this
-    setClass(classNameOrMap: string | Record<string, boolean | unknown>): this {
-        if (isStr(classNameOrMap)) {
-            return this.setAttr('class', classNameOrMap)
+    setClassMulti(classMap?: Record<string, boolean | unknown> | null): this {
+        if (classMap == null) {
+            return this
         }
-        // Conditional class object (Vue.js style)
-        for (const [className, condition] of Object.entries(classNameOrMap)) {
-            if (condition) {
-                this.ref.classList.add(className)
-            } else {
-                this.ref.classList.remove(className)
+        if (!isPOJO(classMap)) {
+            throw typeErr(
+                'classMap',
+                'a plain object',
+                classMap,
+                'Pass null/undefined or an object like { active: true }.',
+            )
+        }
+
+        try {
+            for (const [className, condition] of Object.entries(classMap)) {
+                if (condition) {
+                    this.addClass(className)
+                } else {
+                    this.rmClass(className)
+                }
             }
+        } catch (cause) {
+            throw new Error(`Failed to set some classes from object: ${JSON.stringify(classMap)}.`, { cause })
         }
         return this
     }

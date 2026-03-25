@@ -56,36 +56,74 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
     }
 
     /**
-     * Sets one or more data attributes on the element.
+     * Sets a single data attribute on the element.
      *
      * @example
      * ```ts
-     * el.setData('myKey', 'myValue')  // Single
-     * el.setData({ myKey: 'myValue', otherKey: 'otherValue' })  // Multiple
-     * el.setData('count', 42)  // Numbers are automatically converted to strings
+     * el.setData('myKey', 'myValue')
+     * el.setData('count', 42 as unknown as string)
      * ```
      *
-     * @throws {TypeError} If arguments are invalid types.
+     * @param name - The data attribute name (in camelCase).
+     * @param value - The value to assign.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `name` is not a string.
+     * @see {@link setDataMulti} for setting multiple data attributes at once.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
-    setData(name: string, value?: string): this
-    setData(obj: Record<string, string | undefined>): this
-    setData(nameOrObj: string | Record<string, string | undefined>, value?: string): this {
-        if (isStr(nameOrObj)) {
-            this.ref.dataset[nameOrObj] = value
-        } else if (isPOJO(nameOrObj)) {
-            for (const [k, v] of Object.entries(nameOrObj)) {
-                this.ref.dataset[k] = v
-            }
-        } else {
+    setData(name: string, value?: string): this {
+        if (!isStr(name)) {
+            throw typeErr('name', 'a string', name)
+        }
+
+        this.ref.dataset[name] = value
+        return this
+    }
+
+    /**
+     * Sets multiple data attributes from an object, or no-ops for nullish input.
+     *
+     * @remarks
+     * This helper is useful for optional dataset bags in builder APIs.
+     * - `null` or `undefined`: does nothing and returns `this`
+     * - plain object: sets each data attribute on the element
+     * - anything else: throws `TypeError`
+     *
+     * @example
+     * ```ts
+     * el.setDataMulti({ myKey: 'myValue', otherKey: 'otherValue' })
+     * el.setDataMulti(null) // no-op
+     * ```
+     *
+     * @param attributes - Data attributes object or nullish to skip.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `attributes` is not nullish and not a plain object.
+     * @see {@link setData} for setting a single data attribute.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
+     */
+    setDataMulti(attributes?: Record<string, string | undefined> | null): this {
+        if (attributes == null) {
+            return this
+        }
+        if (!isPOJO(attributes)) {
             throw typeErr(
-                'nameOrObj',
-                'a string or object',
-                nameOrObj,
-                'Pass a single data key or an object like { userId: "42" }.',
+                'attributes',
+                'a plain object',
+                attributes,
+                'Pass null/undefined or an object like { userId: "42" }.',
             )
+        }
+
+        try {
+            for (const [name, value] of Object.entries(attributes)) {
+                this.setData(name, value)
+            }
+        } catch (cause) {
+            throw new Error(`Failed to set some data attributes from object: ${JSON.stringify(attributes)}.`, { cause })
         }
         return this
     }

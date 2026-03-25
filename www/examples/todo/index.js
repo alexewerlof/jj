@@ -73,9 +73,9 @@ function render() {
     list.empty()
 
     if (visible.length === 0) {
-        emptyState.setClass({ 'is-hidden': false })
+        emptyState.setClassMulti({ 'is-hidden': false })
     } else {
-        emptyState.setClass({ 'is-hidden': true })
+        emptyState.setClassMulti({ 'is-hidden': true })
         list.addChildMap(visible, (todo) => renderItem(todo))
     }
 
@@ -103,7 +103,7 @@ function renderItem(todo) {
 
 function updateFilterButtons() {
     filters.findAll('button').forEach((button) => {
-        button.setClass({
+        button.setClassMulti({
             'is-active': button.getAttr('data-filter') === currentFilter,
         })
     })
