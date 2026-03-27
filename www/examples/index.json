@@ -3,5 +3,6 @@
     "chat-ui": "A simple chat UI",
     "rsvp": "Fast reading algorithm",
     "todo": "Nested TODO list with web components",
-    "kanban": "A drag-and-drop Kanban board"
+    "kanban": "A drag-and-drop Kanban board",
+    "service-status": "A 30-day reliability dashboard for services"
 }

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Service Status</title>
+        <link rel="icon" href="data:," />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <main class="status-page">
+            <header class="status-page__topbar">
+                <h1>Service Status</h1>
+                <button class="subscribe-button" type="button">Subscribe to updates</button>
+            </header>
+
+            <section class="active-incident" aria-label="Latest incident summary">
+                <div id="active-incident-header" class="active-incident__header">No active incident</div>
+                <div id="active-incident-body" class="active-incident__body"></div>
+            </section>
+
+            <section class="status-board" aria-label="Service availability board">
+                <div class="status-board__head">
+                    <p>Uptime over the past <span id="days-shown">90</span> days. <a href="#incident-groups">View historical uptime.</a></p>
+                </div>
+                <div id="service-rows" class="status-board__rows"></div>
+            </section>
+
+            <section class="incident-history" aria-label="Recent incidents">
+                <div class="incident-history__head">
+                    <h2>Past Incidents</h2>
+                    <p>Grouped by service for the same reporting period.</p>
+                </div>
+                <div id="incident-groups" class="incident-history__groups"></div>
+            </section>
+        </main>
+
+        <script type="module" src="index.js"></script>
+    </body>
+</html>
