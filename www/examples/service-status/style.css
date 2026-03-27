@@ -7,6 +7,7 @@
     --text-soft: #8d8a84;
 
     --slot-red: #d14e4e;
+    --slot-yellow: #e0952a;
     --slot-green: #4f9e57;
     --slot-empty: #b9b4a8;
 
@@ -226,9 +227,30 @@ body {
 .status-slot {
     position: relative;
     height: 2rem;
-    background: var(--slot-color);
+    border: 1px solid transparent;
+    border-radius: 2px;
     cursor: default;
     transition: transform 0.15s ease;
+
+    &.status-slot--healthy {
+        background: var(--slot-green);
+        border-color: color-mix(in srgb, var(--slot-green), black 20%);
+    }
+
+    &.status-slot--degraded {
+        background: var(--slot-yellow);
+        border-color: color-mix(in srgb, var(--slot-yellow), black 20%);
+    }
+
+    &.status-slot--breached {
+        background: var(--slot-red);
+        border-color: color-mix(in srgb, var(--slot-red), black 20%);
+    }
+
+    &.status-slot--empty {
+        background: var(--slot-empty);
+        border-color: color-mix(in srgb, var(--slot-empty), black 20%);
+    }
 
     &:hover {
         transform: translateY(-2px);

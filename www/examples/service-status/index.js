@@ -26,11 +26,13 @@ function initializePage() {
         renderIncidentHistory(serviceRecords)
     } catch (error) {
         console.error(error)
-        serviceRows.empty().addChild(
-            JJHE.create('p')
-                .addClass('empty-incidents')
-                .setText('Unable to generate service status data. Check the browser console for details.'),
-        )
+        serviceRows
+            .empty()
+            .addChild(
+                JJHE.create('p')
+                    .addClass('empty-incidents')
+                    .setText('Unable to generate service status data. Check the browser console for details.'),
+            )
     }
 }
 
@@ -76,7 +78,17 @@ function buildServiceRecords(services, days) {
         const periodAvg = computePeriodAvg(daysWithData.map((d) => d.primaryValue))
         const { label: statusLabel, cssClass: statusClass } = computeStatusLabel(timeline, primarySli)
 
-        return { id, name: serviceData.name, primarySli, sliDefs: serviceData.slis, timeline, periodAvg, daysWithDataCount: daysWithData.length, statusLabel, statusClass }
+        return {
+            id,
+            name: serviceData.name,
+            primarySli,
+            sliDefs: serviceData.slis,
+            timeline,
+            periodAvg,
+            daysWithDataCount: daysWithData.length,
+            statusLabel,
+            statusClass,
+        }
     })
 }
 
@@ -111,18 +123,45 @@ function computeStatusLabel(timeline, primarySli) {
 
 // ─── SLI health calculation ─────────────────────────────────────────────────────
 /**
- * Compute a 0–1 health score for a raw SLI value against its SLO.
- *   1     = perfectly healthy (value at or beyond ideal)
- *   0     = SLO violated
- *   0<x<1 = proportion of error budget remaining
+ * Compute the error budget remaining ratio for a raw SLI value against its SLO.
+ *
+ * Availability-style SLOs (direction: 'above') use:
+ *   budget     = 100 - target
+ *   degradation = target - value
+ *
+ * The returned ratio is:
+ *   1   => full budget remains (or service is above target)
+ *   0   => budget fully exhausted
+ *   < 0 => service is in budget debt (breached)
  */
 function computeSliHealth(value, slo) {
-    if (slo.direction === 'above') return clamp((value - slo.target) / (slo.ideal - slo.target), 0, 1)
-    return clamp((slo.target - value) / (slo.target - slo.ideal), 0, 1)
-}
+    if (slo.direction === 'above') {
+        const budget = 100 - slo.target
+        if (budget <= 0) {
+            return value >= slo.target ? 1 : -1
+        }
 
-function clamp(value, min, max) {
-    return Math.min(max, Math.max(min, value))
+        const degradation = slo.target - value
+        if (degradation <= 0) {
+            return 1
+        }
+
+        return (budget - degradation) / budget
+    }
+
+    // For "lower is better" metrics (like latency), map against the allowed
+    // headroom between ideal and target as an equivalent error budget.
+    const budget = slo.target - slo.ideal
+    if (budget <= 0) {
+        return value <= slo.target ? 1 : -1
+    }
+
+    const degradation = value - slo.target
+    if (degradation <= 0) {
+        return 1
+    }
+
+    return (budget - degradation) / budget
 }
 
 // ─── Rendering ────────────────────────────────────────────────────────────────────────────
@@ -164,9 +203,7 @@ function renderServiceRows(serviceRecords) {
         rowMeta.addChild(JJHE.create('p').addClass('service-name').setText(service.name))
         rowHeader
             .addChild(rowMeta)
-            .addChild(
-                JJHE.create('p').addClass('service-state', service.statusClass).setText(service.statusLabel),
-            )
+            .addChild(JJHE.create('p').addClass('service-state', service.statusClass).setText(service.statusLabel))
 
         service.timeline.forEach((day) => {
             slotStrip.addChild(createDaySlot(service, day))
@@ -183,9 +220,8 @@ function renderServiceRows(serviceRecords) {
 }
 
 function createDaySlot(service, day) {
-    const color = getBarColor(day.hasData, day.primaryValue, service.primarySli.slo)
-    const slot = JJHE.create('div').addClass('status-slot')
-    slot.setAttr('style', `--slot-color: ${color};`)
+    const slotClass = getSlotClass(day.hasData, day.primaryValue, service.primarySli.slo)
+    const slot = JJHE.create('div').addClass('status-slot', `status-slot--${slotClass}`)
 
     const tooltip = JJHE.create('div').addClass('status-slot__tooltip')
     tooltip
@@ -272,23 +308,15 @@ function collectIncidents(service) {
 
 // ─── Color helpers ───────────────────────────────────────────────────────────────────────
 /**
- * Map a raw SLI value and its SLO to a CSS colour string for the bar slot.
- * Uses computeSliHealth() to get a 0–1 ratio, then blends between red and green.
+ * Map a day's SLI reading to one of three semantic slot states.
+ * CSS classes (.status-slot--healthy/--degraded/--breached/--empty) own the actual colours.
  */
-function getBarColor(hasData, value, slo) {
-    if (!hasData) return 'var(--slot-empty)'
+function getSlotClass(hasData, value, slo) {
+    if (!hasData) return 'empty'
     const health = computeSliHealth(value, slo)
-    if (health >= 1) return 'var(--slot-green)'
-    if (health <= 0) return 'var(--slot-red)'
-    return blendColor({ r: 209, g: 78, b: 78 }, { r: 79, g: 158, b: 87 }, health)
-}
-
-function blendColor(redColor, greenColor, ratio) {
-    const safeRatio = clamp(ratio, 0, 1)
-    const red = Math.round(redColor.r + (greenColor.r - redColor.r) * safeRatio)
-    const green = Math.round(redColor.g + (greenColor.g - redColor.g) * safeRatio)
-    const blue = Math.round(redColor.b + (greenColor.b - redColor.b) * safeRatio)
-    return `rgb(${red}, ${green}, ${blue})`
+    if (health < 0) return 'breached'
+    if (health < 0.5) return 'degraded'
+    return 'healthy'
 }
 
 // ─── Format helpers ───────────────────────────────────────────────────────────────────────
