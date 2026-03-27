@@ -1,6 +1,7 @@
 import { getData } from './server.js'
 import { JJD, JJHE } from '../../../lib/bundle.js'
 import { ServiceAvailabilityIndicator } from './components/service-availability-indicator.js'
+import { buildServiceRecords, formatDateShort } from './model.js'
 
 // Change this constant to adjust the reporting window.
 const DAYS_TO_RENDER = 90
@@ -36,134 +37,6 @@ initializePage().catch((error) => {
                 .setText('Unable to generate service status data. Check the browser console for details.'),
         )
 })
-
-// ─── Data processing (UI-side) ─────────────────────────────────────────────────────
-// These functions translate the raw server response into shapes the render
-// functions can consume directly. Adding a new SLI to SERVICE_CATALOG in
-// server.js flows through automatically — no changes needed here.
-
-/**
- * Convert the raw server response into a list of service records ready to render.
- * This is the “light processing” step owned by the UI:
- *   - Orders dates into a timeline array
- *   - Computes the period average used in the axis label
- *   - Derives the current status label from the latest day’s SLI health
- */
-function buildServiceRecords(services, days) {
-    const dateRange = buildDateRange(days)
-    return Object.entries(services).map(([id, serviceData]) => {
-        const primarySli = serviceData.slis.find((sli) => sli.primary)
-
-        // Turn the date-keyed server map into an ordered timeline array.
-        const timeline = dateRange.map((date) => {
-            const primaryDayData = primarySli.days[date]
-            const hasData = primaryDayData != null
-
-            // Gather readings from every SLI for this date (shown in the tooltip).
-            const sliValues = serviceData.slis.map((sli) => ({
-                metric: sli.metric,
-                unit: sli.unit,
-                value: sli.days[date]?.value ?? null,
-            }))
-
-            return {
-                date,
-                hasData,
-                primaryValue: primaryDayData?.value ?? null,
-                sliValues,
-                events: hasData ? (primaryDayData.events ?? []) : [],
-            }
-        })
-
-        const daysWithData = timeline.filter((day) => day.hasData)
-        const periodAvg = computePeriodAvg(daysWithData.map((d) => d.primaryValue))
-        const { label: statusLabel, cssClass: statusClass } = computeStatusLabel(timeline, primarySli)
-
-        return {
-            id,
-            name: serviceData.name,
-            primarySli,
-            sliDefs: serviceData.slis,
-            timeline,
-            periodAvg,
-            daysWithDataCount: daysWithData.length,
-            statusLabel,
-            statusClass,
-        }
-    })
-}
-
-function buildDateRange(days) {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    return Array.from({ length: days }, (_, i) => {
-        const d = new Date(today)
-        d.setDate(today.getDate() - (days - 1 - i))
-        return d.toISOString().slice(0, 10)
-    })
-}
-
-function computePeriodAvg(values) {
-    const valid = values.filter((v) => v !== null)
-    if (valid.length === 0) return 0
-    return valid.reduce((sum, v) => sum + v, 0) / valid.length
-}
-
-/**
- * Determine the service status label from the most recent day that has data.
- * The health score drives both the label text and its CSS colour class.
- */
-function computeStatusLabel(timeline, primarySli) {
-    const latest = [...timeline].reverse().find((day) => day.hasData)
-    if (!latest) return { label: 'No Data', cssClass: 'status-no-data' }
-    const health = computeSliHealth(latest.primaryValue, primarySli.slo)
-    if (health >= 1) return { label: 'Operational', cssClass: 'status-operational' }
-    if (health > 0) return { label: 'Degraded Performance', cssClass: 'status-degraded' }
-    return { label: 'Service Disruption', cssClass: 'status-disruption' }
-}
-
-// ─── SLI health calculation ─────────────────────────────────────────────────────
-/**
- * Compute the error budget remaining ratio for a raw SLI value against its SLO.
- *
- * Availability-style SLOs (direction: 'above') use:
- *   budget     = 100 - target
- *   degradation = target - value
- *
- * The returned ratio is:
- *   1   => full budget remains (or service is above target)
- *   0   => budget fully exhausted
- *   < 0 => service is in budget debt (breached)
- */
-function computeSliHealth(value, slo) {
-    if (slo.direction === 'above') {
-        const budget = 100 - slo.target
-        if (budget <= 0) {
-            return value >= slo.target ? 1 : -1
-        }
-
-        const degradation = slo.target - value
-        if (degradation <= 0) {
-            return 1
-        }
-
-        return (budget - degradation) / budget
-    }
-
-    // For "lower is better" metrics (like latency), map against the allowed
-    // headroom between ideal and target as an equivalent error budget.
-    const budget = slo.target - slo.ideal
-    if (budget <= 0) {
-        return value <= slo.target ? 1 : -1
-    }
-
-    const degradation = value - slo.target
-    if (degradation <= 0) {
-        return 1
-    }
-
-    return (budget - degradation) / budget
-}
 
 // ─── Rendering ────────────────────────────────────────────────────────────────────────────
 function renderActiveIncident(serviceRecords) {
@@ -262,9 +135,4 @@ function formatSliValues(sliValues) {
         .filter((s) => s.value !== null)
         .map((s) => `${s.metric}: ${s.unit === '%' ? `${s.value.toFixed(2)}%` : `${s.value}${s.unit}`}`)
         .join(' · ')
-}
-
-function formatDateShort(isoDate) {
-    const d = new Date(`${isoDate}T00:00:00Z`)
-    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 }

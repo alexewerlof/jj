@@ -56,6 +56,11 @@ body {
     gap: var(--space-6);
 }
 
+.status-row {
+    --status-slot-size: 8px;
+    --status-slot-gap: 2px;
+}
+
 .status-page__topbar {
     display: flex;
     justify-content: space-between;
@@ -121,7 +126,6 @@ body {
 .incident-history__head {
     margin-bottom: var(--space-3);
     display: flex;
-    justify-content: flex-end;
     align-items: center;
     gap: var(--space-3);
 
@@ -209,9 +213,17 @@ body {
        inner content area of the 996 px page exactly (996 − 98 px of
        padding/borders = 898 px). Using fixed px instead of 1fr
        avoids sub-pixel rounding that makes columns unequal. */
-    grid-template-columns: repeat(90, 8px);
-    gap: 2px;
+    grid-template-columns: repeat(var(--daily-slot-count, 90), var(--status-slot-size));
+    gap: var(--status-slot-gap);
     align-items: center;
+}
+
+.status-row__summary {
+    display: grid;
+    grid-template-columns: repeat(var(--sls-period-count, 3), 1fr);
+    gap: var(--status-slot-gap);
+    align-items: center;
+    margin-bottom: var(--space-1);
 }
 
 .status-row__axis {
@@ -262,6 +274,26 @@ body {
         transform: translate(-50%, -8px);
         pointer-events: auto;
     }
+
+    &.status-slot--summary {
+        min-width: 0;
+        height: 2.25rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fffdf9;
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        text-shadow: 0 1px 1px rgb(0 0 0 / 0.16);
+    }
+}
+
+.status-slot__label {
+    position: relative;
+    z-index: 1;
+    white-space: nowrap;
 }
 
 .status-slot__tooltip {
@@ -274,7 +306,11 @@ body {
     border-radius: var(--radius-2);
     background: #fffdf9;
     color: var(--text-strong);
+    font-family: var(--font-body);
     font-size: 0.82rem;
+    font-weight: 400;
+    letter-spacing: normal;
+    text-shadow: none;
     line-height: 1.35;
     box-shadow: var(--shadow-soft);
     opacity: 0;
@@ -313,6 +349,37 @@ body {
             margin-top: var(--space-1);
         }
     }
+}
+
+.tooltip-event {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+}
+
+.tooltip-event__dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: var(--radius-1);
+    flex-shrink: 0;
+    background: var(--incident-info);
+    transform: translateY(0.08rem);
+}
+
+.tooltip-event--severity-2 .tooltip-event__dot {
+    background: var(--incident-critical);
+}
+
+.tooltip-event--severity-1 .tooltip-event__dot {
+    background: var(--incident-warning);
+}
+
+.tooltip-event--severity-0 .tooltip-event__dot {
+    background: var(--incident-info);
+}
+
+.tooltip-event__text {
+    flex: 1;
 }
 
 .status-slot:hover .status-slot__tooltip {

@@ -1,4 +1,5 @@
 import { fetchTemplate, JJHE, defineComponent } from '../../../../lib/bundle.js'
+import { formatDateShort, formatPeriodLabel, formatSliValue, getSlotClass } from '../model.js'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./service-availability-indicator.html'))
 
@@ -11,6 +12,7 @@ export class ServiceAvailabilityIndicator extends HTMLElement {
     #days = 90
     #serviceNameEl
     #serviceStateEl
+    #summaryEl
     #slotsEl
     #axisStartEl
     #axisValueEl
@@ -42,6 +44,7 @@ export class ServiceAvailabilityIndicator extends HTMLElement {
         this.#root.setClass('status-row').setTemplate(await templatePromise)
         this.#serviceNameEl = this.#root.find('.service-name', true)
         this.#serviceStateEl = this.#root.find('.service-state', true)
+        this.#summaryEl = this.#root.find('.status-row__summary', true)
         this.#slotsEl = this.#root.find('.status-row__slots', true)
         this.#axisStartEl = this.#root.find('.status-row__axis-start', true)
         this.#axisValueEl = this.#root.find('.status-row__axis-value', true)
@@ -59,6 +62,9 @@ export class ServiceAvailabilityIndicator extends HTMLElement {
             .setClass('service-state')
             .addClass(this.#service.statusClass)
             .setText(this.#service.statusLabel)
+        this.#root.ref.style.setProperty('--daily-slot-count', String(this.#days))
+        this.#root.ref.style.setProperty('--sls-period-count', String(this.#service.slsPeriods.length))
+        this.#summaryEl.empty().addChildMap(this.#service.slsPeriods, (period) => this.#createSummarySlot(period))
         this.#axisStartEl.setText(`${this.#days} days ago`)
         this.#axisValueEl.setText(formatPeriodLabel(this.#service.periodAvg, this.#service.primarySli))
         this.#axisEndEl.setText('Today')
@@ -73,6 +79,38 @@ export class ServiceAvailabilityIndicator extends HTMLElement {
         tooltip
             .addChild(JJHE.create('div').addClass('tooltip-date').setText(formatDateShort(day.date)))
             .addChild(createTooltipBody(day))
+
+        slot.addChild(tooltip)
+        return slot
+    }
+
+    #createSummarySlot(period) {
+        const slotClass = getSlotClass(period.hasData, period.primaryValue, this.#service.primarySli.slo)
+        const slot = JJHE.create('div').addClass('status-slot', 'status-slot--summary', `status-slot--${slotClass}`)
+
+        slot.setAttr(
+            'aria-label',
+            `${formatPeriodRange(period.startDate, period.endDate)}: ${formatSummaryValue(period, this.#service.primarySli)}`,
+        )
+
+        if (period.primaryValue !== null) {
+            slot.addChild(
+                JJHE.create('span')
+                    .addClass('status-slot__label')
+                    .setText(formatInlineValue(period, this.#service.primarySli)),
+            )
+        } else {
+            slot.addChild(JJHE.create('span').addClass('status-slot__label').setText('No data'))
+        }
+
+        const tooltip = JJHE.create('div').addClass('status-slot__tooltip')
+        tooltip
+            .addChild(
+                JJHE.create('div')
+                    .addClass('tooltip-date')
+                    .setText(formatPeriodRange(period.startDate, period.endDate)),
+            )
+            .addChild(createSummaryTooltipBody(period, this.#service.primarySli))
 
         slot.addChild(tooltip)
         return slot
@@ -93,60 +131,86 @@ function createTooltipBody(day) {
     })
 
     day.events.forEach((event) => {
-        container.addChild(JJHE.create('p').addClass('tooltip-event').setText(`! ${event.description}`))
+        container.addChild(createTooltipEventLine(event.description, event.severity))
     })
 
     return container
 }
 
-function getSlotClass(hasData, value, slo) {
-    if (!hasData) return 'empty'
-    const health = computeSliHealth(value, slo)
-    if (health < 0) return 'breached'
-    if (health < 0.5) return 'degraded'
-    return 'healthy'
-}
+function createSummaryTooltipBody(period, primarySli) {
+    const container = JJHE.create('div').addClass('tooltip-copy')
 
-function computeSliHealth(value, slo) {
-    if (slo.direction === 'above') {
-        const budget = 100 - slo.target
-        if (budget <= 0) {
-            return value >= slo.target ? 1 : -1
+    if (!period.hasData) {
+        return container.addChild(JJHE.create('p').setText('No service-level data recorded in this window.'))
+    }
+
+    container.addChild(JJHE.create('p').setText(`${primarySli.metric} SLS: ${formatSummaryValue(period, primarySli)}`))
+
+    period.sliValues.forEach((sli) => {
+        if (sli.metric !== primarySli.metric && sli.value !== null) {
+            container.addChild(JJHE.create('p').setText(`${sli.metric} avg: ${formatSliValue(sli)}`))
         }
+    })
 
-        const degradation = slo.target - value
-        if (degradation <= 0) {
-            return 1
-        }
+    container.addChild(
+        JJHE.create('p').setText(
+            `${period.observedDays}/${period.totalDays} days reported · ${period.breachDays} breach days · ${period.incidents.length} incidents`,
+        ),
+    )
 
-        return (budget - degradation) / budget
+    period.incidents.slice(0, 2).forEach((incident) => {
+        container.addChild(
+            createTooltipEventLine(`${formatDateShort(incident.date)}: ${incident.description}`, incident.severity),
+        )
+    })
+
+    if (period.incidents.length > 2) {
+        container.addChild(
+            JJHE.create('p')
+                .addClass('tooltip-event')
+                .setText(`+ ${period.incidents.length - 2} more incidents`),
+        )
     }
 
-    const budget = slo.target - slo.ideal
-    if (budget <= 0) {
-        return value <= slo.target ? 1 : -1
+    return container
+}
+
+function formatInlineValue(period, primarySli) {
+    if (period.primaryValue === null) {
+        return 'No data'
     }
 
-    const degradation = value - slo.target
-    if (degradation <= 0) {
-        return 1
+    if (primarySli.unit === '%') {
+        return `${period.primaryValue.toFixed(2)}%`
     }
 
-    return (budget - degradation) / budget
+    return `${period.primaryValue.toFixed(0)}${primarySli.unit}`
 }
 
-function formatSliValue(sli) {
-    if (sli.value === null) return 'No data'
-    if (sli.unit === '%') return `${sli.value.toFixed(2)}%`
-    return `${sli.value}${sli.unit}`
+function formatSummaryValue(period, primarySli) {
+    return formatSliValue({
+        metric: primarySli.metric,
+        unit: primarySli.unit,
+        value: period.primaryValue,
+    })
 }
 
-function formatDateShort(isoDate) {
-    const d = new Date(`${isoDate}T00:00:00Z`)
-    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+function formatPeriodRange(startDate, endDate) {
+    return `${formatDateShort(startDate)} – ${formatDateShort(endDate)}`
 }
 
-function formatPeriodLabel(avg, primarySli) {
-    if (primarySli.metric === 'availability') return `${avg.toFixed(2)}% uptime`
-    return `${avg.toFixed(0)} ${primarySli.unit} avg`
+function createTooltipEventLine(text, severity) {
+    const normalizedSeverity = normalizeSeverity(severity)
+
+    return JJHE.create('p')
+        .addClass('tooltip-event', `tooltip-event--severity-${normalizedSeverity}`)
+        .addChild(JJHE.create('span').addClass('tooltip-event__dot'))
+        .addChild(JJHE.create('span').addClass('tooltip-event__text').setText(text))
+}
+
+function normalizeSeverity(severity) {
+    if (severity === 2 || severity === 1 || severity === 0) {
+        return severity
+    }
+    return 0
 }
