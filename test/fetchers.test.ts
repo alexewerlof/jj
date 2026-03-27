@@ -1,7 +1,7 @@
 import './attach-jsdom.js'
 import { describe, it, beforeEach, afterEach } from 'node:test'
 import assert from 'node:assert'
-import { fetchText, fetchHtml, fetchCss, fetchTemplate, fetchStyle, JJDF } from '../src/index.js'
+import { fetchTemplate, fetchStyle, JJDF } from '../src/index.js'
 
 type MockFetchReply = {
     ok: boolean
@@ -43,76 +43,6 @@ describe('fetch', () => {
 
     afterEach(() => {
         globalThis.fetch = originalFetch
-    })
-
-    describe('fetchText()', () => {
-        it('fetches text with default mime header', async () => {
-            const calls = installFetchMock(() => {
-                return {
-                    ok: true,
-                    text: 'hello',
-                }
-            })
-
-            const result = await fetchText('/data.txt')
-            assert.strictEqual(result, 'hello')
-            const acceptHeader = (calls[0]?.init?.headers as Record<string, string> | undefined)?.Accept ?? null
-            assert.strictEqual(acceptHeader, 'text/*')
-        })
-
-        it('throws TypeError for non-string mime', async () => {
-            await assert.rejects(async () => await fetchText('/data.txt', 42 as any), {
-                name: 'TypeError',
-            })
-        })
-
-        it('throws on non-ok response', async () => {
-            installFetchMock(() => {
-                return {
-                    ok: false,
-                    status: 404,
-                    statusText: 'Not Found',
-                    text: '',
-                }
-            })
-
-            await assert.rejects(async () => await fetchText('/missing.txt'), {
-                name: 'Error',
-                message: /GET \/missing\.txt failed: 404 Not Found/,
-            })
-        })
-    })
-
-    describe('fetchHtml()', () => {
-        it('uses text/html accept header', async () => {
-            const calls = installFetchMock(() => {
-                return {
-                    ok: true,
-                    text: '<p>ok</p>',
-                }
-            })
-
-            const html = await fetchHtml('/fragment.html')
-            assert.strictEqual(html, '<p>ok</p>')
-            const acceptHeader = (calls[0]?.init?.headers as Record<string, string> | undefined)?.Accept ?? null
-            assert.strictEqual(acceptHeader, 'text/html')
-        })
-    })
-
-    describe('fetchCss()', () => {
-        it('uses text/css accept header', async () => {
-            const calls = installFetchMock(() => {
-                return {
-                    ok: true,
-                    text: ':host { display: block; }',
-                }
-            })
-
-            const css = await fetchCss('/style.css')
-            assert.strictEqual(css, ':host { display: block; }')
-            const acceptHeader = (calls[0]?.init?.headers as Record<string, string> | undefined)?.Accept ?? null
-            assert.strictEqual(acceptHeader, 'text/css')
-        })
     })
 
     describe('fetchTemplate()', () => {

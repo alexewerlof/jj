@@ -1,5 +1,5 @@
 import { RSVPEngine } from './RSVPEngine.js'
-import { JJD, sleep, fetchText } from '../../../lib/bundle.js'
+import { JJD, sleep } from '../../../lib/bundle.js'
 
 const doc = JJD.from(document)
 
@@ -8,6 +8,18 @@ const leftSpan = doc.find('#left-side')
 const pivotSpan = doc.find('#pivot-char')
 const rightSpan = doc.find('#right-side')
 const renderProgress = doc.find('#render-progress')
+
+async function fetchText(filePath) {
+    try {
+        const response = await fetch(filePath)
+        if (!response.ok) {
+            return `Error loading ${filePath}: ${response.status} ${response.statusText}`
+        }
+        return await response.text()
+    } catch (cause) {
+        throw new Error(`Fetch ${filePath} failed`, { cause })
+    }
+}
 
 const defaultText = await fetchText('./default.txt')
 inputTextArea.setText(defaultText.replaceAll('\n', ' '))

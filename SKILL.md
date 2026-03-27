@@ -420,10 +420,10 @@ The library uses explicit error handling:
 Inject styles using helper functions:
 
 ```typescript
-import { fetchCss, fetchStyle, cssToStyle, addLinkPre } from 'jj'
+import { fetchStyle, fetchStyle, cssToStyle, addLinkPre } from 'jj'
 
 // Fetch and inject external CSS
-document.adoptedStyleSheets.push(await fetchCss('/styles/theme.css'))
+document.adoptedStyleSheets.push(await fetchStyle('/styles/theme.css'))
 
 const cssPath = import.meta.resolve('./styles/theme.css')
 // Preload/Prefetch resources ASAP

@@ -24,7 +24,7 @@ import { typeErr } from './internal.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API | Fetch API}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Response/text | Response.text()}
  */
-export async function fetchText(url: URL | string, mime: string = 'text/*') {
+async function fetchText(url: URL | string, mime: string = 'text/*') {
     if (!isStr(mime)) {
         throw typeErr('mime', 'a string', mime)
     }
@@ -36,56 +36,11 @@ export async function fetchText(url: URL | string, mime: string = 'text/*') {
 }
 
 /**
- * Fetches the contents of a HTML file as string.
- *
- * @remarks
- * Useful for loading HTML templates dynamically.
- * You can use `import.meta.resolve('./relative-path-to.html')` to resolve paths relative to the current module.
- *
- * @category Fetch
- * @example
- * ```ts
- * const template = await fetchHtml('./template.html')
- * ```
- *
- * @param url - The HTML file location.
- * @returns The file content as a string.
- * @throws {Error} If the response is not ok.
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types | MIME types}
- */
-export async function fetchHtml(url: URL | string): Promise<string> {
-    return await fetchText(url, 'text/html')
-}
-
-/**
- * Fetches the contents of a CSS file as string.
- *
- * @remarks
- * You can use `import.meta.resolve('./relative-path-to.css')` inside components to resolve relative paths.
- *
- * @category Fetch
- * @example
- * ```ts
- * const css = await fetchCss('./style.css')
- * ```
- *
- * @param url - The CSS file location.
- * @returns The file content as a string.
- * @throws {Error} If the response is not ok.
- */
-export async function fetchCss(url: URL | string): Promise<string> {
-    return await fetchText(url, 'text/css')
-}
-
-/**
  * Fetches an HTML template and returns it as a wrapped `DocumentFragment`.
  *
  * @remarks
- * This helper combines {@link fetchHtml} with `Range.createContextualFragment()` and wraps the
- * resulting fragment in `JJDF`.
- *
- * Because it returns a detached fragment, you can load templates:
- * - eagerly (fetch once, reuse many times)
+ * Because this function returns a detached fragment, you can load templates:
+ * - eagerly (initialize the promise, reuse the result many times)
  * - lazily (fetch only when a component connects)
  *
  * The returned `JJDF` is suitable for both Shadow DOM and Light DOM flows.
@@ -128,14 +83,13 @@ export async function fetchCss(url: URL | string): Promise<string> {
  * @param url - The HTML file location.
  * @returns A `JJDF` wrapping a `DocumentFragment` parsed from the fetched HTML.
  * @throws {Error} If the fetch fails or the response is not ok or the retrieved content cannot be parsed as HTML.
- * @see {@link fetchHtml} for fetching HTML content
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Range/createContextualFragment | Range.createContextualFragment}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}
  */
 export async function fetchTemplate(url: URL | string): Promise<JJDF> {
     try {
-        const html = await fetchHtml(url)
-        return JJDF.from(document.createRange().createContextualFragment(html))
+        const htmlStr = await fetchText(url, 'text/html')
+        return JJDF.from(document.createRange().createContextualFragment(htmlStr))
     } catch (err) {
         throw new Error(`Failed to fetch or process HTML from ${url}`, { cause: err })
     }
@@ -162,7 +116,8 @@ export async function fetchTemplate(url: URL | string): Promise<JJDF> {
  */
 export async function fetchStyle(url: URL | string): Promise<CSSStyleSheet> {
     try {
-        return await cssToStyle(await fetchCss(url))
+        const cssStr = await fetchText(url, 'text/css')
+        return await cssToStyle(cssStr)
     } catch (err) {
         throw new Error(`Failed to fetch or convert CSS string to CSSStyleSheet from ${url}`, { cause: err })
     }

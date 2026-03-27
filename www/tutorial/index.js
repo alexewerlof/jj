@@ -1,4 +1,4 @@
-import { JJD, fetchText } from '../../lib/bundle.js'
+import { JJD } from '../../lib/bundle.js'
 import { RenderMarkdown } from '../components/render-markdown.js'
 import toc from './toc.js'
 
@@ -15,7 +15,11 @@ function getFrom(urlStr) {
 
 function fetchFile(path) {
     const url = new URL('./' + path, window.location.href)
-    return fetchText(url)
+    const response = fetch(url)
+    if (!response.ok) {
+        throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`)
+    }
+    return response.text()
 }
 
 const contentRenderer = doc.find('#content-renderer')

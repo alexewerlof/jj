@@ -1,6 +1,7 @@
-import { attr2prop, fetchStyle, fetchHtml, JJHE, defineComponent } from '../../lib/bundle.js'
+import { attr2prop, fetchStyle, JJHE, defineComponent } from '../../lib/bundle.js'
+import { fetchTemplate } from '../../src/fetchers.js'
 
-const templatePromise = fetchHtml(import.meta.resolve('./simple-counter.html'))
+const templatePromise = fetchTemplate(import.meta.resolve('./simple-counter.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./simple-counter.css'))
 
 export class SimpleCounter extends HTMLElement {
