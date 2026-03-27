@@ -74,19 +74,6 @@ body {
     }
 }
 
-.subscribe-button {
-    border: 0;
-    border-radius: var(--radius-2);
-    padding: var(--space-3) var(--space-5);
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    font-weight: 700;
-    font-size: 0.72rem;
-    color: #f1f0ec;
-    background: #212121;
-    cursor: pointer;
-}
-
 .active-incident {
     border: 1px solid var(--incident-highlight-border);
     border-radius: var(--radius-2);
@@ -474,10 +461,6 @@ body {
         flex-direction: column;
         align-items: start;
         gap: var(--space-3);
-    }
-
-    .subscribe-button {
-        width: 100%;
     }
 
     .status-board__head,

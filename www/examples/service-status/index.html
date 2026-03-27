@@ -11,7 +11,6 @@
         <main class="status-page">
             <header class="status-page__topbar">
                 <h1>Service Status</h1>
-                <button class="subscribe-button" type="button">Subscribe to updates</button>
             </header>
 
             <section class="active-incident" aria-label="Latest incident summary">
@@ -21,7 +20,10 @@
 
             <section class="status-board" aria-label="Service availability board">
                 <div class="status-board__head">
-                    <p>Uptime over the past <span id="days-shown">90</span> days. <a href="#incident-groups">View historical uptime.</a></p>
+                    <p>
+                        Uptime over the past <span id="days-shown">90</span> days.
+                        <a href="#incident-groups">View historical uptime.</a>
+                    </p>
                 </div>
                 <div id="service-rows" class="status-board__rows"></div>
             </section>
