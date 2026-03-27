@@ -402,6 +402,55 @@ connectedCallback() {
 
 The trade-off: page styles bleed in (helpful or harmful depending on your needs), and `querySelector` from the parent can reach your internals.
 
+There are some benefits to light DOM components: they still help abstract away the logic and templates but they are not as air-tight as the shadow DOM variant.
+
+### Three Initialization Patterns (Decision Table)
+
+When you choose a component style, you are mainly choosing where your internal DOM lives.
+
+JJ supports three practical patterns:
+
+1. Open Shadow DOM
+2. Closed Shadow DOM
+3. Light DOM with `addTemplate()` (available on `JJD`/`JJDF`/`JJE` descendants via `JJNx` inheritance)
+
+```javascript
+import { fetchTemplate, fetchStyle, JJHE } from 'jj'
+
+const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
+
+// 1) Open Shadow DOM
+this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+
+// 2) Closed Shadow DOM
+this.#root = JJHE.from(this).initShadow('closed', await templatePromise, await stylePromise)
+
+// 3) Light DOM
+this.#root = JJHE.from(this)
+    .empty()
+    .addTemplate(await templatePromise)
+```
+
+| Aspect                          | Open Shadow DOM                                                                                                    | Closed Shadow DOM                                                       | Light DOM (`addTemplate()`)                                                             |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| How to initialize DOM           | `JJHE.from(this).initShadow('open', template, ...styles)`                                                          | `JJHE.from(this).initShadow('closed', template, ...styles)`             | `JJHE.from(this).addTemplate(template)`                                                 |
+| Outside DOM access              | Outside code can read `el.shadowRoot` and inspect internals                                                        | Outside code cannot read `el.shadowRoot` (`null`)                       | Internals are regular children of the custom element; parent queries can reach them     |
+| Query behavior inside component | Use `this.#root.shadow.find(...)` to query shadow internals                                                        | Same as open, but no external shadowRoot reference                      | Use `this.#root.find(...)` or standard descendant queries on light DOM                  |
+| Event handling                  | Native composed events cross boundary; custom events should usually be `composed: true` when meant for parent page | Same event model as open shadow; mode does not change propagation rules | No shadow boundary; regular bubbling in document tree; `composed` is usually irrelevant |
+| CSS isolation                   | Strong style encapsulation: page selectors do not target shadow internals                                          | Same encapsulation as open shadow                                       | No encapsulation: page styles can affect internals                                      |
+| CSS inheritance and variables   | Inherited text styles and CSS variables still flow from host to shadow content                                     | Same as open shadow                                                     | Full cascade applies naturally from page/global styles                                  |
+| Debuggability & testing         | Easy to inspect in DevTools and integration tests via `shadowRoot`                                                 | Harder black-box testing/debugging; interact through public API/events  | Easiest DOM inspection and end-to-end selectors                                         |
+| Interop with host page/theme    | Great for reusable, style-safe components; expose theme via CSS vars                                               | Great for strict encapsulation and strong boundaries                    | Great for components that should intentionally inherit site typography/layout           |
+| Upgrade/migration cost          | Moderate: update selectors/events for shadow boundary semantics                                                    | Similar to open, plus stricter API surface expectations                 | Lowest friction from plain DOM components or framework-rendered markup                  |
+| Recommended when                | You want encapsulation but also practical inspectability                                                           | You need strict encapsulation and API-only interaction                  | You want simple integration, shared page styling, and easy template hydration           |
+
+In short:
+
+- Use **Open Shadow DOM** as the default for reusable UI components.
+- Use **Closed Shadow DOM** only when you explicitly need to hide internals.
+- Use **Light DOM + `addTemplate()`** when you want framework-like simplicity and page-level styling to apply directly.
+
 ### Loading Eagerness
 
 You have full control over when the HTML and CSS resources are fetched.
@@ -755,7 +804,7 @@ export class RenderMarkdown extends HTMLElement {
 ### Do's ✅
 
 - Create template and style promises at module scope for reuse
-- Use the `static defined = defineComponent('my-component', MyComponent)` convention
+- Use the `static defined = defineComponent('my-component', MyComponent)` convention to ensure the component is registered before being used in the templates
 - Initialize Shadow DOM in `connectedCallback()`, not `constructor()`
 - Use private fields (`#field`) for internal state
 - Validate property values in setters

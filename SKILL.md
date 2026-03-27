@@ -321,6 +321,8 @@ export class MyComponent extends HTMLElement {
 **Template sources** - `initShadow()` accepts various template inputs:
 
 ```typescript
+import { JJN, JJHE } from 'jj'
+
 // From external HTML file
 const templatePromise = fetchTemplate('./template.html')
 
@@ -332,6 +334,9 @@ const template = document.querySelector<HTMLTemplateElement>('#my-template')
 
 // From existing element's HTML
 const template = document.getElementById('template-source')
+
+// From any JJ wrapper (resolved through JJNx.addTemplate)
+const template = JJHE.find('#template-source')
 ```
 
 **Style sources** - Pass one or more `CSSStyleSheet` instances after the template:

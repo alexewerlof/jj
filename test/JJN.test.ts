@@ -264,4 +264,5 @@ describe('JJN', () => {
             assert.strictEqual(child.parentNode, null)
         })
     })
+
 })

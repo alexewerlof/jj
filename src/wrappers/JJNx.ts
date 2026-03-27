@@ -1,5 +1,9 @@
+import { isInstance, isPromise, isStr } from 'jty'
+import { typeErr } from '../internal.js'
 import { Wrappable, Wrapped } from './types.js'
 import { JJN } from './JJN-raw.js'
+import type { JJHE } from './JJHE.js'
+import type { JJDF } from './JJDF.js'
 
 export abstract class JJNx<T extends Element | Document | DocumentFragment> extends JJN<T> {
     /**
@@ -163,5 +167,92 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      */
     empty(): this {
         return this.setChild()
+    }
+
+    /**
+     * Clones and appends template-like input to this node.
+     *
+     * @remarks
+     * Supports HTML strings, native template sources, native Nodes, and any JJ wrapper via {@link JJN}.
+     * Wrapper inputs are unwrapped and cloned before append.
+     *
+     * @param template - The template source to clone and append.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If the template type is unsupported or a Promise was passed.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createRange | Document.createRange}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLTemplateElement | HTMLTemplateElement}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement | HTMLElement}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode | Node.cloneNode}
+     */
+    addTemplate(
+        template:
+            | string
+            | HTMLTemplateElement
+            | DocumentFragment
+            | HTMLElement
+            | JJDF
+            | JJHE<HTMLTemplateElement>
+            | JJHE,
+    ): this {
+        if (isStr(template)) {
+            // Using Range for faster parsing than innerHTML
+            return this.addChild(document.createRange().createContextualFragment(template))
+        }
+        if (isInstance(template, DocumentFragment) || isInstance(template, HTMLElement)) {
+            return this.addChild(
+                isInstance(template, HTMLTemplateElement)
+                    ? (template.content.cloneNode(true) as DocumentFragment)
+                    : (template.cloneNode(true) as Node),
+            )
+        }
+        if (isInstance(template, Node)) {
+            return this.addChild(template.cloneNode(true))
+        }
+        if (isInstance(template, JJN)) {
+            return this.addTemplate(template.ref)
+        }
+        if (isPromise(template)) {
+            throw typeErr(
+                'template',
+                'not a Promise',
+                template,
+                'Templates must be provided synchronously. Did you forget to await?',
+            )
+        }
+        throw typeErr(
+            'template',
+            'a string, Node, DocumentFragment, HTMLElement, JJDF, or JJHE',
+            template,
+            'Pass an HTML string, a DOM template/fragment/element, or a JJ wrapper.',
+        )
+    }
+
+    /**
+     * Clones and sets template-like input as the only children of this node.
+     *
+     * @remarks
+     * Supports HTML strings, native template sources, native Nodes, and any JJ wrapper via {@link JJN}.
+     * Wrapper inputs are unwrapped and cloned before set.
+     *
+     * @example
+     * ```ts
+     * el.setTemplate('<p>New Content</p>')
+     * ```
+     * @param template - The template source to clone and set.
+     * @returns This instance for chaining.
+     * @see {@link addTemplate}
+     */
+    setTemplate(
+        template:
+            | string
+            | HTMLTemplateElement
+            | DocumentFragment
+            | HTMLElement
+            | JJDF
+            | JJHE<HTMLTemplateElement>
+            | JJHE,
+    ): this {
+        return this.empty().addTemplate(template)
     }
 }

@@ -1,7 +1,7 @@
 import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JJDF } from '../src/index.js'
+import { JJDF, JJHE } from '../src/index.js'
 
 describe('JJDF', () => {
     describe('constructor', () => {
@@ -56,6 +56,58 @@ describe('JJDF', () => {
             const frag = document.createDocumentFragment()
             const jjdf = new JJDF(frag)
             assert.throws(() => jjdf.find('#nonexistent', true), ReferenceError)
+        })
+    })
+
+    describe('addTemplate()', () => {
+        it('appends parsed nodes from an HTML string', () => {
+            const host = JJDF.create()
+
+            host.addTemplate('<span id="hello">hello</span>')
+
+            assert.strictEqual(host.find('#hello')?.ref.textContent, 'hello')
+        })
+
+        it('clones HTMLTemplateElement content', () => {
+            const host = JJDF.create()
+            const template = document.createElement('template')
+            template.innerHTML = '<em id="from-template">from-template</em>'
+
+            host.addTemplate(template)
+
+            assert.strictEqual(host.find('#from-template')?.ref.textContent, 'from-template')
+        })
+
+        it('accepts JJ wrappers via JJN recursion', () => {
+            const host = JJDF.create()
+            const source = JJHE.create('section').setAttr('id', 'wrapped-node')
+            source.ref.textContent = 'wrapped-node'
+
+            host.addTemplate(source)
+
+            assert.strictEqual(host.find('#wrapped-node')?.ref.textContent, 'wrapped-node')
+            assert.notStrictEqual(host.find('#wrapped-node')?.ref, source.ref)
+        })
+
+        it('accepts JJDF wrappers via JJN recursion', () => {
+            const host = JJDF.create()
+            const source = JJDF.create().addTemplate('<strong id="wrapped-fragment">wrapped-fragment</strong>')
+
+            host.addTemplate(source)
+
+            assert.strictEqual(host.find('#wrapped-fragment')?.ref.textContent, 'wrapped-fragment')
+        })
+
+        it('throws for Promise inputs', () => {
+            const host = JJDF.create()
+
+            assert.throws(() => host.addTemplate(Promise.resolve('<span>x</span>') as any), TypeError)
+        })
+
+        it('throws for unsupported inputs', () => {
+            const host = JJDF.create()
+
+            assert.throws(() => host.addTemplate(123 as any), TypeError)
         })
     })
 })

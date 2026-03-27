@@ -1,7 +1,6 @@
-import { isInstance, isPromise, isStr } from 'jty'
+import { isInstance } from 'jty'
 import { typeErr } from '../internal.js'
 import { JJNx } from './JJNx.js'
-import { JJHE } from './JJHE.js'
 
 /**
  * Wraps a DocumentFragment (which is a descendant of Node).
@@ -52,7 +51,6 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
      *
      * @remarks
      * To wrap an existing DocumentFragment, use {@link JJDF.from}.
-     * To create templates from HTML or other sources, use {@link JJDF.addTemplate}.
      *
      * @example
      * ```ts
@@ -64,58 +62,6 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
      */
     static create(): JJDF<DocumentFragment> {
         return new JJDF(document.createDocumentFragment())
-    }
-
-    /**
-     * Create a JJDF by cloning various template sources.
-     *
-     * @param template - The template source, which can be a string, HTMLTemplateElement, DocumentFragment, HTMLElement, or JJDF.
-     * @returns A JJDF<DocumentFragment> representing the template content.
-     * @throws {TypeError} If the template type is unsupported.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createRange | Document.createRange}
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLTemplateElement | HTMLTemplateElement}
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement | HTMLElement}
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode | Node.cloneNode}
-     */
-    addTemplate(
-        template:
-            | string
-            | HTMLTemplateElement
-            | DocumentFragment
-            | HTMLElement
-            | JJHE<HTMLTemplateElement>
-            | JJHE<HTMLElement>
-            | JJDF,
-    ): this {
-        if (isStr(template)) {
-            // Using Range for faster parsing than innerHTML
-            return this.addChild(document.createRange().createContextualFragment(template))
-        }
-        if (isInstance(template, DocumentFragment) || isInstance(template, HTMLElement)) {
-            return this.addChild(
-                isInstance(template, HTMLTemplateElement)
-                    ? (template.content.cloneNode(true) as DocumentFragment)
-                    : (template.cloneNode(true) as DocumentFragment),
-            )
-        }
-        if (isInstance(template, JJDF) || isInstance(template, JJHE)) {
-            return this.addTemplate(template.ref)
-        }
-        if (isPromise(template)) {
-            throw typeErr(
-                'template',
-                'not a Promise',
-                template,
-                'Templates must be provided synchronously. Did you forget to await?',
-            )
-        }
-        throw typeErr(
-            'template',
-            'a string, DocumentFragment, HTMLElement, JJDF, or JJHE',
-            template,
-            'Pass an HTML string, a DOM template/fragment/element, or a JJ wrapper.',
-        )
     }
 
     /**

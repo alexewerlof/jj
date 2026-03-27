@@ -108,6 +108,9 @@ Do not call `.defined` like a synchronous function, and prefer `defineComponent(
 ## 6. Common Gotchas
 
 - **`empty()`**: Use `el.empty()` to clear children. It uses `replaceChildren()` under the hood (fast & safe).
+- **`empty().addChild()`**: Use `setChild()` instead which replaces the children to the same effect but in 1 call.
+- **`addTemplate()`**: Available on `JJD`/`JJDF`/`JJE` and their descendants like `JJHE`. It accepts `string`, `HTMLTemplateElement`, `DocumentFragment`, `HTMLElement`, or any `JJN` wrapper and clones before append. This is useful for quickly populating the root DOM node of a custom element that uses light DOM.
+- **`empty().addTemplate()`**: for the same reason, use `setTemplate()` instead.
 - **`parent`**: Use `node.parent` to get the wrapped parent node. It returns `null` for detached nodes.
 - **`children`**: Use `node.children` to get wrapped child nodes. It always returns an array, including for text and document fragment children.
 - **`rm()`**: Use `node.rm()` to detach any wrapped node from its current parent. Detached nodes are ignored.

@@ -606,7 +606,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * shadow DOM for security reasons (for example `<a>`).
      *
      * @param mode - The encapsulation mode ('open' or 'closed'). Defaults to 'open'.
-     * @param template - Optional content to initialize the shadow DOM, which can be a string, DocumentFragment, HTMLTemplateElement, HTMLElement, or JJ wrapper.
+     * @param template - Optional content to initialize the shadow DOM, which can be a string, DocumentFragment, HTMLTemplateElement, HTMLElement, or any JJ wrapper.
      * @param styles - Optional styles to add to the shadow DOM, which can be strings or CSSStyleSheet instances.
      * @returns This instance for chaining.
      * @throws {TypeError} If the element cannot have a shadow root, or if arguments are of invalid types.
@@ -617,14 +617,14 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      */
     initShadow(
         mode: ShadowRootMode = 'open',
-        template:
+        template?:
             | string
             | DocumentFragment
             | HTMLTemplateElement
             | HTMLElement
+            | JJDF
             | JJHE<HTMLTemplateElement>
-            | JJHE<HTMLElement>
-            | JJDF<DocumentFragment>,
+            | JJHE,
         ...styles: (string | CSSStyleSheet)[]
     ): this {
         if (!this.ref.shadowRoot) {
