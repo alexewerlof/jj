@@ -181,7 +181,8 @@ function computeAverage(values) {
     if (valid.length === 0) {
         return null
     }
-    return valid.reduce((sum, value) => sum + value, 0) / valid.length
+    const avg = valid.reduce((sum, value) => sum + value, 0) / valid.length
+    return parseFloat(avg.toFixed(10))
 }
 
 function aggregateSliValues(window) {
