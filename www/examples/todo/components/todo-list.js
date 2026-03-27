@@ -7,6 +7,6 @@ export class TodoList extends HTMLElement {
     static defined = defineComponent('todo-list', TodoList)
 
     async connectedCallback() {
-        JJHE.from(this).initShadow('open', template, await stylePromise)
+        JJHE.from(this).setShadow('open', template, await stylePromise)
     }
 }

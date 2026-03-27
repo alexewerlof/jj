@@ -28,7 +28,7 @@ export class MyComponent extends HTMLElement {
 
     // 4. Initialize shadow root in connectedCallback
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
     }
 }
 ```
@@ -91,7 +91,7 @@ Called when the element is inserted into the DOM. This is where most initializat
 ```javascript
 async connectedCallback() {
     // Initialize Shadow DOM
-    this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+    this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
 
     // Set up event listeners
     this.jjRoot.shadow.find('#btn').on('click', () => this.#handleClick())
@@ -336,7 +336,7 @@ This means the same template can be used in multiple shadow dom structures in th
 
 ```javascript
 async connectedCallback() {
-    this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+    this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
 }
 ```
 
@@ -388,7 +388,7 @@ Read more: [Using Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/W
 
 Light DOM is the default in most JavaScript frameworks. React, Vue, Svelte, and Angular all render into the regular DOM — though Vue, Angular, and Svelte can opt into Shadow DOM when needed.
 
-In JJ, skip `initShadow` and manipulate the element's children directly:
+In JJ, skip `setShadow` and manipulate the element's children directly:
 
 ```javascript
 connectedCallback() {
@@ -421,10 +421,10 @@ const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html')
 const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 
 // 1) Open Shadow DOM
-this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
 
 // 2) Closed Shadow DOM
-this.#root = JJHE.from(this).initShadow('closed', await templatePromise, await stylePromise)
+this.#root = JJHE.from(this).setShadow('closed', await templatePromise, await stylePromise)
 
 // 3) Light DOM
 this.#root = JJHE.from(this)
@@ -434,7 +434,7 @@ this.#root = JJHE.from(this)
 
 | Aspect                          | Open Shadow DOM                                                                                                    | Closed Shadow DOM                                                       | Light DOM (`addTemplate()`)                                                             |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| How to initialize DOM           | `JJHE.from(this).initShadow('open', template, ...styles)`                                                          | `JJHE.from(this).initShadow('closed', template, ...styles)`             | `JJHE.from(this).addTemplate(template)`                                                 |
+| How to initialize DOM           | `JJHE.from(this).setShadow('open', template, ...styles)`                                                           | `JJHE.from(this).setShadow('closed', template, ...styles)`              | `JJHE.from(this).addTemplate(template)`                                                 |
 | Outside DOM access              | Outside code can read `el.shadowRoot` and inspect internals                                                        | Outside code cannot read `el.shadowRoot` (`null`)                       | Internals are regular children of the custom element; parent queries can reach them     |
 | Query behavior inside component | Use `this.#root.shadow.find(...)` to query shadow internals                                                        | Same as open, but no external shadowRoot reference                      | Use `this.#root.find(...)` or standard descendant queries on light DOM                  |
 | Event handling                  | Native composed events cross boundary; custom events should usually be `composed: true` when meant for parent page | Same event model as open shadow; mode does not change propagation rules | No shadow boundary; regular bubbling in document tree; `composed` is usually irrelevant |
@@ -469,7 +469,7 @@ export class MyComponent extends HTMLElement {
     static defined = defineComponent('my-component', MyComponent)
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
     }
 }
 ```
@@ -486,7 +486,7 @@ const [template, style] = await Promise.all([
 
 export class MyComponent extends HTMLElement {
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', template, style)
+        this.jjRoot = JJHE.from(this).setShadow('open', template, style)
     }
 }
 ```
@@ -509,7 +509,7 @@ export class MyComponent extends HTMLElement {
     async connectedCallback() {
         templatePromise ??= fetchTemplate(import.meta.resolve('./my-component.html'))
         stylePromise ??= fetchStyle(import.meta.resolve('./my-component.css'))
-        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
     }
 }
 ```
@@ -536,18 +536,18 @@ export class MyComponent extends HTMLElement {
     static defined = defineComponent('my-component', MyComponent)
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', template, await style)
+        this.jjRoot = JJHE.from(this).setShadow('open', template, await style)
     }
 }
 ```
 
 Use this pattern sparingly. Mixing HTML structure and CSS into JavaScript increases cognitive load. That said, when layout and behavior are genuinely inseparable, inlining can improve cohesion by keeping tightly coupled things together.
 
-> **Tip:** `initShadow` also accepts a raw CSS string, so `cssToStyle` is optional here — it just pre-processes the sheet at module load time instead of on first mount.
+> **Tip:** `setShadow` also accepts a raw CSS string, so `cssToStyle` is optional here — it just pre-processes the sheet at module load time instead of on first mount.
 
 ### Template Sources
 
-`initShadow()` accepts several template types directly:
+`setShadow()` accepts several template types directly:
 
 ```javascript
 // From external HTML file
@@ -575,7 +575,7 @@ const baseStylePromise = fetchStyle(import.meta.resolve('./base.css'))
 const themeStylePromise = fetchStyle(import.meta.resolve('./theme.css'))
 ```
 
-`initShadow` also accepts a raw CSS string or a `cssToStyle()` promise, letting you pre-process the sheet at module load time:
+`setShadow` also accepts a raw CSS string or a `cssToStyle()` promise, letting you pre-process the sheet at module load time:
 
 ```javascript
 const style = cssToStyle('p { color: var(--foreground-color); }')
@@ -644,7 +644,7 @@ export class SimpleCounter extends HTMLElement {
     #count = 0
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
 
         this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
         this.jjRoot.shadow.find('#dec').on('click', () => this.#update(-1))
@@ -711,7 +711,7 @@ export class ChatMessage extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
         this.#render()
     }
 

@@ -49,7 +49,7 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
                 'shadowRoot',
                 'a ShadowRoot instance',
                 shadowRoot,
-                'Use JJHE.initShadow() or element.attachShadow({ mode: "open" }).',
+                'Use JJHE.setShadow() or element.attachShadow({ mode: "open" }).',
             )
         }
         super(shadowRoot)

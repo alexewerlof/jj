@@ -100,7 +100,7 @@ export async function fetchCss(url: URL | string): Promise<string> {
  *     #root
  *
  *     async connectedCallback() {
- *         this.#root = JJHE.from(this).initShadow('open').shadow
+ *         this.#root = JJHE.from(this).setShadow('open').shadow
  *         this.#root.addTemplate(await templatePromise)
  *     }
  * }
@@ -114,7 +114,7 @@ export async function fetchCss(url: URL | string): Promise<string> {
  *     #root
  *
  *     async connectedCallback() {
- *         this.#root = JJHE.from(this).initShadow('open').shadow
+ *         this.#root = JJHE.from(this).setShadow('open').shadow
  *
  *         if (!MyLazyCard.#templatePromise) {
  *             MyLazyCard.#templatePromise = fetchTemplate(import.meta.resolve('./my-lazy-card.html'))

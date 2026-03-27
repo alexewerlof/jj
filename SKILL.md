@@ -248,7 +248,7 @@ const input = doc.create('input') // Correctly typed as JJHE<HTMLInputElement>
 JJ is not opnionated about custom elements. You should use the native lifecycle callbacks:
 Custom element lifecycle callbacks include (all of which can be `async`):
 
-- `connectedCallback()`: Called each time the element is added to the document. The specification recommends that, as far as possible, developers should implement custom element setup in this callback instead of the constructor. In JJ, keep shadow templates and styles at module scope and pass them directly to `initShadow()`.
+- `connectedCallback()`: Called each time the element is added to the document. The specification recommends that, as far as possible, developers should implement custom element setup in this callback instead of the constructor. In JJ, keep shadow templates and styles at module scope and pass them directly to `setShadow()`.
 - `disconnectedCallback()`: Called each time the element is removed from the document.
 - `connectedMoveCallback()`: When defined, this is called instead of `connectedCallback()` and `disconnectedCallback()` each time the element is moved to a different place in the DOM via `Element.moveBefore()`. Use this to avoid running initialization/cleanup code in the `connectedCallback()` and `disconnectedCallback()` callbacks when the element is not actually being added to or removed from the DOM.
 - `adoptedCallback()`: Called each time the element is moved to a new document.
@@ -298,7 +298,7 @@ export class MyComponent extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
 
         // Access elements inside Shadow DOM
         this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
@@ -318,7 +318,7 @@ export class MyComponent extends HTMLElement {
 }
 ```
 
-**Template sources** - `initShadow()` accepts various template inputs:
+**Template sources** - `setShadow()` accepts various template inputs:
 
 ```typescript
 import { JJN, JJHE } from 'jj'
@@ -550,7 +550,7 @@ export class SimpleCounter extends HTMLElement {
     #count = 0
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
         this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
         this.jjRoot.shadow.find('#dec').on('click', () => this.#update(-1))
     }
@@ -697,7 +697,7 @@ Output: `doc/` folder with HTML documentation
 ✅ **Do** chain operations before accessing `.ref`
 ✅ **Do** use `JJHE.create()` for element creation with type inference
 ✅ **Do** leverage the fluent API
-✅ **Do** keep reusable shadow resources at module scope and pass them to `initShadow()`
+✅ **Do** keep reusable shadow resources at module scope and pass them to `setShadow()`
 ✅ **Do** handle errors explicitly
 ✅ **Do** use `.ref` when accessing native properties like `.value`, `.checked`, etc.
 

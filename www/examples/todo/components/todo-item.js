@@ -43,7 +43,7 @@ export class TodoItem extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
         const check = this.jjRoot.shadow.find('#check')
         const remove = this.jjRoot.shadow.find('#remove')
 

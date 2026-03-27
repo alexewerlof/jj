@@ -615,7 +615,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets | ShadowRoot.adoptedStyleSheets}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/adoptedStyleSheets | Document.adoptedStyleSheets}
      */
-    initShadow(
+    setShadow(
         mode: ShadowRootMode = 'open',
         template?:
             | string

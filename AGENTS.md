@@ -59,7 +59,7 @@ btn.setText('Click me')
 
 ## 5. Shadow DOM Pattern
 
-Keep template and style resources at module scope, then pass them directly to `JJHE.initShadow()`.
+Keep template and style resources at module scope, then pass them directly to `JJHE.setShadow()`.
 
 ```typescript
 const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
@@ -67,7 +67,7 @@ const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 
 class MyComponent extends HTMLElement {
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
     }
 }
 ```

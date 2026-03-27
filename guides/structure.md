@@ -8,7 +8,7 @@ We try to avoid mixing different language in the same file. Each component has:
 
 ### Shared template and style promises
 
-Keep shadow resources at module scope and pass them directly to `initShadow()`. This preserves one-time loading without an extra helper.
+Keep shadow resources at module scope and pass them directly to `setShadow()`. This preserves one-time loading without an extra helper.
 
 ```js
 const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
@@ -21,14 +21,14 @@ class MyComponent extends HTMLElement {
     async connectedCallback() {
         if (this.#root) return
 
-        this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
     }
 }
 ```
 
 ### CSS variables
 
-It is a common use case to want to use CSS variables from a central file inside Shadow DOM for layout consistency. You can do that by passing multiple stylesheets to `initShadow()`:
+It is a common use case to want to use CSS variables from a central file inside Shadow DOM for layout consistency. You can do that by passing multiple stylesheets to `setShadow()`:
 
 ```js
 const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
@@ -37,7 +37,7 @@ const componentStylePromise = fetchStyle(import.meta.resolve('./my-component.css
 
 class MyComponent extends HTMLElement {
     async connectedCallback() {
-        this.#root = JJHE.from(this).initShadow(
+        this.#root = JJHE.from(this).setShadow(
             'open',
             await templatePromise,
             await sharedStylePromise,

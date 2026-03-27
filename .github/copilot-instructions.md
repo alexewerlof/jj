@@ -50,7 +50,7 @@ input.ref.focus() // Use .ref only when wrapper lacks method
 All custom components follow a **three-file pattern** (HTML/CSS/JS separate):
 
 1. **Template + Styles** — loaded at module scope via `fetchTemplate()` / `fetchStyle()`
-2. **Component Class** — extends `HTMLElement`, initializes shadow DOM via `JJHE.initShadow()`
+2. **Component Class** — extends `HTMLElement`, initializes shadow DOM via `JJHE.setShadow()`
 3. **Registration** — static `.defined` promise via `defineComponent()`
 
 **Pattern example** (`www/examples/kanban/components/kanban-card.js`):
@@ -63,7 +63,7 @@ export class KanbanCard extends HTMLElement {
     static defined = defineComponent('kanban-card', KanbanCard)
 
     async connectedCallback() {
-        this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
         this.#render()
     }
     // ...

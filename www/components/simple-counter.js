@@ -20,7 +20,7 @@ export class SimpleCounter extends HTMLElement {
             return
         }
 
-        this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise).shadow
+        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise).shadow
 
         // Access elements inside Shadow DOM via this.#root
         this.#countSpan = this.#root.find('#count', true)

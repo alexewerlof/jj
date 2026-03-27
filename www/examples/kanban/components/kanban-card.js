@@ -11,7 +11,7 @@ export class KanbanCard extends HTMLElement {
     async connectedCallback() {
         if (this.#root) return
 
-        this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
 
         // Render initial data
         this.#render()

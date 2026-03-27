@@ -47,7 +47,7 @@ export class ChatMessage extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.#root = JJHE.from(this).initShadow('open', await templatePromise, await stylePromise)
+        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
         this.#render()
     }
 
