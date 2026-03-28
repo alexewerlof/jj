@@ -1,5 +1,53 @@
-import { isFn, isInstance } from 'jty'
-import { createCustomEventInternal, typeErr } from '../internal.js'
+import { isFn, isInstance, isStr } from 'jty'
+import { typeErr } from '../internal.js'
+
+/**
+ * Creates a `CustomEvent` with JJ's default bubbling and Shadow DOM settings.
+ *
+ * @remarks
+ * Native `CustomEvent` defaults to `bubbles: false` and `composed: false`.
+ * JJ defaults both to `true` because cross-component custom events commonly need
+ * to bubble out of Shadow DOM boundaries.
+ *
+ * Pass `options` to override those defaults when you need a local-only event.
+ *
+ * @category Events
+ * @param type - The event type name.
+ * @param detail - Optional payload exposed as `event.detail`.
+ * @param options - Additional `CustomEvent` options excluding `detail`.
+ * @returns A configured `CustomEvent` instance.
+ * @throws {TypeError} If `eventName` is not a string.
+ * @example
+ * ```ts
+ * const event = customEvent('todo-toggle', { id: '123', done: true })
+ * element.dispatchEvent(event)
+ * ```
+ *
+ * @example
+ * ```ts
+ * const localOnly = customEvent('panel-ready', undefined, {
+ *     bubbles: false,
+ *     composed: false,
+ * })
+ * ```
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent | CustomEvent()}
+ */
+export function customEvent<T = unknown>(
+    type: string,
+    detail?: T,
+    options?: Omit<CustomEventInit<T>, 'detail'>,
+): CustomEvent<T> {
+    if (!isStr(type)) {
+        throw typeErr('eventName', 'a string', type, 'Pass an event name like "todo-toggle".')
+    }
+
+    return new CustomEvent<T>(type, {
+        bubbles: true,
+        composed: true,
+        ...options,
+        detail,
+    })
+}
 
 /**
  * Wraps a DOM EventTarget.
@@ -160,12 +208,8 @@ export class JJET<T extends EventTarget = EventTarget> {
      * ```
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent | CustomEvent()}
      */
-    triggerCustomEvent<T = unknown>(
-        eventName: string,
-        detail?: T,
-        options?: Omit<CustomEventInit<T>, 'detail'>,
-    ): this {
-        return this.trigger(createCustomEventInternal(eventName, detail, options))
+    triggerCustomEvent<T = unknown>(eventName: string, detail?: T, options?: Omit<CustomEventInit<T>, 'detail'>): this {
+        return this.trigger(customEvent(eventName, detail, options))
     }
 
     /**
