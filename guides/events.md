@@ -4,6 +4,16 @@ If you come from React, Vue, or Svelte, it’s easy to assume Shadow DOM “bloc
 
 This guide explains how events **leave** a Shadow DOM, how they **do not enter** by default, and how that differs from framework event models.
 
+> [!IMPORTANT]
+> This guide is mostly about components that call `attachShadow()`.
+>
+> If your custom element uses **light DOM** (no shadow root), you do **not** have a shadow boundary. In that case, event flow is regular DOM flow, and you usually do not need special event plumbing just because it is a custom element.
+>
+> MDN references:
+>
+> - [`Event.composed`](https://developer.mozilla.org/en-US/docs/Web/API/Event/composed): crossing behavior is specifically about crossing shadow DOM boundaries.
+> - `Event()` constructor defaults `bubbles` and `composed` to `false` for synthetic events unless you set them.
+
 ---
 
 ## Mental model
@@ -192,8 +202,21 @@ document.addEventListener('panel:highlight-all', () => {
 
 ---
 
+## Propagation control
+
+These three standard methods work the same in shadow DOM as in any other DOM context:
+
+- [`event.preventDefault()`](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault): cancels the default browser action (e.g. form submit, link navigation). No shadow-specific behavior.
+- [`event.stopPropagation()`](https://developer.mozilla.org/en-US/docs/Web/API/Event/stopPropagation): stops the event from bubbling further **within the current tree**. For a `composed` event inside a shadow root, this stops it bubbling within the shadow but does **not** prevent it from appearing outside — `composed` events are already part of the outer composed path at the time of dispatch. To halt propagation in the outer document, call it on a listener attached to the shadow host instead.
+- [`event.stopImmediatePropagation()`](https://developer.mozilla.org/en-US/docs/Web/API/Event/stopImmediatePropagation): like `stopPropagation()`, but also prevents other listeners on the **same element** from firing.
+
+---
+
 ## Quick reference
 
+- **Using light DOM custom elements (no `attachShadow()`)?**
+    - Treat events like normal DOM events.
+    - You generally do not need `composed: true` just because it is a custom element.
 - **Need to notify outside listeners?**
     - Native DOM: use `new CustomEvent(..., { bubbles: true, composed: true })`.
     - JJ: use `customEvent(name, detail)` or `triggerCustomEvent(name, detail)`.
@@ -260,3 +283,12 @@ JJHE.from(this).triggerCustomEvent('todo-toggle', {
     done: true,
 })
 ```
+
+---
+
+## References (MDN)
+
+- [Event: composed property](https://developer.mozilla.org/en-US/docs/Web/API/Event/composed)
+- [Event: Event() constructor](https://developer.mozilla.org/en-US/docs/Web/API/Event/Event)
+- [Event: composedPath()](https://developer.mozilla.org/en-US/docs/Web/API/Event/composedPath)
+- [Using shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM)
