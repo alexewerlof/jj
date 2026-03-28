@@ -100,7 +100,7 @@ Events originating **outside** the shadow tree do **not** traverse into it. The 
 - **Listen on the host**, then forward inside if needed.
 - Or, expose an explicit method on the element and call it.
 
-### Example: forward from host to internal node
+### Method 1: direct function call on the custom element
 
 ```js
 class XPanel extends HTMLElement {
@@ -112,6 +112,56 @@ class XPanel extends HTMLElement {
         this.shadowRoot.querySelector('#inner')?.classList.add('highlight')
     }
 }
+
+customElements.define('x-panel', XPanel)
+
+const panel = document.querySelector('x-panel')
+panel?.highlight()
+```
+
+This is exactly the pattern you described: parent code gets a reference to the host element instance, then calls a public method.
+
+### Method 2: add/remove listener on the host, then dispatch to that host
+
+```js
+class XPanel extends HTMLElement {
+    #onHighlightRequest = () => {
+        this.highlight()
+    }
+
+    connectedCallback() {
+        this.attachShadow({ mode: 'open' }).innerHTML = `<button id="inner">Inner</button>`
+
+        // Listen on the host element itself.
+        this.addEventListener('panel:highlight', this.#onHighlightRequest)
+    }
+
+    disconnectedCallback() {
+        // Remove listeners when detached.
+        this.removeEventListener('panel:highlight', this.#onHighlightRequest)
+    }
+
+    highlight() {
+        this.shadowRoot.querySelector('#inner')?.classList.add('highlight')
+    }
+}
+
+customElements.define('x-panel', XPanel)
+
+const panel = document.querySelector('x-panel')
+panel?.dispatchEvent(new CustomEvent('panel:highlight'))
+```
+
+Important detail: `HTMLElement` is an `EventTarget`, so `this.addEventListener(...)` on the element instance works exactly as expected. But the event must target that element (or bubble through its ancestor chain). A `dispatchEvent()` on `document` does not automatically jump into every shadow tree.
+
+If you want a broadcast-style trigger from document-level code, forward it explicitly:
+
+```js
+document.addEventListener('panel:highlight-all', () => {
+    for (const panel of document.querySelectorAll('x-panel')) {
+        panel.dispatchEvent(new CustomEvent('panel:highlight'))
+    }
+})
 ```
 
 ---
