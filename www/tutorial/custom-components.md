@@ -28,7 +28,7 @@ export class MyComponent extends HTMLElement {
 
     // 4. Initialize shadow root in connectedCallback
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
     }
 }
 ```
@@ -91,10 +91,10 @@ Called when the element is inserted into the DOM. This is where most initializat
 ```javascript
 async connectedCallback() {
     // Initialize Shadow DOM
-    this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+    this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
 
     // Set up event listeners
-    this.jjRoot.shadow.find('#btn').on('click', () => this.#handleClick())
+    this.#root.shadow.find('#btn').on('click', () => this.#handleClick())
 
     // Initial render
     this.#render()
@@ -197,7 +197,7 @@ This is **zero-dependency reactivity** — no framework, no build step, no virtu
 
 **Vue 3:**
 
-```vue
+```
 <script setup>
 import { watch } from 'vue'
 
@@ -228,8 +228,8 @@ class MyComponent extends HTMLElement {
 
     // Check for shadow existence - attributeChangedCallback fires BEFORE connectedCallback!
     #render() {
-        this.jjRoot?.shadow.find('#name').setText(this.userName)
-        this.jjRoot?.shadow.find('#count').setText(this.count)
+        this.#root?.shadow.find('#name').setText(this.userName)
+        this.#root?.shadow.find('#count').setText(this.count)
     }
 }
 ```
@@ -336,7 +336,7 @@ This means the same template can be used in multiple shadow dom structures in th
 
 ```javascript
 async connectedCallback() {
-    this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+    this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
 }
 ```
 
@@ -455,6 +455,27 @@ In short:
 
 You have full control over when the HTML and CSS resources are fetched.
 
+Before we dig deeper, we should talk about the `defined` convention.
+You can call it whatever you want but the goal is to:
+
+1. Register the custom component with the browser's [custom element registry](https://developer.mozilla.org/en-US/docs/Web/API/Window/customElements).
+2. Wait for the browser registry's [`.whenDefined()`](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/whenDefined) to ensure the component is ready to be used.
+
+In practice, you can use JJ's `defineComponent()` helper to achieve both.
+
+```javascript
+import { JJHE, defineComponent } from 'jj'
+
+export class MyComponent extends HTMLElement {
+    static defined = defineComponent('my-component', MyComponent)
+
+    #root
+
+    async connectedCallback() {
+        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+    }
+```
+
 #### 1. Eager Fetching
 
 Start the network requests as soon as the module is imported. This is the standard JJ pattern:
@@ -468,8 +489,19 @@ const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 export class MyComponent extends HTMLElement {
     static defined = defineComponent('my-component', MyComponent)
 
+    // Optional: if you want to force template and styles to be loaded before declaring the custom component as defined you can write a custom defined static function
+    static defined() {
+        // This is of course optional because `connectedCallback()` is an async
+        // lifecycle function and we can await there instead
+        await Promise.all([
+            templatePromise,
+            ...stylePromise
+        ])
+        return defineComponent('my-component', MyComponent)
+    }
+
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
     }
 }
 ```
@@ -485,8 +517,10 @@ const [template, style] = await Promise.all([
 ])
 
 export class MyComponent extends HTMLElement {
+    #root
+
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).setShadow('open', template, style)
+        this.#root = JJHE.from(this).setShadow('open', template, style).shadow
     }
 }
 ```
@@ -506,10 +540,12 @@ let stylePromise
 export class MyComponent extends HTMLElement {
     static defined = defineComponent('my-component', MyComponent)
 
+    #root
+
     async connectedCallback() {
         templatePromise ??= fetchTemplate(import.meta.resolve('./my-component.html'))
         stylePromise ??= fetchStyle(import.meta.resolve('./my-component.css'))
-        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
     }
 }
 ```
@@ -535,8 +571,10 @@ const style = cssToStyle(`
 export class MyComponent extends HTMLElement {
     static defined = defineComponent('my-component', MyComponent)
 
+    #root
+
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).setShadow('open', template, await style)
+        this.#root = JJHE.from(this).setShadow('open', template, await style)
     }
 }
 ```
@@ -641,18 +679,19 @@ const stylePromise = fetchStyle(import.meta.resolve('./simple-counter.css'))
 export class SimpleCounter extends HTMLElement {
     static defined = defineComponent('simple-counter', SimpleCounter)
 
+    #root
     #count = 0
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise).shadow
 
-        this.jjRoot.shadow.find('#inc').on('click', () => this.#update(1))
-        this.jjRoot.shadow.find('#dec').on('click', () => this.#update(-1))
+        this.#root.find('#inc').on('click', () => this.#update(1))
+        this.#root.find('#dec').on('click', () => this.#update(-1))
     }
 
     #update(delta) {
         this.#count += delta
-        this.jjRoot.shadow.find('#count').setText(this.#count)
+        this.#root.find('#count').setText(this.#count)
     }
 }
 ```
@@ -684,6 +723,7 @@ export class ChatMessage extends HTMLElement {
 
     static defined = defineComponent('chat-message', ChatMessage)
 
+    #root
     #role = 'user'
     #content = ''
 
@@ -711,13 +751,13 @@ export class ChatMessage extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise).shadow
         this.#render()
     }
 
     #render() {
-        this.jjRoot?.shadow.find('#role').setText(this.#role)
-        this.jjRoot?.shadow.find('#content').setText(this.#content)
+        this.#root?.find('#role').setText(this.#role)
+        this.#root?.find('#content').setText(this.#content)
     }
 }
 ```
@@ -754,7 +794,7 @@ doc.body.addChild(
 )
 ```
 
-### Component Without Shadow DOM
+### Component with light DOM
 
 Some components don't need Shadow DOM encapsulation:
 
