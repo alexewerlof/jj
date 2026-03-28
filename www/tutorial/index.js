@@ -13,9 +13,9 @@ function getFrom(urlStr) {
     return url.searchParams.get('file')
 }
 
-function fetchFile(path) {
+async function fetchFile(path) {
     const url = new URL('./' + path, window.location.href)
-    const response = fetch(url)
+    const response = await fetch(url)
     if (!response.ok) {
         throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`)
     }
