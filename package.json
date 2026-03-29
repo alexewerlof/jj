@@ -67,6 +67,6 @@
         "typescript-eslint": "^8.57.1"
     },
     "dependencies": {
-        "jty": "^6.1.1"
+        "jty": "^6.1.6"
     }
 }
