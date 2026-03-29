@@ -114,11 +114,11 @@ describe('JJE', () => {
             })
         })
 
-        describe('setAttrMulti()', () => {
+        describe('setAttrs()', () => {
             it('sets multiple attributes from object', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.setAttrMulti({ id: 'my-id', role: 'main' })
+                jje.setAttrs({ id: 'my-id', role: 'main' })
                 assert.strictEqual(el.getAttribute('id'), 'my-id')
                 assert.strictEqual(el.getAttribute('role'), 'main')
             })
@@ -126,21 +126,21 @@ describe('JJE', () => {
             it('is a no-op for null and undefined', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.setAttrMulti(null).setAttrMulti(undefined)
+                jje.setAttrs(null).setAttrs(undefined)
                 assert.strictEqual(el.attributes.length, 0)
             })
 
             it('returns this for chaining', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                const result = jje.setAttrMulti({ 'data-test': 'ok' })
+                const result = jje.setAttrs({ 'data-test': 'ok' })
                 assert.strictEqual(result, jje)
             })
 
             it('throws TypeError for non-object values', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.setAttrMulti('not-an-object' as any), TypeError)
+                assert.throws(() => jje.setAttrs('not-an-object' as any), TypeError)
             })
         })
 
@@ -203,33 +203,33 @@ describe('JJE', () => {
             })
         })
 
-        describe('setAria()', () => {
+        describe('setAriaAttr()', () => {
             it('sets single aria attribute', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.setAria('label', 'My Label')
+                jje.setAriaAttr('label', 'My Label')
                 assert.strictEqual(el.getAttribute('aria-label'), 'My Label')
             })
 
             it('accepts numbers and converts to strings in single mode', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.setAria('level', 2)
+                jje.setAriaAttr('level', 2)
                 assert.strictEqual(el.getAttribute('aria-level'), '2')
             })
 
             it('throws TypeError for non-string name', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.setAria(null as any, 'value'), TypeError)
+                assert.throws(() => jje.setAriaAttr(null as any, 'value'), TypeError)
             })
         })
 
-        describe('setAriaMulti()', () => {
+        describe('setAriaAttrs()', () => {
             it('sets multiple aria attributes from object', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.setAriaMulti({ label: 'Test', hidden: 'true' })
+                jje.setAriaAttrs({ label: 'Test', hidden: 'true' })
                 assert.strictEqual(el.getAttribute('aria-label'), 'Test')
                 assert.strictEqual(el.getAttribute('aria-hidden'), 'true')
             })
@@ -237,22 +237,22 @@ describe('JJE', () => {
             it('accepts numbers and converts to strings in object mode', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.setAriaMulti({ level: 3 })
+                jje.setAriaAttrs({ level: 3 })
                 assert.strictEqual(el.getAttribute('aria-level'), '3')
             })
 
             it('no-ops for nullish input', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.strictEqual(jje.setAriaMulti(null), jje)
-                assert.strictEqual(jje.setAriaMulti(undefined), jje)
+                assert.strictEqual(jje.setAriaAttrs(null), jje)
+                assert.strictEqual(jje.setAriaAttrs(undefined), jje)
                 assert.strictEqual(el.attributes.length, 0)
             })
 
             it('throws TypeError for invalid object input', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.setAriaMulti('label' as any), TypeError)
+                assert.throws(() => jje.setAriaAttrs('label' as any), TypeError)
             })
         })
 
@@ -300,11 +300,11 @@ describe('JJE', () => {
             })
         })
 
-        describe('setClassMulti()', () => {
+        describe('setClasses()', () => {
             it('sets classes conditionally from object', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.setClassMulti({ active: true, disabled: false, selected: true })
+                jje.setClasses({ active: true, disabled: false, selected: true })
                 assert.ok(el.classList.contains('active'))
                 assert.ok(!el.classList.contains('disabled'))
                 assert.ok(el.classList.contains('selected'))
@@ -314,15 +314,15 @@ describe('JJE', () => {
                 const el = document.createElement('div')
                 el.className = 'active'
                 const jje = new JJE(el)
-                assert.strictEqual(jje.setClassMulti(null), jje)
-                assert.strictEqual(jje.setClassMulti(undefined), jje)
+                assert.strictEqual(jje.setClasses(null), jje)
+                assert.strictEqual(jje.setClasses(undefined), jje)
                 assert.strictEqual(el.className, 'active')
             })
 
             it('throws TypeError for invalid classMap input', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.setClassMulti('active' as any), TypeError)
+                assert.throws(() => jje.setClasses('active' as any), TypeError)
             })
         })
 

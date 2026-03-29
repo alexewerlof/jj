@@ -82,33 +82,33 @@ describe('JJHE', () => {
             })
         })
 
-        describe('setData()', () => {
+        describe('setDataAttr()', () => {
             it('sets single data attribute', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setData('testKey', 'value')
+                jjhe.setDataAttr('testKey', 'value')
                 assert.strictEqual(el.dataset.testKey, 'value')
             })
 
             it('accepts numbers and converts to strings in single mode', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setData('key', 123 as unknown as string)
+                jjhe.setDataAttr('key', 123 as unknown as string)
                 assert.strictEqual(el.dataset.key, '123')
             })
 
             it('throws TypeError for invalid name type', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.throws(() => jjhe.setData(123 as any, 'value'), TypeError)
+                assert.throws(() => jjhe.setDataAttr(123 as any, 'value'), TypeError)
             })
         })
 
-        describe('setDataMulti()', () => {
+        describe('setDataAttrs()', () => {
             it('sets multiple data attributes from object', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setDataMulti({ key1: 'val1', key2: 'val2' })
+                jjhe.setDataAttrs({ key1: 'val1', key2: 'val2' })
                 assert.strictEqual(el.dataset.key1, 'val1')
                 assert.strictEqual(el.dataset.key2, 'val2')
             })
@@ -116,22 +116,22 @@ describe('JJHE', () => {
             it('accepts numbers and converts to strings in object mode', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setDataMulti({ key: 123 as unknown as string })
+                jjhe.setDataAttrs({ key: 123 as unknown as string })
                 assert.strictEqual(el.dataset.key, '123')
             })
 
             it('no-ops for nullish input', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.strictEqual(jjhe.setDataMulti(null), jjhe)
-                assert.strictEqual(jjhe.setDataMulti(undefined), jjhe)
+                assert.strictEqual(jjhe.setDataAttrs(null), jjhe)
+                assert.strictEqual(jjhe.setDataAttrs(undefined), jjhe)
                 assert.strictEqual(el.dataset.key, undefined)
             })
 
             it('throws TypeError for invalid type', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.throws(() => jjhe.setDataMulti(123 as any), TypeError)
+                assert.throws(() => jjhe.setDataAttrs(123 as any), TypeError)
             })
         })
 
@@ -202,7 +202,7 @@ describe('JJHE', () => {
             it('removes one or more style properties', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setStyleMulti({ display: 'grid', gap: '1rem' })
+                jjhe.setStyles({ display: 'grid', gap: '1rem' })
                 jjhe.rmStyle('display', 'gap')
                 assert.strictEqual(el.style.getPropertyValue('display'), '')
                 assert.strictEqual(el.style.getPropertyValue('gap'), '')
@@ -215,11 +215,11 @@ describe('JJHE', () => {
             })
         })
 
-        describe('setStyleMulti()', () => {
+        describe('setStyles()', () => {
             it('sets multiple style properties from object', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setStyleMulti({ display: 'grid', gap: '1rem' })
+                jjhe.setStyles({ display: 'grid', gap: '1rem' })
                 assert.strictEqual(el.style.getPropertyValue('display'), 'grid')
                 assert.strictEqual(el.style.getPropertyValue('gap'), '1rem')
             })
@@ -227,8 +227,8 @@ describe('JJHE', () => {
             it('removes properties for nullish and false values', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setStyleMulti({ display: 'grid', gap: '1rem', color: 'red' })
-                jjhe.setStyleMulti({ display: null, gap: undefined, color: false })
+                jjhe.setStyles({ display: 'grid', gap: '1rem', color: 'red' })
+                jjhe.setStyles({ display: null, gap: undefined, color: false })
                 assert.strictEqual(el.style.getPropertyValue('display'), '')
                 assert.strictEqual(el.style.getPropertyValue('gap'), '')
                 assert.strictEqual(el.style.getPropertyValue('color'), '')
@@ -237,22 +237,22 @@ describe('JJHE', () => {
             it('does not treat zero as removable', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setStyleMulti({ opacity: 0 })
+                jjhe.setStyles({ opacity: 0 })
                 assert.strictEqual(el.style.getPropertyValue('opacity'), '0')
             })
 
             it('no-ops for nullish input', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.strictEqual(jjhe.setStyleMulti(null), jjhe)
-                assert.strictEqual(jjhe.setStyleMulti(undefined), jjhe)
+                assert.strictEqual(jjhe.setStyles(null), jjhe)
+                assert.strictEqual(jjhe.setStyles(undefined), jjhe)
                 assert.strictEqual(el.style.cssText, '')
             })
 
             it('throws TypeError for invalid styleMap input', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.throws(() => jjhe.setStyleMulti('display: grid' as any), TypeError)
+                assert.throws(() => jjhe.setStyles('display: grid' as any), TypeError)
             })
         })
     })

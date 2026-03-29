@@ -97,7 +97,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * ```
      *
      * @throws {TypeError} If arguments are invalid types.
-     * @see {@link setAttrMulti} for setting multiple attributes at once.
+     * @see {@link setAttrs} for setting multiple attributes at once.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute | Element.setAttribute}
      */
     setAttr(name: string, value: unknown): this {
@@ -120,8 +120,8 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @example
      * ```ts
-     * el.setAttrMulti({ id: 'app', role: 'main' })
-     * el.setAttrMulti(null) // no-op
+     * el.setAttrs({ id: 'app', role: 'main' })
+     * el.setAttrs(null) // no-op
      * ```
      *
      * @param attributes - Attributes object or nullish to skip.
@@ -129,7 +129,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @throws {TypeError} If `attributes` is not nullish and not a plain object.
      * @see {@link setAttr} for setting a single attribute.
      */
-    setAttrMulti(attributes?: Record<string, unknown> | null): this {
+    setAttrs(attributes?: Record<string, unknown> | null): this {
         if (attributes == null) {
             return this
         }
@@ -213,18 +213,18 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @example
      * ```ts
-     * el.setAria('hidden', 'true')
-     * el.setAria('level', 2)
+     * el.setAriaAttr('hidden', 'true')
+     * el.setAriaAttr('level', 2)
      * ```
      *
      * @param name - The ARIA attribute suffix.
      * @param value - The value to assign.
      * @returns This instance for chaining.
      * @throws {TypeError} If `name` is not a string.
-     * @see {@link setAriaMulti} for setting multiple ARIA attributes at once.
+     * @see {@link setAriaAttrs} for setting multiple ARIA attributes at once.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
-    setAria(name: string, value: unknown): this {
+    setAriaAttr(name: string, value: unknown): this {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
@@ -244,17 +244,17 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @example
      * ```ts
-     * el.setAriaMulti({ label: 'Close', hidden: 'false' })
-     * el.setAriaMulti(null) // no-op
+     * el.setAriaAttrs({ label: 'Close', hidden: 'false' })
+     * el.setAriaAttrs(null) // no-op
      * ```
      *
      * @param attributes - ARIA attributes object or nullish to skip.
      * @returns This instance for chaining.
      * @throws {TypeError} If `attributes` is not nullish and not a plain object.
-     * @see {@link setAria} for setting a single ARIA attribute.
+     * @see {@link setAriaAttr} for setting a single ARIA attribute.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
-    setAriaMulti(attributes?: Record<string, unknown> | null): this {
+    setAriaAttrs(attributes?: Record<string, unknown> | null): this {
         if (attributes == null) {
             return this
         }
@@ -269,7 +269,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
 
         try {
             for (const [name, value] of Object.entries(attributes)) {
-                this.setAria(name, value)
+                this.setAriaAttr(name, value)
             }
         } catch (cause) {
             throw new Error(`Failed to set some ARIA attributes from object: ${JSON.stringify(attributes)}.`, { cause })
@@ -329,7 +329,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @param className - The full class attribute value.
      * @returns This instance for chaining.
      * @throws {TypeError} If `className` is not a string.
-     * @see {@link setClassMulti} for conditional class maps.
+     * @see {@link setClasses} for conditional class maps.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/className | Element.className}
      */
     setClass(className: string): this {
@@ -350,12 +350,12 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @example
      * ```ts
-     * el.setClassMulti({
+     * el.setClasses({
      *   active: true,
      *   disabled: false,
      *   highlight: isHighlighted,
      * })
-     * el.setClassMulti(null) // no-op
+     * el.setClasses(null) // no-op
      * ```
      *
      * @param classMap - Conditional class map or nullish to skip.
@@ -364,7 +364,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link setClass} for replacing the full class attribute.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      */
-    setClassMulti(classMap?: Record<string, boolean | unknown> | null): this {
+    setClasses(classMap?: Record<string, boolean | unknown> | null): this {
         if (classMap == null) {
             return this
         }

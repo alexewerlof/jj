@@ -115,11 +115,11 @@ Do not call `.defined` like a synchronous function, and prefer `defineComponent(
 - **`children`**: Use `node.children` to get wrapped child nodes. It always returns an array, including for text and document fragment children.
 - **`rm()`**: Use `node.rm()` to detach any wrapped node from its current parent. Detached nodes are ignored.
 - **Attributes**: Use `.setAttr('name', val)`, `.getAttr('name')`, `.rmAttr('name')`.
-- **Optional attribute objects**: Use `.setAttrMulti(attrs)` for builder-style APIs; it no-ops for `null`/`undefined` and validates POJO input.
-- **Classes**: Use `.addClass()`, `.rmClass()`, `.toggleClass()`, `.setClass()`, `.setClassMulti()`.
-- **Inline styles**: Use `.getStyle(name)`, `.setStyle(name, value)`, `.rmStyle()`, `.setStyleMulti()` for style property access via `CSSStyleDeclaration`.
-- **Dataset**: Use `.setData()`, `.setDataMulti()`, `.getData()` (on `JJHE`/`JJSE`/`JJME`).
-- **ARIA**: Use `.setAria()`, `.setAriaMulti()`, `.getAria()`, `.rmAria()`.
+- **Optional attribute objects**: Use `.setAttrs(attrs)` for builder-style APIs; it no-ops for `null`/`undefined` and validates POJO input.
+- **Classes**: Use `.addClass()`, `.rmClass()`, `.toggleClass()`, `.setClass()`, `.setClasses()`.
+- **Inline styles**: Use `.getStyle(name)`, `.setStyle(name, value)`, `.rmStyle()`, `.setStyles()` for style property access via `CSSStyleDeclaration`.
+- **Dataset**: Use `.setDataAttr()`, `.setDataAttrs()`, `.getData()` (on `JJHE`/`JJSE`/`JJME`).
+- **ARIA**: Use `.setAriaAttr()`, `.setAriaAttrs()`, `.getAria()`, `.rmAria()`.
 - **Custom events**: Prefer `customEvent(name, detail?, options?)` for payload-bearing DOM events instead of spelling out `new CustomEvent(...)` each time.
 - **Fluent custom dispatch**: Use `triggerCustomEvent(name, detail?, options?)` on `JJET` descendants when you want JJ-style chaining.
 - **Shadow DOM defaults**: JJ's `customEvent()` defaults to `bubbles: true` and `composed: true`. Override them explicitly when the event should stay local.

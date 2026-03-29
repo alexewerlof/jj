@@ -113,7 +113,7 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
      */
     static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJME {
         return JJME.create(tagName)
-            .setAttrMulti(attributes)
+            .setAttrs(attributes)
             .addChild(...children)
     }
 

@@ -75,9 +75,9 @@ function render() {
     list.empty()
 
     if (visible.length === 0) {
-        emptyState.setClassMulti({ 'is-hidden': false })
+        emptyState.setClasses({ 'is-hidden': false })
     } else {
-        emptyState.setClassMulti({ 'is-hidden': true })
+        emptyState.setClasses({ 'is-hidden': true })
         list.addChildMap(visible, (todo) => renderItem(todo))
     }
 
@@ -96,7 +96,7 @@ function getVisibleTodos() {
 }
 
 function renderItem(todo) {
-    return JJHE.create('todo-item').setAttrMulti({
+    return JJHE.create('todo-item').setAttrs({
         'item-id': todo.id,
         text: todo.text,
         done: todo.done,
@@ -105,7 +105,7 @@ function renderItem(todo) {
 
 function updateFilterButtons() {
     filters.findAll('button').forEach((button) => {
-        button.setClassMulti({
+        button.setClasses({
             'is-active': button.getAttr('data-filter') === currentFilter,
         })
     })
@@ -115,7 +115,7 @@ function updateStats() {
     const activeCount = todos.filter((todo) => !todo.done).length
     const doneCount = todos.length - activeCount
     countLabel.setText(`${activeCount} active · ${doneCount} done`)
-    progress.setAttrMulti({
+    progress.setAttrs({
         max: Math.max(1, todos.length),
         value: doneCount,
     })

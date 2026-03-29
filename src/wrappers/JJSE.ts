@@ -106,7 +106,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      */
     static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJSE {
         return JJSE.create(tagName)
-            .setAttrMulti(attributes)
+            .setAttrs(attributes)
             .addChild(...children)
     }
 

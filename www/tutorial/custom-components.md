@@ -789,7 +789,7 @@ msg.content = 'Hello from code!'
 document.body.appendChild(msg)
 // JJ Syntax
 doc.body.addChild(
-    JJHE.create('chat-message').setAttrMulti({
+    JJHE.create('chat-message').setAttrs({
         role: 'assistant',
         content: 'Hello from code!',
     }),

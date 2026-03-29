@@ -187,12 +187,12 @@ Common chainable operations:
 
 ```typescript
 el.addClass('active').removeClass('disabled').toggleClass('visible')
-el.setClass('card').setClassMulti({ active: isActive, disabled: !isReady })
+el.setClass('card').setClasses({ active: isActive, disabled: !isReady })
 el.attr('data-age', 42).prop('disabled', false)
-el.setData('userId', '42').setDataMulti({ role: 'admin', team: 'ui' })
+el.setDataAttr('userId', '42').setDataAttrs({ role: 'admin', team: 'ui' })
 el.style('background-color', 'blue').style('padding', '10px')
 // ARIA helpers
-el.setAria('hidden', 'true').setAriaMulti({ label: 'Dialog', modal: 'true' }).rmAria('label')
+el.setAriaAttr('hidden', 'true').setAriaAttrs({ label: 'Dialog', modal: 'true' }).rmAria('label')
 ```
 
 Node traversal and detach helpers on `JJN`:

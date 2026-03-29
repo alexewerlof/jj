@@ -45,7 +45,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * @param value - The CSS property value.
      * @returns This instance for chaining.
      * @throws {TypeError} If `name` is not a string.
-     * @see {@link setStyleMulti} for setting/removing specific style properties.
+     * @see {@link setStyles} for setting/removing specific style properties.
      * @see {@link rmStyle} for removing style properties.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style | HTMLElement.style}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/setProperty | CSSStyleDeclaration.setProperty}
@@ -93,13 +93,13 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      *
      * @example
      * ```ts
-     * el.setStyleMulti({
+     * el.setStyles({
      *   display: 'grid',
      *   gap: '1rem',
      *   opacity: 0,
      *   color: null,
      * })
-     * el.setStyleMulti(null) // no-op
+     * el.setStyles(null) // no-op
      * ```
      *
      * @param styleMap - Style property map or nullish to skip.
@@ -107,7 +107,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * @throws {TypeError} If `styleMap` is not nullish and not a plain object.
      * @see {@link setStyle} for setting a single style property.
      */
-    setStyleMulti(styleMap?: Record<string, unknown> | null): this {
+    setStyles(styleMap?: Record<string, unknown> | null): this {
         if (styleMap == null) {
             return this
         }
@@ -185,20 +185,20 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      *
      * @example
      * ```ts
-     * el.setData('myKey', 'myValue')
-     * el.setData('count', 42 as unknown as string)
+     * el.setDataAttr('myKey', 'myValue')
+     * el.setDataAttr('count', 42 as unknown as string)
      * ```
      *
      * @param name - The data attribute name (in camelCase).
      * @param value - The value to assign.
      * @returns This instance for chaining.
      * @throws {TypeError} If `name` is not a string.
-     * @see {@link setDataMulti} for setting multiple data attributes at once.
+     * @see {@link setDataAttrs} for setting multiple data attributes at once.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
-    setData(name: string, value?: string): this {
+    setDataAttr(name: string, value?: string): this {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
@@ -218,19 +218,19 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      *
      * @example
      * ```ts
-     * el.setDataMulti({ myKey: 'myValue', otherKey: 'otherValue' })
-     * el.setDataMulti(null) // no-op
+     * el.setDataAttrs({ myKey: 'myValue', otherKey: 'otherValue' })
+     * el.setDataAttrs(null) // no-op
      * ```
      *
      * @param attributes - Data attributes object or nullish to skip.
      * @returns This instance for chaining.
      * @throws {TypeError} If `attributes` is not nullish and not a plain object.
-     * @see {@link setData} for setting a single data attribute.
+     * @see {@link setDataAttr} for setting a single data attribute.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
-    setDataMulti(attributes?: Record<string, string | undefined> | null): this {
+    setDataAttrs(attributes?: Record<string, string | undefined> | null): this {
         if (attributes == null) {
             return this
         }
@@ -245,7 +245,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
 
         try {
             for (const [name, value] of Object.entries(attributes)) {
-                this.setData(name, value)
+                this.setDataAttr(name, value)
             }
         } catch (cause) {
             throw new Error(`Failed to set some data attributes from object: ${JSON.stringify(attributes)}.`, { cause })

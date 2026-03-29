@@ -52,7 +52,7 @@ They are intentionally not on `JJE` because generic `Element` does not guarantee
 - `getStyle(name)`
 - `setStyle(name, value)`
 - `rmStyle(...names)`
-- `setStyleMulti(styleMap)`
+- `setStyles(styleMap)`
 
 ### Quick Examples
 
@@ -75,7 +75,7 @@ card.setStyle('border-radius', 'var(--bradius)')
 card.rmStyle('background-color')
 
 // Batch set/remove
-card.setStyleMulti({
+card.setStyles({
     display: 'grid',
     gap: 'var(--gap2)',
     opacity: 0,
@@ -83,7 +83,7 @@ card.setStyleMulti({
 })
 ```
 
-`setStyleMulti` behavior:
+`setStyles` behavior:
 
 - `null` or `undefined` map input: no-op
 - plain object input: iterate properties
@@ -99,18 +99,18 @@ JJ also provides class helpers on `JJE` and descendants:
 - `setClass`
 - `addClass`
 - `rmClass`
-- `setClassMulti`
+- `setClasses`
 
 Use classes for stable reusable styling, and inline styles for dynamic values.
 
 ```js
 const panel = JJHE.create('section')
     .setClass('panel')
-    .setClassMulti({
+    .setClasses({
         'is-open': isOpen,
         'is-busy': isBusy,
     })
-    .setStyleMulti({
+    .setStyles({
         height: `${height}px`,
         transform: `translateY(${offsetY}px)`,
     })

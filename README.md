@@ -39,12 +39,12 @@ JJ is **not** a reactive framework, template compiler, or state-management syste
 
 ## API Notes
 
-Batch setter helpers use explicit `Multi` methods:
+Batch setter helpers use plural methods:
 
-- `setAttrMulti({...})`
-- `setAriaMulti({...})`
-- `setDataMulti({...})`
-- `setClassMulti({...})`
+- `setAttrs({...})`
+- `setAriaAttrs({...})`
+- `setDataAttrs({...})`
+- `setClasses({...})`
 
 ## 🧩 Custom Elements Readiness
 

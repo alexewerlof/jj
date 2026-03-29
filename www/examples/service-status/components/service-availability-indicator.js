@@ -62,7 +62,7 @@ export class ServiceAvailabilityIndicator extends HTMLElement {
             .setClass('service-state')
             .addClass(this.#service.statusClass)
             .setText(this.#service.statusLabel)
-        this.#root.setStyleMulti({
+        this.#root.setStyles({
             '--daily-slot-count': String(this.#days),
             '--sls-period-count': String(this.#service.slsPeriods.length),
         })

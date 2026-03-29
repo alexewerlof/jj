@@ -19,7 +19,7 @@ function createMinuteIndicators() {
             line.addClass('minute-indicator--major')
         }
 
-        line.setAttrMulti({
+        line.setAttrs({
             x1: 50,
             y1: 5,
             x2: 50,

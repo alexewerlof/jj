@@ -75,7 +75,7 @@ export class CodeHighlight extends HTMLElement {
     async connectedCallback() {
         this.#root = JJHE.from(this)
             // This tiny bit of styling doesn't justify loading a CSS file
-            .setStyleMulti({
+            .setStyles({
                 display: 'block',
                 background: 'rgba(0, 0, 0, 0.1)',
             })

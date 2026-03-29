@@ -86,7 +86,7 @@ export class TodoItem extends HTMLElement {
         const item = this.jjRoot?.shadow.find('#item')
         const check = this.jjRoot?.shadow.find('#check')
         if (item) {
-            item.setClassMulti({ 'is-done': this.done })
+            item.setClasses({ 'is-done': this.done })
         }
         if (check) {
             check.ref.checked = this.done

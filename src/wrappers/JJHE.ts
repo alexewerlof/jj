@@ -123,7 +123,7 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      */
     static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJHE {
         return JJHE.create(tagName)
-            .setAttrMulti(attributes)
+            .setAttrs(attributes)
             .addChild(...children)
     }
 

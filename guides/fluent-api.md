@@ -44,7 +44,7 @@ email.focus()
 // ❌ BAD - not idiomatic
 email.ref.focus()
 // ✅ GOOD - use the provided methods for the common tasks
-email.setAria('hidden', true)
+email.setAriaAttr('hidden', true)
 // ❌ BAD - not idiomatic
 email.setAttr('aria-hidden', true)
 email.ref.setAttribute('aria-hidden', true)
@@ -52,17 +52,17 @@ email.ref.setAttribute('aria-hidden', true)
 
 ## Setting multiple attributes
 
-Use the explicit `Multi` helpers for grouped updates:
+Use the explicit plural helpers for grouped updates:
 
 ```js
 // ✅ GOOD - set multiple attributes at once (common in examples)
-progress.setAttrMulti({
+progress.setAttrs({
     min: 0,
     max: 100,
 })
 
 // ✅ GOOD - set ARIA attributes together
-dialog.setAriaMulti({
+dialog.setAriaAttrs({
     label: 'RSVP form',
     modal: 'true',
 })
@@ -84,18 +84,18 @@ JJHE.create('div').setAttr(['role', 'status'])
 
 ## Toggling multiple classes
 
-Use `setClassMulti()` to add/remove multiple classes conditionally in one call:
+Use `setClasses()` to add/remove multiple classes conditionally in one call:
 
 ```js
 // ✅ GOOD - conditional classes (Vue-style map)
-const card = JJHE.create('div').setClassMulti({
+const card = JJHE.create('div').setClasses({
     'kanban-card': true,
     'is-dragging': isDragging,
     'is-done': status === 'done',
 })
 
 // ✅ GOOD - toggle multiple flags at once
-const input = JJHE.create('input').setClassMulti({
+const input = JJHE.create('input').setClasses({
     'is-valid': isValid,
     'is-invalid': !isValid,
 })
