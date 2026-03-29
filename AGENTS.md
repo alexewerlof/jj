@@ -117,6 +117,7 @@ Do not call `.defined` like a synchronous function, and prefer `defineComponent(
 - **Attributes**: Use `.setAttr('name', val)`, `.getAttr('name')`, `.rmAttr('name')`.
 - **Optional attribute objects**: Use `.setAttrMulti(attrs)` for builder-style APIs; it no-ops for `null`/`undefined` and validates POJO input.
 - **Classes**: Use `.addClass()`, `.rmClass()`, `.toggleClass()`, `.setClass()`, `.setClassMulti()`.
+- **Inline styles**: Use `.getStyle(name)`, `.setStyle(name, value)`, `.rmStyle()`, `.setStyleMulti()` for style property access via `CSSStyleDeclaration`.
 - **Dataset**: Use `.setData()`, `.setDataMulti()`, `.getData()` (on `JJHE`/`JJSE`/`JJME`).
 - **ARIA**: Use `.setAria()`, `.setAriaMulti()`, `.getAria()`, `.rmAria()`.
 - **Custom events**: Prefer `customEvent(name, detail?, options?)` for payload-bearing DOM events instead of spelling out `new CustomEvent(...)` each time.

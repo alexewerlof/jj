@@ -154,6 +154,109 @@ describe('JJHE', () => {
         })
     })
 
+    describe('style methods', () => {
+        describe('getStyle()', () => {
+            it('gets a style property value', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('display', 'grid')
+                assert.strictEqual(jjhe.getStyle('display'), 'grid')
+            })
+
+            it('returns empty string when style property is not set', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                assert.strictEqual(jjhe.getStyle('display'), '')
+            })
+
+            it('throws TypeError for non-string property name', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                assert.throws(() => jjhe.getStyle(123 as any), TypeError)
+            })
+        })
+
+        describe('setStyle()', () => {
+            it('sets a single style property', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('display', 'flex')
+                assert.strictEqual(el.style.getPropertyValue('display'), 'flex')
+            })
+
+            it('sets numeric style values', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('opacity', 0)
+                assert.strictEqual(el.style.getPropertyValue('opacity'), '0')
+            })
+
+            it('throws TypeError for non-string property name', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                assert.throws(() => jjhe.setStyle({ display: 'grid' } as any, 'grid'), TypeError)
+            })
+        })
+
+        describe('rmStyle()', () => {
+            it('removes one or more style properties', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyleMulti({ display: 'grid', gap: '1rem' })
+                jjhe.rmStyle('display', 'gap')
+                assert.strictEqual(el.style.getPropertyValue('display'), '')
+                assert.strictEqual(el.style.getPropertyValue('gap'), '')
+            })
+
+            it('throws TypeError for non-string property names', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                assert.throws(() => jjhe.rmStyle(null as any), TypeError)
+            })
+        })
+
+        describe('setStyleMulti()', () => {
+            it('sets multiple style properties from object', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyleMulti({ display: 'grid', gap: '1rem' })
+                assert.strictEqual(el.style.getPropertyValue('display'), 'grid')
+                assert.strictEqual(el.style.getPropertyValue('gap'), '1rem')
+            })
+
+            it('removes properties for nullish and false values', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyleMulti({ display: 'grid', gap: '1rem', color: 'red' })
+                jjhe.setStyleMulti({ display: null, gap: undefined, color: false })
+                assert.strictEqual(el.style.getPropertyValue('display'), '')
+                assert.strictEqual(el.style.getPropertyValue('gap'), '')
+                assert.strictEqual(el.style.getPropertyValue('color'), '')
+            })
+
+            it('does not treat zero as removable', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyleMulti({ opacity: 0 })
+                assert.strictEqual(el.style.getPropertyValue('opacity'), '0')
+            })
+
+            it('no-ops for nullish input', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                assert.strictEqual(jjhe.setStyleMulti(null), jjhe)
+                assert.strictEqual(jjhe.setStyleMulti(undefined), jjhe)
+                assert.strictEqual(el.style.cssText, '')
+            })
+
+            it('throws TypeError for invalid styleMap input', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                assert.throws(() => jjhe.setStyleMulti('display: grid' as any), TypeError)
+            })
+        })
+    })
+
     describe('form element methods', () => {
         describe('getValue()', () => {
             it('gets value from input', () => {

@@ -404,6 +404,8 @@ The trade-off: page styles bleed in (helpful or harmful depending on your needs)
 
 There are some benefits to light DOM components: they still help abstract away the logic and templates but they are not as air-tight as the shadow DOM variant.
 
+For practical styling workflows in Light DOM components (regular CSS files, class-based styling, JJ style helpers, and preload/prefetch hints), see [guides/styling.md](../../guides/styling.md).
+
 ### Three Initialization Patterns (Decision Table)
 
 When you choose a component style, you are mainly choosing where your internal DOM lives.
