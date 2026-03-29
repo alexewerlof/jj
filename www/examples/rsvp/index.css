@@ -45,8 +45,47 @@
     color: var(--emphasis-text-color);
 }
 
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: var(--gap2);
+    padding: var(--gap2);
+}
+
+.controls button {
+    font-size: 1.5em;
+    width: 2.5em;
+    height: 2.5em;
+    border-radius: 50%;
+    border: var(--bthick2) solid var(--secondary-color);
+    background-color: var(--background-lighter);
+    color: var(--secondary-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        background-color var(--animation-speed),
+        transform var(--animation-speed);
+}
+
+.controls button[hidden] {
+    display: none;
+}
+
+.controls button:hover {
+    border-color: color-mix(in srgb, var(--secondary-color), white 30%);
+    color: color-mix(in srgb, var(--secondary-color), white 30%);
+}
+
+.controls button:active {
+    transform: scale(0.92);
+}
+
 #render-progress {
-    width: 100%;
+    display: block;
+    width: 30%;
+    margin: 0 auto;
 }
 
 .guides {

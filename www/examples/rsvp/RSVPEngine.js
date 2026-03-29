@@ -14,7 +14,7 @@ export class RSVPEngine {
         if (word.length === 1) return 0
 
         // 0.35 is the magic number for "slightly left of center"
-        const pivot = Math.ceil((word.length - 1) * 0.35)
+        const pivot = Math.round((word.length - 1) * 0.35)
 
         // Cap the pivot so it doesn't look weird on massive strings
         return Math.min(pivot, 4)
