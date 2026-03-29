@@ -2,8 +2,6 @@ import { attr2prop, JJHE, defineComponent } from '../../lib/bundle.js'
 import markdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
 import { CodeHighlight } from './code-highlight.js'
 
-await CodeHighlight.defined
-
 const md = markdownIt()
 
 md.renderer.rules.fence = (tokens, idx) => {
@@ -21,8 +19,10 @@ export class RenderMarkdown extends HTMLElement {
     #root
     #content = ''
 
-    connectedCallback() {
-        this.#root = JJHE.from(this)
+    async connectedCallback() {
+        await CodeHighlight.defined
+
+        this.#root = JJHE.from(this).setStyle('display', 'block')
         this.#render()
     }
 

@@ -172,8 +172,8 @@ testBtn.on('click', async () => {
 
             // Hide connection and model panels after brief delay
             setTimeout(() => {
-                connectionPanel.ref.style.display = 'none'
-                modelPanel.ref.style.display = 'none'
+                connectionPanel.setStyle('display', 'none')
+                modelPanel.setStyle('display', 'none')
                 hideStatus()
             }, 2000)
         } else {

@@ -62,8 +62,10 @@ export class ServiceAvailabilityIndicator extends HTMLElement {
             .setClass('service-state')
             .addClass(this.#service.statusClass)
             .setText(this.#service.statusLabel)
-        this.#root.ref.style.setProperty('--daily-slot-count', String(this.#days))
-        this.#root.ref.style.setProperty('--sls-period-count', String(this.#service.slsPeriods.length))
+        this.#root.setStyleMulti({
+            '--daily-slot-count': String(this.#days),
+            '--sls-period-count': String(this.#service.slsPeriods.length),
+        })
         this.#summaryEl.empty().addChildMap(this.#service.slsPeriods, (period) => this.#createSummarySlot(period))
         this.#axisStartEl.setText(`${this.#days} days ago`)
         this.#axisValueEl.setText(formatPeriodLabel(this.#service.periodAvg, this.#service.primarySli))
