@@ -177,7 +177,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      *
      * @example
      * ```ts
-     * const text = JJT.fromStr('hello')
+        * const text = JJT.create('hello')
      * JJHE.create('div').addChild(text)
      * const parent = text.parent // JJHE
      * ```

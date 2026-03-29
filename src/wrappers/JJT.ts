@@ -18,7 +18,7 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * Creates a JJT instance from a Text node.
      *
      * @remarks
-     * Use {@link JJT.fromStr} to create a Text node from a string.
+        * Use {@link JJT.create} to create a Text node from a string.
      * For other Node types, use {@link JJN.from} or the specific wrapper type.
      *
      * @example
@@ -30,7 +30,7 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * @param text - The Text node.
      * @returns A new JJT instance.
      * @throws {TypeError} If `text` is not a Text node.
-     * @see {@link JJT.fromStr} for creating from string input.
+        * @see {@link JJT.create} for creating from string input.
      */
     static from(text: Text): JJT {
         return new JJT(text)
@@ -44,7 +44,7 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * @see {@link JJT.from} for wrapping an existing Text node.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createTextNode | document.createTextNode}
      */
-    static fromStr(text: string): JJT {
+    static create(text: string): JJT {
         return new JJT(document.createTextNode(text))
     }
 
@@ -59,7 +59,7 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * @param ref - The Text node or a string to create a Text node from.
      * @throws {TypeError} If `ref` is not a Text node or string.
      * @see {@link JJT.from} for wrapping an existing Text node.
-     * @see {@link JJT.fromStr} for creating from a plain string.
+        * @see {@link JJT.create} for creating from a plain string.
      */
     constructor(ref: T) {
         if (!isInstance(ref, Text)) {
@@ -67,7 +67,7 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
                 'ref',
                 'a Text node',
                 ref,
-                "Create a Text node with JJT.fromStr() or document.createTextNode('text').",
+                "Create a Text node with JJT.create() or document.createTextNode('text').",
             )
         }
         super(ref)

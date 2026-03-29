@@ -16,8 +16,8 @@ describe('JJT', () => {
         assert.strictEqual(jjt.ref, text)
     })
 
-    it('creates from static fromStr()', () => {
-        const jjt = JJT.fromStr('foo')
+    it('creates from static create()', () => {
+        const jjt = JJT.create('foo')
         assert.ok(jjt.ref instanceof Text)
         assert.strictEqual(jjt.getText(), 'foo')
     })
@@ -28,19 +28,19 @@ describe('JJT', () => {
     })
 
     it('gets text', () => {
-        const jjt = JJT.fromStr('foo')
+        const jjt = JJT.create('foo')
         assert.strictEqual(jjt.getText(), 'foo')
     })
 
     it('sets text', () => {
-        const jjt = JJT.fromStr('foo')
+        const jjt = JJT.create('foo')
         jjt.setText('bar')
         assert.strictEqual(jjt.getText(), 'bar')
         assert.strictEqual(jjt.ref.textContent, 'bar')
     })
 
     it('sets text with null/undefined', () => {
-        const jjt = JJT.fromStr('foo')
+        const jjt = JJT.create('foo')
         jjt.setText(null)
         assert.strictEqual(jjt.getText(), '')
 
@@ -50,25 +50,25 @@ describe('JJT', () => {
     })
 
     it('empties text', () => {
-        const jjt = JJT.fromStr('foo')
+        const jjt = JJT.create('foo')
         jjt.empty()
         assert.strictEqual(jjt.getText(), '')
     })
 
     it('adds text', () => {
-        const jjt = JJT.fromStr('foo')
+        const jjt = JJT.create('foo')
         jjt.addText('bar')
         assert.strictEqual(jjt.getText(), 'foobar')
     })
 
     it('adds text to empty content', () => {
-        const jjt = JJT.fromStr('')
+        const jjt = JJT.create('')
         jjt.addText('foo')
         assert.strictEqual(jjt.getText(), 'foo')
     })
 
     it('adds empty, null, or undefined text', () => {
-        const jjt = JJT.fromStr('foo')
+        const jjt = JJT.create('foo')
         jjt.addText('')
         jjt.addText(null)
         jjt.addText(undefined)

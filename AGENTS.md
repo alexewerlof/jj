@@ -155,12 +155,7 @@ Do not call `.defined` like a synchronous function, and prefer `defineComponent(
 - **How to write `extra`**: Keep it brief and actionable. It should tell the caller what went wrong and how to fix it in one sentence.
 
     ```typescript
-    throw typeErr(
-        'ref',
-        'a Text node',
-        ref,
-        "Create a Text node with JJT.fromStr() or document.createTextNode('text').",
-    )
+    throw typeErr('ref', 'a Text node', ref, "Create a Text node with JJT.create() or document.createTextNode('text').")
 
     throw new RangeError(
         errMsg('as', `'fetch', 'style', or 'script'`, as, 'Use a valid value or omit it to auto-detect from the URL.'),
