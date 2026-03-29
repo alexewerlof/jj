@@ -5,6 +5,22 @@ Follow these rules strictly to generate idiomatic, type-safe, and secure code.
 ALWAYS prioritize security and correctness over performance.
 If you encounter contradicting instructions, pause and ask the user what to do.
 
+## Repository Orientation
+
+- **Build pipeline**: `src/` (TypeScript) compiles to `lib/` (ESM JS + `.d.ts`).
+- **Library API**: Public wrappers and helpers are exported from `src/index.ts`.
+- **Bundle**: `bundle.js` script produces browser bundle artifacts in `lib/`.
+- **Docs**: `typedoc` generates API docs in `doc/`.
+- **Examples**: `www/` contains runnable examples/tutorials and consumes `lib/bundle.js`.
+
+## Build and Validation Commands
+
+- `npm run build` runs the full project build flow.
+- `npm run typecheck` runs TypeScript checks without emitting files.
+- `npm test` runs typecheck plus the Node test suite.
+- `npm run doc` regenerates documentation only.
+- `npm run fmt` formats files using the repository Prettier configuration.
+
 ## 1. Core Philosophy
 
 - **Imperative**: No Virtual DOM. You are manipulating real DOM nodes wrapped in `JJ` objects.
@@ -130,6 +146,10 @@ Do not call `.defined` like a synchronous function, and prefer `defineComponent(
 
 - **Formatting**: Strictly follow `.prettierrc.json`.
     - Single quotes, no semicolons, 4 spaces indent, trailing commas.
+- **ESM import paths**: In TypeScript source, local imports must use `.js` file extensions so emitted ESM resolves correctly at runtime.
+    ```typescript
+    import { JJD } from './JJD.js'
+    ```
 - **Documentation**: All public methods and classes MUST have documentation in **TypeDoc** format.
     - Use `@param`, `@returns`, `@example`, etc.
     - Use `@remarks` to mention any edge cases or nuances.
@@ -171,3 +191,11 @@ Do not call `.defined` like a synchronous function, and prefer `defineComponent(
 ## 10. Documentation Maintenance
 
 **CRITICAL**: If you change the code or API surface of this library, you **MUST** update this file (`AGENTS.md`) to reflect the changes. This file is the source of truth for all agents working on this repo. Keeping it up-to-date is as important as writing tests.
+
+## 11. Common Pitfalls
+
+1. **Forgetting `.js` in TypeScript imports** breaks Node ESM runtime resolution.
+2. **Using `.ref` when a wrapper method exists** reduces chainability and type safety.
+3. **Hardcoding CSS values** violates CSS instruction files and design system conventions.
+4. **Skipping tests for small changes** often misses edge cases and regressions.
+5. **Changing package export surface casually** can break downstream consumers and bundling.
