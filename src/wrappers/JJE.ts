@@ -31,6 +31,9 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @param ref - The Element instance.
      * @returns A new JJE instance.
+     * @see {@link JJHE.create} for creating HTMLElements
+     * @see {@link JJSE.create} for creating SVGElements
+     * @see {@link JJME.create} for creating MathMLElements
      */
     static from(ref: Element): JJE {
         return new JJE(ref)
@@ -200,6 +203,9 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @param name - The ARIA attribute suffix.
      * @returns `true` if the attribute exists.
      * @throws {TypeError} If `name` is not a string.
+     * @see {@link getAria} for reading ARIA values.
+     * @see {@link setAriaAttr} for setting ARIA values.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
     hasAria(name: string): boolean {
         if (!isStr(name)) {
@@ -289,6 +295,9 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @param names - The ARIA attribute suffix(es) to remove.
      * @returns This instance for chaining.
      * @throws {TypeError} If any name is not a string.
+     * @see {@link setAriaAttr} for setting a single ARIA attribute.
+     * @see {@link setAriaAttrs} for setting multiple ARIA attributes.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute | Element.removeAttribute}
      */
     rmAria(...names: string[]): this {
         try {
@@ -482,6 +491,9 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @param oldClassName - The class name to remove
      * @param newClassName - The class name to add
      * @throws {TypeError} If either className is not a string.
+     * @see {@link addClass} for explicitly adding class names.
+     * @see {@link rmClass} for explicitly removing class names.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/replace | DOMTokenList.replace}
      */
     replaceClass(oldClassName: string, newClassName: string): this {
         if (!isStr(oldClassName)) {
@@ -538,6 +550,8 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * Shows the Element by removing the `hidden` and `aria-hidden` attributes.
      *
      * @returns This instance for chaining.
+     * @see {@link hide} for the inverse operation.
+     * @see {@link rmAttr} for generic attribute removal.
      */
     show(): this {
         return this.rmAttr('hidden', 'aria-hidden')
@@ -558,6 +572,8 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * Enables the Element by removing the `disabled` and `aria-disabled` attributes.
      *
      * @returns This instance for chaining.
+     * @see {@link disable} for the inverse operation.
+     * @see {@link rmAttr} for generic attribute removal.
      */
     enable(): this {
         return this.rmAttr('disabled', 'aria-disabled')
@@ -647,6 +663,8 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * Gets a wrapper around the Element's Shadow Root, if it exists.
      *
      * @returns A JJSR instance wrapping the shadow root, or null if no shadow root exists.
+     * @see {@link setShadow} for creating and initializing a shadow root.
+     * @see {@link JJSR} for ShadowRoot-specific helper methods.
      */
     get shadow() {
         return this.ref.shadowRoot ? new JJSR(this.ref.shadowRoot) : null

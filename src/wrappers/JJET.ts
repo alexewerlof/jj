@@ -59,6 +59,13 @@ export function customEvent<T = unknown>(
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget | EventTarget}
  */
 export class JJET<T extends EventTarget = EventTarget> {
+    /**
+     * Creates a JJET instance from an EventTarget reference.
+     *
+     * @param ref - The EventTarget instance.
+     * @returns A new JJET instance.
+     * @see {@link constructor} for input validation behavior.
+     */
     static from(ref: EventTarget) {
         return new JJET(ref)
     }
@@ -71,6 +78,7 @@ export class JJET<T extends EventTarget = EventTarget> {
      *
      * @param ref - The EventTarget to wrap.
      * @throws {TypeError} If `ref` is not an EventTarget.
+     * @see {@link JJET.from} for the factory form.
      */
     constructor(ref: T) {
         if (!isInstance(ref, EventTarget)) {
@@ -81,6 +89,8 @@ export class JJET<T extends EventTarget = EventTarget> {
 
     /**
      * Gets the underlying DOM object.
+     *
+     * @see {@link run} for fluent callbacks that can also access this same wrapped target.
      */
     get ref() {
         return this.#ref
@@ -231,6 +241,9 @@ export class JJET<T extends EventTarget = EventTarget> {
      *
      * @param fn - The synchronous function to run. `this` inside the function will refer to this JJET instance, and the wrapped instance is also passed as the first argument.
      * @returns This instance for chaining.
+     * @see {@link ref} for direct access to the wrapped native target.
+     * @see {@link on} for event listener chaining.
+     * @see {@link trigger} for dispatching events in-chain.
      */
     run(fn: (this: this, ref: this) => void): this {
         try {

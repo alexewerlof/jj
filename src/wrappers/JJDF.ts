@@ -69,6 +69,8 @@ export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T>
      *
      * @param ref - The DocumentFragment instance to wrap.
      * @throws {TypeError} If `ref` is not a DocumentFragment.
+     * @see {@link JJDF.from} to wrap an existing fragment.
+     * @see {@link JJDF.create} to create a new empty fragment.
      */
     constructor(ref: T) {
         if (!isInstance(ref, DocumentFragment)) {

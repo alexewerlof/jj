@@ -30,11 +30,20 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      * @param text - The Text node.
      * @returns A new JJT instance.
      * @throws {TypeError} If `text` is not a Text node.
+     * @see {@link JJT.fromStr} for creating from string input.
      */
     static from(text: Text): JJT {
         return new JJT(text)
     }
 
+    /**
+     * Creates a JJT instance from a string.
+     *
+     * @param text - The string to convert into a Text node.
+     * @returns A new JJT instance wrapping a Text node.
+     * @see {@link JJT.from} for wrapping an existing Text node.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createTextNode | document.createTextNode}
+     */
     static fromStr(text: string): JJT {
         return new JJT(document.createTextNode(text))
     }
@@ -49,6 +58,8 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      *
      * @param ref - The Text node or a string to create a Text node from.
      * @throws {TypeError} If `ref` is not a Text node or string.
+     * @see {@link JJT.from} for wrapping an existing Text node.
+     * @see {@link JJT.fromStr} for creating from a plain string.
      */
     constructor(ref: T) {
         if (!isInstance(ref, Text)) {

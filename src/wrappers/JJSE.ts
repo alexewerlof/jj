@@ -115,6 +115,8 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      *
      * @param ref - The SVGElement to wrap.
      * @throws {TypeError} If `ref` is not an SVGElement.
+     * @see {@link JJSE.from} to wrap an existing SVG element.
+     * @see {@link JJSE.create} to create a new SVG element.
      */
     constructor(ref: T) {
         if (!isInstance(ref, SVGElement)) {

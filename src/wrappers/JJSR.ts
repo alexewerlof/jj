@@ -31,6 +31,8 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      *
      * @param shadowRoot - The ShadowRoot instance.
      * @returns A new JJSR instance.
+     * @see {@link JJHE.setShadow} for attaching and initializing a shadow root from a host element.
+     * @see {@link JJSR.constructor} for validation behavior.
      */
     static from(shadowRoot: ShadowRoot) {
         return new JJSR(shadowRoot)

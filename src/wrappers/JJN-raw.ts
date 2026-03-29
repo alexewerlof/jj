@@ -46,6 +46,8 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      *
      * @param x an unknown value
      * @returns true if `x` is a string, Node (or its descendent), JJN (or its descendent)
+     * @see {@link JJN.wrap} for converting Wrappable into wrappers.
+     * @see {@link JJN.unwrap} for converting Wrappable into native nodes.
      */
     static isWrappable(x: unknown): x is Wrappable {
         return isStr(x) || isInstance(x, Node) || isInstance(x, JJN)
@@ -72,6 +74,8 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @param raw - The object to wrap. If it's already Wrapped, it'll be returned without any change. We don't double-wrap or clone it.
      * @returns The most granular Wrapped subclass instance. If the input is already wrapped, it'll be returned as is without cloning.
      * @throws {TypeError} If the input is not a Node, string, or JJ wrapper.
+     * @see {@link JJN.from} for explicit base wrapper construction.
+     * @see {@link JJN.unwrap} for the reverse conversion.
      */
     static wrap(raw: Wrappable): Wrapped {
         if (isInstance(raw, JJN)) {
@@ -98,6 +102,8 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @param obj - The object to unwrap.
      * @returns The underlying DOM node.
      * @throws {TypeError} If the input cannot be unwrapped.
+     * @see {@link JJN.wrap} for the reverse conversion.
+     * @see {@link JJN.isWrappable} for pre-validation checks.
      */
     static unwrap(obj: Wrappable): Unwrapped {
         if (isStr(obj)) {
@@ -124,6 +130,8 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      *
      * @param iterable - The iterable to wrap.
      * @returns An array of wrapped instances.
+     * @see {@link JJN.wrap} for single-item wrapping.
+     * @see {@link JJN.unwrapAll} for the reverse iterable conversion.
      */
     static wrapAll(iterable: Iterable<Wrappable>): Wrapped[] {
         return Array.from(iterable, JJN.wrap)
@@ -139,6 +147,8 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      *
      * @param iterable - The iterable to unwrap.
      * @returns An array of native DOM nodes.
+     * @see {@link JJN.unwrap} for single-item unwrapping.
+     * @see {@link JJN.wrapAll} for iterable wrapping.
      */
     static unwrapAll(iterable: Iterable<Wrappable>): Unwrapped[] {
         return Array.from(iterable, JJN.unwrap)
@@ -149,6 +159,8 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      *
      * @param ref - The Node to wrap.
      * @throws {TypeError} If `ref` is not a Node.
+     * @see {@link JJN.from} for the factory form.
+     * @see {@link JJN.wrap} for automatic subtype wrapping.
      */
     constructor(ref: T) {
         if (!isInstance(ref, Node)) {
