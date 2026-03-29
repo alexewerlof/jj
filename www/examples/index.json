@@ -1,4 +1,5 @@
 {
+    "hackernews": "Minimal Hacker News-style feed imagined for 2031",
     "clock": "A simple SVG clock",
     "chat-ui": "A simple chat UI",
     "rsvp": "Fast reading algorithm",

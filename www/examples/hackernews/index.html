@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="index.css" />
+        <title>JJ Hacker News</title>
+    </head>
+    <body>
+        <main id="app">
+            <section class="hn">
+                <header class="hn__top">
+                    <div class="hn__brand">
+                        <a href="..">
+                            <div class="hn__brand-icon">Y</div>
+                            <strong>Hacker News</strong>
+                        </a>
+                    </div>
+                    <nav class="hn__nav" aria-label="Primary">
+                        <a href="#">new</a> | <a href="#">past</a> | <a href="#">comments</a> | <a href="#">ask</a> |
+                        <a href="#">show</a> | <a href="#">jobs</a> |
+                        <a href="#">submit</a>
+                    </nav>
+                    <a class="hn__login" href="#">login</a>
+                </header>
+                <ol id="stories" class="hn__list"></ol>
+            </section>
+        </main>
+        <script type="module" src="index.js"></script>
+    </body>
+</html>
