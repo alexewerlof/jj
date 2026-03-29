@@ -16,7 +16,7 @@ describe('JJDF', () => {
         })
     })
 
-    describe('static from()', () => {
+    describe(JJDF.from.name, () => {
         it('creates JJDF from DocumentFragment', () => {
             const frag = document.createDocumentFragment()
             const jjdf = JJDF.from(frag)
@@ -24,7 +24,7 @@ describe('JJDF', () => {
         })
     })
 
-    describe('static create()', () => {
+    describe(JJDF.create.name, () => {
         it('creates new DocumentFragment', () => {
             const jjdf = JJDF.create()
             assert.ok(jjdf instanceof JJDF)
@@ -32,7 +32,7 @@ describe('JJDF', () => {
         })
     })
 
-    describe('find() by ID', () => {
+    describe(JJDF.prototype.find.name, () => {
         it('finds element by id in fragment', () => {
             const frag = document.createDocumentFragment()
             const div = document.createElement('div')
@@ -59,19 +59,41 @@ describe('JJDF', () => {
         })
     })
 
+    describe(JJDF.prototype.findAll.name, () => {
+        it('finds all matching elements in a fragment', () => {
+            const host = JJDF.create().addTemplate(`
+                <ul>
+                    <li class="item">a</li>
+                    <li class="item">b</li>
+                    <li>c</li>
+                </ul>
+            `)
+
+            const result = host.findAll('.item')
+
+            assert.strictEqual(result.length, 2)
+            assert.deepStrictEqual(
+                result.map((item) => item.ref.textContent),
+                ['a', 'b'],
+            )
+        })
+
+        it('returns an empty array when there are no matches', () => {
+            const host = JJDF.create().addTemplate('<div id="only"></div>')
+
+            const result = host.findAll('.missing')
+
+            assert.deepStrictEqual(result, [])
+        })
+    })
+
     describe(JJDF.prototype.addChildren.name, () => {
         it('appends an array of children and ignores nullish values', () => {
             const host = JJDF.create()
             const first = JJHE.create('span').setAttr('id', 'first')
             first.ref.textContent = 'first'
 
-            host.addChildren([
-                first,
-                ' tail',
-                null as any,
-                undefined as any,
-                false as any,
-            ])
+            host.addChildren([first, ' tail', null as any, undefined as any, false as any])
 
             assert.strictEqual(host.find('#first')?.ref.textContent, 'first')
             assert.strictEqual(host.ref.textContent, 'first tail')
@@ -202,7 +224,7 @@ describe('JJDF', () => {
         })
     })
 
-    describe('addTemplate()', () => {
+    describe(JJDF.prototype.addTemplate.name, () => {
         it('appends parsed nodes from an HTML string', () => {
             const host = JJDF.create()
 
