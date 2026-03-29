@@ -1,4 +1,4 @@
-import { isInstance, isPromise, isStr } from 'jty'
+import { isArr, isInstance, isPromise, isStr } from 'jty'
 import { typeErr } from '../internal.js'
 import { Wrappable, Wrapped } from './types.js'
 import { JJN } from './JJN-raw.js'
@@ -62,12 +62,40 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @param children - The children to append.
      * @returns This instance for chaining.
+     * @see {@link addChildren} for the array-based form.
+     * @see {@link addChildMap} for mapping arrays into appended children.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/append | Element.append}
      */
     addChild(...children: Wrappable[]): this {
         const nodes = JJN.unwrapAll(children.filter(JJN.isWrappable))
         this.ref.append(...nodes)
         return this
+    }
+
+    /**
+     * Appends an array of children to this Element.
+     *
+     * @remarks
+     * This is the array-based companion to {@link addChild}.
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
+     * @example
+     * ```ts
+     * el.addChildren([JJHE.tree('span', null, 'hello'), ' world'])
+     * ```
+     *
+     * @param children - The children to append.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `children` is not an array of Wrappable.
+     * @see {@link addChild} for the variadic form.
+     * @see {@link addChildMap} for mapping arrays into appended children.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/append | Element.append}
+     */
+    addChildren(children: Wrappable[]): this {
+        if (!isArr(children)) {
+            throw typeErr('children', 'an array of Wrappable', children)
+        }
+        return this.addChild(...children)
     }
 
     /**
@@ -83,12 +111,40 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @param children - The children to prepend.
      * @returns This instance for chaining.
+     * @see {@link preChildren} for the array-based form.
+     * @see {@link preChildMap} for mapping arrays into prepended children.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend | Element.prepend}
      */
     preChild(...children: Wrappable[]): this {
         const nodes = JJN.unwrapAll(children.filter(JJN.isWrappable))
         this.ref.prepend(...nodes)
         return this
+    }
+
+    /**
+     * Prepends an array of children to this Element.
+     *
+     * @remarks
+     * This is the array-based companion to {@link preChild}.
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
+     * @example
+     * ```ts
+     * el.preChildren([JJHE.tree('span', null, 'first'), ' child'])
+     * ```
+     *
+     * @param children - The children to prepend.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `children` is not an array of Wrappable.
+     * @see {@link preChild} for the variadic form.
+     * @see {@link preChildMap} for mapping arrays into prepended children.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend | Element.prepend}
+     */
+    preChildren(children: Wrappable[]): this {
+        if (!isArr(children)) {
+            throw typeErr('children', 'an array of Wrappable', children)
+        }
+        return this.preChild(...children)
     }
 
     /**
@@ -105,9 +161,21 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @param array - The source array.
      * @param mapFn - The mapping function returning a Wrappable.
      * @returns This instance for chaining.
+     * @throws {TypeError} If `array` is not an array of Wrappable.
+     * @throws {Error} If mapping the array or appending the children fails.
+     * @see {@link addChild} for directly appending variadic children.
+     * @see {@link addChildren} for appending a pre-built array of children.
      */
     addChildMap(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
-        return this.addChild(...array.map(mapFn))
+        if (!isArr(array)) {
+            throw typeErr('array', 'an array of Wrappable', array)
+        }
+
+        try {
+            return this.addChildren(array.map(mapFn))
+        } catch (cause) {
+            throw new Error('Failed to map array to children', { cause })
+        }
     }
 
     /**
@@ -124,9 +192,21 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @param array - The source array.
      * @param mapFn - The mapping function.
      * @returns This instance for chaining.
+     * @throws {TypeError} If `array` is not an array of Wrappable.
+     * @throws {Error} If mapping the array or prepending the children fails.
+     * @see {@link preChild} for directly prepending variadic children.
+     * @see {@link preChildren} for prepending a pre-built array of children.
      */
     preChildMap(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
-        return this.preChild(...array.map(mapFn))
+        if (!isArr(array)) {
+            throw typeErr('array', 'an array of Wrappable', array)
+        }
+
+        try {
+            return this.preChildren(array.map(mapFn))
+        } catch (cause) {
+            throw new Error('Failed to map array to children', { cause })
+        }
     }
 
     /**
@@ -142,6 +222,9 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * ```
      * @param children - The children to replace with.
      * @returns This instance for chaining.
+     * @see {@link setChildren} for the array-based form.
+     * @see {@link setChildMap} for mapping arrays into replacement children.
+     * @see {@link empty} for clearing all children.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
      */
     setChild(...children: Wrappable[]): this {
@@ -155,6 +238,68 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
     }
 
     /**
+     * Replaces the existing children of an Element with an array of children.
+     *
+     * @remarks
+     * This is the array-based companion to {@link setChild}.
+     * Passing an empty array empties the Element.
+     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     *
+     * @example
+     * ```ts
+     * el.setChildren([JJHE.tree('p', null, 'New Content')])
+     * ```
+     *
+     * @param children - The children to replace with.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `children` is not an array of Wrappable.
+     * @see {@link setChild} for the variadic form.
+     * @see {@link setChildMap} for mapping arrays into replacement children.
+     * @see {@link empty} for clearing all children.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
+     */
+    setChildren(children: Wrappable[]): this {
+        if (!isArr(children)) {
+            throw typeErr('children', 'an array of Wrappable', children)
+        }
+        return this.setChild(...children)
+    }
+
+    /**
+     * Maps an array to children and replaces the existing children with the result.
+     *
+     * @remarks
+     * This is the mapping companion to {@link setChildren}.
+     * To make template codes easier, this function ignores any mapped child that is not possible to `wrap()` (e.g. undefined, null, false).
+     * Errors thrown by the mapping function or child replacement are wrapped with a higher-level error that preserves the original cause.
+     *
+     * @example
+     * ```ts
+     * node.setChildMap(['a', 'b'], item => JJHE.tree('li', null, item))
+     * ```
+     *
+     * @param array - The source array.
+     * @param mapFn - The mapping function returning a Wrappable.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `array` is not an array of Wrappable.
+     * @throws {Error} If mapping the array or replacing the children fails.
+     * @see {@link setChildren} for replacing children from a pre-built array.
+     * @see {@link setChild} for the variadic replacement form.
+     * @see {@link empty} for clearing all children without replacements.
+     */
+    setChildMap(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
+        if (!isArr(array)) {
+            throw typeErr('array', 'an array of Wrappable', array)
+        }
+
+        try {
+            return this.setChildren(array.map(mapFn))
+        } catch (cause) {
+            throw new Error('Failed to map array to children', { cause })
+        }
+    }
+
+    /**
      * Removes all children from this Element.
      *
      * @example
@@ -163,6 +308,9 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * ```
      *
      * @returns This instance for chaining.
+     * @see {@link setChild} for replacing children with a variadic list.
+     * @see {@link setChildren} for replacing children with an array.
+     * @see {@link setChildMap} for replacing children from mapped input.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.setChildren}
      */
     empty(): this {
@@ -179,6 +327,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @param template - The template source to clone and append.
      * @returns This instance for chaining.
      * @throws {TypeError} If the template type is unsupported or a Promise was passed.
+     * @see {@link setTemplate} for replacing existing children with a cloned template.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createRange | Document.createRange}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLTemplateElement | HTMLTemplateElement}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}
@@ -242,6 +391,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @param template - The template source to clone and set.
      * @returns This instance for chaining.
      * @see {@link addTemplate}
+     * @see {@link empty} for clearing children without adding a replacement template.
      */
     setTemplate(
         template:
