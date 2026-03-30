@@ -9,17 +9,16 @@ import { JJD } from '../lib/bundle.js'
 const doc = JJD.from(document)
 
 // 1. Handle Copy Button Logic
-doc.find('#copy-btn').on('click', async function () {
+const copyBtn = doc.find('#copy-btn')
+copyBtn.on('click', async () => {
     try {
         await navigator.clipboard.writeText('npm i jj')
 
-        // Visual feedback using JJ
-        // `this` is the JJHET instance, so we can chain methods
-        const originalHtml = this.getHTML()
-        this.setHTML('✓', true)
+        const originalHtml = copyBtn.getHTML()
+        copyBtn.setHTML('✓', true)
 
         setTimeout(() => {
-            this.setHTML(originalHtml, true)
+            copyBtn.setHTML(originalHtml, true)
         }, 1000)
     } catch (err) {
         console.error('Failed to copy', err)

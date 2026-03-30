@@ -1,4 +1,4 @@
-import { isFn, isInstance, isStr } from 'jty'
+import { isInstance, isStr } from 'jty'
 import { typeErr } from '../internal.js'
 
 /**
@@ -71,7 +71,6 @@ export class JJET<T extends EventTarget = EventTarget> {
     }
 
     #ref!: T
-    #boundHandlers = new WeakMap<EventListenerOrEventListenerObject, EventListenerOrEventListenerObject>()
 
     /**
      * Creates a JJET instance.
@@ -97,45 +96,27 @@ export class JJET<T extends EventTarget = EventTarget> {
     }
 
     /**
-     * Gets or creates a bound version of the handler.
-     *
-     * @remarks
-     * Bound handlers are cached in a WeakMap to ensure `off()` can properly remove listeners.
-     * When the original handler is garbage collected, the bound version is automatically removed.
-     *
-     * @param handler - The event handler to bind.
-     * @returns The bound handler, or null if the input is null.
-     */
-    #getBoundHandler(handler: EventListenerOrEventListenerObject | null): EventListenerOrEventListenerObject | null {
-        if (handler === null) return null
-
-        let bound = this.#boundHandlers.get(handler)
-        if (!bound) {
-            // Bind the handler to this JJET instance
-            if (isFn(handler)) {
-                bound = handler.bind(this)
-            } else {
-                // EventListenerObject with handleEvent method
-                bound = { handleEvent: handler.handleEvent.bind(this) }
-            }
-            this.#boundHandlers.set(handler, bound)
-        }
-        return bound
-    }
-
-    /**
      * Adds an event listener.
-     *
-     * @remarks
-     * The handler is automatically bound to this JJET instance, so `this` inside the handler
-     * refers to the JJET instance, not the DOM element. To access the DOM element, use `this.ref`.
      *
      * @example
      * ```ts
-     * JJET.from(window).on('resize', function() {
-     *   console.log(this) // JJET instance
-     *   console.log(this.ref) // window object
-     * })
+     * const onResize = () => {
+     *     console.log('resized')
+     * }
+     *
+     * JJET.from(window).on('resize', onResize)
+     * ```
+     *
+     * @example
+     * ```ts
+     * const target = {
+     *     count: 0,
+     *     increment() {
+     *         this.count++
+     *     },
+     * }
+     *
+     * JJET.from(window).on('click', target.increment.bind(target))
      * ```
      * @param eventName - The name of the event.
      * @param handler - The event handler.
@@ -144,8 +125,7 @@ export class JJET<T extends EventTarget = EventTarget> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener | EventTarget.addEventListener}
      */
     on(eventName: string, handler: EventListenerOrEventListenerObject | null, options?: AddEventListenerOptions): this {
-        const boundHandler = this.#getBoundHandler(handler)
-        this.ref.addEventListener(eventName, boundHandler, options)
+        this.ref.addEventListener(eventName, handler, options)
         return this
     }
 
@@ -157,10 +137,15 @@ export class JJET<T extends EventTarget = EventTarget> {
      *
      * @example
      * ```ts
-     * const handler = function() { console.log(this) }
-     * JJET.from(window).on('resize', handler)
-     * JJET.from(window).off('resize', handler)
+     * const onResize = () => {
+     *     console.log('resized')
+     * }
+     *
+     * const win = JJET.from(window)
+     * win.on('resize', onResize)
+     * win.off('resize', onResize)
      * ```
+     *
      * @param eventName - The name of the event.
      * @param handler - The event handler.
      * @param options - Optional event listener options or boolean.
@@ -172,8 +157,7 @@ export class JJET<T extends EventTarget = EventTarget> {
         handler: EventListenerOrEventListenerObject | null,
         options?: EventListenerOptions | boolean,
     ): this {
-        const boundHandler = this.#getBoundHandler(handler)
-        this.ref.removeEventListener(eventName, boundHandler, options)
+        this.ref.removeEventListener(eventName, handler, options)
         return this
     }
 
