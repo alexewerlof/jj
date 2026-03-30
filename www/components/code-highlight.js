@@ -81,12 +81,7 @@ export class CodeHighlight extends HTMLElement {
             })
         const codeText = this.#fileContent ? await this.#fileContent : this.textContent
         if (this.#language) {
-            const preEl = JJHE.tree(
-                'pre',
-                undefined,
-                JJHE.tree('code').setHTML(highlightCode(codeText, this.#language), true),
-            )
-            this.#root.setChild(preEl)
+            this.#root.setChild(JJHE.tree('code').setHTML(highlightCode(codeText, this.#language), true))
         }
     }
 }
