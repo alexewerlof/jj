@@ -10,12 +10,14 @@ import type { JJT } from './JJT.js'
 
 /**
  * Represents any value that can be wrapped by the library.
- * Can be a native Node, a string (which becomes a Text node), or an existing JJ wrapper.
+ * Native nodes and JJ wrappers are preserved as nodes.
+ * Non-object values are coercible to text.
+ * Plain objects are accepted for APIs that coerce via `JSON.stringify` / `String`.
  * @category Wrappers
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node | Node}
  * @see {@link JJN.wrap} to convert a Wrappable into a Wrapped type
  */
-export type Wrappable = string | Node | JJN
+export type Wrappable = string | number | boolean | bigint | symbol | object | null | undefined | Node | JJN
 
 /**
  * Union type of all possible JJ wrapper classes.

@@ -82,9 +82,25 @@ describe('JJN', () => {
             assert.strictEqual(unwrapped.textContent, 'test')
         })
 
-        it('throws for invalid types', () => {
-            assert.throws(() => JJN.unwrap(42 as any), TypeError)
-            assert.throws(() => JJN.unwrap({} as any), TypeError)
+        it('coerces primitives into Text nodes', () => {
+            assert.strictEqual(JJN.unwrap(42 as any).textContent, '42')
+            assert.strictEqual(JJN.unwrap(false as any).textContent, 'false')
+            assert.strictEqual(JJN.unwrap(5n as any).textContent, '5')
+            assert.strictEqual(JJN.unwrap(Symbol('x') as any).textContent, 'Symbol(x)')
+        })
+
+        it('coerces nullish values into Text nodes', () => {
+            assert.strictEqual(JJN.unwrap(null as any).textContent, 'null')
+            assert.strictEqual(JJN.unwrap(undefined as any).textContent, 'undefined')
+        })
+
+        it('stringifies plain objects and falls back safely', () => {
+            assert.strictEqual(JJN.unwrap({ a: 1 } as any).textContent, '{"a":1}')
+
+            const circular: { self?: unknown } = {}
+            circular.self = circular
+
+            assert.strictEqual(JJN.unwrap(circular as any).textContent, '[object Object]')
         })
     })
 
@@ -264,5 +280,4 @@ describe('JJN', () => {
             assert.strictEqual(child.parentNode, null)
         })
     })
-
 })

@@ -1,6 +1,6 @@
 import { isInstance, isObj, isStr } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './types.js'
-import { typeErr } from '../internal.js'
+import { toStr, typeErr } from '../internal.js'
 import { JJET } from './JJET.js'
 
 /**
@@ -73,18 +73,19 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      *
      * @param raw - The object to wrap. If it's already Wrapped, it'll be returned without any change. We don't double-wrap or clone it.
      * @returns The most granular Wrapped subclass instance. If the input is already wrapped, it'll be returned as is without cloning.
-     * @throws {TypeError} If the input is not a Node, string, or JJ wrapper.
      * @see {@link JJN.from} for explicit base wrapper construction.
      * @see {@link JJN.unwrap} for the reverse conversion.
      */
     static wrap(raw: Wrappable): Wrapped {
-        if (isInstance(raw, JJN)) {
-            return raw
+        if (isObj(raw)) {
+            if (isInstance(raw, JJN)) {
+                return raw
+            }
+            if (isInstance(raw, Node)) {
+                return new JJN(raw)
+            }
         }
-        if (isInstance(raw, Node)) {
-            return new JJN(raw)
-        }
-        throw typeErr('raw', 'a Node or JJN instance', raw)
+        return JJN.from(document.createTextNode(toStr(raw)))
     }
 
     /**
@@ -92,23 +93,21 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      *
      * @remarks
      * If the input is already a native Node, it is returned as is.
-     * If the input is a string, a new Text node is created and returned.
+     * If the input is a JJ wrapper, its underlying node is returned.
+     * Otherwise, the input is coerced into a Text node.
+     * Plain objects are stringified with JSON when possible, and fall back to `String(...)`.
      *
      * @example
      * ```ts
      * const rawElement = JJN.unwrap(myJJHE) // Returns HTMLElement
      * ```
      *
-     * @param obj - The object to unwrap.
+     * @param obj - The value to unwrap.
      * @returns The underlying DOM node.
-     * @throws {TypeError} If the input cannot be unwrapped.
      * @see {@link JJN.wrap} for the reverse conversion.
      * @see {@link JJN.isWrappable} for pre-validation checks.
      */
     static unwrap(obj: Wrappable): Unwrapped {
-        if (isStr(obj)) {
-            return document.createTextNode(obj)
-        }
         if (isObj(obj)) {
             if (isInstance(obj, Node)) {
                 return obj
@@ -117,7 +116,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
                 return obj.ref
             }
         }
-        throw typeErr('obj', 'a string, Node, or JJ wrapper', obj)
+        return document.createTextNode(toStr(obj))
     }
 
     /**
@@ -177,7 +176,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      *
      * @example
      * ```ts
-        * const text = JJT.create('hello')
+     * const text = JJT.create('hello')
      * JJHE.create('div').addChild(text)
      * const parent = text.parent // JJHE
      * ```
@@ -228,7 +227,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      *
      * @example
      * ```ts
-    * const doc = JJD.from(document)
+     * const doc = JJD.from(document)
      * const el = JJHE.create('div')
      * doc.body.addChild(el)
      * el.rm()
@@ -270,5 +269,4 @@ export class JJN<T extends Node = Node> extends JJET<T> {
         }
         return this
     }
-
 }

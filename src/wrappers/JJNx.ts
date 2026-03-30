@@ -1,5 +1,5 @@
 import { isArr, isInstance, isPromise, isStr } from 'jty'
-import { typeErr } from '../internal.js'
+import { notNullish, typeErr } from '../internal.js'
 import { Wrappable, Wrapped } from './types.js'
 import { JJN } from './JJN-raw.js'
 import type { JJHE } from './JJHE.js'
@@ -58,7 +58,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * ```
      *
      * @remarks
-     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     * To make template codes easier, this function ignores nullish children (`null` and `undefined`).
+     * Other non-node values are coerced into Text nodes.
      *
      * @param children - The children to append.
      * @returns This instance for chaining.
@@ -67,7 +68,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/append | Element.append}
      */
     addChild(...children: Wrappable[]): this {
-        const nodes = JJN.unwrapAll(children.filter(JJN.isWrappable))
+        const nodes = JJN.unwrapAll(children.filter(notNullish))
         this.ref.append(...nodes)
         return this
     }
@@ -77,7 +78,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @remarks
      * This is the array-based companion to {@link addChild}.
-     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     * To make template codes easier, this function ignores nullish children (`null` and `undefined`).
+     * Other non-node values are coerced into Text nodes.
      *
      * @example
      * ```ts
@@ -86,7 +88,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @param children - The children to append.
      * @returns This instance for chaining.
-     * @throws {TypeError} If `children` is not an array of Wrappable.
+     * @throws {TypeError} If `children` is not an array.
      * @see {@link addChild} for the variadic form.
      * @see {@link addChildMap} for mapping arrays into appended children.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/append | Element.append}
@@ -107,7 +109,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * ```
      *
      * @remarks
-     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     * To make template codes easier, this function ignores nullish children (`null` and `undefined`).
+     * Other non-node values are coerced into Text nodes.
      *
      * @param children - The children to prepend.
      * @returns This instance for chaining.
@@ -116,7 +119,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend | Element.prepend}
      */
     preChild(...children: Wrappable[]): this {
-        const nodes = JJN.unwrapAll(children.filter(JJN.isWrappable))
+        const nodes = JJN.unwrapAll(children.filter(notNullish))
         this.ref.prepend(...nodes)
         return this
     }
@@ -126,7 +129,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @remarks
      * This is the array-based companion to {@link preChild}.
-     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     * To make template codes easier, this function ignores nullish children (`null` and `undefined`).
+     * Other non-node values are coerced into Text nodes.
      *
      * @example
      * ```ts
@@ -135,7 +139,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @param children - The children to prepend.
      * @returns This instance for chaining.
-     * @throws {TypeError} If `children` is not an array of Wrappable.
+     * @throws {TypeError} If `children` is not an array.
      * @see {@link preChild} for the variadic form.
      * @see {@link preChildMap} for mapping arrays into prepended children.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend | Element.prepend}
@@ -156,19 +160,20 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * ```
      *
      * @remarks
-     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     * To make template codes easier, this function ignores nullish children (`null` and `undefined`).
+     * Other non-node values are coerced into Text nodes.
      *
      * @param array - The source array.
      * @param mapFn - The mapping function returning a Wrappable.
      * @returns This instance for chaining.
-     * @throws {TypeError} If `array` is not an array of Wrappable.
+     * @throws {TypeError} If `array` is not an array.
      * @throws {Error} If mapping the array or appending the children fails.
      * @see {@link addChild} for directly appending variadic children.
      * @see {@link addChildren} for appending a pre-built array of children.
      */
-    addChildMap(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
+    addChildMap<T>(array: T[], mapFn: (item: T) => Wrappable) {
         if (!isArr(array)) {
-            throw typeErr('array', 'an array of Wrappable', array)
+            throw typeErr('array', 'an array', array)
         }
 
         try {
@@ -187,19 +192,20 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * ```
      *
      * @remarks
-     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     * To make template codes easier, this function ignores nullish children (`null` and `undefined`).
+     * Other non-node values are coerced into Text nodes.
      *
      * @param array - The source array.
      * @param mapFn - The mapping function.
      * @returns This instance for chaining.
-     * @throws {TypeError} If `array` is not an array of Wrappable.
+     * @throws {TypeError} If `array` is not an array.
      * @throws {Error} If mapping the array or prepending the children fails.
      * @see {@link preChild} for directly prepending variadic children.
      * @see {@link preChildren} for prepending a pre-built array of children.
      */
-    preChildMap(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
+    preChildMap<T>(array: T[], mapFn: (item: T) => Wrappable) {
         if (!isArr(array)) {
-            throw typeErr('array', 'an array of Wrappable', array)
+            throw typeErr('array', 'an array', array)
         }
 
         try {
@@ -214,7 +220,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @remarks
      * If no children are provided, it empties the Element.
-     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     * To make template codes easier, this function ignores nullish children (`null` and `undefined`).
+     * Other non-node values are coerced into Text nodes.
      *
      * @example
      * ```ts
@@ -231,7 +238,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
         if (children.length === 0) {
             this.ref.replaceChildren()
         } else {
-            const nodes = JJN.unwrapAll(children.filter(JJN.isWrappable))
+            const nodes = JJN.unwrapAll(children.filter(notNullish))
             this.ref.replaceChildren(...nodes)
         }
         return this
@@ -243,7 +250,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @remarks
      * This is the array-based companion to {@link setChild}.
      * Passing an empty array empties the Element.
-     * To make template codes easier, this function ignores any child that is not possible to `wrap()` (e.g. undefined, null, false).
+     * To make template codes easier, this function ignores nullish children (`null` and `undefined`).
+     * Other non-node values are coerced into Text nodes.
      *
      * @example
      * ```ts
@@ -270,7 +278,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @remarks
      * This is the mapping companion to {@link setChildren}.
-     * To make template codes easier, this function ignores any mapped child that is not possible to `wrap()` (e.g. undefined, null, false).
+     * To make template codes easier, this function ignores mapped nullish children (`null` and `undefined`).
+     * Other non-node values are coerced into Text nodes.
      * Errors thrown by the mapping function or child replacement are wrapped with a higher-level error that preserves the original cause.
      *
      * @example

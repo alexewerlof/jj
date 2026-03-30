@@ -88,7 +88,7 @@ describe('JJDF', () => {
     })
 
     describe(JJDF.prototype.addChildren.name, () => {
-        it('appends an array of children and ignores nullish values', () => {
+        it('appends an array of children, ignores nullish values, and coerces others to text', () => {
             const host = JJDF.create()
             const first = JJHE.create('span').setAttr('id', 'first')
             first.ref.textContent = 'first'
@@ -96,8 +96,16 @@ describe('JJDF', () => {
             host.addChildren([first, ' tail', null as any, undefined as any, false as any])
 
             assert.strictEqual(host.find('#first')?.ref.textContent, 'first')
-            assert.strictEqual(host.ref.textContent, 'first tail')
-            assert.strictEqual(host.ref.childNodes.length, 2)
+            assert.strictEqual(host.ref.textContent, 'first tailfalse')
+            assert.strictEqual(host.ref.childNodes.length, 3)
+        })
+
+        it('coerces objects and symbols to text nodes', () => {
+            const host = JJDF.create()
+
+            host.addChildren([{ ok: true } as any, Symbol('tag') as any, 9 as any])
+
+            assert.strictEqual(host.ref.textContent, '{"ok":true}Symbol(tag)9')
         })
 
         it('throws for non-array input', () => {
