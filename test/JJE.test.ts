@@ -172,34 +172,34 @@ describe('JJE', () => {
     })
 
     describe('ARIA methods', () => {
-        describe('getAria()', () => {
+        describe('getAriaAttr()', () => {
             it('gets aria attribute value', () => {
                 const el = document.createElement('div')
                 el.setAttribute('aria-label', 'test')
                 const jje = new JJE(el)
-                assert.strictEqual(jje.getAria('label'), 'test')
+                assert.strictEqual(jje.getAriaAttr('label'), 'test')
             })
 
             it('throws TypeError for non-string name', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.getAria(123 as any), TypeError)
+                assert.throws(() => jje.getAriaAttr(123 as any), TypeError)
             })
         })
 
-        describe('hasAria()', () => {
+        describe('hasAriaAttr()', () => {
             it('checks aria attribute existence', () => {
                 const el = document.createElement('div')
                 el.setAttribute('aria-hidden', 'true')
                 const jje = new JJE(el)
-                assert.strictEqual(jje.hasAria('hidden'), true)
-                assert.strictEqual(jje.hasAria('label'), false)
+                assert.strictEqual(jje.hasAriaAttr('hidden'), true)
+                assert.strictEqual(jje.hasAriaAttr('label'), false)
             })
 
             it('throws TypeError for non-string name', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.hasAria({} as any), TypeError)
+                assert.throws(() => jje.hasAriaAttr({} as any), TypeError)
             })
         })
 
@@ -256,13 +256,13 @@ describe('JJE', () => {
             })
         })
 
-        describe('rmAria()', () => {
+        describe('rmAriaAttr()', () => {
             it('removes aria attributes', () => {
                 const el = document.createElement('div')
                 el.setAttribute('aria-label', 'test')
                 el.setAttribute('aria-hidden', 'true')
                 const jje = new JJE(el)
-                jje.rmAria('label', 'hidden')
+                jje.rmAriaAttr('label', 'hidden')
                 assert.strictEqual(el.hasAttribute('aria-label'), false)
                 assert.strictEqual(el.hasAttribute('aria-hidden'), false)
             })
@@ -270,7 +270,7 @@ describe('JJE', () => {
             it('throws TypeError for non-string name', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.rmAria(null as any), Error)
+                assert.throws(() => jje.rmAriaAttr(null as any), Error)
             })
         })
     })
@@ -350,6 +350,29 @@ describe('JJE', () => {
             })
         })
 
+        describe('addClasses()', () => {
+            it('adds classes from an array', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                jje.addClasses(['foo', 'bar', 'baz'])
+                assert.ok(el.classList.contains('foo'))
+                assert.ok(el.classList.contains('bar'))
+                assert.ok(el.classList.contains('baz'))
+            })
+
+            it('throws TypeError for non-array input', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                assert.throws(() => jje.addClasses('foo' as any), TypeError)
+            })
+
+            it('throws TypeError for non-string class names inside the array', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                assert.throws(() => jje.addClasses(['foo', 123 as any]), TypeError)
+            })
+        })
+
         describe('rmClass()', () => {
             it('removes classes', () => {
                 const el = document.createElement('div')
@@ -365,6 +388,30 @@ describe('JJE', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
                 assert.throws(() => jje.rmClass(null as any), TypeError)
+            })
+        })
+
+        describe('rmClasses()', () => {
+            it('removes classes from an array', () => {
+                const el = document.createElement('div')
+                el.className = 'foo bar baz'
+                const jje = new JJE(el)
+                jje.rmClasses(['foo', 'baz'])
+                assert.ok(!el.classList.contains('foo'))
+                assert.ok(el.classList.contains('bar'))
+                assert.ok(!el.classList.contains('baz'))
+            })
+
+            it('throws TypeError for non-array input', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                assert.throws(() => jje.rmClasses(null as any), TypeError)
+            })
+
+            it('throws TypeError for non-string class names inside the array', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                assert.throws(() => jje.rmClasses(['foo', null as any]), TypeError)
             })
         })
 

@@ -45,40 +45,40 @@ describe('JJHE', () => {
     })
 
     describe('data attribute methods', () => {
-        describe('getData()', () => {
+        describe('getDataAttr()', () => {
             it('gets data attribute', () => {
                 const el = document.createElement('div')
                 el.dataset.testKey = 'value'
                 const jjhe = new JJHE(el)
-                assert.strictEqual(jjhe.getData('testKey'), 'value')
+                assert.strictEqual(jjhe.getDataAttr('testKey'), 'value')
             })
 
             it('returns undefined for missing data', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.strictEqual(jjhe.getData('missing'), undefined)
+                assert.strictEqual(jjhe.getDataAttr('missing'), undefined)
             })
 
             it('throws TypeError for non-string name', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.throws(() => jjhe.getData(123 as any), TypeError)
+                assert.throws(() => jjhe.getDataAttr(123 as any), TypeError)
             })
         })
 
-        describe('hasData()', () => {
+        describe('hasDataAttr()', () => {
             it('checks data attribute existence', () => {
                 const el = document.createElement('div')
                 el.dataset.exists = 'value'
                 const jjhe = new JJHE(el)
-                assert.strictEqual(jjhe.hasData('exists'), true)
-                assert.strictEqual(jjhe.hasData('missing'), false)
+                assert.strictEqual(jjhe.hasDataAttr('exists'), true)
+                assert.strictEqual(jjhe.hasDataAttr('missing'), false)
             })
 
             it('throws TypeError for non-string name', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.throws(() => jjhe.hasData(null as any), TypeError)
+                assert.throws(() => jjhe.hasDataAttr(null as any), TypeError)
             })
         })
 
@@ -135,13 +135,13 @@ describe('JJHE', () => {
             })
         })
 
-        describe('rmData()', () => {
+        describe('rmDataAttr()', () => {
             it('removes data attributes', () => {
                 const el = document.createElement('div')
                 el.dataset.key1 = 'val1'
                 el.dataset.key2 = 'val2'
                 const jjhe = new JJHE(el)
-                jjhe.rmData('key1', 'key2')
+                jjhe.rmDataAttr('key1', 'key2')
                 assert.strictEqual(el.dataset.key1, undefined)
                 assert.strictEqual(el.dataset.key2, undefined)
             })
@@ -149,7 +149,31 @@ describe('JJHE', () => {
             it('throws TypeError for non-string name', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                assert.throws(() => jjhe.rmData(null as any), TypeError)
+                assert.throws(() => jjhe.rmDataAttr(null as any), TypeError)
+            })
+        })
+
+        describe('rmDataAttrs()', () => {
+            it('removes data attributes from an array of names', () => {
+                const el = document.createElement('div')
+                el.dataset.key1 = 'val1'
+                el.dataset.key2 = 'val2'
+                const jjhe = new JJHE(el)
+                jjhe.rmDataAttrs(['key1', 'key2'])
+                assert.strictEqual(el.dataset.key1, undefined)
+                assert.strictEqual(el.dataset.key2, undefined)
+            })
+
+            it('throws TypeError for non-array input', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                assert.throws(() => jjhe.rmDataAttrs(null as any), TypeError)
+            })
+
+            it('throws TypeError for non-string names inside the array', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                assert.throws(() => jjhe.rmDataAttrs(['key1', null as any]), TypeError)
             })
         })
     })

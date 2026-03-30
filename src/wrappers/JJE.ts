@@ -1,4 +1,4 @@
-import { isInstance, isStr, isPOJO } from 'jty'
+import { isInstance, isStr, isPOJO, isArr } from 'jty'
 import { Wrapped } from './types.js'
 import { typeErr } from '../internal.js'
 import { JJSR } from './JJSR.js'
@@ -182,7 +182,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @example
      * ```ts
-     * el.getAria('label') // gets 'aria-label'
+     * el.getAriaAttr('label') // gets 'aria-label'
      * ```
      *
      * @param name - The ARIA attribute suffix (e.g., 'label' for 'aria-label').
@@ -190,7 +190,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @throws {TypeError} If `name` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
-    getAria(name: string): string | null {
+    getAriaAttr(name: string): string | null {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
@@ -203,11 +203,11 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @param name - The ARIA attribute suffix.
      * @returns `true` if the attribute exists.
      * @throws {TypeError} If `name` is not a string.
-     * @see {@link getAria} for reading ARIA values.
+     * @see {@link getAriaAttr} for reading ARIA values.
      * @see {@link setAriaAttr} for setting ARIA values.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
-    hasAria(name: string): boolean {
+    hasAriaAttr(name: string): boolean {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
@@ -288,8 +288,8 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @example
      * ```ts
-     * el.rmAria('hidden')  // Remove single
-     * el.rmAria('label', 'hidden')  // Remove multiple
+     * el.rmAriaAttr('hidden')  // Remove single
+     * el.rmAriaAttr('label', 'hidden')  // Remove multiple
      * ```
      *
      * @param names - The ARIA attribute suffix(es) to remove.
@@ -299,7 +299,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link setAriaAttrs} for setting multiple ARIA attributes.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute | Element.removeAttribute}
      */
-    rmAria(...names: string[]): this {
+    rmAriaAttr(...names: string[]): this {
         try {
             for (const name of names) {
                 if (!isStr(name)) {
@@ -425,6 +425,29 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
+     * Adds multiple classes from an array of class names.
+     *
+     * @example
+     * ```ts
+     * el.addClasses(['btn', 'btn-primary'])
+     * ```
+     *
+     * @param classNames - The classes to add.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `classNames` is not an array.
+     * @throws {TypeError} If any class name in `classNames` is not a string.
+     * @see {@link addClass} for adding one or more classes via rest arguments.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/add | DOMTokenList.add}
+     */
+    addClasses(classNames: string[]): this {
+        if (!isArr(classNames)) {
+            throw typeErr('classNames', 'an array of strings', classNames)
+        }
+        return this.addClass(...classNames)
+    }
+
+    /**
      * Removes one or more classes from the Element.
      *
      * @example
@@ -447,6 +470,29 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
         }
         this.ref.classList.remove(...classNames)
         return this
+    }
+
+    /**
+     * Removes multiple classes from an array of class names.
+     *
+     * @example
+     * ```ts
+     * el.rmClasses(['btn', 'btn-primary'])
+     * ```
+     *
+     * @param classNames - The classes to remove.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `classNames` is not an array.
+     * @throws {TypeError} If any class name in `classNames` is not a string.
+     * @see {@link rmClass} for removing one or more classes via rest arguments.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/remove | DOMTokenList.remove}
+     */
+    rmClasses(classNames: string[]): this {
+        if (!isArr(classNames)) {
+            throw typeErr('classNames', 'an array of strings', classNames)
+        }
+        return this.rmClass(...classNames)
     }
 
     /**

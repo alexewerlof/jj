@@ -1,4 +1,4 @@
-import { hasProp, isPOJO, isStr } from 'jty'
+import { hasProp, isArr, isPOJO, isStr } from 'jty'
 import { typeErr } from '../internal.js'
 import { JJE } from './JJE.js'
 
@@ -139,7 +139,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      *
      * @example
      * ```ts
-     * const value = el.getData('my-key')
+     * const value = el.getDataAttr('myKey')
      * ```
      *
      * @param name - The data attribute name (in camelCase).
@@ -149,7 +149,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
-    getData(name: string): string | undefined {
+    getDataAttr(name: string): string | undefined {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
@@ -161,7 +161,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      *
      * @example
      * ```ts
-     * if (el.hasData('my-key')) {
+     * if (el.hasDataAttr('myKey')) {
      *   // ...
      * }
      * ```
@@ -173,7 +173,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
-    hasData(name: string): boolean {
+    hasDataAttr(name: string): boolean {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
@@ -258,8 +258,8 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      *
      * @example
      * ```ts
-     * el.rmData('myKey')  // Remove single
-     * el.rmData('myKey', 'otherKey')  // Remove multiple
+     * el.rmDataAttr('myKey')  // Remove single
+     * el.rmDataAttr('myKey', 'otherKey')  // Remove multiple
      * ```
      *
      * @param names - The data attribute name(s) (in camelCase).
@@ -269,7 +269,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
-    rmData(...names: string[]): this {
+    rmDataAttr(...names: string[]): this {
         for (const name of names) {
             if (!isStr(name)) {
                 throw typeErr('name', 'a string', name)
@@ -277,5 +277,29 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
             delete this.ref.dataset[name]
         }
         return this
+    }
+
+    /**
+     * Removes multiple data attributes from an array of names.
+     *
+     * @example
+     * ```ts
+     * el.rmDataAttrs(['myKey', 'otherKey'])
+     * ```
+     *
+     * @param names - The data attribute names to remove (in camelCase).
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `names` is not an array.
+     * @throws {TypeError} If any name in `names` is not a string.
+     * @see {@link rmDataAttr} for removing one or more data attributes via rest arguments.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
+     */
+    rmDataAttrs(names: string[]): this {
+        if (!isArr(names)) {
+            throw typeErr('names', 'an array', names)
+        }
+        return this.rmDataAttr(...names)
     }
 }
