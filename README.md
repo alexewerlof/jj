@@ -6,6 +6,34 @@
 
 ## ⚡ Quick Start
 
+CDN:
+
+[Import map](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap): Add this to your HTML:
+
+```html
+<script type="importmap">
+    {
+        "jj": "https://cdn.jsdelivr.net/npm/jj/lib/bundle.min.js"
+        // Or a specific version
+        "jj": "https://cdn.jsdelivr.net/npm/jj@2/lib/bundle.min.js
+    }
+</script>
+```
+
+And then:
+
+```js
+import { JJHE } from 'jj'
+```
+
+CDN:
+
+```js
+import { JJHE } from 'https://cdn.jsdelivr.net/npm/jj/lib/bundle.min.js'
+```
+
+NPM:
+
 ```bash
 npm i jj
 ```
@@ -104,3 +132,7 @@ npm test
 MIT
 
 _Made in Sweden 🇸🇪 by [Alex Ewerlöf](https://alexewerlof.com/)_
+
+```
+
+```
