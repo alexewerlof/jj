@@ -10,7 +10,7 @@ doc.find('#toc', true).addChild(toc)
 
 function getFrom(urlStr) {
     const url = new URL(urlStr)
-    return url.searchParams.get('file')
+    return url.searchParams.get('file') || 'index.md'
 }
 
 async function fetchFile(path) {
@@ -23,11 +23,4 @@ async function fetchFile(path) {
 }
 
 const contentRenderer = doc.find('#content-renderer')
-console.log(contentRenderer)
-console.log(contentRenderer.ref.content)
-const file = getFrom(window.location)
-if (file) {
-    contentRenderer.ref.content = await fetchFile(file)
-} else {
-    contentRenderer.ref.content = 'From _index_'
-}
+contentRenderer.ref.content = await fetchFile(getFrom(window.location))
