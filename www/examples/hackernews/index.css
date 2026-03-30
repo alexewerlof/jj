@@ -2,8 +2,8 @@
     --primary-color: #ff6600;
     --background-color: #f6f6ef;
     --body-color: #ffffff;
-    --foreground-color: #000000;
-    --foreground-subtile-color: #828282;
+    --emphasize-color: #000000;
+    --foreground-color: #828282;
     --ui-border: #f6f6ef;
     --body-font-family: Verdana, Geneva, sans-serif;
     --hn-top-text: #222222;
@@ -36,7 +36,7 @@ a {
     padding: 2px;
     background: var(--primary-color);
     color: var(--hn-top-text);
-    line-height: 12px;
+    line-height: 13px;
 }
 
 .hn__brand {
@@ -58,11 +58,6 @@ a {
     margin-right: auto;
 }
 
-.hn__login {
-    color: var(--hn-top-text);
-    text-decoration: none;
-}
-
 .hn__list {
     margin: 0;
     padding: 10px 30px;
@@ -71,19 +66,31 @@ a {
 
 .hn__item {
     margin: 0 0 5px;
-    color: var(--foreground-subtile-color);
 
     & small {
-        color: var(--foreground-subtile-color);
         margin-left: 4px;
         font-size: 0.85em;
     }
 
     & p {
         margin: 2px 0 0;
-        color: var(--foreground-subtile-color);
         font-size: 0.7em;
+
+        & a {
+            color: inherit;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
     }
+}
+
+footer {
+    text-align: center;
+    padding: 1em;
+    font-size: 0.8em;
+    border-top: 2px solid var(--primary-color);
 }
 
 .hn__item-content {
