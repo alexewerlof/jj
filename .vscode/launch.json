@@ -15,7 +15,7 @@
             "name": "Debug current test (Node)",
             "type": "node",
             "request": "launch",
-            "runtimeArgs": ["--test"],
+            "runtimeArgs": ["--import", "tsx", "--test"],
             "program": "${file}",
             "skipFiles": ["<node_internals>/**"]
         }
