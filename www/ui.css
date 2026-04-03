@@ -22,6 +22,7 @@ html {
     background-attachment: fixed;
     color: var(--foreground-color);
     font-family: var(--body-font-family);
+    line-height: 1.4;
 }
 
 h1,

@@ -28,8 +28,11 @@
         </nav>
 
         <main>
+            <aside>
+                <table-of-contents id="toc"></table-of-contents>
+            </aside>
             <article>
-                <render-markdown id="content">Some stuff</render-markdown>
+                <render-markdown id="content-renderer"></render-markdown>
             </article>
         </main>
 
@@ -40,6 +43,13 @@
             </div>
         </footer>
 
+        <script type="importmap">
+            {
+                "imports": {
+                    "jty": "../../node_modules/jty/lib/index.js"
+                }
+            }
+        </script>
         <script type="module" src="index.js"></script>
     </body>
 </html>

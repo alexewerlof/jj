@@ -30,3 +30,10 @@ This way, the upgraded `JJN.wrap()` static method is available inside all the JJ
 When checking wrapper inputs in this method, use `isInstance(template, JJN)` (not `JJDF`/`JJHE`) to avoid circular dependencies and keep support generic for any JJ wrapper.
 
 Tests live in the root `test/` folder. From there, import wrappers via `../src/index.ts`.
+
+## Related Task Skills
+
+- `../../skills/SKILL.md` (main skill)
+- `../../skills/references/querying-patterns.md`
+- `../../skills/references/eventing-patterns.md`
+- `../../skills/references/error-handling-patterns.md`

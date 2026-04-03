@@ -8,140 +8,89 @@ If you encounter contradicting instructions, pause and ask the user what to do.
 ## Repository Orientation
 
 - **Build pipeline**: `src/` (TypeScript) compiles to `lib/` (ESM JS + `.d.ts`).
-- **Library API**: Public wrappers and helpers are exported from `src/index.ts`.
-- **Bundle**: `bundle.js` script produces browser bundle artifacts in `lib/`.
-- **Docs**: `typedoc` generates API docs in `doc/`.
-- **Examples**: `www/` contains runnable examples/tutorials and consumes `lib/bundle.js`.
+- **Public API**: Public wrappers and helpers are exported from `src/index.ts`.
+- **Landing page**: `www/index.html` is the landing page that consumes `lib/bundle.js`.
+- **Examples**: `www/examples` contains runnable examples/tutorials and consumes `lib/bundle.js`.
 
 ## Build and Validation Commands
 
-- `npm run build` runs the full project build flow.
+- `npm run build` uses [tsup](https://www.npmjs.com/package/tsup) to produces bundle artifacts in `lib/` in cjs, global, and esm format minified and plain with sourcemaps.
 - `npm run typecheck` runs TypeScript checks without emitting files.
-- `npm test` runs typecheck plus the Node test suite.
-- `npm run doc` regenerates documentation only.
-- `npm run fmt` formats files using the repository Prettier configuration.
+- `npm test` runs typecheck plus uses node's native test framework together with [jsdom](https://www.npmjs.com/package/jsdom) to emulate the browser environment.
+- `npm run doc` run `typedoc` to generates API docs in `doc/`.
+- `npm run fmt` formats files using the repository [Prettier](https://www.npmjs.com/package/prettier) [configuration](./.prettierrc.json).
 
-## 1. Core Philosophy
+## Task Skills (Use First)
 
-- **Imperative**: No Virtual DOM. You are manipulating real DOM nodes wrapped in `JJ` objects.
-- **Fluent API**: Chain methods whenever possible.
-- **Native Escape**: Use `.ref` to access the underlying native DOM node when a `JJ` method doesn't exist.
-- **Document Wrapper**: Initialize your own document wrapper with `const doc = JJD.from(document)` when you need fluent document queries or document-level operations.
+For task-focused guidance, load `skills/SKILL.md` — it is the main JJ skill with a full API overview and links to every reference doc. For deep-dives, reference files live under `skills/references/`.
 
-## 2. Type-Safe Element Creation
+- `skills/SKILL.md` (main skill — start here)
+- `skills/references/react-to-jj-translation.md`
+- `skills/references/vue-to-jj-translation.md`
+- `skills/references/svelte-to-jj-translation.md`
+- `skills/references/angular-to-jj-translation.md`
+- `skills/references/jquery-to-jj-translation.md`
+- `skills/references/lit-to-jj-translation.md`
+- `skills/references/web-components-patterns.md`
+- `skills/references/eventing-patterns.md`
+- `skills/references/querying-patterns.md`
+- `skills/references/css-improvements.md`
+- `skills/references/testing-with-jsdom.md`
+- `skills/references/security-and-html.md`
+- `skills/references/error-handling-patterns.md`
 
-**ALWAYS** use factory methods (e.g. `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR.from()`) instead of `new JJHE(...)` or `document.createElement`.
+## 1. Core API Rules
 
-```typescript
-// ✅ GOOD
-const div = JJHE.create('div') // inferred as JJHE<HTMLDivElement>
-const input = JJHE.create('input').setAttr('type', 'text') // inferred as JJHE<HTMLInputElement>
-const svg = JJSE.create('svg') // Inferred as JJSE<SVGSVGElement>
-const math = JJME.create('math') // Inferred as JJME<MathMLElement>
-const myInput = JJHE.fromId('my-input') // inferred as JJHE<HTMLInputElement>
+> Load `skills/SKILL.md` for full patterns and examples before writing code.
 
-// ❌ BAD
-const div = new JJHE(document.createElement('div')) // Verbose, redundant, miss type inference
-```
+- **Imperative**: No Virtual DOM. Manipulate real DOM nodes wrapped in `JJ` objects.
+- **Fluent API**: Chain wrapper methods whenever possible. Access `.ref` only for native APIs not covered by JJ.
+- **Hyperscript**: Use `JJHE.tree()`, `JJSE.tree()`, or `JJME.tree()` to programmatically create a HTML, SVG, or MathML DOM tree respectively.
+- **Document Wrapper**: Use `JJD.from(document)` for fluent document queries.
 
-## 3. Security (Critical)
+### Element Creation
 
-- **`setHTML`**: You MUST pass `true` as the second argument to confirm you are setting innerHTML intentionally.
-- **XSS Prevention**: Prefer `.setText()` over `.setHTML()` whenever possible.
+Use factory methods — `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR.from()`, `JJDF.create()`, `JJHE.tree()`, `JJSE.tree()`, `JJME.tree()`. Never `new JJHE(...)` or bare `document.createElement`. Factory methods infer the correct element subtype.
 
-```typescript
-// ✅ GOOD
-div.setHTML('<p>Content</p>', true)
-div.setText(userInput)
+### Security
 
-// ❌ BAD
-div.setHTML('<p>Content</p>') // Will THROW error
-div.ref.innerHTML = '...' // Bypasses checks, discouraged
-```
+`setHTML(html, true)` requires the explicit `true` flag or throws. Prefer `.setText()` for user-supplied content.
 
-## 4. Chaining vs Native Access
+→ See `skills/references/security-and-html.md`.
 
-Chain `JJ` methods first. Access `.ref` only when necessary.
+### Shadow DOM and Components
 
-```typescript
-// ✅ GOOD
-const btn = JJHE.create('button').addClass('btn', 'primary').setText('Click me').on('click', handler)
+- Keep `fetchTemplate`/`fetchStyle` at module scope (loaded once, reused per instance).
+- Pass awaited results to `JJHE.from(this).setShadow(mode, template, ...styles)`.
+- Expose `static defined = defineComponent('tag', Class)` on every custom element and `await` it before using the custom element.
 
-// ❌ BAD
-const btn = JJHE.create('button')
-btn.ref.classList.add('btn') // Breaking the chain unnecessary
-btn.setText('Click me')
-```
+→ See `skills/references/web-components-patterns.md`.
 
-## 5. Shadow DOM Pattern
+### Child Mutations
 
-Keep template and style resources at module scope, then pass them directly to `JJHE.setShadow()`.
+- Use `setChild()` instead of `empty().addChild()`.
+- Use `setTemplate()` instead of `empty().addTemplate()`.
+- `addChild()` / `addChildren()` / `addChildMap()` ignore nullish children (`null`/`undefined`); others coerce to Text nodes.
+- `addTemplate()` always **clones** before appending.
 
-```typescript
-const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
-const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
+### Events
 
-class MyComponent extends HTMLElement {
-    async connectedCallback() {
-        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
-    }
-}
-```
+- Use `customEvent(name, detail?)` over `new CustomEvent(...)`.
+- Use `triggerCustomEvent(name, detail?)` on `JJET` descendants for fluent dispatch.
+- JJ event defaults: `bubbles: true`, `composed: true`. Override explicitly when the event should stay local.
 
-## 5.1 Async Component Registration
+### Dataset Helpers
 
-`defineComponent()` is async and must be treated as async everywhere.
+- Use `getDataAttr()` / `hasDataAttr()` / `setDataAttr()` / `rmDataAttr()` for singular data-attribute operations.
+- Use `setDataAttrs()` for setting multiple data attributes from an object key-value.
+- Use ``rmDataAttrs()` for removing multiple data attributes using an array format or use `rmDataAttr()` for variadic arg format that reads better.
 
-For component classes, expose a static `defined` promise:
+### ARIA and Class Helpers
 
-```typescript
-class MyComponent extends HTMLElement {
-    static defined = defineComponent('my-component', MyComponent)
-}
-```
+- Use `getAriaAttr()` / `hasAriaAttr()` / `setAriaAttr()` / `rmAriaAttr()` for singular ARIA operations.
+- Use `addClass()` / `rmClass()` / `toggleClass()` for rest-argument class mutations and `addClasses()` / `rmClasses()` for array-based class mutations.
 
-For importers, always await definition readiness before using the custom element:
-
-```typescript
-await MyComponent.defined
-```
-
-If multiple components are needed, await them in parallel:
-
-```typescript
-await Promise.all([MyComponent.defined, OtherComponent.defined])
-```
-
-The promise resolves to:
-
-- `false` when the component is newly defined by this call.
-- `true` when the same constructor was already defined.
-
-This explicit definition step is critical for reliability. Without it, markup may be parsed before the element is defined, which can lead to timing-sensitive or flaky upgrades.
-
-Do not call `.defined` like a synchronous function, and prefer `defineComponent()` over direct `customElements.define()` when exposing a component readiness contract.
-
-## 6. Common Gotchas
-
-- **`empty()`**: Use `el.empty()` to clear children. It uses `replaceChildren()` under the hood (fast & safe).
-- **`empty().addChild()`**: Use `setChild()` instead which replaces the children to the same effect but in 1 call.
-- **Child coercion**: `addChild()` / `preChild()` / `setChild()` and their array/map variants ignore only `null`/`undefined`; all other non-node values are coerced to Text nodes.
-- **`addTemplate()`**: Available on `JJD`/`JJDF`/`JJE` and their descendants like `JJHE`. It accepts `string`, `HTMLTemplateElement`, `DocumentFragment`, `HTMLElement`, or any `JJN` wrapper and clones before append. This is useful for quickly populating the root DOM node of a custom element that uses light DOM.
-- **`empty().addTemplate()`**: for the same reason, use `setTemplate()` instead.
-- **`parent`**: Use `node.parent` to get the wrapped parent node. It returns `null` for detached nodes.
-- **`children`**: Use `node.children` to get wrapped child nodes. It always returns an array, including for text and document fragment children.
-- **`rm()`**: Use `node.rm()` to detach any wrapped node from its current parent. Detached nodes are ignored.
-- **Attributes**: Use `.setAttr('name', val)`, `.getAttr('name')`, `.rmAttr('name')`.
-- **Optional attribute objects**: Use `.setAttrs(attrs)` for builder-style APIs; it no-ops for `null`/`undefined` and validates POJO input.
-- **Classes**: Use `.addClass()`, `.rmClass()`, `.toggleClass()`, `.setClass()`, `.setClasses()`.
-- **Inline styles**: Use `.getStyle(name)`, `.setStyle(name, value)`, `.rmStyle()`, `.setStyles()` for style property access via `CSSStyleDeclaration`.
-- **Dataset**: Use `.setDataAttr()`, `.setDataAttrs()`, `.getData()` (on `JJHE`/`JJSE`/`JJME`).
-- **ARIA**: Use `.setAriaAttr()`, `.setAriaAttrs()`, `.getAria()`, `.rmAria()`.
-- **Custom events**: Prefer `customEvent(name, detail?, options?)` for payload-bearing DOM events instead of spelling out `new CustomEvent(...)` each time.
-- **Fluent custom dispatch**: Use `triggerCustomEvent(name, detail?, options?)` on `JJET` descendants when you want JJ-style chaining.
-- **Shadow DOM defaults**: JJ's `customEvent()` defaults to `bubbles: true` and `composed: true`. Override them explicitly when the event should stay local.
-- **Selectors**: Use `.closest(selector)` on `JJE` for ancestor lookup.
-- **Namespaces**: Use `MATHML_NS` and `SVG_NS` from `src/ns.ts` for `document.createElementNS(...)` calls; avoid duplicating namespace URI strings.
+→ See `skills/references/eventing-patterns.md`.
 
 ## 7. Code Style & Standards
 
@@ -151,6 +100,7 @@ Do not call `.defined` like a synchronous function, and prefer `defineComponent(
     ```typescript
     import { JJD } from './JJD.js'
     ```
+- **CSS custom properties**: Never hard-code pixel values or color literals — use CSS variables (`var(--spacing-md)`, not `'16px'`).
 - **Documentation**: All public methods and classes MUST have documentation in **TypeDoc** format.
     - Use `@param`, `@returns`, `@example`, etc.
     - Use `@remarks` to mention any edge cases or nuances.
@@ -191,12 +141,6 @@ Do not call `.defined` like a synchronous function, and prefer `defineComponent(
 
 ## 10. Documentation Maintenance
 
-**CRITICAL**: If you change the code or API surface of this library, you **MUST** update this file (`AGENTS.md`) to reflect the changes. This file is the source of truth for all agents working on this repo. Keeping it up-to-date is as important as writing tests.
+**CRITICAL**: If you change the code or API surface of this library, you **MUST** update the relevant `AGENTS.md` files to reflect the changes. These files are the source of truth for all agents working on this repo. Keeping it up-to-date is as important as writing tests.
 
-## 11. Common Pitfalls
-
-1. **Forgetting `.js` in TypeScript imports** breaks Node ESM runtime resolution.
-2. **Using `.ref` when a wrapper method exists** reduces chainability and type safety.
-3. **Hardcoding CSS values** violates CSS instruction files and design system conventions.
-4. **Skipping tests for small changes** often misses edge cases and regressions.
-5. **Changing package export surface casually** can break downstream consumers and bundling.
+Do not modify the package export surface without explicit instruction — silent breaking changes affect downstream consumers and bundling.

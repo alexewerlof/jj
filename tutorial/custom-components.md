@@ -1,0 +1,100 @@
+# Custom Components
+
+JJ complements native Web Components instead of replacing them.
+
+You still use browser lifecycle callbacks, Shadow DOM, and attributes. JJ removes repetition around setup.
+
+- MDN custom elements: https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements
+- MDN Shadow DOM: https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow
+
+## Core JJ helpers for components
+
+- defineComponent(name, constructor, options?)
+- fetchTemplate(url)
+- fetchStyle(url)
+- attr2prop(instance, name, oldValue, newValue)
+- JJHE.from(this).setShadow(mode, template, ...styles)
+
+## Baseline pattern
+
+```js
+import { attr2prop, defineComponent, fetchStyle, fetchTemplate, JJHE } from 'jj'
+
+const templatePromise = fetchTemplate(import.meta.resolve('./my-card.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./my-card.css'))
+
+export class MyCard extends HTMLElement {
+    static observedAttributes = ['title']
+    static defined = defineComponent('my-card', MyCard)
+
+    #title = 'Untitled'
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        attr2prop(this, name, oldValue, newValue)
+    }
+
+    get title() {
+        return this.#title
+    }
+
+    set title(value) {
+        this.#title = String(value ?? '')
+        this.#render()
+    }
+
+    async connectedCallback() {
+        JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        this.#render()
+    }
+
+    #render() {
+        const shadow = JJHE.from(this).shadow
+        shadow?.find('[data-role="title"]')?.setText(this.#title)
+    }
+}
+```
+
+## Why static defined matters
+
+defineComponent resolves Promise<boolean>:
+
+- false when the component is newly defined by that call
+- true when the same constructor was already defined
+
+This makes startup timing explicit and avoids flaky upgrades.
+
+```js
+await MyCard.defined
+```
+
+For multiple components:
+
+```js
+await Promise.all([CardA.defined, CardB.defined, CardC.defined])
+```
+
+## Lifecycle mapping
+
+- constructor: initialize local fields
+- connectedCallback: create shadow, wire events, render
+- disconnectedCallback: cleanup timers/listeners/observers
+- attributeChangedCallback: bridge attributes to properties with attr2prop
+
+More lifecycle details:
+
+- https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks
+
+## Event boundaries
+
+Shadow DOM does not block all events, but boundary rules matter.
+
+- Native UI events like click are commonly composed and can cross boundaries.
+- Custom events are not composed by default in native CustomEvent.
+- JJ customEvent defaults to bubbles=true and composed=true for component communication.
+
+Deep dive: [events guide](../../guides/events.md).
+
+## Keep going
+
+1. Read [wrapper mental model](./?file=wrapper-mental-model.md).
+2. Then read [components guide](../../guides/components.md) for advanced architecture patterns.

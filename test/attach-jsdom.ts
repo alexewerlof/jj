@@ -1,6 +1,7 @@
 import { JSDOM } from 'jsdom'
 
 const { window } = new JSDOM()
+global.location = window.location
 global.Document = window.Document
 global.DocumentFragment = window.DocumentFragment
 global.ShadowRoot = window.ShadowRoot

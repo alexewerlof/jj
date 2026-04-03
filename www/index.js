@@ -1,10 +1,9 @@
+import { JJD } from '../lib/bundle.js'
 import { SimpleCounter } from './components/simple-counter.js'
 import { RenderMarkdown } from './components/render-markdown.js'
 import { CodeHighlight } from './components/code-highlight.js'
 
 await Promise.all([SimpleCounter.defined, RenderMarkdown.defined, CodeHighlight.defined])
-
-import { JJD } from '../lib/bundle.js'
 
 const doc = JJD.from(document)
 

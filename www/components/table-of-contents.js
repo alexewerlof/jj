@@ -48,7 +48,7 @@ export class TableOfContents extends HTMLElement {
     static observedAttributes = ['toc-tree']
 
     #root
-    #tocTree
+    #tocTree = []
 
     get tocTree() {
         return this.#tocTree
@@ -76,7 +76,7 @@ export class TableOfContents extends HTMLElement {
     }
 
     #renderToc() {
-        this.#root?.tree(createNav(this.#tocTree))
+        this.#root?.setChild(createNav(this.#tocTree))
     }
 }
 

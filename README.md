@@ -4,6 +4,9 @@
 
 **JJ** is a lightweight, no-transpilation library for modern web development. What You Write Is What Is Run (WYWIWIR).
 
+JJ complements browser-native capabilities instead of replacing them with a thick abstraction layer.
+It is designed for moderate to advanced web developers and AI agents that want fluent DOM helpers while staying close to standards.
+
 ## ⚡ Quick Start
 
 CDN:
@@ -65,6 +68,17 @@ const formula = JJME.create('math').addChild(JJME.create('mi').setText('x'))
 
 JJ is **not** a reactive framework, template compiler, or state-management system.
 
+## 🧭 Documentation Lanes
+
+- Tutorial onboarding: [www/tutorial/index.md](www/tutorial/index.md)
+- Browser-first guides: [guides/index.md](guides/index.md)
+- Components deep dive: [guides/components.md](guides/components.md)
+- Templates and rendering: [guides/templates.md](guides/templates.md)
+- Architecture and platform APIs: [guides/architecture.md](guides/architecture.md)
+- API reference: [doc/index.html](doc/index.html)
+
+The guides intentionally include verified MDN links so you can move between JJ helpers and underlying browser APIs.
+
 ## API Notes
 
 Batch setter helpers use plural methods:
@@ -73,6 +87,24 @@ Batch setter helpers use plural methods:
 - `setAriaAttrs({...})`
 - `setDataAttrs({...})`
 - `setClasses({...})`
+
+ARIA helpers use explicit singular naming:
+
+- `getAriaAttr(name)`
+- `hasAriaAttr(name)`
+- `setAriaAttr(name, value)`
+- `setAriaAttrs({...})`
+- `rmAriaAttr(...names)`
+- `rmAriaAttrs(names)`
+
+Dataset helpers use explicit singular/plural naming:
+
+- `getDataAttr(name)`
+- `hasDataAttr(name)`
+- `setDataAttr(name, value)`
+- `setDataAttrs({...})`
+- `rmDataAttr(...names)`
+- `rmDataAttrs(names)`
 
 ## 🧩 Custom Elements Readiness
 

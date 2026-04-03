@@ -147,23 +147,103 @@ watcher.on('change' /* changeHandler */)
 watcher.on('unlink' /* unlinkHandler */)
 ```
 
-# Document Fragments
+## Building subtrees with `JJHE.tree()`
 
-`DocumentFragment` (wrapped by `JJDF`) is a performance trick to aggregate some elements before adding them to DOM.
+`JJHE.tree(tag, attrs?, ...children)` is a compact factory for building element subtrees in one expression. Children can be strings, numbers, `JJN` wrappers, `null`, or `undefined` (ignored).
 
-However, when working with `jj`, you may not need them at all.
+```js
+// ✅ GOOD - entire li in one expression
+const item = JJHE.tree('li', { class: 'item' }, 'Hello')
+
+// ✅ GOOD - nested structure inline
+const card = JJHE.tree('article', { class: 'card' }, JJHE.tree('h2', null, title), JJHE.tree('p', null, body))
+
+// ✅ GOOD - spread array into tree
+const ul = JJHE.tree('ul', null, ...items.map((item) => JJHE.tree('li', null, item.label)))
+```
+
+String/number children become Text nodes automatically. A `null` or `undefined` child is silently skipped — useful for conditional children:
+
+```js
+const row = JJHE.tree(
+    'tr',
+    null,
+    JJHE.tree('td', null, user.name),
+    isAdmin ? JJHE.tree('td', null, 'Admin') : null, // skipped when not admin
+)
+```
+
+## Updating lists with `addChildMap` and `setChildMap`
+
+For rendering an array of items, prefer the map helpers over manual loops:
+
+```js
+const names = ['Alice', 'Bob', 'Carol']
+
+// Build a new list
+const ul = JJHE.create('ul').addChildMap(names, (name) => JJHE.tree('li', null, name))
+
+// Replace a list's children
+ul.setChildMap(names, (name) => JJHE.tree('li', null, name))
+```
+
+- `addChildMap` appends rendered items after existing children.
+- `setChildMap` replaces all children with the rendered items (equivalent to `empty()` then `addChildMap()`).
+
+Both skip `null` and `undefined` values returned by the map function:
+
+```js
+// Conditionally render only active items
+ul.setChildMap(users, (user) => (user.active ? JJHE.tree('li', null, user.name) : null))
+```
+
+## `setChild` vs `addChild` — replace or append
+
+Two common operations on element children:
+
+| Method           | Behavior                                   |
+| ---------------- | ------------------------------------------ |
+| `addChild(node)` | Appends the node after existing children.  |
+| `setChild(node)` | Replaces all children with the given node. |
+
+```js
+const container = JJHE.create('div')
+container.addChild(JJHE.create('p').setText('first'))
+container.addChild(JJHE.create('p').setText('second')) // div has two <p> now
+
+container.setChild(JJHE.create('p').setText('only')) // div now has one <p>
+```
+
+Use `setChild` for a "replace content" update. Use `addChild` for incremental construction.
+
+## Document Fragments
+
+`DocumentFragment` (wrapped by `JJDF`) is a performance trick to aggregate some elements before adding them to the DOM.
+
+However, when working with JJ, you may not need them at all.
 
 ```js
 const fruits = ['Apple', 'Orange', 'Pear']
-// ✅ GOOD - use the .mapAppend()
-const ul = JJHE.create('ul').mapAppend(fruits, (fruit) => JJHE.create('li').setText(fruit))
-// ✅ GOOD - another way
-const ul = JJHE.tree('ul', null, ...fruits.map(fruit) => JJHE.tree('li', null, fruit))
-// ❌ BAD - use unnecessary DocumentFragment
+// ✅ GOOD - use addChildMap()
+const ul = JJHE.create('ul').addChildMap(fruits, (fruit) => JJHE.create('li').setText(fruit))
+// ✅ GOOD - another way with tree()
+const ul = JJHE.tree('ul', null, ...fruits.map((fruit) => JJHE.tree('li', null, fruit)))
+// ❌ BAD - unnecessary use of DocumentFragment
 const ul = JJHE.create('ul')
 const frag = JJDF.create()
 for (const fruit of fruits) {
-    frag.append(JJHE.create('li').setText(fruit)
+    frag.addChild(JJHE.create('li').setText(fruit))
 }
-ul.append(frag)
+ul.addChild(frag)
 ```
+
+When `JJDF` _is_ appropriate — inserting multiple sibling nodes in one operation:
+
+```js
+// Building a definition list entry as two siblings
+const frag = JJDF.create().addChild(JJHE.create('dt').setText('Term')).addChild(JJHE.create('dd').setText('Definition'))
+
+dl.addChild(frag) // inserts both dt and dd as siblings
+```
+
+Since `addChild(frag)` inserts the fragment's children (not a wrapper element), this is the idiomatic way to insert multiple sibling nodes without a container.

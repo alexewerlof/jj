@@ -5,6 +5,8 @@ import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11
 import highlightXml from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/xml.min.js'
 import highlightTypescript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/typescript.min.js'
 
+const h = JJHE.tree
+
 // https://highlightjs.readthedocs.io/en/latest/api.html#configure
 highlight.configure({
     languages: ['js', 'css', 'html'],
@@ -24,7 +26,7 @@ function highlightCode(code, language) {
 }
 
 JJD.from(document).head.addChild(
-    JJHE.tree('link', {
+    h('link', {
         rel: 'stylesheet',
         href: import.meta.resolve('../code.css'),
     }),
@@ -81,7 +83,8 @@ export class CodeHighlight extends HTMLElement {
             })
         const codeText = this.#fileContent ? await this.#fileContent : this.textContent
         if (this.#language) {
-            this.#root.setChild(JJHE.tree('code').setHTML(highlightCode(codeText, this.#language), true))
+            const highlighted = highlightCode(codeText, this.#language)
+            this.#root.setChild(h('pre', null, h('code').setHTML(highlighted, true)))
         }
     }
 }
