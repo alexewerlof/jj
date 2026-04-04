@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Alata&family=Roboto&family=RobotoMono&display=swap');
+
 :root {
     --animation-speed: 0.2s;
     --animation-speed2: calc(var(--animation-speed) * 2);
