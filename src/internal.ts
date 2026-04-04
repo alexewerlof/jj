@@ -3,6 +3,8 @@
  * These are not part of the public API.
  */
 
+import { isStr } from 'jty'
+
 /**
  * Creates a gzip-friendly error message by concatenating strings.
  * This avoids repeating common error message patterns that compress well.
@@ -36,6 +38,64 @@ export function errMsg(varName: string, expected: unknown, received: unknown, ex
  */
 export function typeErr(varName: string, expected: unknown, received: unknown, extra?: string): TypeError {
     return new TypeError(errMsg(varName, expected, received, extra))
+}
+
+/**
+ * Converts a PascalCase, camelCase, or snake_case string to kebab-case.
+ *
+ * @internal
+ */
+export function pas2keb(str: string): string {
+    if (!isStr(str)) {
+        throw typeErr('str', 'a string', str)
+    }
+    if (/[^a-zA-Z0-9_]/.test(str)) {
+        throw new SyntaxError(
+            errMsg(
+                'str',
+                'alphanumeric characters and underscores',
+                str,
+                'Remove spaces or punctuation before converting to kebab-case.',
+            ),
+        )
+    }
+    return str
+        .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+        .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+        .replace(/_/g, '-')
+        .toLowerCase()
+}
+
+/**
+ * Converts a kebab-case string to camelCase.
+ *
+ * @internal
+ */
+export function keb2cam(str: string): string {
+    if (!isStr(str)) {
+        throw typeErr('str', 'a string', str)
+    }
+    return str.replace(/^-+|-+$/g, '').replace(/-+([a-z])/g, (g, c) => c.toUpperCase())
+}
+
+/**
+ * Returns the file extension from a path.
+ *
+ * @internal
+ */
+export function fileExt(path: string): string {
+    if (!isStr(path)) {
+        throw typeErr('path', 'a string', path)
+    }
+    const lastDotIndex = path.lastIndexOf('.')
+    if (lastDotIndex === -1) {
+        return ''
+    }
+    const ext = path.slice(lastDotIndex + 1)
+    if (ext.indexOf('/') !== -1) {
+        return ''
+    }
+    return ext.toLowerCase().trim()
 }
 
 /**

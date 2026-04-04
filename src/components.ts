@@ -1,6 +1,5 @@
 import { isInstance, isFn, hasProp, isStr } from 'jty'
-import { typeErr, errMsg } from './internal.js'
-import { keb2cam, pas2keb } from './case.js'
+import { typeErr, errMsg, keb2cam, pas2keb } from './internal.js'
 
 /**
  * A helper to bridge the attribute world (kebab-case) to the property world (camelCase).

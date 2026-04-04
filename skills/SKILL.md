@@ -264,15 +264,10 @@ document.adoptedStyleSheets = [sheet]
 const fragment = await fetchTemplate(import.meta.resolve('./dialog.html'))
 ```
 
-## Case Utilities
+## String Casing
 
-```typescript
-import { keb2cam, keb2pas, pas2keb } from 'jj'
-
-keb2cam('user-name') // 'userName'
-keb2pas('user-name') // 'UserName'
-pas2keb('UserName') // 'user-name'
-```
+String case-conversion helpers are internal implementation details.
+Use higher-level public APIs like `attr2prop` and `defineComponent` instead of importing low-level casing utilities.
 
 ## Namespace Constants
 

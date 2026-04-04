@@ -1,7 +1,6 @@
 import { isInstance, isStr } from 'jty'
 import { JJHE } from './wrappers/index.js'
-import { fileExt } from './util.js'
-import { typeErr, errMsg } from './internal.js'
+import { typeErr, errMsg, fileExt } from './internal.js'
 
 /**
  * Tries to find the best match for the link.as attribute when it's omitted

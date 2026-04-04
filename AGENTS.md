@@ -137,7 +137,12 @@ Use factory methods — `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR
 
 - **Mandatory Tests**: Every new feature or bugfix MUST include tests.
 - **Environment**: use `node --test` with `jsdom` for DOM simulation.
-- **Location**: Tests live in the root `test/` folder and mirror source filenames (e.g., `test/JJE.test.ts` for `src/JJE.ts`, `test/JJHE.test.ts` for `src/wrappers/JJHE.ts`).
+- **Location Heuristic**:
+    - Public API behavior tests belong in `test/` and should primarily validate consumer-facing exports from `src/index.ts`.
+    - Internal implementation tests may live in `src/` when they target internal helpers directly (for example `src/internal.test.ts`).
+- **JSDOM Bootstrap**:
+    - Tests in `test/` import `./attach-jsdom.js` first.
+    - Tests in `src/` import `../test/attach-jsdom.js` first.
 
 ## 10. Documentation Maintenance
 
