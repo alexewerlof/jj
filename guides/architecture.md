@@ -233,23 +233,23 @@ card.ref
 
 ## Resource loading strategy
 
-JJ provides helpers for `<link rel="preload">` and `<link rel="prefetch">`:
-
-- `createLinkPre(href, rel, as?)` — creates the link element but does not append it.
-- `addLinkPre(href, rel, as?)` — creates the link element and appends it to `<head>` immediately.
+Use native `<link>` elements for preload and prefetch hints:
 
 ```js
-import { addLinkPre } from 'jj'
+import { JJHE } from 'jj'
+
+const h = JJHE.tree
 
 // Hint that this style is needed in the current page lifecycle
-addLinkPre('/components/my-component.css', 'preload', 'style')
+document.head.append(h('link', { href: '/components/my-component.css', rel: 'preload', as: 'style' }).ref)
 
 // Hint for likely future navigation
-addLinkPre('/next-page.css', 'prefetch', 'style')
+document.head.append(h('link', { href: '/next-page.css', rel: 'prefetch', as: 'style' }).ref)
 ```
 
 - Use `preload` for resources needed during the current lifetime of the page.
 - Use `prefetch` for probable future navigation.
+- See the [performance guide](./performance.md) for practical patterns.
 
 ## Static vs interactive apps
 

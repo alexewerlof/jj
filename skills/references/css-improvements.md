@@ -13,15 +13,15 @@ el.setStyle('padding', '8px 16px')
 el.setStyles({
     color: 'red',
     padding: '8px',
-    border: null,        // removes border
-    background: false,   // removes background
+    border: null, // removes border
+    background: false, // removes background
 })
 
 // Remove properties
 el.rmStyle('color', 'padding')
 
 // Read a property
-const val = el.getStyle('color')  // '' when not set
+const val = el.getStyle('color') // '' when not set
 ```
 
 ## Class-driven styling (preferred)
@@ -33,7 +33,7 @@ el.addClass('is-active')
 el.rmClass('is-loading')
 el.toggleClass('is-expanded')
 el.setClasses({ 'is-active': isActive, 'is-error': hasError })
-el.setClass('card card--featured')   // replaces entire className
+el.setClass('card card--featured') // replaces entire className
 ```
 
 ## Text direction and advanced DOM state
@@ -54,17 +54,28 @@ Custom properties cascade through shadow boundaries. Define variables on the hos
 ```
 
 Inside shadow styles:
+
 ```css
-button { background: var(--btn-color); }
+button {
+    background: var(--btn-color);
+}
 ```
 
 ## Loading stylesheets
 
 ```js
-import { fetchStyle, addLinkPre } from 'jj'
+import { JJHE, fetchStyle } from 'jj'
+
+const h = JJHE.tree
 
 // Hint browser to start loading early
-addLinkPre(import.meta.resolve('./theme.css'), 'preload', 'style')
+document.head.addChild(
+    h('link', {
+        href: import.meta.resolve('./theme.css'),
+        rel: 'preload',
+        as: 'style',
+    }).ref,
+)
 
 // Load as a CSSStyleSheet for adoptedStyleSheets
 const sheet = await fetchStyle(import.meta.resolve('./theme.css'))
@@ -72,6 +83,7 @@ document.adoptedStyleSheets = [sheet]
 ```
 
 ## Browser references
+
 - CSSStyleDeclaration: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration
 - CSS nesting: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Nesting
 - CSS custom properties: https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties

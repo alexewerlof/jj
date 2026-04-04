@@ -169,4 +169,5 @@ This is more maintainable than building the entire structure in JavaScript, sinc
 
 - [structure guide](./structure.md) — file-per-concern conventions.
 - [components guide](./components.md) — using templates in custom elements.
+- [performance guide](./performance.md) — native preload and prefetch hints.
 - [tutorial DOM fundamentals](../www/tutorial/dom-fundamentals.md)

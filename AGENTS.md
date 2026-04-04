@@ -90,6 +90,10 @@ Use factory methods — `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR
 - Use `getAriaAttr()` / `hasAriaAttr()` / `setAriaAttr()` / `rmAriaAttr()` for singular ARIA operations.
 - Use `addClass()` / `rmClass()` / `toggleClass()` for rest-argument class mutations and `addClasses()` / `rmClasses()` for array-based class mutations.
 
+### Resource Hints
+
+- Use native `<link>` elements for `preload`, `prefetch`, and `modulepreload`, typically via `JJHE.tree()` and `document.head.append(...)`.
+
 → See `skills/references/eventing-patterns.md`.
 
 ## 7. Code Style & Standards

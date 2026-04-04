@@ -250,11 +250,24 @@ const ancestor = el.closest('[data-section]') // null if not found
 ## Resource Loaders
 
 ```typescript
-import { addLinkPre, fetchStyle, fetchTemplate } from 'jj'
+import { JJHE, fetchStyle, fetchTemplate } from 'jj'
 
-// Hint browser to preload early
-addLinkPre(import.meta.resolve('./bundle.js'), 'modulepreload')
-addLinkPre(import.meta.resolve('./main.css'), 'preload', 'style')
+const h = JJHE.tree
+
+// Hint browser to preload early with native <link>
+document.head.append(
+    h('link', {
+        href: import.meta.resolve('./bundle.js'),
+        rel: 'modulepreload',
+    }).ref,
+)
+document.head.append(
+    h('link', {
+        href: import.meta.resolve('./main.css'),
+        rel: 'preload',
+        as: 'style',
+    }).ref,
+)
 
 // Load a CSSStyleSheet for adoptedStyleSheets or setShadow
 const sheet = await fetchStyle(import.meta.resolve('./theme.css'))

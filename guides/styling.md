@@ -138,27 +138,31 @@ class MyComponent extends HTMLElement {
 
 ## Preloading and Prefetching Style Resources
 
-JJ also provides helpers for `<link rel="preload">` and `<link rel="prefetch">`:
-
-- `createLinkPre(href, rel, as?)`
-- `addLinkPre(href, rel, as?)`
-
-Use `addLinkPre` when you want the browser to start fetching styles earlier:
+Use native `<link>` elements to hint resource loading:
 
 ```js
-import { addLinkPre } from 'jj'
+import { JJHE } from 'jj'
 
-// Hint that this stylesheet is needed soon
-addLinkPre('/components/my-component.css', 'preload', 'style')
+const h = JJHE.tree
 
-// Hint for likely future navigation usage
-addLinkPre('/next-page.css', 'prefetch', 'style')
+document.head.addChild(
+    h('link', {
+        href: '/components/my-component.css',
+        rel: 'preload',
+        as: 'style',
+    }).ref,
+)
+
+document.head.addChild(
+    h('link', {
+        href: '/next-page.css',
+        rel: 'prefetch',
+        as: 'style',
+    }).ref,
+)
 ```
 
-Guideline:
-
-- Use `preload` for resources needed in the current page lifecycle.
-- Use `prefetch` for probable future navigation.
+For behavior guidelines and when to use each hint, see the performance guide.
 
 ## Recommended Workflow
 
@@ -166,10 +170,11 @@ Guideline:
 2. Use class helpers for state and variants.
 3. Use style helpers for dynamic runtime values.
 4. Use `fetchStyle` for shadow DOM component styling.
-5. Optionally use `addLinkPre` for loading hints.
+5. Optionally add native `<link rel="preload" as="style">` and `<link rel="prefetch" as="style">` hints.
 
 ## Continue Reading
 
 For full component styling patterns (shadow and light DOM, eager/lazy loading, template/style separation), continue with:
 
 - [www/tutorial/custom-components.md](../www/tutorial/custom-components.md)
+- [performance guide](./performance.md)

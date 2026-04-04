@@ -9,6 +9,7 @@ These guides are for moderate to advanced developers and AI agents who want JJ f
 - [Query](./query.md)
 - [Events](./events.md)
 - [Styling](./styling.md)
+- [Performance](./performance.md)
 
 ## Advanced
 
