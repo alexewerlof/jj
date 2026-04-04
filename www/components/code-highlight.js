@@ -6,6 +6,7 @@ import highlightXml from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11
 import highlightTypescript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/typescript.min.js'
 
 const h = JJHE.tree
+const doc = JJD.from(document)
 
 // https://highlightjs.readthedocs.io/en/latest/api.html#configure
 highlight.configure({
@@ -25,30 +26,17 @@ function highlightCode(code, language) {
     }).value
 }
 
-JJD.from(document).head.addChild(
+doc.head.addChild(
     h('link', {
         rel: 'stylesheet',
         href: import.meta.resolve('../code.css'),
     }),
 )
 
-async function loadFile(filePath) {
-    try {
-        const response = await fetch(filePath)
-        if (!response.ok) {
-            return `Error loading ${filePath}: ${response.status} ${response.statusText}`
-        }
-        return await response.text()
-    } catch (e) {
-        return `Error: ${e.message}`
-    }
-}
-
 export class CodeHighlight extends HTMLElement {
     static observedAttributes = ['file', 'language']
     static defined = defineComponent('code-highlight', CodeHighlight)
 
-    #fileContent
     #language
     #root
 
@@ -65,13 +53,10 @@ export class CodeHighlight extends HTMLElement {
     }
 
     set language(value) {
-        if (typeof value !== 'string') throw new Error('language must be a string')
+        if (typeof value !== 'string') {
+            throw new TypeError(`language must be a string. Got ${value} (${typeof value})`)
+        }
         this.#language = value
-    }
-
-    set file(value) {
-        if (typeof value !== 'string') throw new Error('file must be a string')
-        this.#fileContent = loadFile(value)
     }
 
     async connectedCallback() {
@@ -81,9 +66,8 @@ export class CodeHighlight extends HTMLElement {
                 display: 'block',
                 background: 'rgba(0, 0, 0, 0.1)',
             })
-        const codeText = this.#fileContent ? await this.#fileContent : this.textContent
         if (this.#language) {
-            const highlighted = highlightCode(codeText, this.#language)
+            const highlighted = highlightCode(this.textContent, this.#language)
             this.#root.setChild(h('pre', null, h('code').setHTML(highlighted, true)))
         }
     }
