@@ -1,6 +1,5 @@
 import { isStr } from 'jty'
 import { JJDF } from './wrappers/index.js'
-import { cssToStyle } from './util.js'
 import { typeErr } from './internal.js'
 
 /**
@@ -116,8 +115,8 @@ export async function fetchTemplate(url: URL | string): Promise<JJDF> {
  */
 export async function fetchStyle(url: URL | string): Promise<CSSStyleSheet> {
     try {
-        const cssStr = await fetchText(url, 'text/css')
-        return await cssToStyle(cssStr)
+        const sheet = new CSSStyleSheet()
+        return await sheet.replace(await fetchText(url, 'text/css'))
     } catch (err) {
         throw new Error(`Failed to fetch or convert CSS string to CSSStyleSheet from ${url}`, { cause: err })
     }

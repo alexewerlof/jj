@@ -1,4 +1,3 @@
-export * from './util.js'
 export * from './xmlns.js'
 export * from './wrappers/index.js'
 export * from './helpers.js'

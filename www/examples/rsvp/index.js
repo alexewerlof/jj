@@ -1,5 +1,5 @@
 import { RSVPEngine } from './RSVPEngine.js'
-import { JJD, sleep } from '../../../lib/bundle.js'
+import { JJD } from '../../../lib/bundle.js'
 
 const doc = JJD.from(document)
 
@@ -13,6 +13,7 @@ const startButton = doc.find('#start-button', true).on('click', () => {
     startButton.setAttr('hidden', '')
     stopButton.rmAttr('hidden').ref.focus()
 })
+
 const stopButton = doc.find('#stop-button', true).on('click', () => {
     if (currentAbortController) {
         currentAbortController.abort()
@@ -46,6 +47,10 @@ inputTextArea.on('keydown', (event) => {
         startButton.click() // Start new rendering
     }
 })
+
+function sleep(ms = 0) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 async function startRendering() {
     try {
