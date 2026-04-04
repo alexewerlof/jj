@@ -41,32 +41,6 @@ export function typeErr(varName: string, expected: unknown, received: unknown, e
 }
 
 /**
- * Converts a PascalCase, camelCase, or snake_case string to kebab-case.
- *
- * @internal
- */
-export function pas2keb(str: string): string {
-    if (!isStr(str)) {
-        throw typeErr('str', 'a string', str)
-    }
-    if (/[^a-zA-Z0-9_]/.test(str)) {
-        throw new SyntaxError(
-            errMsg(
-                'str',
-                'alphanumeric characters and underscores',
-                str,
-                'Remove spaces or punctuation before converting to kebab-case.',
-            ),
-        )
-    }
-    return str
-        .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-        .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
-        .replace(/_/g, '-')
-        .toLowerCase()
-}
-
-/**
  * Converts a kebab-case string to camelCase.
  *
  * @internal

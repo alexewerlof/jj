@@ -1,39 +1,7 @@
 import '../test/attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { pas2keb, keb2cam } from './internal.js'
-
-describe('pas2keb()', () => {
-    it('throws for non-string input', () => {
-        assert.throws(() => pas2keb(123 as any), TypeError, 'Should throw for a number')
-        assert.throws(() => pas2keb(true as any), TypeError, 'Should throw for a boolean')
-        assert.throws(() => pas2keb(null as any), TypeError, 'Should throw for null')
-        assert.throws(() => pas2keb(undefined as any), TypeError, 'Should throw for undefined')
-    })
-
-    it('converts PascalCase or camelCase to kebab-case', () => {
-        assert.strictEqual(pas2keb('PascalCase'), 'pascal-case')
-        assert.strictEqual(pas2keb('camelCase'), 'camel-case')
-        assert.strictEqual(pas2keb('Hello'), 'hello')
-    })
-
-    it('handles consecutive uppercase letters', () => {
-        assert.strictEqual(pas2keb('MyHTMLElement'), 'my-html-element')
-        assert.strictEqual(pas2keb('isURL'), 'is-url')
-        assert.strictEqual(pas2keb('isURLShortener'), 'is-url-shortener')
-    })
-
-    it('handles edge cases', () => {
-        assert.strictEqual(pas2keb(''), '', 'Should handle empty string')
-        assert.strictEqual(pas2keb('A'), 'a')
-        assert.strictEqual(pas2keb('I'), 'i')
-    })
-
-    it('converts snake_case to kebab-case', () => {
-        assert.strictEqual(pas2keb('snake_case'), 'snake-case')
-        assert.strictEqual(pas2keb('Snake_Case'), 'snake-case')
-    })
-})
+import { keb2cam } from './internal.js'
 
 describe('keb2cam()', () => {
     it('throws for non-string input', () => {

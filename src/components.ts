@@ -1,5 +1,5 @@
 import { isInstance, isFn, hasProp, isStr } from 'jty'
-import { typeErr, errMsg, keb2cam, pas2keb } from './internal.js'
+import { typeErr, errMsg, keb2cam } from './internal.js'
 
 /**
  * A helper to bridge the attribute world (kebab-case) to the property world (camelCase).
@@ -81,12 +81,7 @@ export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown
  * Registers the custom element with the browser and waits till it is defined.
  *
  * @remarks
- * This helper accepts either kebab-case names (`my-widget`) or PascalCase names (`MyWidget`).
- * PascalCase input is normalized to kebab-case internally before registration.
- *
- * The returned promise resolves to:
- * - `false` when the element was newly defined by this call.
- * - `true` when the same constructor had already been defined for the normalized name.
+ * Note that the component name should contain a hyphen to be valid.
  *
  * Defining components before usage is important for reliability. If markup is rendered before
  * the browser knows the custom element definition, upgrade timing can become race-prone and
@@ -129,12 +124,7 @@ export async function defineComponent(
     constructor: CustomElementConstructor,
     options?: ElementDefinitionOptions,
 ): Promise<boolean> {
-    if (!isStr(name)) {
-        throw typeErr('name', 'a string', name, 'Use a custom-element tag name like "my-widget" or "MyWidget".')
-    }
-    // If already kebab-case (contains hyphen), accept as-is; otherwise normalize via pas2keb
-    const normalizedName = name.includes('-') ? name : pas2keb(name)
-    if (!normalizedName.includes('-')) {
+    if (!isStr(name) || !name.includes('-')) {
         throw new SyntaxError(
             errMsg(
                 'name',
@@ -152,16 +142,14 @@ export async function defineComponent(
             'Pass the custom element class itself, e.g. defineComponent("my-widget", MyWidget).',
         )
     }
-    const definedConstructor = customElements.get(normalizedName)
+    const definedConstructor = customElements.get(name)
     if (definedConstructor) {
         if (definedConstructor !== constructor) {
-            throw new ReferenceError(
-                `A different constructor is already defined for the custom element "${normalizedName}".`,
-            )
+            throw new ReferenceError(`A different constructor is already defined for the custom element "${name}".`)
         }
     } else {
-        customElements.define(normalizedName, constructor, options)
-        await customElements.whenDefined(normalizedName)
+        customElements.define(name, constructor, options)
+        await customElements.whenDefined(name)
     }
     return Boolean(definedConstructor)
 }
