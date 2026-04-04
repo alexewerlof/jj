@@ -1,9 +1,9 @@
 import '../test/attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { keb2cam } from './internal.js'
+import { keb2cam, toStr } from './internal.js'
 
-describe('keb2cam()', () => {
+describe(keb2cam.name, () => {
     it('throws for non-string input', () => {
         assert.throws(() => keb2cam(123 as any), TypeError, 'Should throw for a number')
         assert.throws(() => keb2cam(true as any), TypeError, 'Should throw for a boolean')
@@ -28,5 +28,39 @@ describe('keb2cam()', () => {
     it('does not convert other cases', () => {
         assert.strictEqual(keb2cam('camelCase'), 'camelCase', 'Should not change camelCase')
         assert.strictEqual(keb2cam('snake_case'), 'snake_case', 'Should not convert snake_case')
+    })
+})
+
+describe(toStr.name, () => {
+    it('returns strings unchanged', () => {
+        assert.strictEqual(toStr('hello'), 'hello')
+    })
+
+    it('serializes plain objects and arrays with JSON.stringify', () => {
+        assert.strictEqual(toStr({ a: 1, b: 'x' }), '{"a":1,"b":"x"}')
+        assert.strictEqual(toStr([1, 2, 3]), '[1,2,3]')
+    })
+
+    it('handles null explicitly', () => {
+        assert.strictEqual(toStr(null), 'null')
+    })
+
+    it('falls back to String(x) when JSON.stringify throws', () => {
+        const circular: Record<string, unknown> = {}
+        circular.self = circular
+        assert.strictEqual(toStr(circular), '[object Object]')
+    })
+
+    it('uses function.toString() for functions', () => {
+        const fn = () => 'ok'
+        assert.strictEqual(toStr(fn), fn.toString())
+    })
+
+    it('stringifies primitive default branch values', () => {
+        assert.strictEqual(toStr(123), '123')
+        assert.strictEqual(toStr(false), 'false')
+        assert.strictEqual(toStr(10n), '10')
+        assert.strictEqual(toStr(Symbol('x')), 'Symbol(x)')
+        assert.strictEqual(toStr(undefined), 'undefined')
     })
 })
