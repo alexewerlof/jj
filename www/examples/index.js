@@ -2,7 +2,7 @@ import { JJD, JJHE } from '../../lib/bundle.js'
 
 const doc = JJD.from(document)
 
-const GITHUB_BASE = 'https://github.com/alexewerlof/jj/tree/main/www/examples'
+const GITHUB_BASE = 'https://github.com/alexewerlof/jj/tree/master/www/examples'
 
 async function loadExamples() {
     try {
