@@ -79,26 +79,6 @@ export function keb2cam(str: string): string {
 }
 
 /**
- * Returns the file extension from a path.
- *
- * @internal
- */
-export function fileExt(path: string): string {
-    if (!isStr(path)) {
-        throw typeErr('path', 'a string', path)
-    }
-    const lastDotIndex = path.lastIndexOf('.')
-    if (lastDotIndex === -1) {
-        return ''
-    }
-    const ext = path.slice(lastDotIndex + 1)
-    if (ext.indexOf('/') !== -1) {
-        return ''
-    }
-    return ext.toLowerCase().trim()
-}
-
-/**
  * Converts a value to its string representation.
  * It is primarily used for creating Text nodes from non-string inputs.
  * @param x a value to be converted

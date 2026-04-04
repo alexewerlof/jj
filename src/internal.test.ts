@@ -1,7 +1,7 @@
 import '../test/attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { pas2keb, keb2cam, fileExt } from './internal.js'
+import { pas2keb, keb2cam } from './internal.js'
 
 describe('pas2keb()', () => {
     it('throws for non-string input', () => {
@@ -60,56 +60,5 @@ describe('keb2cam()', () => {
     it('does not convert other cases', () => {
         assert.strictEqual(keb2cam('camelCase'), 'camelCase', 'Should not change camelCase')
         assert.strictEqual(keb2cam('snake_case'), 'snake_case', 'Should not convert snake_case')
-    })
-})
-
-describe('fileExt()', () => {
-    it('throws for input that is not a string or URL', () => {
-        assert.throws(() => fileExt(123 as any), TypeError, 'Should throw for a number')
-        assert.throws(() => fileExt(true as any), TypeError, 'Should throw for a boolean')
-        assert.throws(() => fileExt(null as any), TypeError, 'Should throw for null')
-        assert.throws(() => fileExt(undefined as any), TypeError, 'Should throw for undefined')
-        assert.throws(() => fileExt(new URL('file.txt') as any), TypeError, 'Should throw for an object')
-    })
-
-    it('returns the extension of a file path', () => {
-        assert.strictEqual(fileExt('file.txt'), 'txt')
-        assert.strictEqual(fileExt('./file.txt'), 'txt')
-        assert.strictEqual(fileExt('./path/to/file.txt'), 'txt')
-        assert.strictEqual(fileExt('/path/to/file.txt'), 'txt')
-        assert.strictEqual(fileExt('https://www.alexewerlof.com/path/to/file.js'), 'js')
-        assert.strictEqual(fileExt('/.well-known/file.css'), 'css')
-    })
-
-    it('always returns lowercase', () => {
-        assert.strictEqual(fileExt('FILE.TXT'), 'txt')
-        assert.strictEqual(fileExt('./FILE.TxT'), 'txt')
-        assert.strictEqual(fileExt('./path/to/FILE.Txt'), 'txt')
-        assert.strictEqual(fileExt('/path/to/FILE.tXT'), 'txt')
-    })
-
-    it('returns an empty string for non-file paths', () => {
-        assert.strictEqual(fileExt('/path/to/directory'), '')
-        assert.strictEqual(fileExt('https://www.alexewerlof.com/path/to/directory'), '')
-    })
-
-    it('returns empty strings if there is no extension', () => {
-        assert.strictEqual(fileExt(''), '')
-        assert.strictEqual(fileExt('.'), '')
-        assert.strictEqual(fileExt('..'), '')
-        assert.strictEqual(fileExt('file'), '')
-        assert.strictEqual(fileExt('./dir'), '')
-        assert.strictEqual(fileExt('/path/to/file.'), '')
-    })
-
-    it('handles edge cases for dotfiles and paths', () => {
-        assert.strictEqual(fileExt('.env'), 'env')
-        assert.strictEqual(fileExt('.gitignore'), 'gitignore')
-        assert.strictEqual(fileExt('hidden/.file'), 'file')
-
-        assert.strictEqual(fileExt('folder.v1/file'), '')
-        assert.strictEqual(fileExt('/some.path/file'), '')
-
-        assert.strictEqual(fileExt('script.js?v=1'), 'js?v=1')
     })
 })
