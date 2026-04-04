@@ -5,6 +5,30 @@
 
 import { isStr } from 'jty'
 
+const NS = 'http://www.w3.org/'
+
+/**
+ * MathML namespace URI used by DOM namespace-aware APIs like `document.createElementNS`.
+ *
+ * @remarks
+ * Keep this value aligned with the official W3C MathML namespace.
+ *
+ * @category Constants
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/MathML/Reference/Attribute | MathML}
+ */
+export const MATHML_NS = NS + '1998/Math/MathML'
+
+/**
+ * SVG namespace URI used by DOM namespace-aware APIs like `document.createElementNS`.
+ *
+ * @remarks
+ * Keep this value aligned with the official W3C SVG namespace.
+ *
+ * @category Constants
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Guides/Namespaces_crash_course | SVG namespaces}
+ */
+export const SVG_NS = NS + '2000/svg'
+
 /**
  * Creates a gzip-friendly error message by concatenating strings.
  * This avoids repeating common error message patterns that compress well.

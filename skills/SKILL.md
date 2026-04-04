@@ -282,13 +282,6 @@ const fragment = await fetchTemplate(import.meta.resolve('./dialog.html'))
 String case-conversion helpers are internal implementation details.
 Use higher-level public APIs like `attr2prop` and `defineComponent` instead of importing low-level casing utilities.
 
-## Namespace Constants
-
-```typescript
-import { MATHML_NS, SVG_NS } from 'jj'
-// Use these with document.createElementNS — never hardcode namespace URIs
-```
-
 ## Common mistakes
 
 1. **`.ts` extension in imports** — TypeScript source must use `.js` (`import { X } from './X.js'`).

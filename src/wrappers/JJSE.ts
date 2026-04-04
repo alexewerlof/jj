@@ -1,6 +1,5 @@
 import { isInstance, isNum, isStr } from 'jty'
-import { typeErr } from '../internal.js'
-import { SVG_NS } from '../xmlns.js'
+import { SVG_NS, typeErr } from '../internal.js'
 import { Wrappable } from './types.js'
 import { JJEx } from './JJEx.js'
 
