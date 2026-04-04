@@ -1,9 +1,18 @@
 import { isArr, isInstance, isPromise, isStr } from 'jty'
-import { notNullish, typeErr } from '../internal.js'
+import { typeErr } from '../internal.js'
 import { Wrappable, Wrapped } from './types.js'
 import { JJN } from './JJN-raw.js'
 import type { JJHE } from './JJHE.js'
 import type { JJDF } from './JJDF.js'
+
+/**
+ * A simple utility function that is used by addChild() and friends to filter out nullish children.
+ * @param x any value
+ * @returns true if x is undefined or null. False otherwise
+ */
+function notNullish(x: unknown): boolean {
+    return x != null
+}
 
 export abstract class JJNx<T extends Element | Document | DocumentFragment> extends JJN<T> {
     /**

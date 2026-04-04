@@ -99,15 +99,6 @@ export function fileExt(path: string): string {
 }
 
 /**
- * A simple utility function that is used by addChild() and friends to filter out nullish children.
- * @param x any value
- * @returns true if x is undefined or null. False otherwise
- */
-export function notNullish(x: unknown): boolean {
-    return x != null
-}
-
-/**
  * Converts a value to its string representation.
  * It is primarily used for creating Text nodes from non-string inputs.
  * @param x a value to be converted
