@@ -24,3 +24,17 @@ article {
     padding: 0.5rem;
     overflow-y: auto;
 }
+
+button.page-control {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: var(--secondary-color);
+    transition: background-color var(--animation-speed);
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+}

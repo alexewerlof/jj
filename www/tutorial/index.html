@@ -29,9 +29,11 @@
         </nav>
 
         <main>
+            <button id="prev-btn" type="button" class="page-control">&lt;</button>
             <article>
                 <render-markdown id="content">Some stuff</render-markdown>
             </article>
+            <button id="next-btn" type="button" class="page-control">&gt;</button>
         </main>
 
         <footer>
@@ -41,6 +43,13 @@
             </div>
         </footer>
 
+        <script type="importmap">
+            {
+                "imports": {
+                    "jty": "../../node_modules/jty/lib/index.js"
+                }
+            }
+        </script>
         <script type="module" src="index.js"></script>
     </body>
 </html>
