@@ -46,6 +46,27 @@ a {
     }
 }
 
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--primary-color);
+}
+
+caption {
+    caption-side: top;
+    padding: var(--gap);
+}
+
+th,
+td {
+    border: 1px solid var(--ui-border);
+    padding: var(--gap);
+}
+
+tr:only-child,
+tr:nth-of-type(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+}
 /* Global input styling - beautiful semi-transparent inputs */
 input[type='text'],
 input[type='email'],
@@ -126,4 +147,11 @@ html::-webkit-scrollbar-thumb {
 
 html::-webkit-scrollbar-thumb:hover {
     background: color-mix(in srgb, var(--brand-blue), white 20%);
+}
+
+blockquote {
+    border-left: 4px solid var(--primary-color);
+    padding-left: var(--gap3);
+    margin-left: 0;
+    font-style: italic;
 }
