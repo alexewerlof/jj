@@ -26,7 +26,7 @@ function highlightCode(code, language) {
     }).value
 }
 
-doc.head.addChild(
+doc.find('head', true).addChild(
     h('link', {
         rel: 'stylesheet',
         href: import.meta.resolve('../code.css'),
@@ -42,6 +42,12 @@ export class CodeHighlight extends HTMLElement {
 
     constructor() {
         super()
+        this.#root = JJHE.from(this)
+            // This tiny bit of styling doesn't justify loading a CSS file
+            .setStyles({
+                display: 'block',
+                background: 'rgba(0, 0, 0, 0.1)',
+            })
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -60,12 +66,6 @@ export class CodeHighlight extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.#root = JJHE.from(this)
-            // This tiny bit of styling doesn't justify loading a CSS file
-            .setStyles({
-                display: 'block',
-                background: 'rgba(0, 0, 0, 0.1)',
-            })
         if (this.#language) {
             const highlighted = highlightCode(this.textContent, this.#language)
             this.#root.setChild(h('pre', null, h('code').setHTML(highlighted, true)))

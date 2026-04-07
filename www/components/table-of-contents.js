@@ -68,15 +68,17 @@ export class TableOfContents extends HTMLElement {
         attr2prop(this, name, oldValue, newValue)
     }
 
-    async connectedCallback() {
-        if (!this.#root) {
-            this.#root = JJHE.from(this)
-        }
+    connectedCallback() {
         this.#renderToc()
     }
 
     #renderToc() {
-        this.#root?.setChild(createNav(this.#tocTree))
+        try {
+            this.#root.setChild(createNav(this.#tocTree))
+        } catch (cause) {
+            this.#root.setChild(String(cause))
+            throw new Error(`Failed to render table of contents`, { cause })
+        }
     }
 }
 

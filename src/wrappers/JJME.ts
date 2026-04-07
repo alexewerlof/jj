@@ -39,7 +39,7 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
      * Creates a JJME instance from a tag name (in the MathML namespace).
      *
      * @remarks
-     * Automatically uses {@link MATHML_NS} for namespace-aware element creation.
+     * Automatically uses the MathML namespace constant for namespace-aware element creation.
      *
      * @example
      * ```ts

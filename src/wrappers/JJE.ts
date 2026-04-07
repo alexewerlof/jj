@@ -668,18 +668,49 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * shadow DOM for security reasons (for example `<a>`).
      *
      * @param mode - The encapsulation mode ('open' or 'closed'). Defaults to 'open'.
-     * @param template - Optional content to initialize the shadow DOM, which can be a string, DocumentFragment, HTMLTemplateElement, HTMLElement, or any JJ wrapper.
-     * @param styles - Optional styles to add to the shadow DOM, which can be strings or CSSStyleSheet instances.
      * @returns This instance for chaining.
-     * @throws {TypeError} If the element cannot have a shadow root, or if arguments are of invalid types.
-     * @throws {Error} If it fails to initialize the shadow DOM with the provided template or styles.
+     * @throws {DOMException} If the element cannot have a shadow root. See {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow | Element.attachShadow} for more details.
+     * @throws {Error} If the shadow DOM is already attached but with another mode.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow | Element.attachShadow}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets | ShadowRoot.adoptedStyleSheets}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/adoptedStyleSheets | Document.adoptedStyleSheets}
      */
-    setShadow(
-        mode: ShadowRootMode = 'open',
-        template?:
+    setShadow(mode: ShadowRootMode = 'open'): this {
+        const { shadowRoot } = this.ref
+        if (!shadowRoot) {
+            this.ref.attachShadow({ mode })
+        } else if (shadowRoot.mode !== mode) {
+            throw new Error(
+                `Element already has a shadow root with mode "${shadowRoot.mode}". Cannot attach another with mode "${mode}".`,
+            )
+        }
+        return this
+    }
+
+    /**
+     * Initializes an already-attached Shadow DOM with template content and optional styles.
+     *
+     * @remarks
+     * This method expects the shadow root to already exist.
+     * You would typically call `setShadow()` in the custom component constructor and then
+     * perform initialization in `connectedCallback()`.
+     *
+     * @example
+     * ```ts
+     * const host = JJHE.from(this).setShadow('open')
+     * host.initShadow(await templatePromise, await stylePromise)
+     * ```
+     *
+     * @param template - The template content to clone into the shadow root.
+     * @param styles - Optional styles to add to the shadow root.
+     * @returns This instance for chaining.
+     * @throws {ReferenceError} If the element does not have a shadow root yet.
+     * @throws {Error} If it fails to initialize the shadow DOM with the provided template or styles.
+     * @see {@link setShadow} for attaching the shadow root first.
+     * @see {@link JJSR.init} for the underlying shadow-root initialization helper.
+     */
+    initShadow(
+        template:
             | string
             | DocumentFragment
             | HTMLTemplateElement
@@ -689,16 +720,8 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
             | JJHE,
         ...styles: (string | CSSStyleSheet)[]
     ): this {
-        if (!this.ref.shadowRoot) {
-            this.ref.attachShadow({ mode })
-        }
         try {
-            if (template) {
-                this.shadow?.addTemplate(template)
-            }
-            if (styles.length > 0) {
-                this.shadow?.addStyle(...styles)
-            }
+            this.getShadow(true).init(template, ...styles)
         } catch (cause) {
             throw new Error(`Failed to initialize shadow DOM`, { cause })
         }
@@ -708,11 +731,27 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     /**
      * Gets a wrapper around the Element's Shadow Root, if it exists.
      *
+     * @remarks
+     * Closed shadow roots are available here only when they were attached through {@link setShadow}
+     * on this wrapper.
+     *
+     * @param required - Whether to throw if the shadow root does not exist.
      * @returns A JJSR instance wrapping the shadow root, or null if no shadow root exists.
-     * @see {@link setShadow} for creating and initializing a shadow root.
+     * @throws {ReferenceError} If `required` is true and the shadow root does not exist.
+     * @see {@link setShadow} for attaching a shadow root.
+     * @see {@link initShadow} for populating the attached shadow root.
      * @see {@link JJSR} for ShadowRoot-specific helper methods.
      */
-    get shadow() {
-        return this.ref.shadowRoot ? new JJSR(this.ref.shadowRoot) : null
+    getShadow(required: true): JJSR
+    getShadow(required?: false): JJSR | null
+    getShadow(required = false): JJSR | null {
+        const shadowRoot = this.ref.shadowRoot
+        if (shadowRoot) {
+            return new JJSR(shadowRoot)
+        }
+        if (required) {
+            throw new ReferenceError('No shadow root found on this element. Did you forget to call setShadow() first?')
+        }
+        return null
     }
 }

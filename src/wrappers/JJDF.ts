@@ -20,7 +20,7 @@ import { JJNx } from './JJNx.js'
  *   JJHE.tree('div', null, 'Item 1'),
  *   JJHE.tree('div', null, 'Item 2'),
  * )
- * doc.body.addChild(frag)
+ * doc.find('body', true).addChild(frag)
  * ```
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}

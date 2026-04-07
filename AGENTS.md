@@ -61,7 +61,7 @@ Use factory methods — `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR
 ### Shadow DOM and Components
 
 - Keep `fetchTemplate`/`fetchStyle` at module scope (loaded once, reused per instance).
-- Pass awaited results to `JJHE.from(this).setShadow(mode, template, ...styles)`.
+- Attach with `JJHE.from(this).setShadow(mode)`, then initialize with `initShadow(template, ...styles)` when content is ready.
 - Expose `static defined = defineComponent('tag', Class)` on every custom element and `await` it before using the custom element.
 
 → See `skills/references/web-components-patterns.md`.

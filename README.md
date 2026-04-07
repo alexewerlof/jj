@@ -65,67 +65,10 @@ const formula = JJME.create('math').addChild(JJME.create('mi').setText('x'))
 - **Native Speed** – Direct DOM manipulation, no VDOM overhead
 - **Web Standards** – First-class Web Components support
 - **Fluent API** – Chainable methods for cleaner code
+- **AI-Optimized** – Comes with up to date skills that are versioned with the lib
+- **Well documented** - Tutorials, guides, API docs and FAQs
 
 JJ is **not** a reactive framework, template compiler, or state-management system.
-
-## 🧭 Documentation Lanes
-
-- Tutorial onboarding: [www/tutorial/index.md](www/tutorial/index.md)
-- Browser-first guides: [guides/index.md](guides/index.md)
-- Components deep dive: [guides/components.md](guides/components.md)
-- Templates and rendering: [guides/templates.md](guides/templates.md)
-- Architecture and platform APIs: [guides/architecture.md](guides/architecture.md)
-- API reference: [doc/index.html](doc/index.html)
-
-The guides intentionally include verified MDN links so you can move between JJ helpers and underlying browser APIs.
-
-## API Notes
-
-Batch setter helpers use plural methods:
-
-- `setAttrs({...})`
-- `setAriaAttrs({...})`
-- `setDataAttrs({...})`
-- `setClasses({...})`
-
-ARIA helpers use explicit singular naming:
-
-- `getAriaAttr(name)`
-- `hasAriaAttr(name)`
-- `setAriaAttr(name, value)`
-- `setAriaAttrs({...})`
-- `rmAriaAttr(...names)`
-- `rmAriaAttrs(names)`
-
-Dataset helpers use explicit singular/plural naming:
-
-- `getDataAttr(name)`
-- `hasDataAttr(name)`
-- `setDataAttr(name, value)`
-- `setDataAttrs({...})`
-- `rmDataAttr(...names)`
-- `rmDataAttrs(names)`
-
-## 🧩 Custom Elements Readiness
-
-Use `defineComponent(name, constructor, options?)` and expose a static `defined` promise on each custom element class:
-
-```js
-import { defineComponent } from 'jj'
-
-export class MyWidget extends HTMLElement {
-    static defined = defineComponent('my-widget', MyWidget)
-}
-
-await MyWidget.defined
-```
-
-`defineComponent()` resolves a `Promise<boolean>`:
-
-- `false`: this call registered the component.
-- `true`: it was already registered with the same constructor.
-
-This explicit definition step is important for reliability. If markup is parsed before the element is defined, upgrades can race with rendering and produce flaky behavior.
 
 ## 📚 Learn More
 

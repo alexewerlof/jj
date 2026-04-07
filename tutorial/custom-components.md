@@ -13,7 +13,8 @@ You still use browser lifecycle callbacks, Shadow DOM, and attributes. JJ remove
 - fetchTemplate(url)
 - fetchStyle(url)
 - attr2prop(instance, name, oldValue, newValue)
-- JJHE.from(this).setShadow(mode, template, ...styles)
+- JJHE.from(this).setShadow(mode)
+- JJHE.from(this).initShadow(template, ...styles)
 
 ## Baseline pattern
 
@@ -28,6 +29,13 @@ export class MyCard extends HTMLElement {
     static defined = defineComponent('my-card', MyCard)
 
     #title = 'Untitled'
+    #isInitialized = false
+    #root = null
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     attributeChangedCallback(name, oldValue, newValue) {
         attr2prop(this, name, oldValue, newValue)
@@ -43,13 +51,14 @@ export class MyCard extends HTMLElement {
     }
 
     async connectedCallback() {
-        JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        if (this.#isInitialized) return
+        JJHE.from(this).initShadow(await templatePromise, await stylePromise)
+        this.#isInitialized = true
         this.#render()
     }
 
     #render() {
-        const shadow = JJHE.from(this).shadow
-        shadow?.find('[data-role="title"]')?.setText(this.#title)
+        this.#root?.find('[data-role="title"]')?.setText(this.#title)
     }
 }
 ```
@@ -75,8 +84,8 @@ await Promise.all([CardA.defined, CardB.defined, CardC.defined])
 
 ## Lifecycle mapping
 
-- constructor: initialize local fields
-- connectedCallback: create shadow, wire events, render
+- constructor: initialize local fields and attach/store the root wrapper
+- connectedCallback: initialize shadow contents once, wire events, render
 - disconnectedCallback: cleanup timers/listeners/observers
 - attributeChangedCallback: bridge attributes to properties with attr2prop
 

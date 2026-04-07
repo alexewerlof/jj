@@ -178,15 +178,25 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * ```ts
      * const text = JJT.create('hello')
      * JJHE.create('div').addChild(text)
-     * const parent = text.parent // JJHE
+     * const parent = text.getParent() // JJHE
      * ```
      *
+     * @param required - Whether to throw if the node has no parent.
      * @returns The wrapped parent node, or `null` if this node has no parent.
+     * @throws {ReferenceError} If `required` is true and the node has no parent.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/parentNode | Node.parentNode}
      */
-    get parent(): Wrapped | null {
+    getParent(required: true): Wrapped
+    getParent(required: false): Wrapped | null
+    getParent(required = false): Wrapped | null {
         const { parentNode } = this.ref
-        return parentNode ? JJN.wrap(parentNode) : null
+        if (parentNode) {
+            return JJN.wrap(parentNode)
+        }
+        if (required) {
+            throw new ReferenceError('Node has no parent. Did you forget to attach it to the document?')
+        }
+        return null
     }
 
     /**
@@ -198,14 +208,22 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @example
      * ```ts
      * const el = JJHE.create('div').addChild('hello', JJHE.create('span'))
-     * const children = el.children // [JJT, JJHE]
+     * const children = el.getChildren() // [JJT, JJHE]
      * ```
      *
+     * @param required - Whether to throw if the node has no children.
      * @returns The wrapped child nodes.
+     * @throws {ReferenceError} If `required` is true and the node has no children.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/childNodes | Node.childNodes}
      */
-    get children(): Wrapped[] {
-        return JJN.wrapAll(this.ref.childNodes)
+    getChildren(required: true): Wrapped[]
+    getChildren(required: false): Wrapped[] | null
+    getChildren(required = false): Wrapped[] | null {
+        const children = JJN.wrapAll(this.ref.childNodes)
+        if (required && children.length === 0) {
+            throw new ReferenceError('Node has no children. Did you forget to initialize or append them?')
+        }
+        return children
     }
 
     /**
@@ -229,7 +247,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * ```ts
      * const doc = JJD.from(document)
      * const el = JJHE.create('div')
-     * doc.body.addChild(el)
+     * doc.find('body', true).addChild(el)
      * el.rm()
      * ```
      *

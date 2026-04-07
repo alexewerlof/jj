@@ -54,8 +54,8 @@ async function fetchText(url: URL | string, mime: string = 'text/*') {
  *     #root
  *
  *     async connectedCallback() {
- *         this.#root = JJHE.from(this).setShadow('open').shadow
- *         this.#root.addTemplate(await templatePromise)
+ *         this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+ *         this.#root.init(await templatePromise)
  *     }
  * }
  * ```
@@ -68,13 +68,13 @@ async function fetchText(url: URL | string, mime: string = 'text/*') {
  *     #root
  *
  *     async connectedCallback() {
- *         this.#root = JJHE.from(this).setShadow('open').shadow
+ *         this.#root = JJHE.from(this).setShadow('open').getShadow(true)
  *
  *         if (!MyLazyCard.#templatePromise) {
  *             MyLazyCard.#templatePromise = fetchTemplate(import.meta.resolve('./my-lazy-card.html'))
  *         }
  *
- *         this.#root.addTemplate(await MyLazyCard.#templatePromise)
+ *         this.#root.init(await MyLazyCard.#templatePromise)
  *     }
  * }
  * ```

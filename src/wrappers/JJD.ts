@@ -1,7 +1,6 @@
 import { isInstance } from 'jty'
 import { typeErr } from '../internal.js'
 import { JJNx } from './JJNx.js'
-import { JJHE } from './JJHE.js'
 
 /**
  * Wraps a Document (which is a descendant of Node).
@@ -58,31 +57,5 @@ export class JJD<T extends Document = Document> extends JJNx<T> {
             throw typeErr('ref', 'a Document instance', ref, 'Use JJD.from(document) to create an instance.')
         }
         super(ref)
-    }
-
-    /**
-     * Gets the `<head>` element of the document wrapped in a `JJHE` instance.
-     *
-     * @remarks
-     * Returns the wrapped head element from the document. See {@link JJHE} for element manipulation.
-     *
-     * @returns The wrapped head element.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/head | Document.head}
-     */
-    get head() {
-        return JJHE.from(this.ref.head)
-    }
-
-    /**
-     * Gets the `<body>` element of the document wrapped in a `JJHE` instance.
-     *
-     * @remarks
-     * Returns the wrapped body element from the document. See {@link JJHE} for element manipulation.
-     *
-     * @returns The wrapped body element.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/body | Document.body}
-     */
-    get body() {
-        return JJHE.from(this.ref.body)
     }
 }

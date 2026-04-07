@@ -38,7 +38,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      * Creates a JJSE instance from a tag name (in the SVG namespace).
      *
      * @remarks
-     * Automatically uses {@link SVG_NS} for namespace-aware element creation.
+     * Automatically uses the SVG namespace constant for namespace-aware element creation.
      * For existing SVGElements, use {@link JJSE.from} instead.
      * For HTMLElements, use {@link JJHE.create} or {@link JJME.create} for MathMLElements.
      *

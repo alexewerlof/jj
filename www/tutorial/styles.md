@@ -52,12 +52,20 @@ class MyCard extends HTMLElement {
     static defined = defineComponent('my-card', MyCard)
 
     #root = null
+    #isInitialized = false
+
+    constructor() {
+        super()
+        JJHE.from(this).setShadow('open')
+        this.#root = JJHE.from(this).getShadow(true)
+    }
 
     async connectedCallback() {
-        if (this.#root) {
+        if (this.#isInitialized) {
             return
         }
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise).shadow
+        JJHE.from(this).initShadow(await templatePromise, await stylePromise)
+        this.#isInitialized = true
     }
 }
 ```
@@ -99,9 +107,15 @@ class LazyStyledCard extends HTMLElement {
     static defined = defineComponent('lazy-styled-card', LazyStyledCard)
 
     #root = null
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     async connectedCallback() {
-        if (this.#root) {
+        if (this.#isInitialized) {
             return
         }
         if (!templatePromise) {
@@ -111,7 +125,8 @@ class LazyStyledCard extends HTMLElement {
             stylePromise = fetchStyle(import.meta.resolve('./lazy-styled-card.css'))
         }
         const [template, style] = await Promise.all([templatePromise, stylePromise])
-        this.#root = JJHE.from(this).setShadow('open', template, style).shadow
+        this.#root.init(template, style)
+        this.#isInitialized = true
     }
 }
 ```

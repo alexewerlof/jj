@@ -29,7 +29,8 @@ Most standalone UI components (buttons, cards, dialogs) benefit from shadow DOM.
 - `attr2prop(instance, name, oldValue, newValue)` — bridges attribute changes to property setters.
 - `fetchTemplate(url)` — fetches an HTML file and returns a `DocumentFragment` promise.
 - `fetchStyle(url)` — fetches a CSS file and returns a `CSSStyleSheet` promise.
-- `JJHE.from(this).setShadow(mode, template, ...styles)` — attaches shadow root, clones template, adopts stylesheets.
+- `JJHE.from(this).setShadow(mode)` — attaches the shadow root.
+- `JJHE.from(this).initShadow(template, ...styles)` — clones template content into an attached shadow root and adopts stylesheets.
 
 ## Recommended structure
 
@@ -47,33 +48,41 @@ Custom elements have four lifecycle callbacks. Understanding their order is crit
 
 ### 1. `constructor()`
 
-Runs when an instance is created. **Do not access or manipulate the DOM here.** The element may not be connected yet and has no shadow root.
+Runs when an instance is created. The element may not be connected yet, but you can still initialize wrapper references and attach the shadow root.
 
 Appropriate uses:
 
 - Declare private fields.
 - Set default property values.
+- Attach the shadow root and store `#root`.
 
 ```js
 class MyCounter extends HTMLElement {
     #count = 0 // private state
-    #root = null // shadow root wrapper, assigned in connectedCallback
+    #root = null // root-of-contents wrapper, assigned in the constructor
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 }
 ```
 
 ### 2. `connectedCallback()`
 
-Runs when the element is inserted into the document. Set up your shadow root, wire events, and render here.
+Runs when the element is inserted into the document. Initialize shadow contents, wire events, and render here.
 
 ```js
 async connectedCallback() {
-    if (this.#root) return  // guard: prevent re-running on reconnect
-    this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+    if (this.#isInitialized) return  // guard: prevent re-running on reconnect
+    JJHE.from(this).initShadow(await templatePromise, await stylePromise)
+    this.#isInitialized = true
     this.#render()
 }
 ```
 
-**Guard pattern**: The `if (this.#root) return` check is important. When an element is disconnected and reconnected (e.g. via `document.body.append(el)`), `connectedCallback` fires again. Without the guard, the shadow root would be recreated on every reconnect.
+**Guard pattern**: The `if (this.#isInitialized) return` check is important. When an element is disconnected and reconnected (e.g. via `document.body.append(el)`), `connectedCallback` fires again. Without the guard, the template and event wiring would be recreated on every reconnect even though `#root` already exists from the constructor.
 
 ### 3. `disconnectedCallback()`
 
@@ -119,6 +128,12 @@ export class MyCard extends HTMLElement {
 
     #title = 'Untitled'
     #root = null
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     attributeChangedCallback(name, oldValue, newValue) {
         attr2prop(this, name, oldValue, newValue)
@@ -131,12 +146,14 @@ export class MyCard extends HTMLElement {
     set title(value) {
         this.#title = String(value ?? '')
         // Only render if shadow root exists — connectedCallback will render on first connect
-        if (this.#root) this.#render()
+        this.#render()
     }
 
     async connectedCallback() {
-        if (this.#root) return
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        if (!this.#isInitialized) {
+            this.#root.init(await templatePromise, await stylePromise)
+            this.#isInitialized = true
+        }
         this.#render()
     }
 
@@ -163,12 +180,7 @@ const sharedVarsPromise = fetchStyle(import.meta.resolve('../../shared/variables
 const componentStylePromise = fetchStyle(import.meta.resolve('./my-card.css'))
 
 // In connectedCallback:
-this.#root = JJHE.from(this).setShadow(
-    'open',
-    await templatePromise,
-    await sharedVarsPromise,
-    await componentStylePromise,
-)
+JJHE.from(this).initShadow(await templatePromise, await sharedVarsPromise, await componentStylePromise)
 ```
 
 Constructable stylesheets produced by `fetchStyle` are _adopted_ by multiple shadow roots — the browser shares the same parsed `CSSStyleSheet` object without duplicating CSS text. This is more efficient than `<link rel="stylesheet">` per instance.
@@ -183,13 +195,14 @@ const templatePromise = fetchTemplate(import.meta.resolve('./my-section.html'))
 export class MySection extends HTMLElement {
     static defined = defineComponent('my-section', MySection)
 
-    #initialized = false
+    #isInitialized = false
 
     async connectedCallback() {
-        if (this.#initialized) return
-        this.#initialized = true
-        JJHE.from(this).setTemplate(await templatePromise)
-        this.#wireEvents()
+        if (!this.#isInitialized) {
+            JJHE.from(this).setTemplate(await templatePromise)
+            this.#isInitialized = true
+        }
+        this.#render()
     }
 }
 ```
@@ -336,6 +349,12 @@ export class UserCard extends HTMLElement {
     #name = ''
     #role = ''
     #root = null
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     attributeChangedCallback(name, oldValue, newValue) {
         attr2prop(this, name, oldValue, newValue)
@@ -358,14 +377,18 @@ export class UserCard extends HTMLElement {
     }
 
     async connectedCallback() {
-        if (this.#root) return
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
-        this.#root.find('[data-action="contact"]')?.on('click', this.#onContactClick)
+        if (!this.#isInitialized) {
+            this.#root
+                .init(await templatePromise, await stylePromise)
+                .find('[data-action="contact"]')
+                ?.on('click', this.#onContactClick)
+            this.#isInitialized = true
+        }
         this.#render()
     }
 
     disconnectedCallback() {
-        // external listeners would be removed here
+        this.#root.find('[data-action="contact"]')?.off('click', this.#onContactClick)
     }
 
     #render() {

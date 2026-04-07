@@ -17,12 +17,15 @@ export class RenderMarkdown extends HTMLElement {
     static observedAttributes = ['content']
 
     #root
-    #content = ''
+    #htmlContent = ''
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setStyle('display', 'block')
+    }
 
     async connectedCallback() {
         await CodeHighlight.defined
-
-        this.#root = JJHE.from(this).setStyle('display', 'block')
         this.#render()
     }
 
@@ -31,21 +34,22 @@ export class RenderMarkdown extends HTMLElement {
     }
 
     set content(markdown) {
-        this.#content = markdown
-        this.#render()
+        try {
+            this.#htmlContent = md.render(markdown)
+            this.#render()
+        } catch (cause) {
+            this.#htmlContent = `<p style="color: red;">Error rendering markdown: ${cause.message}</p>`
+            this.#render()
+            console.error(`Failed to render markdown content`, cause)
+            throw new Error(`Failed to render markdown content`, { cause })
+        }
     }
 
     get content() {
-        return this.#content
+        return this.#htmlContent
     }
 
     #render() {
-        if (this.#root) {
-            try {
-                this.#root.setHTML(md.render(this.#content), true)
-            } catch (e) {
-                this.#root.setText(e.message)
-            }
-        }
+        this.#root.setHTML(this.#htmlContent, true)
     }
 }

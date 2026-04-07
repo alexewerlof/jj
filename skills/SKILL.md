@@ -14,14 +14,14 @@ Each JJ wrapper exposes the native node via `.ref`.
 | Class | Wraps            | Key additions                                          |
 | ----- | ---------------- | ------------------------------------------------------ |
 | JJET  | EventTarget      | `.on()`, `.off()`, `.trigger()`, `.run()`              |
-| JJN   | Node             | `.parent`, `.children`, `.rm()`, `.clone()`            |
-| JJD   | Document         | `.find()`, `.findAll()`, `.head`, `.body`              |
+| JJN   | Node             | `.getParent()`, `.getChildren()`, `.rm()`, `.clone()`  |
+| JJD   | Document         | `.find()`, `.findAll()`                                |
 | JJDF  | DocumentFragment | `.addTemplate()`, `.setTemplate()`, batch child ops    |
 | JJE   | Element          | Attributes, classes, ARIA, visibility, HTML write      |
 | JJHE  | HTMLElement      | `.setText()`, `.setStyle()`, `.setShadow()`, `.tree()` |
 | JJSE  | SVGElement       | SVG namespace factory                                  |
 | JJME  | MathMLElement    | MathML namespace factory                               |
-| JJSR  | ShadowRoot       | `.find()`, `.findAll()`, `.addStyle()`                 |
+| JJSR  | ShadowRoot       | `.find()`, `.findAll()`, `.addStyle()`, `.init()`      |
 | JJDF  | DocumentFragment | Fragment operations                                    |
 | JJT   | Text             | `.getText()`, `.setText()`                             |
 
@@ -65,7 +65,7 @@ const card = doc.find('.card') // null when absent
 const items = doc.findAll('.item') // always an array
 
 // Inside a custom element's shadow root
-const btn = this.#root.shadow.find('#submit')
+const btn = this.getShadow(true).find('#submit')
 ```
 
 ## Attributes, Classes, Styles
@@ -156,7 +156,13 @@ export class MyCard extends HTMLElement {
 
     #userName = ''
     #count = 0
-    #root = null // JJHE wrapper; null until connectedCallback
+    #root = null // JJSR wrapper; attached in constructor
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     attributeChangedCallback(name, oldValue, newValue) {
         // Converts kebab-case → camelCase, then calls the matching setter
@@ -180,14 +186,17 @@ export class MyCard extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        if (!this.#isInitialized) {
+            this.#root.init(await templatePromise, await stylePromise)
+            this.#isInitialized = true
+        }
         this.#render()
     }
 
     #render() {
         if (!this.#root) return // guard for attribute changes before mount
-        this.#root.shadow.find('[data-role="name"]')?.setText(this.#userName)
-        this.#root.shadow.find('[data-role="count"]')?.setText(String(this.#count))
+        this.#root.find('[data-role="name"]')?.setText(this.#userName)
+        this.#root.find('[data-role="count"]')?.setText(String(this.#count))
     }
 }
 
@@ -241,8 +250,8 @@ el.addTemplate(await templatePromise) // clones before appending
 ## Node Traversal
 
 ```typescript
-const parent = el.parent // wrapped parent or null (detached)
-const children = el.children // wrapped child array (always an array)
+const parent = el.getParent() // wrapped parent or null (detached)
+const children = el.getChildren() // wrapped child array (always an array)
 el.rm() // detach from parent (no-op if already detached)
 const ancestor = el.closest('[data-section]') // null if not found
 ```

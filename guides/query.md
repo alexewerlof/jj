@@ -131,9 +131,18 @@ After initializing a shadow root wrapper, query within it the same way you'd que
 ```js
 class MyCard extends HTMLElement {
     #root = null
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     async connectedCallback() {
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        if (!this.#isInitialized) {
+            this.#root.init(await templatePromise, await stylePromise)
+            this.#isInitialized = true
+        }
         this.#render()
     }
 

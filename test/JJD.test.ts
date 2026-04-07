@@ -51,19 +51,17 @@ describe('JJD', () => {
         })
     })
 
-    describe('head', () => {
-        it('returns wrapped head element', () => {
+    describe('find() document roots', () => {
+        it('finds the head element', () => {
             const jjd = new JJD(document)
-            const head = jjd.head
+            const head = jjd.find('head', true)
             assert.ok(head)
             assert.strictEqual((head.ref as HTMLElement).tagName, 'HEAD')
         })
-    })
 
-    describe('body', () => {
-        it('returns wrapped body element', () => {
+        it('finds the body element', () => {
             const jjd = new JJD(document)
-            const body = jjd.body
+            const body = jjd.find('body', true)
             assert.ok(body)
             assert.strictEqual((body.ref as HTMLElement).tagName, 'BODY')
         })

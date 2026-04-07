@@ -102,20 +102,25 @@ The HTML file should contain the markup fragment you want to clone — it does n
 
 ## Using templates with shadow DOM
 
-The most common use of `fetchTemplate` is feeding the result to `setShadow()`, which also accepts the same template inputs:
+The most common use of `fetchTemplate` is feeding the result to `initShadow()` after the shadow root has been attached:
 
 ```js
 const templatePromise = fetchTemplate(import.meta.resolve('./my-card.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./my-card.css'))
 
 class MyCard extends HTMLElement {
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
+
     async connectedCallback() {
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        JJHE.from(this).initShadow(await templatePromise, await stylePromise)
     }
 }
 ```
 
-`setShadow()` internally calls `setTemplate()` on the new shadow root.
+`initShadow()` delegates to `JJSR.init()`, which clones the template into the already attached shadow root and adopts any provided stylesheets.
 
 ## JJDF for multi-node fragments
 

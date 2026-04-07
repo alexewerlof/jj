@@ -128,13 +128,20 @@ import { fetchStyle, JJHE } from 'jj'
 const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 
 class MyComponent extends HTMLElement {
+    constructor() {
+        super()
+        JJHE.from(this).setShadow('open')
+    }
+
     async connectedCallback() {
-        JJHE.from(this).setShadow('open', undefined, await stylePromise)
+        JJHE.from(this)
+            .getShadow(true)
+            .addStyle(await stylePromise)
     }
 }
 ```
 
-`fetchStyle` is especially useful with shadow DOM because `setShadow` can adopt stylesheets directly.
+`fetchStyle` is especially useful with shadow DOM because `JJSR.addStyle()` can adopt stylesheets directly after `setShadow()` has attached the root.
 
 ## Preloading and Prefetching Style Resources
 

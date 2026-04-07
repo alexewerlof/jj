@@ -52,6 +52,12 @@ For encapsulated UI components, keep state as private class fields:
 class TodoItem extends HTMLElement {
     #done = false
     #root = null
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     set done(value) {
         this.#done = Boolean(value)
@@ -62,17 +68,18 @@ class TodoItem extends HTMLElement {
         // Guard against re-initialisation: connectedCallback fires on every
         // DOM insertion, including moves via insertBefore/appendChild.
         // See the component lifecycle events guide for full details.
-        if (this.#root) return
-        this.#root = JJHE.from(this).setShadow('open').shadow
-        this.#root.setChild(
-            JJHE.tree(
-                'div',
-                null,
-                JJHE.tree('input', { id: 'checkbox', type: 'checkbox' }),
-                JJHE.tree('label', { for: 'checkbox' }, 'Task'),
-                JJHE.tree('div', { id: 'status' }),
-            ),
-        )
+        if (!this.#isInitialized) {
+            this.#root.init(
+                JJHE.tree(
+                    'div',
+                    null,
+                    JJHE.tree('input', { id: 'checkbox', type: 'checkbox' }),
+                    JJHE.tree('label', { for: 'checkbox' }, 'Task'),
+                    JJHE.tree('div', { id: 'status' }),
+                ),
+            )
+            this.#isInitialized = true
+        }
         this.#render()
     }
 

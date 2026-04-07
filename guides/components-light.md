@@ -26,15 +26,15 @@ export class MySection extends HTMLElement {
     static defined = defineComponent('my-section', MySection)
 
     #host = null
-    #initialized = false
+    #isInitialized = false
 
     async connectedCallback() {
-        if (this.#initialized) return
-        this.#initialized = true
-        this.#host = JJHE.from(this)
-        this.#host.setTemplate(await templatePromise)
-        this.#wireEvents()
-        this.#render()
+        if (!this.#isInitialized) {
+            this.#host = JJHE.from(this)
+            this.#host.setTemplate(await templatePromise)
+            this.#isInitialized = true
+            this.#render()
+        }
     }
 }
 ```
@@ -156,7 +156,7 @@ export class NewsFeed extends HTMLElement {
     #heading = 'Latest News'
     #articles = []
     #host = null
-    #initialized = false
+    #isInitialized = false
 
     attributeChangedCallback(name, oldValue, newValue) {
         attr2prop(this, name, oldValue, newValue)
@@ -171,12 +171,13 @@ export class NewsFeed extends HTMLElement {
     }
 
     async connectedCallback() {
-        if (this.#initialized) return
-        this.#initialized = true
-        this.#host = JJHE.from(this)
-        this.#host.setTemplate(await templatePromise)
-        this.#host.on('click', this.#onListClick)
-        document.addEventListener('feed-refresh', this.#onFeedRefresh)
+        if (!this.#isInitialized) {
+            this.#host = JJHE.from(this)
+                .setTemplate(await templatePromise)
+                .on('click', this.#onListClick)
+            document.addEventListener('feed-refresh', this.#onFeedRefresh)
+            this.#isInitialized = true
+        }
         this.#render()
     }
 
@@ -195,11 +196,7 @@ export class NewsFeed extends HTMLElement {
         const list = this.#host?.find('[data-role="list"]')
         if (!list) return
 
-        list.setChild(
-            ...this.#articles.map((a) =>
-                H.tree('li', { 'data-id': a.id }, a.title),
-            ),
-        )
+        list.setChildMap(this.#articles, (a) => H.tree('li', { 'data-id': a.id }, a.title))
     }
 
     #onListClick = (event) => {
@@ -224,8 +221,12 @@ export class NewsFeed extends HTMLElement {
 
 ```css
 /* news-feed.css — included by the page as a normal stylesheet */
-news-feed .news-feed { padding: var(--spacing-md); }
-news-feed .news-feed h2 { font: var(--font-heading); }
+news-feed .news-feed {
+    padding: var(--spacing-md);
+}
+news-feed .news-feed h2 {
+    font: var(--font-heading);
+}
 ```
 
 ```html

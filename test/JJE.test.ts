@@ -1,7 +1,53 @@
 import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JJE } from '../src/index.js'
+import { JJDF, JJE, JJHE, JJSR } from '../src/index.js'
+
+function ensureAdoptedStyleSheets(shadowRoot: ShadowRoot) {
+    if (!('adoptedStyleSheets' in shadowRoot)) {
+        Object.defineProperty(shadowRoot, 'adoptedStyleSheets', {
+            value: [],
+            writable: true,
+        })
+    }
+}
+
+function createTemplateInputs() {
+    const fragment = JJDF.create().addChild(JJHE.tree('p', null, 'fragment'))
+    const template = document.createElement('template')
+    template.innerHTML = '<p>template</p>'
+
+    const element = document.createElement('section')
+    element.textContent = 'element'
+
+    return [
+        {
+            label: 'DocumentFragment from fetchTemplate-like flow',
+            template: fragment,
+            expected: 'fragment',
+        },
+        {
+            label: 'HTMLTemplateElement',
+            template,
+            expected: 'template',
+        },
+        {
+            label: 'HTMLElement',
+            template: element,
+            expected: 'element',
+        },
+        {
+            label: 'HTML string',
+            template: '<p>string</p>',
+            expected: 'string',
+        },
+        {
+            label: 'JJHE wrapper',
+            template: JJHE.tree('p', null, 'wrapper'),
+            expected: 'wrapper',
+        },
+    ]
+}
 
 describe('JJE', () => {
     describe('constructor', () => {
@@ -553,6 +599,92 @@ describe('JJE', () => {
             // Wait, looking at implementation: `html` is falsy so it enters `if (html && ...)` check?
             // if html is '', `html` is false, so check passes.
             assert.strictEqual(el.innerHTML, '')
+        })
+    })
+
+    describe('shadow methods', () => {
+        describe('setShadow()', () => {
+            it('attaches an open shadow root and returns this', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+
+                const result = jje.setShadow()
+
+                assert.strictEqual(result, jje)
+                assert.ok(el.shadowRoot)
+            })
+
+            it('is idempotent for an already attached shadow root', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+
+                jje.setShadow('open')
+
+                assert.doesNotThrow(() => jje.setShadow('open'))
+            })
+        })
+
+        describe('getShadow()', () => {
+            it('returns null when no shadow root exists', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+
+                assert.strictEqual(jje.getShadow(), null)
+            })
+
+            it('returns a JJSR when a shadow root exists', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el).setShadow('open')
+
+                assert.ok(jje.getShadow() instanceof JJSR)
+            })
+
+            it('throws when required and no shadow root exists', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+
+                assert.throws(() => jje.getShadow(true), {
+                    name: 'ReferenceError',
+                    message: /No shadow root found on this element/,
+                })
+            })
+        })
+
+        describe('initShadow()', () => {
+            for (const entry of createTemplateInputs()) {
+                it(`initializes shadow content from ${entry.label}`, () => {
+                    const el = document.createElement('div')
+                    const jje = new JJE(el).setShadow('open')
+
+                    jje.initShadow(entry.template)
+
+                    assert.match(jje.getShadow(true).ref.textContent ?? '', new RegExp(entry.expected))
+                })
+            }
+
+            it('initializes styles and content after constructor-time shadow attachment', async () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el).setShadow('open')
+                const shadow = jje.getShadow(true)
+                const sheet = new CSSStyleSheet()
+
+                ensureAdoptedStyleSheets(shadow.ref)
+                await sheet.replace(':host { display: block; }')
+
+                jje.initShadow('<p>styled</p>', ':host { color: red; }', sheet)
+
+                assert.strictEqual(shadow.find('p', true).ref.textContent, 'styled')
+                assert.strictEqual(shadow.ref.adoptedStyleSheets.length, 2)
+            })
+
+            it('throws when the shadow root has not been attached yet', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+
+                assert.throws(() => jje.initShadow('<p>missing</p>'), {
+                    message: /Failed to initialize shadow DOM/,
+                })
+            })
         })
     })
 })

@@ -38,15 +38,16 @@ const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html')
 const stylePromise    = fetchStyle(import.meta.resolve('./my-component.css'))
 
 async connectedCallback() {
-    // setShadow(mode, template, ...styles)
-    this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
-    this.#root.shadow.find('#btn').on('click', this.#handleClick)
+    // setShadow(mode) in the constructor, then initShadow(template, ...styles) here
+    JJHE.from(this).initShadow(await templatePromise, await stylePromise)
+    this.#root.find('#btn').on('click', this.#handleClick)
     this.#render()
 }
 ```
 
 Shadow mode:
-- `'open'`  — `element.shadowRoot` visible externally; easy to debug and test
+
+- `'open'` — `element.shadowRoot` visible externally; easy to debug and test
 - `'closed'` — `element.shadowRoot` returns `null`; caller must interact through public API
 
 ## Attribute-to-property bridge
@@ -63,7 +64,7 @@ attributeChangedCallback(name, oldValue, newValue) {
 // Guard renders until shadow is ready:
 #render() {
     if (!this.#root) return
-    this.#root.shadow.find('[data-role="name"]')?.setText(this.#userName)
+    this.#root.find('[data-role="name"]')?.setText(this.#userName)
 }
 ```
 
@@ -88,6 +89,7 @@ JJHE.from(this).triggerCustomEvent('item-selected', { id: this.#id })
 ```
 
 ## Browser references
+
 - CustomElementRegistry.define: https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define
 - CustomElementRegistry.whenDefined: https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/whenDefined
 - Using shadow DOM: https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM

@@ -1,6 +1,7 @@
 import { isInstance, isStr } from 'jty'
 import { typeErr } from '../internal.js'
 import { JJDF } from './JJDF.js'
+import type { JJHE } from './JJHE.js'
 
 /**
  * Wraps a DOM ShadowRoot (which is a descendant of DocumentFragment).
@@ -51,10 +52,40 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
                 'shadowRoot',
                 'a ShadowRoot instance',
                 shadowRoot,
-                'Use JJHE.setShadow() or element.attachShadow({ mode: "open" }).',
+                'Use JJHE.from(element).setShadow() or element.attachShadow({ mode: "open" }).',
             )
         }
         super(shadowRoot)
+    }
+
+    /**
+     * Initializes the ShadowRoot with template content and optional styles.
+     *
+     * @example
+     * ```ts
+     * shadow.init('<p>Hello</p>', 'p { color: red; }')
+     * ```
+     *
+     * @param template - The template content to clone into the shadow root.
+     * @param styles - Optional styles to add to the shadow root.
+     * @returns This instance for chaining.
+     * @throws {Error} If the template or styles cannot be applied.
+     * @see {@link JJDF.addTemplate} for supported template inputs.
+     * @see {@link addStyle} for stylesheet handling.
+     */
+    init(
+        template:
+            | string
+            | DocumentFragment
+            | HTMLTemplateElement
+            | HTMLElement
+            | JJDF
+            | JJHE<HTMLTemplateElement>
+            | JJHE,
+        ...styles: (string | CSSStyleSheet)[]
+    ): this {
+        this.addTemplate(template).addStyle(...styles)
+        return this
     }
 
     /**
@@ -93,6 +124,10 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
     /**
      * Adds constructed stylesheets to the ShadowRoot.
      *
+     * @remarks
+     * Although this function accepts CSS strings, it converts them to CSSStyleSheet synchronously which has a performance penalty.
+     * For better performance, create CSSStyleSheet instances in advance.
+     *
      * @example
      * ```ts
      * const sheet = new CSSStyleSheet()
@@ -105,28 +140,30 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets | ShadowRoot.adoptedStyleSheets}
      */
     addStyle(...styles: (string | CSSStyleSheet)[]): this {
-        const cssStyleSheets: CSSStyleSheet[] = []
-        try {
-            for (const sheet of styles) {
-                if (isInstance(sheet, CSSStyleSheet)) {
-                    cssStyleSheets.push(sheet)
-                } else if (isStr(sheet)) {
-                    const cssSheet = new CSSStyleSheet()
-                    cssSheet.replaceSync(sheet)
-                    cssStyleSheets.push(cssSheet)
-                } else {
-                    throw typeErr(
-                        'styleSheets',
-                        'CSSStyleSheet instances or CSS strings',
-                        sheet,
-                        'Pass a CSS string or a stylesheet created with `new CSSStyleSheet()`.',
-                    )
+        if (styles.length) {
+            const cssStyleSheets: CSSStyleSheet[] = []
+            try {
+                for (const sheet of styles) {
+                    if (isInstance(sheet, CSSStyleSheet)) {
+                        cssStyleSheets.push(sheet)
+                    } else if (isStr(sheet)) {
+                        const cssSheet = new CSSStyleSheet()
+                        cssSheet.replaceSync(sheet)
+                        cssStyleSheets.push(cssSheet)
+                    } else {
+                        throw typeErr(
+                            'styleSheets',
+                            'CSSStyleSheet instances or CSS strings',
+                            sheet,
+                            'Pass a CSS string or a stylesheet created with `new CSSStyleSheet()`.',
+                        )
+                    }
                 }
+            } catch (cause) {
+                throw new Error(`Failed to create CSSStyleSheet from provided styles.`, { cause })
             }
-        } catch (cause) {
-            throw new Error(`Failed to create CSSStyleSheet from provided styles.`, { cause })
+            this.ref.adoptedStyleSheets.push(...cssStyleSheets)
         }
-        this.ref.adoptedStyleSheets.push(...cssStyleSheets)
         return this
     }
 }

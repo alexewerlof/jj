@@ -76,15 +76,16 @@ The pattern used in the [architecture guide](./architecture.md) protects against
 
 ```js
 connectedCallback() {
-    if (this.#root) return                              // ← guard
-    this.#root = JJHE.from(this).setShadow('open').shadow
-    this.#root.setChild(
-        JJHE.tree('div', null,
-            JJHE.tree('input', { id: 'checkbox', type: 'checkbox' }),
-            JJHE.tree('label', { for: 'checkbox' }, 'Task'),
-            JJHE.tree('div', { id: 'status' }),
-        ),
-    )
+    if (!this.#isInitialized) {
+        this.#root.init(
+            JJHE.tree('div', null,
+                JJHE.tree('input', { id: 'checkbox', type: 'checkbox' }),
+                JJHE.tree('label', { for: 'checkbox' }, 'Task'),
+                JJHE.tree('div', { id: 'status' }),
+            ),
+        )
+        this.#isInitialized = true
+    }
     this.#render()
 }
 ```
@@ -113,19 +114,26 @@ If you need to react to moves without running init/cleanup code, define the call
 class TodoItem extends HTMLElement {
     #done = false
     #root = null
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     connectedCallback() {
-        if (this.#root) return
-        this.#root = JJHE.from(this).setShadow('open').shadow
-        this.#root.setChild(
-            JJHE.tree(
-                'div',
-                null,
-                JJHE.tree('input', { id: 'checkbox', type: 'checkbox' }),
-                JJHE.tree('label', { for: 'checkbox' }, 'Task'),
-                JJHE.tree('div', { id: 'status' }),
-            ),
-        )
+        if (!this.#isInitialized) {
+            this.#root.init(
+                JJHE.tree(
+                    'div',
+                    null,
+                    JJHE.tree('input', { id: 'checkbox', type: 'checkbox' }),
+                    JJHE.tree('label', { for: 'checkbox' }, 'Task'),
+                    JJHE.tree('div', { id: 'status' }),
+                ),
+            )
+            this.#isInitialized = true
+        }
         this.#render()
     }
 

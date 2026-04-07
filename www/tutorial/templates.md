@@ -19,7 +19,8 @@ JJ accepts multiple template sources, which lets you pick the right tool for eac
 Use one convention consistently in your custom elements:
 
 - Light DOM component: `this.#root = JJHE.from(this)`
-- Shadow DOM component: `this.#root = JJHE.from(this).setShadow(...).shadow`
+- Shadow DOM component: attach in the constructor and store it `this.#root = JJHE.from(this).setShadow(...)`.getShadow(true)`
+    - Keep the initialization status in `#isInitialized` and guard `connectedCallback()` to run `this.#root.init()` only once.
 
 That gives you a predictable wrapper to query and update.
 
@@ -34,12 +35,19 @@ export class MyCard extends HTMLElement {
     static defined = defineComponent('my-card', MyCard)
 
     #root = null
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     async connectedCallback() {
-        if (this.#root) {
+        if (this.#isInitialized) {
             return
         }
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise).shadow
+        this.#root.init(await templatePromise)
+        this.#isInitialized = true
     }
 }
 ```
@@ -68,15 +76,22 @@ export class LazyShadowCard extends HTMLElement {
     static defined = defineComponent('lazy-shadow-card', LazyShadowCard)
 
     #root = null
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     async connectedCallback() {
-        if (this.#root) {
+        if (this.#isInitialized) {
             return
         }
         if (!templatePromise) {
             templatePromise = fetchTemplate(import.meta.resolve('./lazy-shadow-card.html'))
         }
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise).shadow
+        this.#root.init(await templatePromise)
+        this.#isInitialized = true
     }
 }
 ```

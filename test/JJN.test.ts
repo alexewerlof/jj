@@ -173,14 +173,14 @@ describe('JJN', () => {
         })
     })
 
-    describe('parent', () => {
+    describe('getParent()', () => {
         it('returns wrapped parent node', () => {
             const parent = document.createElement('div')
             const child = document.createElement('span')
             parent.appendChild(child)
 
             const jjn = JJN.from(child)
-            const wrappedParent = jjn.parent
+            const wrappedParent = jjn.getParent()
 
             assert.ok(wrappedParent)
             assert.strictEqual(wrappedParent?.ref, parent)
@@ -192,7 +192,7 @@ describe('JJN', () => {
             const child = document.createElement('span')
             const jjn = JJN.from(child)
 
-            assert.strictEqual(jjn.parent, null)
+            assert.strictEqual(jjn.getParent(), null)
         })
 
         it('returns the most specific wrapper for the parent', () => {
@@ -201,15 +201,25 @@ describe('JJN', () => {
             parent.appendChild(child)
 
             const jjn = JJN.from(child)
-            const wrappedParent = jjn.parent
+            const wrappedParent = jjn.getParent()
 
             assert.ok(wrappedParent)
             assert.ok(isInstance(wrappedParent, JJHE)) // Should be the most specific wrapper, which is JJHE for HTMLElement
             assert.ok(isOwnInstance(wrappedParent, JJHE))
         })
+
+        it('throws when required and detached', () => {
+            const child = document.createElement('span')
+            const jjn = JJN.from(child)
+
+            assert.throws(() => jjn.getParent(true), {
+                name: 'ReferenceError',
+                message: /Node has no parent/,
+            })
+        })
     })
 
-    describe('children', () => {
+    describe('getChildren()', () => {
         it('returns wrapped child nodes', () => {
             const parent = document.createElement('div')
             const child1 = document.createElement('span')
@@ -217,7 +227,7 @@ describe('JJN', () => {
             parent.append(child1, child2)
 
             const jjn = JJN.from(parent)
-            const children = jjn.children
+            const children = jjn.getChildren()
 
             assert.strictEqual(children.length, 2)
             assert.strictEqual(children[0]?.ref, child1)
@@ -228,7 +238,7 @@ describe('JJN', () => {
             const parent = document.createElement('div')
             const jjn = JJN.from(parent)
 
-            assert.deepStrictEqual(jjn.children, [])
+            assert.deepStrictEqual(jjn.getChildren(), [])
         })
 
         it('returns the most specific wrappers for children', () => {
@@ -238,11 +248,21 @@ describe('JJN', () => {
             parent.append(child1, child2)
 
             const jjn = JJN.from(parent)
-            const children = jjn.children
+            const children = jjn.getChildren()
 
             assert.ok(isInstance(children[0], JJHE))
             assert.ok(isOwnInstance(children[0], JJHE))
             assert.strictEqual(children[1]?.constructor.name, 'JJT')
+        })
+
+        it('throws when required and there are no children', () => {
+            const parent = document.createElement('div')
+            const jjn = JJN.from(parent)
+
+            assert.throws(() => jjn.getChildren(true), {
+                name: 'ReferenceError',
+                message: /Node has no children/,
+            })
         })
     })
 

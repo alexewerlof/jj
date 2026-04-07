@@ -16,14 +16,23 @@ The last one is optional. In fact there are 3 ways to create a component:
 
 Regardless of the method, the browser provides the following lifecycle callbacks on your class (you simply implement the ones you need):
 
-| Callback                   | Description                                                                                                                 |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `constructor`              | Called when the element is created. Good for setting up initial state, attaching shadow DOM, etc.                           |
-| `connectedCallback`        | Called when the element is added to the DOM. Good for setup work like populating initial content or adding event listeners. |
-| `disconnectedCallback`     | Called when the element is removed from the DOM. Good for cleanup work like removing event listeners or canceling timers.   |
-| `connectedMoveCallback`    | Called when the element is moved within the DOM. Less commonly used.                                                        |
-| `adoptedCallback`          | Called when the element is moved to a new document. Less commonly used.                                                     |
-| `attributeChangedCallback` | Called when one of the `observedAttributes` static array changes. Good for reacting to attribute changes.                   |
+| Callback                   | Description                                                                                                                                                                                                                                                                |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `constructor`              | Called when the element is created. Good for setting up initial state, attaching shadow DOM, etc.                                                                                                                                                                          |
+| `connectedCallback`        | Called when the element is added to the DOM. Can run multiple times on the same instance (re-attach after removal, move between parents via remove+insert, or adopt into another document). Good for setup work like populating initial content or adding event listeners. |
+| `disconnectedCallback`     | Called when the element is removed from the DOM. Good for cleanup work like removing event listeners or canceling timers.                                                                                                                                                  |
+| `connectedMoveCallback`    | Called when the element is moved within the DOM. Less commonly used.                                                                                                                                                                                                       |
+| `adoptedCallback`          | Called when the element is moved to a new document. Less commonly used.                                                                                                                                                                                                    |
+| `attributeChangedCallback` | Called when one of the `observedAttributes` static array changes. Good for reacting to attribute changes.                                                                                                                                                                  |
+
+## Conventions
+
+To keep lifecycle logic predictable, use these conventions:
+
+1. Do not add a separate `#initialized` flag.
+2. For shadow components, keep a host wrapper in the constructor and keep `#root = null` until content is initialized.
+3. In `connectedCallback()`, initialize only when `#root` is null.
+4. Register listeners in `connectedCallback()` and remove them in `disconnectedCallback()` using stable handler references.
 
 That last one is interesting.
 
@@ -121,16 +130,23 @@ counter.increment()
 That's a lot of code! JJ makes it a bit easier to work with:
 
 ```js
-import { JJHE } from 'jj'
+import { JJHE, attr2prop } from 'jj'
 
 const h = JJHE.tree
 
 class MyCounter extends HTMLElement {
     static observedAttributes = ['value']
 
+    #host
+    #root = null
     #value = 0
     // Keeps a reference to the node that updates with the value
     #valueElement = null
+    #incButton = null
+
+    #onIncrement = () => {
+        this.increment()
+    }
 
     get value() {
         return this.#value
@@ -169,11 +185,22 @@ class MyCounter extends HTMLElement {
 
     constructor() {
         super()
+        this.#host = JJHE.from(this).setShadow('open')
     }
 
     connectedCallback() {
-        this.#valueElement = h('span', null, this.value.toString())
-        const jjThis = JJHE.from(this).setShadow('open', h('p', null, 'Counter value: ', this.#valueElement))
+        if (!this.#root) {
+            this.#valueElement = h('span', null, this.value.toString())
+            this.#host.initShadow(h('p', null, 'Counter value: ', this.#valueElement, h('button', { id: 'inc' }, '+')))
+            this.#root = this.#host.getShadow(true)
+            this.#incButton = this.#root.find('#inc', true)
+        }
+
+        this.#incButton.on('click', this.#onIncrement)
+    }
+
+    disconnectedCallback() {
+        this.#incButton?.off('click', this.#onIncrement)
     }
 }
 ```

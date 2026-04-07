@@ -18,7 +18,7 @@ Use shadow DOM for self-contained UI widgets — buttons, cards, dialogs, date p
 
 ## Initialization
 
-Load templates and stylesheets at module scope so they are fetched once and shared across all instances. Attach the shadow root in `connectedCallback`, guarding against reconnects with the root wrapper itself:
+Load templates and stylesheets at module scope so they are fetched once and shared across all instances. Attach the shadow root in the constructor, store `#root` immediately, and initialize its contents in `connectedCallback()`:
 
 ```js
 import { attr2prop, defineComponent, fetchStyle, fetchTemplate, JJHE } from 'jj'
@@ -32,21 +32,31 @@ export class MyCard extends HTMLElement {
     static defined = defineComponent('my-card', MyCard)
 
     #title = 'Untitled'
-    #root = null  // JJSR wrapper — doubles as the reconnect guard
+    #root = null
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     attributeChangedCallback(name, oldValue, newValue) {
         attr2prop(this, name, oldValue, newValue)
     }
 
-    get title() { return this.#title }
+    get title() {
+        return this.#title
+    }
     set title(value) {
         this.#title = String(value ?? '')
-        if (this.#root) this.#render()
+        this.#render()
     }
 
     async connectedCallback() {
-        if (this.#root) return
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        if (!this.#isInitialized) {
+            JJHE.from(this).initShadow(await templatePromise, await stylePromise)
+            this.#isInitialized = true
+        }
         this.#render()
     }
 
@@ -56,7 +66,7 @@ export class MyCard extends HTMLElement {
 }
 ```
 
-`setShadow(mode, template, ...styles)` attaches the shadow root, clones the template fragment into it, and adopts the constructable stylesheets in a single call.
+`setShadow(mode)` attaches the shadow root. `initShadow(template, ...styles)` clones the template fragment into that attached root and adopts the constructable stylesheets.
 
 ### Shadow mode: `open` vs `closed`
 
@@ -92,12 +102,7 @@ const sharedVarsPromise = fetchStyle(import.meta.resolve('../../shared/variables
 const componentStylePromise = fetchStyle(import.meta.resolve('./my-card.css'))
 
 // In connectedCallback:
-this.#root = JJHE.from(this).setShadow(
-    'open',
-    await templatePromise,
-    await sharedVarsPromise,
-    await componentStylePromise,
-)
+JJHE.from(this).initShadow(await templatePromise, await sharedVarsPromise, await componentStylePromise)
 ```
 
 Constructable stylesheets are shared objects — the browser parses the CSS once and all shadow roots that adopt it reference the same `CSSStyleSheet`. This is more efficient than a `<link>` tag per instance.
@@ -152,9 +157,7 @@ Override `composed` to prevent an event from leaking outside:
 
 ```js
 // Won't cross the shadow boundary — internal coordination only
-this.#root?.find('#menu')?.ref.dispatchEvent(
-    new CustomEvent('_menu-toggle', { bubbles: true, composed: false }),
-)
+this.#root?.find('#menu')?.ref.dispatchEvent(new CustomEvent('_menu-toggle', { bubbles: true, composed: false }))
 ```
 
 Use a naming convention (e.g. a leading `_`) to distinguish internal events from the component's public API.
@@ -258,7 +261,7 @@ To style slotted content from inside the shadow stylesheet, use the `::slotted()
     margin: 0;
 }
 
-::slotted([slot="footer"]) {
+::slotted([slot='footer']) {
     font-size: var(--font-size-sm);
 }
 ```
@@ -303,32 +306,45 @@ export class UserCard extends HTMLElement {
     #name = ''
     #role = ''
     #root = null
+    #isInitialized = false
+
+    constructor() {
+        super()
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+    }
 
     attributeChangedCallback(name, oldValue, newValue) {
         attr2prop(this, name, oldValue, newValue)
     }
 
-    get name() { return this.#name }
+    get name() {
+        return this.#name
+    }
     set name(value) {
         this.#name = String(value ?? '')
         if (this.#root) this.#render()
     }
 
-    get role() { return this.#role }
+    get role() {
+        return this.#role
+    }
     set role(value) {
         this.#role = String(value ?? '')
         if (this.#root) this.#render()
     }
 
     async connectedCallback() {
-        if (this.#root) return
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
-        this.#root.find('#action')?.on('click', this.#onActionClick)
+        if (!this.#isInitialized) {
+            JJHE.from(this).initShadow(await templatePromise, await stylePromise)
+            this.#root.find('#action')?.on('click', this.#onActionClick)
+            this.#isInitialized = true
+        }
         this.#render()
     }
 
     disconnectedCallback() {
         // Remove any document/window listeners registered in connectedCallback
+        this.#root.find('#action')?.off('click', this.#onActionClick)
     }
 
     #render() {
