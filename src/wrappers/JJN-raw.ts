@@ -187,7 +187,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/parentNode | Node.parentNode}
      */
     getParent(required: true): Wrapped
-    getParent(required: false): Wrapped | null
+    getParent(required?: false): Wrapped | null
     getParent(required = false): Wrapped | null {
         const { parentNode } = this.ref
         if (parentNode) {
@@ -217,7 +217,7 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/childNodes | Node.childNodes}
      */
     getChildren(required: true): Wrapped[]
-    getChildren(required: false): Wrapped[] | null
+    getChildren(required?: false): Wrapped[] | null
     getChildren(required = false): Wrapped[] | null {
         const children = JJN.wrapAll(this.ref.childNodes)
         if (required && children.length === 0) {

@@ -31,7 +31,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
      */
     find(selector: string, required: true): Wrapped
-    find(selector: string, required: false): Wrapped | null
+    find(selector: string, required?: false): Wrapped | null
     find(selector: string, required = false): Wrapped | null {
         const queryResult = this.ref.querySelector(selector)
         if (queryResult) {
