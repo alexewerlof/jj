@@ -1,4 +1,4 @@
-import { fetchTemplate, fetchStyle, defineComponent, CC, JJHE } from '../../lib/bundle.js'
+import { fetchTemplate, fetchStyle, defineComponent, JJHE } from '../../lib/bundle.js'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./simple-counter.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./simple-counter.css'))
