@@ -103,6 +103,12 @@ Shadow DOM does not block all events, but boundary rules matter.
 
 Deep dive: [events guide](../../guides/events.md).
 
+# Event handling
+
+Sometimes you want to register event handlers on the DOM elements inside a component. You can do this in the `connectedCallback` after initializing the shadow DOM.
+
+You don't need to remove those listeners in `disconnectedCallback` because when the component is garbage collected, the listeners will be gone too.
+
 ## Keep going
 
 1. Read [wrapper mental model](./?file=wrapper-mental-model.md).
