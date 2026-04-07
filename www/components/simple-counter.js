@@ -1,48 +1,66 @@
-import { fetchTemplate, fetchStyle, JJHE, defineComponent } from '../../lib/bundle.js'
+import { fetchTemplate, fetchStyle, defineComponent, CC, JJHE } from '../../lib/bundle.js'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./simple-counter.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./simple-counter.css'))
 
 export class SimpleCounter extends HTMLElement {
     static defined = defineComponent('simple-counter', SimpleCounter)
+    static observedAttributes = ['count']
 
     #host
     #root = null
-    #countSpan
-    #incButton
-    #decButton
+    #isInitialized = false
     // State
     #count = 0
 
-    #onIncrement = () => this.#update(1)
-    #onDecrement = () => this.#update(-1)
+    get count() {
+        return this.#count
+    }
+
+    set count(value) {
+        const oldCount = this.#count
+        if (typeof value === 'string') {
+            value = parseInt(value, 10)
+        }
+        if (typeof value !== 'number' || isNaN(value)) {
+            throw new TypeError('Count must be a number or numeric string')
+        }
+        if (value !== oldCount) {
+            this.#count = value
+            console.log(`Count changed from ${oldCount} to ${value}`)
+            this.render()
+            this.#host.triggerCustomEvent('count-changed', { detail: { oldCount, newCount: value } })
+        }
+    }
+
+    #update(delta) {
+        if (typeof delta !== 'number' || isNaN(delta)) {
+            throw new TypeError('Delta must be a number')
+        }
+        this.count += delta
+        this.render()
+    }
 
     constructor() {
         super()
         this.#host = JJHE.from(this).setShadow('open')
+        this.#root = this.#host.getShadow(true)
     }
 
     async connectedCallback() {
-        if (!this.#root) {
-            this.#root = this.#host.initShadow(await templatePromise, await stylePromise).getShadow(true)
-
-            // Access elements inside Shadow DOM via this.#root
-            this.#countSpan = this.#root.find('#count', true)
-            this.#incButton = this.#root.find('#inc', true)
-            this.#decButton = this.#root.find('#dec', true)
+        if (!this.#isInitialized) {
+            this.#root.init(await templatePromise, await stylePromise)
+            // Attach event listeners to buttons
+            this.#root.find('#inc', true).on('click', () => this.#update(1))
+            this.#root.find('#dec', true).on('click', () => this.#update(-1))
+            this.#isInitialized = true
         }
-
-        this.#incButton.on('click', this.#onIncrement)
-        this.#decButton.on('click', this.#onDecrement)
+        this.render()
     }
 
-    disconnectedCallback() {
-        this.#incButton?.off('click', this.#onIncrement)
-        this.#decButton?.off('click', this.#onDecrement)
-    }
-
-    #update(delta) {
-        this.#count += delta
-        this.#countSpan.setText(String(this.#count))
+    render() {
+        if (!this.#isInitialized) return
+        // Access elements inside Shadow DOM via this.#root
+        this.#root.find('#count', true).setText(String(this.#count))
     }
 }
