@@ -6,7 +6,6 @@ const baseConfig: Omit<Options, 'entry' | 'minify'> = {
     outDir: 'lib',
     dts: true,
     sourcemap: true,
-    noExternal: ['jty'],
 }
 
 export default defineConfig([

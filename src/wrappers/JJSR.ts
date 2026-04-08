@@ -1,5 +1,4 @@
-import { isInstance, isStr } from 'jty'
-import { typeErr } from '../internal.js'
+import { isInstance, isStr, typeErr } from '../internal.js'
 import { JJDF } from './JJDF.js'
 import type { JJHE } from './JJHE.js'
 

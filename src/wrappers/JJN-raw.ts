@@ -1,6 +1,5 @@
-import { isInstance, isObj, isStr } from 'jty'
 import { Unwrapped, Wrappable, Wrapped } from './types.js'
-import { toStr, typeErr } from '../internal.js'
+import { isInstance, isStr, toStr, typeErr } from '../internal.js'
 import { JJET } from './JJET.js'
 
 /**
@@ -77,13 +76,11 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @see {@link JJN.unwrap} for the reverse conversion.
      */
     static wrap(raw: Wrappable): Wrapped {
-        if (isObj(raw)) {
-            if (isInstance(raw, JJN)) {
-                return raw
-            }
-            if (isInstance(raw, Node)) {
-                return new JJN(raw)
-            }
+        if (isInstance(raw, JJN)) {
+            return raw
+        }
+        if (isInstance(raw, Node)) {
+            return new JJN(raw)
         }
         return JJN.from(document.createTextNode(toStr(raw)))
     }
@@ -108,13 +105,11 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @see {@link JJN.isWrappable} for pre-validation checks.
      */
     static unwrap(obj: Wrappable): Unwrapped {
-        if (isObj(obj)) {
-            if (isInstance(obj, Node)) {
-                return obj
-            }
-            if (isInstance(obj, JJN)) {
-                return obj.ref
-            }
+        if (isInstance(obj, Node)) {
+            return obj
+        }
+        if (isInstance(obj, JJN)) {
+            return obj.ref
         }
         return document.createTextNode(toStr(obj))
     }

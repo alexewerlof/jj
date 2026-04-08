@@ -2,7 +2,7 @@ import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
 import { JJHE, JJME, JJN } from '../src/index.js'
-import { isInstance, isOwnInstance } from 'jty'
+import { isInstance } from '../src/internal.js'
 
 describe('JJN', () => {
     describe('constructor', () => {
@@ -185,7 +185,7 @@ describe('JJN', () => {
             assert.ok(wrappedParent)
             assert.strictEqual(wrappedParent?.ref, parent)
             assert.ok(isInstance(wrappedParent, JJHE)) // Should be the most specific wrapper, which is JJHE for HTMLElement
-            assert.ok(isOwnInstance(wrappedParent, JJHE))
+            assert.strictEqual(wrappedParent?.constructor, JJHE)
         })
 
         it('returns null for detached nodes', () => {
@@ -205,7 +205,7 @@ describe('JJN', () => {
 
             assert.ok(wrappedParent)
             assert.ok(isInstance(wrappedParent, JJHE)) // Should be the most specific wrapper, which is JJHE for HTMLElement
-            assert.ok(isOwnInstance(wrappedParent, JJHE))
+            assert.strictEqual(wrappedParent?.constructor, JJHE)
         })
 
         it('throws when required and detached', () => {
@@ -227,7 +227,7 @@ describe('JJN', () => {
             parent.append(child1, child2)
 
             const jjn = JJN.from(parent)
-            const children = jjn.getChildren()
+            const children = jjn.getChildren(true)
 
             assert.strictEqual(children.length, 2)
             assert.strictEqual(children[0]?.ref, child1)
@@ -248,10 +248,10 @@ describe('JJN', () => {
             parent.append(child1, child2)
 
             const jjn = JJN.from(parent)
-            const children = jjn.getChildren()
+            const children = jjn.getChildren(true)
 
             assert.ok(isInstance(children[0], JJHE))
-            assert.ok(isOwnInstance(children[0], JJHE))
+            assert.strictEqual(children[0]?.constructor, JJHE)
             assert.strictEqual(children[1]?.constructor.name, 'JJT')
         })
 

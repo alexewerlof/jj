@@ -1,5 +1,4 @@
-import { isInstance } from 'jty'
-import { typeErr } from '../internal.js'
+import { isInstance, typeErr } from '../internal.js'
 import { JJNx } from './JJNx.js'
 
 /**

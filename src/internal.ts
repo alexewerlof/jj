@@ -3,8 +3,6 @@
  * These are not part of the public API.
  */
 
-import { isStr } from 'jty'
-
 const NS = 'http://www.w3.org/'
 
 /**
@@ -62,6 +60,58 @@ export function errMsg(varName: string, expected: unknown, received: unknown, ex
  */
 export function typeErr(varName: string, expected: unknown, received: unknown, extra?: string): TypeError {
     return new TypeError(errMsg(varName, expected, received, extra))
+}
+
+/**
+ * Checks if the provided value is a string.
+ *
+ * @internal
+ */
+export function isStr(x: unknown): x is string {
+    return typeof x === 'string'
+}
+
+/**
+ * Checks if a value is a number and not NaN.
+ *
+ * @internal
+ */
+export function isNum(x: unknown): x is number {
+    return typeof x === 'number' && !Number.isNaN(x)
+}
+
+/**
+ * Checks if a value is a plain object.
+ *
+ * @internal
+ */
+export function isObj(x: unknown): x is Record<PropertyKey, unknown> {
+    return typeof x === 'object' && x !== null && Object.getPrototypeOf(x) === Object.prototype
+}
+
+/**
+ * Checks if a provided value is an instance of the provided class.
+ *
+ * @internal
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isInstance<T extends new (...args: any[]) => any>(
+    x: unknown,
+    classConstructor: T,
+): x is InstanceType<T> {
+    if (typeof classConstructor !== 'function') {
+        throw typeErr('classConstructor', 'a constructor function', classConstructor)
+    }
+    return x instanceof classConstructor
+}
+
+/**
+ * Checks if the provided value has the specified property.
+ *
+ * @internal
+ */
+export function hasProp<K extends PropertyKey>(x: unknown, propName: K): x is Record<K, unknown> {
+    return x !== null && typeof x === 'object' && propName in x
 }
 
 /**

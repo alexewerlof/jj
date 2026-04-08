@@ -1,5 +1,4 @@
-import { isArr, isInstance, isPromise, isStr } from 'jty'
-import { typeErr } from '../internal.js'
+import { isInstance, isStr, typeErr } from '../internal.js'
 import { Wrappable, Wrapped } from './types.js'
 import { JJN } from './JJN-raw.js'
 import type { JJHE } from './JJHE.js'
@@ -105,7 +104,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/append | Element.append}
      */
     addChildren(children: Wrappable[]): this {
-        if (!isArr(children)) {
+        if (!Array.isArray(children)) {
             throw typeErr('children', 'an array of Wrappable', children)
         }
         return this.addChild(...children)
@@ -156,7 +155,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend | Element.prepend}
      */
     preChildren(children: Wrappable[]): this {
-        if (!isArr(children)) {
+        if (!Array.isArray(children)) {
             throw typeErr('children', 'an array of Wrappable', children)
         }
         return this.preChild(...children)
@@ -183,7 +182,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link addChildren} for appending a pre-built array of children.
      */
     addChildMap<T>(array: T[], mapFn: (item: T) => Wrappable) {
-        if (!isArr(array)) {
+        if (!Array.isArray(array)) {
             throw typeErr('array', 'an array', array)
         }
 
@@ -215,7 +214,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link preChildren} for prepending a pre-built array of children.
      */
     preChildMap<T>(array: T[], mapFn: (item: T) => Wrappable) {
-        if (!isArr(array)) {
+        if (!Array.isArray(array)) {
             throw typeErr('array', 'an array', array)
         }
 
@@ -278,7 +277,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren | Element.replaceChildren}
      */
     setChildren(children: Wrappable[]): this {
-        if (!isArr(children)) {
+        if (!Array.isArray(children)) {
             throw typeErr('children', 'an array of Wrappable', children)
         }
         return this.setChild(...children)
@@ -308,7 +307,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link empty} for clearing all children without replacements.
      */
     setChildMap(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
-        if (!isArr(array)) {
+        if (!Array.isArray(array)) {
             throw typeErr('array', 'an array of Wrappable', array)
         }
 
@@ -381,7 +380,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
         if (isInstance(template, JJN)) {
             return this.addTemplate(template.ref)
         }
-        if (isPromise(template)) {
+        if (isInstance(template, Promise)) {
             throw typeErr(
                 'template',
                 'not a Promise',

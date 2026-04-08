@@ -1,5 +1,4 @@
-import { isInstance, isStr } from 'jty'
-import { MATHML_NS, typeErr } from '../internal.js'
+import { isInstance, isStr, MATHML_NS, typeErr } from '../internal.js'
 import { Wrappable } from './types.js'
 import { JJEx } from './JJEx.js'
 

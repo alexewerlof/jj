@@ -1,5 +1,4 @@
-import { hasProp, isArr, isPOJO, isStr } from 'jty'
-import { typeErr } from '../internal.js'
+import { hasProp, isObj, isStr, typeErr } from '../internal.js'
 import { JJE } from './JJE.js'
 
 /**
@@ -111,7 +110,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
         if (styleMap == null) {
             return this
         }
-        if (!isPOJO(styleMap)) {
+        if (!isObj(styleMap)) {
             throw typeErr(
                 'styleMap',
                 'a plain object',
@@ -234,7 +233,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
         if (attributes == null) {
             return this
         }
-        if (!isPOJO(attributes)) {
+        if (!isObj(attributes)) {
             throw typeErr(
                 'attributes',
                 'a plain object',
@@ -297,7 +296,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
     rmDataAttrs(names: string[]): this {
-        if (!isArr(names)) {
+        if (!Array.isArray(names)) {
             throw typeErr('names', 'an array', names)
         }
         return this.rmDataAttr(...names)

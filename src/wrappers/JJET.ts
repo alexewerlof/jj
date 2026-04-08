@@ -1,5 +1,4 @@
-import { isInstance, isStr } from 'jty'
-import { typeErr } from '../internal.js'
+import { isInstance, isStr, typeErr } from '../internal.js'
 
 /**
  * Creates a `CustomEvent` with JJ's default bubbling and Shadow DOM settings.

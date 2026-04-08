@@ -62,6 +62,7 @@ const formula = JJME.create('math').addChild(JJME.create('mi').setText('x'))
 ## 🚀 Why JJ?
 
 - **Zero Build** – Runs directly in modern browsers
+- **Zero Dependencies** – Integrated, efficient, and not vulnerable to supply chain attacks
 - **Native Speed** – Direct DOM manipulation, no VDOM overhead
 - **Web Standards** – First-class Web Components support
 - **Fluent API** – Chainable methods for cleaner code

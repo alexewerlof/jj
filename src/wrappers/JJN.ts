@@ -1,4 +1,4 @@
-import { isInstance, isObj } from 'jty'
+import { isInstance } from '../internal.js'
 import { JJN } from './JJN-raw.js'
 import { JJHE } from './JJHE.js'
 import { JJE } from './JJE.js'
@@ -11,7 +11,7 @@ import { JJSE } from './JJSE.js'
 import { Wrappable, Wrapped } from './types.js'
 
 JJN.wrap = function wrap(raw: Wrappable): Wrapped {
-    if (isObj(raw)) {
+    if (raw && typeof raw === 'object') {
         if (isInstance(raw, JJN)) {
             return raw
         }

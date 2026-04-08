@@ -1,6 +1,5 @@
-import { isInstance, isStr, isPOJO, isArr } from 'jty'
 import { Wrapped } from './types.js'
-import { typeErr } from '../internal.js'
+import { isInstance, isObj, isStr, typeErr } from '../internal.js'
 import { JJSR } from './JJSR.js'
 import { JJNx } from './JJNx.js'
 import type { JJDF } from './JJDF.js'
@@ -136,7 +135,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
         if (attributes == null) {
             return this
         }
-        if (!isPOJO(attributes)) {
+        if (!isObj(attributes)) {
             throw typeErr(
                 'attributes',
                 'a plain object',
@@ -264,7 +263,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
         if (attributes == null) {
             return this
         }
-        if (!isPOJO(attributes)) {
+        if (!isObj(attributes)) {
             throw typeErr(
                 'attributes',
                 'a plain object',
@@ -377,7 +376,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
         if (classMap == null) {
             return this
         }
-        if (!isPOJO(classMap)) {
+        if (!isObj(classMap)) {
             throw typeErr(
                 'classMap',
                 'a plain object',
@@ -441,7 +440,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/add | DOMTokenList.add}
      */
     addClasses(classNames: string[]): this {
-        if (!isArr(classNames)) {
+        if (!Array.isArray(classNames)) {
             throw typeErr('classNames', 'an array of strings', classNames)
         }
         return this.addClass(...classNames)
@@ -489,7 +488,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/remove | DOMTokenList.remove}
      */
     rmClasses(classNames: string[]): this {
-        if (!isArr(classNames)) {
+        if (!Array.isArray(classNames)) {
             throw typeErr('classNames', 'an array of strings', classNames)
         }
         return this.rmClass(...classNames)

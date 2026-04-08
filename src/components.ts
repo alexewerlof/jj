@@ -1,5 +1,4 @@
-import { isInstance, isFn, hasProp, isStr } from 'jty'
-import { typeErr, errMsg, keb2cam } from './internal.js'
+import { errMsg, hasProp, isInstance, isStr, keb2cam, typeErr } from './internal.js'
 
 /**
  * A helper to bridge the attribute world (kebab-case) to the property world (camelCase).
@@ -100,7 +99,7 @@ export async function defineComponent(
             errMsg('name', 'a custom-element name containing a hyphen', name, 'Use kebab-case like "my-component".'),
         )
     }
-    if (!isFn(constructor)) {
+    if (typeof constructor !== 'function') {
         throw typeErr(
             'constructor',
             'a function',

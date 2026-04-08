@@ -59,14 +59,12 @@
         "globals": "^17.4.0",
         "jiti": "^2.6.1",
         "jsdom": "^29.0.1",
+        "jty": "^6.1.6",
         "prettier": "^3.6.2",
         "tsup": "^8.5.1",
         "tsx": "^4.20.6",
         "typedoc": "^0.28.18",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.57.1"
-    },
-    "dependencies": {
-        "jty": "^6.1.6"
     }
 }

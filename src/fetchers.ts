@@ -1,6 +1,5 @@
-import { isStr } from 'jty'
 import { JJDF } from './wrappers/index.js'
-import { typeErr } from './internal.js'
+import { isStr, typeErr } from './internal.js'
 
 /**
  * Fetches a file and returns its contents as string.

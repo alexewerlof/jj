@@ -1,7 +1,95 @@
 import '../test/attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { keb2cam, toStr } from './internal.js'
+import { hasProp, isInstance, isNum, isObj, isStr, keb2cam, toStr } from './internal.js'
+
+describe(isStr.name, () => {
+    it('returns true for strings', () => {
+        assert.strictEqual(isStr('Hello'), true)
+        assert.strictEqual(isStr(''), true)
+    })
+
+    it('returns false for non-string values', () => {
+        assert.strictEqual(isStr(null), false)
+        assert.strictEqual(isStr(123), false)
+    })
+})
+
+describe(isNum.name, () => {
+    it('returns true for numbers except NaN', () => {
+        assert.strictEqual(isNum(17), true)
+        assert.strictEqual(isNum(Math.PI), true)
+        assert.strictEqual(isNum(NaN), false)
+    })
+
+    it('returns false for non-number values', () => {
+        assert.strictEqual(isNum('13'), false)
+        assert.strictEqual(isNum(17n), false)
+    })
+})
+
+describe(isObj.name, () => {
+    it('returns true for object literals', () => {
+        assert.strictEqual(isObj({}), true)
+    })
+
+    it('returns false for non-plain objects', () => {
+        class C {}
+
+        assert.strictEqual(isObj(Object.create(null)), false)
+        assert.strictEqual(isObj([]), false)
+        assert.strictEqual(isObj(new Map()), false)
+        assert.strictEqual(isObj(new C()), false)
+    })
+})
+
+describe(isInstance.name, () => {
+    it('returns true for matching instances', async () => {
+        class A {}
+
+        const a = new A()
+        const resolved = Promise.resolve()
+        const rejected = Promise.reject(new Error('boom'))
+
+        assert.strictEqual(isInstance({}, Object), true)
+        assert.strictEqual(isInstance(a, A), true)
+        assert.strictEqual(isInstance(a, Object), true)
+        assert.strictEqual(isInstance(/hello/i, RegExp), true)
+        assert.strictEqual(isInstance(resolved, Promise), true)
+        assert.strictEqual(isInstance(rejected, Promise), true)
+
+        await Promise.allSettled([resolved, rejected])
+    })
+
+    it('returns false for non-matching instances', () => {
+        assert.strictEqual(isInstance('plain str', String), false)
+        assert.strictEqual(isInstance(22, Number), false)
+    })
+
+    it('throws when classConstructor is not a function', () => {
+        // @ts-expect-error verifying runtime validation
+        assert.throws(() => isInstance({}, null), TypeError)
+        // @ts-expect-error verifying runtime validation
+        assert.throws(() => isInstance({}, 'lamborghini'), TypeError)
+    })
+})
+
+describe(hasProp.name, () => {
+    it('returns true when property exists', () => {
+        const target = Object.create({ inherited: 'value' })
+        target.own = 'value'
+
+        assert.strictEqual(hasProp(target, 'own'), true)
+        assert.strictEqual(hasProp(target, 'inherited'), true)
+        assert.strictEqual(hasProp([], 'length'), true)
+    })
+
+    it('returns false when property is missing or target is not an object', () => {
+        assert.strictEqual(hasProp({ foo: 'bar' }, 'baz'), false)
+        assert.strictEqual(hasProp('Hello', 'length'), false)
+        assert.strictEqual(hasProp(null, 'yes'), false)
+    })
+})
 
 describe(keb2cam.name, () => {
     it('throws for non-string input', () => {

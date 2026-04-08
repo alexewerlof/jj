@@ -1,5 +1,4 @@
-import { hasProp, isInstance, isStr } from 'jty'
-import { errMsg, typeErr } from '../internal.js'
+import { errMsg, hasProp, isInstance, isStr, typeErr } from '../internal.js'
 import { Wrappable } from './types.js'
 import { JJEx } from './JJEx.js'
 
