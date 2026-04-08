@@ -7,17 +7,18 @@ If you encounter contradicting instructions, pause and ask the user what to do.
 
 ## Repository Orientation
 
-- **Build pipeline**: `src/` (TypeScript) compiles to `lib/` (ESM JS + `.d.ts`).
+- **Source code**: `src/` (TypeScript) compiles to `lib/`.
+- **Tests**: `test/` (TypeScript) runs with `jsdom` for DOM emulation in Node.js.
 - **Public API**: Public wrappers and helpers are exported from `src/index.ts`.
-- **Landing page**: `www/index.html` is the landing page that consumes `lib/bundle.js`.
-- **Examples**: `www/examples` contains runnable examples/tutorials and consumes `lib/bundle.js`.
+- **Public site**: `www/` is the landing page that consumes `lib/bundle.js`. It is served as static content via [Github Pages Action](.github/workflows/gh-pages.yml).
+- **Examples**: `www/examples` contains runnable examples/tutorials.
 
 ## Build and Validation Commands
 
 - `npm run build` uses [tsup](https://www.npmjs.com/package/tsup) to produces bundle artifacts in `lib/` in cjs, global, and esm format minified and plain with sourcemaps.
 - `npm run typecheck` runs TypeScript checks without emitting files.
 - `npm test` runs typecheck plus uses node's native test framework together with [jsdom](https://www.npmjs.com/package/jsdom) to emulate the browser environment.
-- `npm run doc` run `typedoc` to generates API docs in `doc/`.
+- `npm run doc` runs `typedoc` to generate API docs in `doc/`.
 - `npm run fmt` formats files using the repository [Prettier](https://www.npmjs.com/package/prettier) [configuration](./.prettierrc.json).
 
 ## Task Skills (Use First)
@@ -43,7 +44,7 @@ For task-focused guidance, load `skills/SKILL.md` — it is the main JJ skill wi
 
 > Load `skills/SKILL.md` for full patterns and examples before writing code.
 
-- **Imperative**: No Virtual DOM. Manipulate real DOM nodes wrapped in `JJ` objects.
+- **Imperative**: No Virtual DOM. Manipulate real DOM nodes [wrapped in `JJ` objects](./wrappers/AGENTS.md).
 - **Fluent API**: Chain wrapper methods whenever possible. Access `.ref` only for native APIs not covered by JJ.
 - **Hyperscript**: Use `JJHE.tree()`, `JJSE.tree()`, or `JJME.tree()` to programmatically create a HTML, SVG, or MathML DOM tree respectively.
 - **Document Wrapper**: Use `JJD.from(document)` for fluent document queries.

@@ -1,4 +1,6 @@
-The hierarchy is as follows:
+Instead of monkey-patching DOM elements, JJ relies on wrapper classes. Each wrapper class starts with `JJ` and follows by 1-2 letter specifying the DOM construct it wraps. The underlying native construct is always accessible via the readonly `.ref` property.
+
+The `JJ` classes follow the same inheritance hierarchy as the DOM constructs they wrap. The hierarchy is as follows:
 
 ```
 JJET: wraps DOM EventTarget
