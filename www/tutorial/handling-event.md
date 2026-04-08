@@ -24,7 +24,7 @@ jjButton.trigger('click')
 
 ## Custom Events
 
-[`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent)s can have any name with an optional payload (`detail`) you can create a custom event using the DOM API and trigger it on an element:
+[`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent)s can have any name and an optional payload (`detail`) you can create a custom event using the DOM API and trigger it on an element:
 
 ```js
 const myEvent = new CustomEvent('my-event', { detail: { some: 'data' } })

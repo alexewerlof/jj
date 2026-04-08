@@ -7,6 +7,7 @@ const content = doc.find('#content', true)
 
 const steps = [
     'Intro',
+    'Wrappers',
     'DOM Creation',
     'DOM Manipulation',
     'Handling Events',

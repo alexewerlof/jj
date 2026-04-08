@@ -68,8 +68,9 @@ const activeTabElement = document.querySelector('.tab.active')
 
 JJ uses:
 
-- `find()` (instead of `querySelector`) to find one element.
+- `find()` (instead of `querySelector`) to find one element either in an entire document or within a specific parent element.
 - `findAll()` (instead of `querySelectorAll`) to get an array of multiple elements.
+- `.closest(selector)` to find the closest ancestor that matches the selector.
 
 The examples above would look like this in JJ:
 

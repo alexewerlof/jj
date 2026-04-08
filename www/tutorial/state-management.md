@@ -1,5 +1,92 @@
 # State Management
 
+When it comes to web application development, there are two dominant paradigms:
+
+- **Imperative**: your code manipulates the DOM directly.
+- **Declarative**: your code manipulates data and a framework maps it to DOM.
+
+JJ takes a middle ground but is closer to imperative style. It offers sugar syntax for common DOM operations without making any effort to abstract the raw power of modern platforms. This translates to more control at the cost of potential boilerplate (which JJ tries to minimize with its fluent API, solid TypeScript types, and AI skills).
+
+## A practical state loop
+
+You do not need a framework or fat library to build predictable UI updates. Keep local state, update it in event handlers, and render intentionally.
+
+```js
+import { JJHE } from 'jj'
+
+const state = {
+    count: 0,
+}
+
+const value = JJHE.create('strong').setText(state.count)
+
+const incBtn = JJHE.create('button')
+    .setText('+1')
+    .on('click', () => {
+        state.count++
+        value.setText(state.count)
+    })
+
+JJHE.from(document.body).addChild(JJHE.tree('div', { class: 'counter' }, value, incBtn))
+```
+
+Using getter/setters we can rewrite the same example like this:
+
+```js
+import { JJHE } from 'jj'
+
+class State {
+    #count = 0
+    constructor(init = 0) {
+        this.#count = init
+        // We have hard-coded the HTML structure to keep this example self-contained
+        // but you can load the structure from a template, file, or even generate
+        // it dynamically.
+        this.jjCount = JJHE.create('strong').setText(this.#count)
+        const incBtn = JJHE.create('button')
+            .setText('+1')
+            .on('click', () => this.add(1))
+        this.root = JJHE.tree('div', { class: 'counter' }, this.jjCount, incBtn)
+    }
+
+    get count() {
+        return this.#count
+    }
+
+    set count(value) {
+        if (typeof value !== 'number' || isNaN(value)) {
+            throw new TypeError(`Count must be a number. Got ${value}`)
+        }
+        if (value !== this.#count) {
+            this.#count = value
+            // Setter triggers a render only when needed.
+            this.render()
+        }
+    }
+
+    add(delta = 1) {
+        this.count += delta
+    }
+
+    render() {
+        // Note that we update the exact HTML element that needs to change
+        // instead of re-rendering the whole tree.
+        return this.jjCount.setText(this.count)
+    }
+}
+
+const state = new State()
+JJHE.from(document.body).addChild(state.root)
+// Triggers a render and updates the UI.
+state.count = 43
+// Or using the helper method:
+state.add(-1)
+```
+
+This may look more verbose but it extends better to more complex state and UI logic.
+
+You can also use a reactive library like [RxJS](https://rxjs.dev/) or [MobX](https://mobx.js.org/README.html) to manage state and trigger updates.
+
 If you're coming from React, Vue, or Svelte, you may be wondering how to manage state in JJ. The short answer: you don't need a special state management library. You can use plain JavaScript objects and the DOM API to manage state and update the UI. That's because JJ does not rely on virtual DOM, diffing, or proxies to track changes.
 
 In practical terms, you have many choices, including:

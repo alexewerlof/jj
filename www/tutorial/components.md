@@ -207,6 +207,10 @@ class MyCounter extends HTMLElement {
 
 OK, this wasn't dramatically shorter. A better example would show how JJ helps with setting templates and stylesheets and that's exactly what we'll be doing in the next section.
 
+## MDN
+
+- Web components: https://developer.mozilla.org/en-US/docs/Web/API/Web_components
+
 ## Next up: Templates and styles
 
 Now that we have learned the basics of creating components, let's see how we can use HTML for layout, CSS for appearance, and JavaScript for behavior.

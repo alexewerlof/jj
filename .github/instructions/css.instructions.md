@@ -12,6 +12,7 @@ Follow the rules below to keep styles minimal, consistent, and theme-aware.
 ## Quick Checklist
 
 - Use `www/variables.css` custom properties for all values.
+- Style the native browser elements in `www/ui.css` and component-specific styles next to components.
 - Prefer CSS nesting and shallow selectors (max 2-3 levels).
 - Mobile-first layouts; only add media queries when needed.
 - Avoid hardcoded values, magic numbers, and `!important`.

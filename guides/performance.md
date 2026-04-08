@@ -74,3 +74,78 @@ h('link', { href: '/page-data.json', rel: 'preload', as: 'fetch' })
 - MDN preload: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload
 - MDN prefetch: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/prefetch
 - MDN modulepreload: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/modulepreload
+
+## Adding multiple children
+
+Often, we need multiple elements to a parent. Adding them one by one forces the browser to redraw over and over again.
+
+Instead, we can use a `DocumentFragment` to accumulate all the children and then add them in one go:
+
+Instead of:
+
+```ts
+import { JJD, JJHE } from 'jj'
+
+const doc = JJD.from(document)
+const contents = ['New York', 'Stockholm', 'Tokyo']
+const parent = doc.find('#parent-ul')
+
+for (const city of contents) {
+    parent.append(JJHE.from('li').setText(city))
+}
+```
+
+Write:
+
+```ts
+import { JJD, JJDF, JJHE } from 'jj'
+
+const doc = JJD.from(document)
+const contents = ['New York', 'Stockholm', 'Tokyo']
+const parent = doc.find('#parent-ul')
+
+const docFrag = new JJDF()
+for (const city of contents) {
+    docFrag.append(JJHE.from('li').setText(city))
+}
+
+parent.setChil(docFrag)
+```
+
+## Attaching event listeners
+
+Attaching the event listener to each element, reduces performance and consumes too much memory.
+
+Instead, we can attach the event listener to a common parent and take advantage of event bubbling and capturing.
+
+Example, instead of:
+
+```ts
+import { JJD } from 'jj'
+
+const doc = JJD.from(document)
+const parent = doc.find('#parent-ul')
+for (const child of parent.getChildren()) {
+    child.on('click', function () {
+        alert('Hello world')
+    })
+}
+```
+
+Use event delegation:
+
+```ts
+import { JJD } from 'jj'
+
+const doc = JJD.from(document)
+const parent = doc.find('#parent-ul')
+parent.on('click', function (evt) {
+    // 'this' is the JJ* wrapper, access native element with this.ref
+    if (evt.target?.tagName !== 'LI') return
+    alert('Hello world')
+})
+```
+
+Note: Event handlers are automatically bound to the JJET instance, so `this` inside the handler refers to the wrapper, not the DOM element.
+For this to work, you need to use `function` instead of arrow functions (`=>`).
+Use `this.ref` to access the underlying element.
