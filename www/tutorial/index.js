@@ -1,74 +1,76 @@
-import { isArrIdx, isInt } from 'jty'
+import { isInt } from 'jty'
 import { JJD, JJET } from '../../lib/bundle.js'
 import { RenderMarkdown } from '../components/render-markdown.js'
-
-const doc = JJD.from(document)
-const content = doc.find('#content', true)
 
 const steps = [
     'Intro',
     'Wrappers',
     'DOM Creation',
     'DOM Manipulation',
-    'Handling Events',
+    'Events',
     'State Management',
     'Components',
     'Templates',
     'Styles',
     'Next Steps',
 ]
-let currentStep = parseInt(new URLSearchParams(window.location.search).get('step') ?? '0', 10)
 
-function clampStep(num) {
-    if (!isInt(num, steps)) {
-        throw new RangeError(`Expected step to be an index of steps array, got ${num} (${typeof num})`)
+class State extends JJET {
+    #step = undefined
+    #steps = undefined
+    constructor(steps) {
+        super(new EventTarget())
+        if (!Array.isArray(steps) || steps.length === 0) {
+            throw new TypeError(
+                `Expected steps to be a non-empty array, got ${JSON.stringify(steps)} (${typeof steps})`,
+            )
+        }
+        this.#steps = steps
     }
-    if (num < 0) {
-        return 0
-    } else if (num >= steps.length) {
-        return steps.length - 1
-    } else {
-        return num
+
+    get step() {
+        if (this.#step === undefined) {
+            throw new Error('Step is not initialized')
+        }
+        return this.#step
+    }
+
+    set step(num) {
+        if (!isInt(num, this.#steps)) {
+            throw new RangeError(`Expected step to be an index of steps array, got ${num} (${typeof num})`)
+        }
+        if (num < 0) {
+            num = 0
+        } else if (num >= this.#steps.length) {
+            num = this.#steps.length - 1
+        }
+        if (num !== this.#step) {
+            this.#step = num
+            this.triggerCustomEvent('change', { step: num })
+        }
+    }
+
+    get title() {
+        return this.#steps[this.#step]
     }
 }
 
-async function loadStep(step) {
-    if (!isArrIdx(step, steps)) {
-        throw new RangeError(`Expected step to be an index of steps array, got ${step} (${typeof step})`)
-    }
-    const fileName = steps[step].toLowerCase().replace(/\s+/g, '-') + '.md'
-    const url = new URL(fileName, window.location.href)
+async function fetchFile(url) {
     const response = await fetch(url)
     if (!response.ok) {
         throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`)
     }
-    content.ref.content = await response.text()
+    return await response.text()
 }
-
-async function changeStep(delta) {
-    try {
-        const newStep = clampStep(currentStep + delta)
-        if (newStep !== currentStep) {
-            currentStep = newStep
-            window.history.pushState(null, '', setStepNumInUrl(window.location.href, newStep))
-            await loadStep(currentStep)
-        }
-    } catch (cause) {
-        throw new Error(`Error changing step`, { cause })
-    }
-}
-
-doc.find('#prev-btn', true).on('click', async () => {
-    changeStep(-1)
-})
-doc.find('#next-btn', true).on('click', async () => {
-    changeStep(1)
-})
 
 function getStepNumFromUrl(urlStr) {
     const u = new URL(urlStr)
     const stepStr = u.searchParams.get('step')
-    return stepStr !== null ? parseInt(stepStr, 10) : 0
+    if (stepStr === null) {
+        return 0
+    }
+    const step = Number.parseInt(stepStr, 10)
+    return Number.isNaN(step) ? 0 : step
 }
 
 function setStepNumInUrl(urlStr, step) {
@@ -77,21 +79,51 @@ function setStepNumInUrl(urlStr, step) {
     return u.toString()
 }
 
-JJET.from(window).on('popstate', async () => {
-    try {
-        const step = getStepNumFromUrl(window.location.href)
-        await loadStep(step)
-    } catch (cause) {
-        throw new Error(`Error loading step from URL`, { cause })
-    }
-})
-
 async function main() {
     await RenderMarkdown.defined
-    await loadStep(currentStep)
+
+    const win = JJET.from(window)
+    const doc = JJD.from(document)
+    const content = doc.find('#content', true)
+    const prevBtn = doc.find('#prev-btn', true).on('click', () => state.step--)
+    const nextBtn = doc.find('#next-btn', true).on('click', () => state.step++)
+    const progress = doc.find('#progress', true).setAttr('max', steps.length - 1)
+
+    const state = new State(steps).on('change', async (event) => {
+        try {
+            const step = event.detail.step
+            progress.setAttr('value', step)
+            if (step <= 0) {
+                prevBtn.setAttr('disabled', '')
+            } else if (step >= steps.length - 1) {
+                nextBtn.setAttr('disabled', '')
+            } else {
+                prevBtn.rmAttr('disabled')
+                nextBtn.rmAttr('disabled')
+            }
+            window.history.pushState(null, '', setStepNumInUrl(window.location.href, step))
+            const fileName = state.title.toLowerCase().replace(/\s+/g, '-') + '.md'
+            content.ref.content = await fetchFile(fileName)
+        } catch (cause) {
+            throw new Error(`Error changing step`, { cause })
+        }
+    })
+
+    win.on('popstate', async () => {
+        try {
+            state.step = getStepNumFromUrl(window.location.href)
+        } catch (cause) {
+            throw new Error(`Error loading step from URL`, { cause })
+        }
+    }).on('error', (event) => {
+        console.error('Error event:', event)
+        const error = event.error || new Error(event.message)
+        content.ref.content = `Error: ${error.message}`
+    })
+
+    state.step = getStepNumFromUrl(window.location)
 }
 
 main().catch((err) => {
     console.error(err)
-    content.ref.content = `Error loading step: ${err.message}`
 })

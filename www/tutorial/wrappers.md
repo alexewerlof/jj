@@ -1,8 +1,6 @@
 # Wrapper Mental Model
 
-Wrappers are key idea behind JJ. The idea is simple: instead of monkey-patching browser's native constructs, we
-
-Wrappers add sugar syntax on top of native DOM constructs without monkey-patching or modifying browser prototypes. Each wrapper keeps a stable pointer to the native object via `.ref`.
+Wrappers are key idea behind JJ. The idea is simple: instead of monkey-patching browser's native constructs or messing with prototypes, wrappers add sugar syntax on top of native DOM constructs with lightweight classes (using literally one prop: `.ref`). Each wrapper keeps a stable pointer to the native object via `.ref`.
 
 All wrappers start with `JJ` and the abbreviation of the DOM construct they wrap:
 
@@ -39,4 +37,4 @@ This hierarchy is why JJ can return specific wrappers for parent/children traver
 
 ## MDN
 
-- DOM introduction: https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model
+- [DOM introduction](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)
