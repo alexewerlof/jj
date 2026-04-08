@@ -12,41 +12,41 @@ const toc = doc.find('#toc', true)
 
 toc.ref.tocTree = [
     {
+        Start: putFileInUrl('index.md'),
         Foundations: {
-            Architecture: '../../guides/architecture.md',
-            Events: '../../guides/events.md',
-            Extensions: '../../guides/extensions.md',
-            'Fluent API': '../../guides/fluent-api.md',
-            Index: '../../guides/index.md',
-            Philosophy: '../../guides/philosophy.md',
-            Query: '../../guides/query.md',
-            Routing: '../../guides/routing.md',
-            Structure: '../../guides/structure.md',
-            Styling: '../../guides/styling.md',
-            Templates: '../../guides/templates.md',
+            Architecture: putFileInUrl('architecture.md'),
+            Events: putFileInUrl('events.md'),
+            Extensions: putFileInUrl('extensions.md'),
+            'Fluent API': putFileInUrl('fluent-api.md'),
+            Philosophy: putFileInUrl('philosophy.md'),
+            Query: putFileInUrl('query.md'),
+            Routing: putFileInUrl('routing.md'),
+            Structure: putFileInUrl('structure.md'),
+            Styling: putFileInUrl('styling.md'),
+            Templates: putFileInUrl('templates.md'),
         },
         Components: {
-            Basics: '../../guides/components.md',
-            'Component Lifecycle Events': '../../guides/component-lifecycle-events.md',
-            'Components Light': '../../guides/components-light.md',
-            'Components Shadow': '../../guides/components-shadow.md',
+            Basics: putFileInUrl('components.md'),
+            'Lifecycle Events': putFileInUrl('component-lifecycle-events.md'),
+            'Light DOM': putFileInUrl('components-light.md'),
+            'Shadow DOM': putFileInUrl('components-shadow.md'),
         },
     },
 ]
 
 function getFileFromUrl(urlStr) {
     const url = new URL(urlStr)
-    return url.searchParams.get('file') || 'index.md'
+    return url.searchParams.get('file')
 }
 
-function putFileInUrl(urlStr, file) {
-    const url = new URL(urlStr)
+function putFileInUrl(file) {
+    const url = new URL(window.location.href)
     url.searchParams.set('file', file)
     return url.toString()
 }
 
 async function fetchFile(path) {
-    const url = new URL('./' + path, window.location.href)
+    const url = new URL(`../../guides/${path}`, window.location.href)
     const response = await fetch(url)
     if (!response.ok) {
         throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`)
@@ -59,14 +59,15 @@ async function renderFileContent(file) {
 }
 
 toc.on('click', async (event) => {
+    const target = event.target
     try {
-        const target = event.target
-        if (target.matches('a')) {
-            event.preventDefault()
-            const file = target.getAttribute('href')
+        if (!event.ctrlKey && target.matches('a')) {
+            const href = target.getAttribute('href')
+            const file = getFileFromUrl(href)
             if (file && file !== getFileFromUrl(window.location.href)) {
+                event.preventDefault()
+                window.history.pushState({}, '', href)
                 await renderFileContent(file)
-                window.history.pushState({}, '', putFileInUrl(window.location.href, file))
             } else {
                 console.warn('No href found on clicked link:', target)
             }
@@ -76,7 +77,7 @@ toc.on('click', async (event) => {
     }
 })
 
-const initialFile = getFileFromUrl(window.location.href)
+const initialFile = getFileFromUrl(window.location.href) || 'index.md'
 if (initialFile) {
     await renderFileContent(initialFile)
 }
@@ -84,7 +85,9 @@ if (initialFile) {
 win.on('popstate', async () => {
     try {
         const file = getFileFromUrl(window.location.href)
-        await renderFileContent(file)
+        if (file) {
+            await renderFileContent(file)
+        }
     } catch (error) {
         console.error('Error handling popstate event:', error)
     }
