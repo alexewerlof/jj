@@ -633,30 +633,6 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
-     * Replaces a class with another one
-     *
-     * @remarks
-     * If the `oldClassName` doesn't exist, the `newClassName` isn't added
-     *
-     * @param oldClassName - The class name to remove
-     * @param newClassName - The class name to add
-     * @throws {TypeError} If either className is not a string.
-     * @see {@link addClass} for explicitly adding class names.
-     * @see {@link rmClass} for explicitly removing class names.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/replace | DOMTokenList.replace}
-     */
-    replaceClass(oldClassName: string, newClassName: string): this {
-        if (!isStr(oldClassName)) {
-            throw typeErr('oldClassName', 'a string', oldClassName)
-        }
-        if (!isStr(newClassName)) {
-            throw typeErr('newClassName', 'a string', newClassName)
-        }
-        this.ref.classList.replace(oldClassName, newClassName)
-        return this
-    }
-
-    /**
      * Finds the closest ancestor (or self) that matches a CSS selector.
      *
      * @remarks

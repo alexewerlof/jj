@@ -579,29 +579,6 @@ describe('JJE', () => {
                 assert.throws(() => jje.swClass({} as any), TypeError)
             })
         })
-
-        describe('replaceClass()', () => {
-            it('replaces class', () => {
-                const el = document.createElement('div')
-                el.className = 'foo'
-                const jje = new JJE(el)
-                jje.replaceClass('foo', 'bar')
-                assert.ok(!el.classList.contains('foo'))
-                assert.ok(el.classList.contains('bar'))
-            })
-
-            it('throws TypeError for non-string oldClassName', () => {
-                const el = document.createElement('div')
-                const jje = new JJE(el)
-                assert.throws(() => jje.replaceClass(null as any, 'bar'), TypeError)
-            })
-
-            it('throws TypeError for non-string newClassName', () => {
-                const el = document.createElement('div')
-                const jje = new JJE(el)
-                assert.throws(() => jje.replaceClass('foo', undefined as any), TypeError)
-            })
-        })
     })
 
     describe('selector methods', () => {
