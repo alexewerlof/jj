@@ -89,7 +89,6 @@ export class TutorialSteps extends HTMLElement {
             return
         }
 
-        this.#host.find('h2#tutorial-step-title', true).setText(this.title || 'Tutorial')
         const maxStep = Math.max(this.#steps.length - 1, 0)
         this.#host.find('progress#tutorial-step-progress', true).setAttrs({ max: maxStep, value: this.#step })
 

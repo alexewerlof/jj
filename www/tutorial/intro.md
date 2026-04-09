@@ -1,3 +1,5 @@
+# Intro
+
 JJ is a simple and minimalistic library that makes working with the browser APIs easier.
 
 Core philosophy:

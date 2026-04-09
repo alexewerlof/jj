@@ -28,23 +28,24 @@ article {
 tutorial-steps {
     display: block;
     margin-top: var(--gap2);
-}
 
-tutorial-steps .tutorial-steps__title {
-    margin: 0 0 var(--gap) 0;
-    font-family: var(--title-font-family);
-    font-size: 1.1rem;
-}
+    .tutorial-steps__title {
+        margin: 0 0 var(--gap) 0;
+        font-family: var(--title-font-family);
+        font-size: 1.1rem;
+    }
 
-tutorial-steps .tutorial-steps__progress {
-    width: 100%;
-}
+    .tutorial-steps__progress {
+        width: 100%;
+    }
 
-tutorial-steps .tutorial-steps__controls {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--gap2);
-    margin-top: var(--gap);
+    .tutorial-steps__controls {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--gap2);
+        margin-top: var(--gap);
+        align-items: center;
+    }
 }
 
 button.page-control {

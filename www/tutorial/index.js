@@ -54,6 +54,7 @@ async function main() {
     }
 
     tutorialSteps.ref.steps = steps
+    doc.find('#next-step', true).on('click', () => tutorialSteps.ref.next())
 
     const initialStep = getStepNumFromUrl(window.location.href)
     tutorialSteps.ref.step = initialStep

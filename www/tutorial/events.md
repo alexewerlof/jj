@@ -1,3 +1,5 @@
+# Events
+
 To add and remove events, we use the following functions and all wrappers:
 
 | Method               | Description                        | Example                                            |
