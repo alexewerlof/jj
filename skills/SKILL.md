@@ -300,6 +300,19 @@ Use higher-level public APIs like `attr2prop` and `defineComponent` instead of i
 5. **Not awaiting `Element.defined`** — markup may be parsed before the element is defined, causing flaky upgrades.
 6. **Breaking the chain with `.ref` unnecessarily** — use wrapper methods first; reach for `.ref` only when no wrapper method exists.
 
+## Pitfall Prevention Rules (Component Work)
+
+Apply these rules whenever building or refactoring JJ-based custom elements:
+
+1. **Template-first component UI** — if component markup is static, use `fetchTemplate` + `setTemplate` (or shadow `init`) rather than building the UI imperatively in JS.
+2. **Keep routing/URL state outside UI components** — query params and history updates belong in page/controller code, not in reusable visual components.
+3. **Query with wrappers, not native DOM first** — prefer `find` / `findAll` on JJ wrappers before dropping to `.ref`.
+4. **Do not unwrap and re-wrap** — avoid `find(...).ref` followed by `JJHE.from(...)`; keep the wrapper value.
+5. **Use specific selectors for required nodes** — prefer selectors like `button#save` and `progress#step-progress` so selector intent replaces manual `instanceof` checks.
+6. **Keep one canonical state-update path** — for state like `step`, centralize validation/clamping/render/event dispatch in one code path; avoid split setter/private-method duplication unless clearly justified.
+7. **Use one initialization invariant** — if `isInitialized` exists and guarantees bound refs are ready, guard on that flag instead of repeating null checks for every bound field.
+8. **Prefer fluent assignment when binding handlers** — in setup code, chain `.on(...)` directly on `find(...)` where readable (for example assigning a button wrapper and click handler in one line).
+
 ## Reference Docs
 
 For framework migration or deep-dive patterns, load these on demand:

@@ -94,6 +94,21 @@ const myDivWrapper = doc.find('#my-div', true)
 
 Passing `true` to `find()` means that we know that `#my-div` exists and it should throw if it's not found. That way we can catch programmatic errors and get a clear actionable error that accelerates debugging (whether manually or using AI agents).
 
+## Creating custom components
+
+We'll soon see how to create custom components but as a teaser, this is how you can create an instance of a custom component called `<my-card>`:
+
+```js
+import { JJET } from 'jj'
+
+// Make sure it's defined and registered before trying to instantiate it
+await MyCard.defined
+// Create an instance
+const card = JJET.create('my-card')
+// Set properties or call methods on the wrapper
+card.title = 'My Card Title'
+```
+
 ## Next up: DOM Manipulation
 
 Now you know the basics but JJ is way more than DOM node creation. Let's see how we can query and manipulate DOM.
