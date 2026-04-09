@@ -192,14 +192,14 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *   present, adds it (as `""`) if absent. Useful for click handlers and event
      *   callbacks where you just want to flip the current state.
      *
-     * > **Warning:** Passing `undefined` explicitly — `toggleAttr('disabled', undefined)` —
+     * > **Warning:** Passing `undefined` explicitly — `swAttr('disabled', undefined)` —
      * > is treated as **auto mode**, not as an explicit remove. If you need to
      * > unconditionally remove the attribute, use {@link rmAttr} instead.
      *
      * ARIA attributes are not HTML boolean attributes. Even boolean-like ARIA states
      * such as `aria-hidden`, `aria-disabled`, and `aria-readonly` require explicit
      * string values like `"true"` or `"false"`, so they should be managed with
-     * {@link setAriaAttr} / {@link rmAriaAttr}, not with `toggleAttr()`.
+     * {@link setAriaAttr} / {@link rmAriaAttr}, not with `swAttr()`.
      *
      * For other attributes that carry a meaningful string value (e.g.
      * `dir="rtl"`, `hidden="until-found"`), use {@link setAttr} and {@link rmAttr} directly.
@@ -207,19 +207,19 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @example
      * ```ts
      * // Explicit mode — driven by a runtime condition (most common)
-     * btn.toggleAttr('disabled', !isReady)
-     * panel.toggleAttr('hidden', !isExpanded)
-     * input.toggleAttr('readonly', isReadonly)
+     * btn.swAttr('disabled', !isReady)
+     * panel.swAttr('hidden', !isExpanded)
+     * input.swAttr('readonly', isReadonly)
      *
      * // Not for ARIA — these need explicit string values
      * dialog.setAriaAttr('hidden', 'true')
      * button.setAriaAttr('disabled', 'false')
      *
      * // Auto mode — flip current state (no condition required)
-     * btn.on('click', () => btn.toggleAttr('disabled'))
+     * btn.on('click', () => btn.swAttr('disabled'))
      *
      * // ⚠️ Watch out: passing undefined is NOT an explicit remove
-     * toggleAttr('disabled', undefined) // → auto mode, NOT rmAttr!
+     * swAttr('disabled', undefined) // → auto mode, NOT rmAttr!
      * ```
      *
      * @param name - The attribute name.
@@ -233,7 +233,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link toggleClass} for the class-list equivalent.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/toggleAttribute | Element.toggleAttribute}
      */
-    toggleAttr(name: string, force?: boolean): this {
+    swAttr(name: string, force?: boolean): this {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
@@ -594,7 +594,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *   adds it if absent. Useful for click handlers and event callbacks where you just
      *   want to flip the current state.
      *
-     * > **Warning:** Passing `undefined` explicitly — `toggleClass('foo', undefined)` —
+     * > **Warning:** Passing `undefined` explicitly — `swClass('foo', undefined)` —
      * > is treated as **auto mode**, not as an explicit remove. If you need to
      * > unconditionally remove a class, use {@link rmClass} instead.
      *
@@ -603,14 +603,14 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @example
      * ```ts
      * // Explicit mode — driven by a runtime condition (most common)
-     * el.toggleClass('is-expanded', isExpanded)
-     * el.toggleClass('is-loading', isPending)
+     * el.swClass('is-expanded', isExpanded)
+     * el.swClass('is-loading', isPending)
      *
      * // Auto mode — flip current state (no condition required)
-     * btn.on('click', () => btn.toggleClass('is-active'))
+     * btn.on('click', () => btn.swClass('is-active'))
      *
      * // ⚠️ Watch out: passing undefined is NOT an explicit remove
-     * toggleClass('foo', undefined) // → auto mode, NOT rmClass!
+     * swClass('foo', undefined) // → auto mode, NOT rmClass!
      * ```
      *
      * @param className - The class to add or remove.
@@ -624,7 +624,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/toggle | DOMTokenList.toggle}
      */
-    toggleClass(className: string, force?: boolean): this {
+    swClass(className: string, force?: boolean): this {
         if (!isStr(className)) {
             throw typeErr('className', 'a string', className)
         }

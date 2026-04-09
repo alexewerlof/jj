@@ -8,19 +8,33 @@ There are a few verbs for that are used consistently across JJ:
 | `add` | Add a value to a list of values.                             | `addClass('active')`, `addChild()` |
 | `pre` | Add a child before existing children.                        | `preChild(childWrapper)`           |
 | `rm`  | Remove a value from a list of values                         | `rmClass('active')`, `rm()`        |
+| `sw`  | Toggle a value in a list of values.                          | `swClass('active')`                |
 
 These verbs exist for the most common DOM aspects:
 
-| Aspect     | Description                              | Example                         |
-| ---------- | ---------------------------------------- | ------------------------------- |
-| `Text`     | The text content of an element.          | `setText('hello')`              |
-| `HTML`     | The inner HTML of an element.            | `setHTML('<b>hello</b>')`       |
-| `Attr`     | An attribute of an element.              | `setAttr('disabled', '')`       |
-| `DataAttr` | A data attribute of an element.          | `setDataAttr('id', '123')`      |
-| `AriaAttr` | An ARIA attribute of an element.         | `setAriaAttr('label', 'Close')` |
-| `Class`    | A CSS class in the element's class list. | `addClass('active')`            |
-| `Child`    | A child element.                         | `addChild(childWrapper)`        |
-| `Style`    | A CSS style property.                    | `setStyle('color', 'red')`      |
+| Aspect            | Description                              | Example                         |
+| ----------------- | ---------------------------------------- | ------------------------------- |
+| Text              | The text content of an element.          | `setText('hello')`              |
+| HTML              | The inner HTML of an element.            | `setHTML('<b>hello</b>')`       |
+| Attribute         | An attribute of an element.              | `setAttr('disabled', '')`       |
+| `data-` Attribute | A data attribute of an element.          | `setDataAttr('id', '123')`      |
+| `aria-` Attribute | An ARIA attribute of an element.         | `setAriaAttr('label', 'Close')` |
+| Class             | A CSS class in the element's class list. | `addClass('active')`            |
+| Child             | A child element.                         | `addChild(childWrapper)`        |
+| Style             | A CSS style property.                    | `setStyle('color', 'red')`      |
+
+Here's the full list of methods:
+
+| Aspect            | Get                  | Set                                                        | Check                | Remove                                                   | Toggle                   |
+| ----------------- | -------------------- | ---------------------------------------------------------- | -------------------- | -------------------------------------------------------- | ------------------------ |
+| Text              | `getText()`          | `setText(value)`                                           |                      |                                                          |                          |
+| HTML              | `getHTML()`          | `setHTML(value)`                                           |                      |                                                          |                          |
+| Attribute         | `getAttr(name)`      | `setAttr(name, value)`                                     | `hasAttr(name)`      | `rmAttr(name)`                                           | `swAttr(name, [force])`  |
+| `data-` Attribute | `getDataAttr(name)`  | `setDataAttr(name, value)`                                 | `hasDataAttr(name)`  | `rmDataAttr(name)`                                       |                          |
+| `aria-` Attribute | `getAriaAttr(name)`  | `setAriaAttr(name, value)`                                 | `hasAriaAttr(name)`  | `rmAriaAttr(name)`                                       |                          |
+| Class             | `getClasses()`       | `addClass(name)` / `addClasses(names)`                     | `hasClass(name)`     | `rmClass(name)` / `rmClasses(names)`                     | `swClass(name, [force])` |
+| Child             | `getChildren()`      | `addChild(childWrapper)` / `addChildren(childWrappersArr)` |                      | `rmChild(childWrapper)` / `rmChildren(childWrappersArr)` |                          |
+| Style             | `getStyle(property)` | `setStyle(property, value)`                                | `hasStyle(property)` | `rmStyle(property)`                                      |                          |
 
 OK, that's a lot of verbs. Let's see an example where we use many of them together:
 

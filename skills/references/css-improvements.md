@@ -31,8 +31,8 @@ Modify classes and keep visual logic in CSS:
 ```js
 el.addClass('is-active')
 el.rmClass('is-loading')
-el.toggleClass('is-expanded', isExpanded) // explicit: condition drives add/remove
-el.toggleClass('is-expanded') // auto: flips current state
+el.swClass('is-expanded', isExpanded) // explicit: condition drives add/remove
+el.swClass('is-expanded') // auto: flips current state
 el.setClasses({ 'is-active': isActive, 'is-error': hasError })
 el.setClass('card card--featured') // replaces entire className
 ```

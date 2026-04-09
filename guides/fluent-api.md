@@ -102,8 +102,8 @@ const input = JJHE.create('input').setClasses({
 
 // ❌ BAD - repetitive explicit toggles instead of setClasses
 const card2 = JJHE.create('div')
-card2.toggleClass('is-dragging', isDragging) // fine alone, but prefer setClasses for multiple
-card2.toggleClass('is-done', status === 'done')
+card2.swClass('is-dragging', isDragging) // fine alone, but prefer setClasses for multiple
+card2.swClass('is-done', status === 'done')
 
 // ❌ BAD - using add/remove imperatively for each condition
 const input2 = JJHE.create('input')

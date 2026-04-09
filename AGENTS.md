@@ -89,9 +89,9 @@ Use factory methods — `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR
 ### ARIA and Class Helpers
 
 - Use `getAriaAttr()` / `hasAriaAttr()` / `setAriaAttr()` / `rmAriaAttr()` for singular ARIA operations.
-- Use `addClass()` / `rmClass()` / `toggleClass(name, force)` for rest-argument class mutations and `addClasses()` / `rmClasses()` for array-based class mutations.
-- `toggleClass(name, force)` has two modes: **explicit** (pass any value other than `undefined` — truthy adds, falsy removes) and **auto** (omit `force` — flips current state). Use `setClasses()` for multiple conditional classes.
-- Use `toggleAttr(name, force)` to conditionally set (as `""`) or remove a boolean-style HTML attribute (`disabled`, `hidden`, etc.) in explicit mode, or flip it in auto mode when `force` is omitted. Do not use it for ARIA attributes; `aria-hidden`, `aria-disabled`, and similar states require explicit string values via `setAriaAttr()` / `rmAriaAttr()`.
+- Use `addClass()` / `rmClass()` / `swClass(name, force)` for rest-argument class mutations and `addClasses()` / `rmClasses()` for array-based class mutations.
+- `swClass(name, force)` has two modes: **explicit** (pass any value other than `undefined` — truthy adds, falsy removes) and **auto** (omit `force` — flips current state). Use `setClasses()` for multiple conditional classes.
+- Use `swAttr(name, force)` to conditionally set (as `""`) or remove a boolean-style HTML attribute (`disabled`, `hidden`, etc.) in explicit mode, or flip it in auto mode when `force` is omitted. Do not use it for ARIA attributes; `aria-hidden`, `aria-disabled`, and similar states require explicit string values via `setAriaAttr()` / `rmAriaAttr()`.
 - Note: passing `undefined` explicitly is treated as auto mode, not explicit remove. Use `rmClass()` / `rmAttr()` for unconditional removal.
 
 ### Resource Hints

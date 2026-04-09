@@ -216,11 +216,11 @@ describe('JJE', () => {
             })
         })
 
-        describe('toggleAttr()', () => {
+        describe('swAttr()', () => {
             it('sets the attribute (to empty string) when value is truthy', () => {
                 const el = document.createElement('button')
                 const jje = new JJE(el)
-                jje.toggleAttr('disabled', true)
+                jje.swAttr('disabled', true)
                 assert.ok(el.hasAttribute('disabled'))
                 assert.strictEqual(el.getAttribute('disabled'), '')
             })
@@ -229,14 +229,14 @@ describe('JJE', () => {
                 const el = document.createElement('button')
                 el.setAttribute('disabled', '')
                 const jje = new JJE(el)
-                jje.toggleAttr('disabled', false)
+                jje.swAttr('disabled', false)
                 assert.ok(!el.hasAttribute('disabled'))
             })
 
             it('auto-toggles when value is omitted: adds if absent', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.toggleAttr('hidden')
+                jje.swAttr('hidden')
                 assert.ok(el.hasAttribute('hidden'))
             })
 
@@ -244,27 +244,27 @@ describe('JJE', () => {
                 const el = document.createElement('div')
                 el.setAttribute('hidden', '')
                 const jje = new JJE(el)
-                jje.toggleAttr('hidden')
+                jje.swAttr('hidden')
                 assert.ok(!el.hasAttribute('hidden'))
             })
 
             it('auto-toggles when value is explicitly undefined (same as omitted)', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.toggleAttr('hidden', undefined)
+                jje.swAttr('hidden', undefined)
                 assert.ok(el.hasAttribute('hidden'), 'undefined triggers auto mode, not explicit remove')
             })
 
             it('returns this for chaining', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.strictEqual(jje.toggleAttr('hidden', true), jje)
+                assert.strictEqual(jje.swAttr('hidden', true), jje)
             })
 
             it('throws TypeError for non-string name', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.toggleAttr(null as any), TypeError)
+                assert.throws(() => jje.swAttr(null as any), TypeError)
             })
         })
     })
@@ -529,11 +529,11 @@ describe('JJE', () => {
             })
         })
 
-        describe('toggleClass()', () => {
+        describe('swClass()', () => {
             it('adds the class when value is truthy', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.toggleClass('foo', true)
+                jje.swClass('foo', true)
                 assert.ok(el.classList.contains('foo'))
             })
 
@@ -541,14 +541,14 @@ describe('JJE', () => {
                 const el = document.createElement('div')
                 el.className = 'foo'
                 const jje = new JJE(el)
-                jje.toggleClass('foo', false)
+                jje.swClass('foo', false)
                 assert.ok(!el.classList.contains('foo'))
             })
 
             it('auto-toggles when value is omitted: adds if absent', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.toggleClass('foo')
+                jje.swClass('foo')
                 assert.ok(el.classList.contains('foo'))
             })
 
@@ -556,27 +556,27 @@ describe('JJE', () => {
                 const el = document.createElement('div')
                 el.className = 'foo'
                 const jje = new JJE(el)
-                jje.toggleClass('foo')
+                jje.swClass('foo')
                 assert.ok(!el.classList.contains('foo'))
             })
 
             it('auto-toggles when value is explicitly undefined (same as omitted)', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                jje.toggleClass('foo', undefined)
+                jje.swClass('foo', undefined)
                 assert.ok(el.classList.contains('foo'), 'undefined triggers auto mode, not explicit remove')
             })
 
             it('returns this for chaining', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.strictEqual(jje.toggleClass('foo', true), jje)
+                assert.strictEqual(jje.swClass('foo', true), jje)
             })
 
             it('throws TypeError for non-string className', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
-                assert.throws(() => jje.toggleClass({} as any), TypeError)
+                assert.throws(() => jje.swClass({} as any), TypeError)
             })
         })
 

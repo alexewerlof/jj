@@ -75,7 +75,7 @@ const btn = this.getShadow(true).find('#submit')
 el.setAttr('role', 'button')
 el.getAttr('role')
 el.rmAttr('hidden')
-el.toggleAttr('disabled', !isReady) // sets disabled="" or removes it
+el.swAttr('disabled', !isReady) // sets disabled="" or removes it
 
 // Attribute — batch (null/undefined skipped)
 el.setAttrs({ type: 'text', placeholder: 'Search…' })
@@ -85,10 +85,10 @@ el.addClass('active')
 el.addClasses(['chip', 'selected'])
 el.rmClass('disabled')
 el.rmClasses(['pending', 'loading'])
-el.toggleClass('expanded', isExpanded) // explicit: adds when truthy, removes when falsy
-el.toggleClass('is-active') // auto: flips current state (adds if absent, removes if present)
-el.toggleAttr('disabled', !isReady) // explicit: sets disabled="" or removes it
-el.toggleAttr('readonly') // auto: flips current state
+el.swClass('expanded', isExpanded) // explicit: adds when truthy, removes when falsy
+el.swClass('is-active') // auto: flips current state (adds if absent, removes if present)
+el.swAttr('disabled', !isReady) // explicit: sets disabled="" or removes it
+el.swAttr('readonly') // auto: flips current state
 el.setClasses({ active: isActive, disabled: !isReady })
 el.setClass('card card--featured') // replaces entire className
 
@@ -108,7 +108,7 @@ el.setAriaAttrs({ label: 'Dialog', modal: 'true' })
 el.rmAriaAttr('hidden')
 
 // ARIA is not presence-based like HTML boolean attributes
-// Use explicit string states instead of toggleAttr()
+// Use explicit string states instead of swAttr()
 el.setAriaAttr('disabled', 'true')
 
 // Inline styles
