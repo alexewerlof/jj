@@ -230,7 +230,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link setAriaAttr} for ARIA attributes that require explicit values.
      * @see {@link rmAriaAttr} for unconditionally removing an ARIA attribute.
      * @see {@link rmAttr} for unconditionally removing an attribute.
-     * @see {@link toggleClass} for the class-list equivalent.
+     * @see {@link swClass} for the class-list equivalent.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/toggleAttribute | Element.toggleAttribute}
      */
     swAttr(name: string, force?: boolean): this {
@@ -583,7 +583,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * without a `force` value.
      *
      * @remarks
-     * This method has two modes, mirroring the behavior of {@link toggleAttr}:
+     * This method has two modes, mirroring the behavior of {@link swAttr}:
      *
      * **Explicit mode** — pass any `force` value other than `undefined`:
      * - Truthy `force` → adds the class.
@@ -620,7 +620,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link setClasses} for toggling multiple classes at once via a condition map.
      * @see {@link addClass} for unconditionally adding a class.
      * @see {@link rmClass} for unconditionally removing a class.
-     * @see {@link toggleAttr} for the attribute equivalent.
+     * @see {@link swAttr} for the attribute equivalent.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/toggle | DOMTokenList.toggle}
      */
