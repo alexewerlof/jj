@@ -6,6 +6,7 @@ These guides are for moderate to advanced developers and AI agents who want JJ f
 
 - [Philosophy](./philosophy.md)
 - [Fluent API](./fluent-api.md)
+- [DOM Manipulation](./dom-manipulation.md)
 - [Query](./query.md)
 - [Events](./events.md)
 - [Styling](./styling.md)

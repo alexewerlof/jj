@@ -12,29 +12,36 @@ There are a few verbs for that are used consistently across JJ:
 
 These verbs exist for the most common DOM aspects:
 
-| Aspect            | Description                              | Example                         |
-| ----------------- | ---------------------------------------- | ------------------------------- |
-| Text              | The text content of an element.          | `setText('hello')`              |
-| HTML              | The inner HTML of an element.            | `setHTML('<b>hello</b>')`       |
-| Attribute         | An attribute of an element.              | `setAttr('disabled', '')`       |
-| `data-` Attribute | A data attribute of an element.          | `setDataAttr('id', '123')`      |
-| `aria-` Attribute | An ARIA attribute of an element.         | `setAriaAttr('label', 'Close')` |
-| Class             | A CSS class in the element's class list. | `addClass('active')`            |
-| Child             | A child element.                         | `addChild(childWrapper)`        |
-| Style             | A CSS style property.                    | `setStyle('color', 'red')`      |
+| Aspect     | Description                              | Example                         |
+| ---------- | ---------------------------------------- | ------------------------------- |
+| `Text`     | The text content of an element.          | `setText('hello')`              |
+| `HTML`     | The inner HTML of an element.            | `setHTML('<b>hello</b>')`       |
+| `Attr`     | An attribute of an element.              | `setAttr('disabled', '')`       |
+| `DataAttr` | A data attribute of an element.          | `setDataAttr('id', '123')`      |
+| `AriaAttr` | An ARIA attribute of an element.         | `setAriaAttr('label', 'Close')` |
+| `Class`    | A CSS class in the element's class list. | `addClass('active')`            |
+| `Child`    | A child element.                         | `addChild(childWrapper)`        |
+| `Style`    | A CSS style property.                    | `setStyle('color', 'red')`      |
 
-Here's the full list of methods:
+Here's the full list of methods for each verb/aspect combination:
 
-| Aspect            | Get                  | Set                                                        | Check                | Remove                                                   | Toggle                   |
-| ----------------- | -------------------- | ---------------------------------------------------------- | -------------------- | -------------------------------------------------------- | ------------------------ |
-| Text              | `getText()`          | `setText(value)`                                           |                      |                                                          |                          |
-| HTML              | `getHTML()`          | `setHTML(value)`                                           |                      |                                                          |                          |
-| Attribute         | `getAttr(name)`      | `setAttr(name, value)`                                     | `hasAttr(name)`      | `rmAttr(name)`                                           | `swAttr(name, [force])`  |
-| `data-` Attribute | `getDataAttr(name)`  | `setDataAttr(name, value)`                                 | `hasDataAttr(name)`  | `rmDataAttr(name)`                                       |                          |
-| `aria-` Attribute | `getAriaAttr(name)`  | `setAriaAttr(name, value)`                                 | `hasAriaAttr(name)`  | `rmAriaAttr(name)`                                       |                          |
-| Class             | `getClasses()`       | `addClass(name)` / `addClasses(names)`                     | `hasClass(name)`     | `rmClass(name)` / `rmClasses(names)`                     | `swClass(name, [force])` |
-| Child             | `getChildren()`      | `addChild(childWrapper)` / `addChildren(childWrappersArr)` |                      | `rmChild(childWrapper)` / `rmChildren(childWrappersArr)` |                          |
-| Style             | `getStyle(property)` | `setStyle(property, value)`                                | `hasStyle(property)` | `rmStyle(property)`                                      |                          |
+| Verb/Aspect | `Text` | `HTML` | `Attr` | `DataAttr` | `AriaAttr` | `Class` | `Child` | `Style` |
+| ----------- | ------ | ------ | ------ | ---------- | ---------- | ------- | ------- | ------- |
+| `get`       | ✅     | ✅     | ✅     | ✅         | ✅         | ✅      | ✅      | ✅      |
+| `set`       | ✅     | ✅     | ✅     | ✅         | ✅         | ✅      | ✅      | ✅      |
+| `has`       |        |        | ✅     | ✅         | ✅         | ✅      | ✅      | ✅      |
+| `rm`        |        |        | ✅     | ✅         | ✅         | ✅      |         | ✅      |
+| `sw`        |        |        | ✅     |            |            | ✅      |         |         |
+
+For children in particular, there are mapping functions:
+| Method | Description |
+| --- | --- |
+| `setChild(childWrapper)` | Set a single child, replacing existing children. The array variation is `setChildren(childWrapperArray)` |
+| `addChild(childWrapper)` | Add a single child, keeping existing children. The array variation is `addChildren(childWrapperArray)` |
+| `preChild(childWrapper)` | Prepend a single child, keeping existing children. The array variation is `preChildren(childWrapperArray)` |
+| `setChildMap(array, mapFn)` | Set children based on an array of values and a mapping function that turns each value into a child wrapper. |
+| `addChildMap(array, mapFn)` | Add children based on an array of values and a mapping function that turns each value into a child wrapper. |
+| `preChildMap(array, mapFn)` | Prepend children based on an array of values and a mapping function that turns each value into a child wrapper. |
 
 OK, that's a lot of verbs. Let's see an example where we use many of them together:
 
