@@ -89,7 +89,10 @@ Use factory methods — `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR
 ### ARIA and Class Helpers
 
 - Use `getAriaAttr()` / `hasAriaAttr()` / `setAriaAttr()` / `rmAriaAttr()` for singular ARIA operations.
-- Use `addClass()` / `rmClass()` / `toggleClass()` for rest-argument class mutations and `addClasses()` / `rmClasses()` for array-based class mutations.
+- Use `addClass()` / `rmClass()` / `toggleClass(name, force)` for rest-argument class mutations and `addClasses()` / `rmClasses()` for array-based class mutations.
+- `toggleClass(name, force)` has two modes: **explicit** (pass any value other than `undefined` — truthy adds, falsy removes) and **auto** (omit `force` — flips current state). Use `setClasses()` for multiple conditional classes.
+- Use `toggleAttr(name, force)` to conditionally set (as `""`) or remove a boolean-style attribute (`disabled`, `hidden`, etc.) in explicit mode, or flip it in auto mode when `force` is omitted.
+- Note: passing `undefined` explicitly is treated as auto mode, not explicit remove. Use `rmClass()` / `rmAttr()` for unconditional removal.
 
 ### Resource Hints
 

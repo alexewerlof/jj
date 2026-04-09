@@ -4,26 +4,26 @@ jQuery provides chainable selection and DOM operations. JJ is similar in API fee
 
 ## Mental mapping
 
-| jQuery                         | JJ equivalent                                         |
-| ------------------------------ | ----------------------------------------------------- |
-| `$('#id')`                     | `JJD.from(document).find('#id')`                      |
-| `$('.cls')` (first match)      | `doc.find('.cls')`                                    |
-| `$('.cls')` (all matches)      | `doc.findAll('.cls')`                                 |
-| `.addClass()` / `.removeClass` | `.addClass()` / `.rmClass()`                          |
-| `.toggleClass()`               | `.toggleClass()`                                      |
-| `.attr(name, val)` (write)     | `.setAttr(name, val)`                                 |
-| `.attr(name)` (read)           | `.getAttr(name)`                                      |
-| `.css(prop, val)` (write)      | `.setStyle(prop, val)`                                |
-| `.text(val)` (write)           | `.setText(val)`                                       |
-| `.html(val)` (write)           | `.setHTML(val, true)` — explicit unsafe flag required |
-| `.html()` (read)               | `.getHTML()` (inner) or `.ref.outerHTML`              |
-| `.on(event, handler)`          | `.on(event, handler)`                                 |
-| `.trigger(event)`              | `.trigger(event)`                                     |
-| `.append(child)`               | `.addChild(child)`                                    |
-| `.empty()`                     | `.empty()`                                            |
-| `.remove()`                    | `.rm()`                                               |
-| `.closest(selector)`           | `.closest(selector)`                                  |
-| `$.ajax`                       | Native `fetch()`                                      |
+| jQuery                         | JJ equivalent                                                                         |
+| ------------------------------ | ------------------------------------------------------------------------------------- |
+| `$('#id')`                     | `JJD.from(document).find('#id')`                                                      |
+| `$('.cls')` (first match)      | `doc.find('.cls')`                                                                    |
+| `$('.cls')` (all matches)      | `doc.findAll('.cls')`                                                                 |
+| `.addClass()` / `.removeClass` | `.addClass()` / `.rmClass()`                                                          |
+| `.toggleClass(cls, bool?)`     | `.toggleClass(cls, force?)` — explicit when force is provided, auto-flip when omitted |
+| `.attr(name, val)` (write)     | `.setAttr(name, val)`                                                                 |
+| `.attr(name)` (read)           | `.getAttr(name)`                                                                      |
+| `.css(prop, val)` (write)      | `.setStyle(prop, val)`                                                                |
+| `.text(val)` (write)           | `.setText(val)`                                                                       |
+| `.html(val)` (write)           | `.setHTML(val, true)` — explicit unsafe flag required                                 |
+| `.html()` (read)               | `.getHTML()` (inner) or `.ref.outerHTML`                                              |
+| `.on(event, handler)`          | `.on(event, handler)`                                                                 |
+| `.trigger(event)`              | `.trigger(event)`                                                                     |
+| `.append(child)`               | `.addChild(child)`                                                                    |
+| `.empty()`                     | `.empty()`                                                                            |
+| `.remove()`                    | `.rm()`                                                                               |
+| `.closest(selector)`           | `.closest(selector)`                                                                  |
+| `$.ajax`                       | Native `fetch()`                                                                      |
 
 ## Selection example
 

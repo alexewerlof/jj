@@ -174,6 +174,63 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
+     * Conditionally sets or removes a boolean-style (presence-based) attribute, or
+     * auto-toggles it when called without a `force` value.
+     *
+     * @remarks
+     * HTML boolean attributes (e.g. `disabled`, `hidden`, `checked`, `readonly`, `required`)
+     * are active whenever they are **present**, regardless of their value.
+     *
+     * This method has two modes:
+     *
+     * **Explicit mode** — pass any `force` value other than `undefined`:
+     * - Truthy `force` → sets the attribute to `""` (presence = active).
+     * - Falsy `force` (e.g. `false`, `null`, `0`, `""`) → removes the attribute. For `undefined`, see auto mode.
+     *
+     * **Auto mode** — omit `force` entirely (i.e. call with one argument) or pass `undefined` explicitly:
+     * - Delegates to the native `Element.toggleAttribute()`: removes the attribute if
+     *   present, adds it (as `""`) if absent. Useful for click handlers and event
+     *   callbacks where you just want to flip the current state.
+     *
+     * > **Warning:** Passing `undefined` explicitly — `toggleAttr('disabled', undefined)` —
+     * > is treated as **auto mode**, not as an explicit remove. If you need to
+     * > unconditionally remove the attribute, use {@link rmAttr} instead.
+     *
+     * For attributes that carry a meaningful string value (e.g. `aria-hidden="true"`,
+     * `dir="rtl"`, `hidden="until-found"`), use {@link setAttr} and {@link rmAttr} directly.
+     *
+     * @example
+     * ```ts
+     * // Explicit mode — driven by a runtime condition (most common)
+     * btn.toggleAttr('disabled', !isReady)
+     * panel.toggleAttr('hidden', !isExpanded)
+     * input.toggleAttr('readonly', isReadonly)
+     *
+     * // Auto mode — flip current state (no condition required)
+     * btn.on('click', () => btn.toggleAttr('disabled'))
+     *
+     * // ⚠️ Watch out: passing undefined is NOT an explicit remove
+     * toggleAttr('disabled', undefined) // → auto mode, NOT rmAttr!
+     * ```
+     *
+     * @param name - The attribute name.
+     * @param force - If omitted or `undefined`: auto-toggle. Truthy: add. Falsy (not `undefined`): remove.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `name` is not a string.
+     * @see {@link setAttr} for setting an attribute with a specific string value.
+     * @see {@link rmAttr} for unconditionally removing an attribute.
+     * @see {@link toggleClass} for the class-list equivalent.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/toggleAttribute | Element.toggleAttribute}
+     */
+    toggleAttr(name: string, force?: boolean): this {
+        if (!isStr(name)) {
+            throw typeErr('name', 'a string', name)
+        }
+        this.ref.toggleAttribute(name, force)
+        return this
+    }
+
+    /**
      * Gets the value of an ARIA attribute.
      *
      * @remarks
@@ -511,19 +568,56 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
-     * Toggles a class on the Element.
+     * Conditionally adds or removes a single class, or auto-toggles it when called
+     * without a `force` value.
      *
-     * @param className - The class to toggle.
+     * @remarks
+     * This method has two modes, mirroring the behavior of {@link toggleAttr}:
+     *
+     * **Explicit mode** — pass any `force` value other than `undefined`:
+     * - Truthy `force` → adds the class.
+     * - Falsy `force` (e.g. `false`, `null`, `0`, `""`) → removes the class.
+     *
+     * **Auto mode** — omit `force` entirely (i.e. call with one argument):
+     * - Delegates to the native `DOMTokenList.toggle()`: removes the class if present,
+     *   adds it if absent. Useful for click handlers and event callbacks where you just
+     *   want to flip the current state.
+     *
+     * > **Warning:** Passing `undefined` explicitly — `toggleClass('foo', undefined)` —
+     * > is treated as **auto mode**, not as an explicit remove. If you need to
+     * > unconditionally remove a class, use {@link rmClass} instead.
+     *
+     * To toggle multiple classes from a condition map in a single call, use {@link setClasses}.
+     *
+     * @example
+     * ```ts
+     * // Explicit mode — driven by a runtime condition (most common)
+     * el.toggleClass('is-expanded', isExpanded)
+     * el.toggleClass('is-loading', isPending)
+     *
+     * // Auto mode — flip current state (no condition required)
+     * btn.on('click', () => btn.toggleClass('is-active'))
+     *
+     * // ⚠️ Watch out: passing undefined is NOT an explicit remove
+     * toggleClass('foo', undefined) // → auto mode, NOT rmClass!
+     * ```
+     *
+     * @param className - The class to add or remove.
+     * @param force - If omitted or `undefined`: auto-toggle. Truthy: add. Falsy (not `undefined`): remove.
      * @returns This instance for chaining.
      * @throws {TypeError} If `className` is not a string.
+     * @see {@link setClasses} for toggling multiple classes at once via a condition map.
+     * @see {@link addClass} for unconditionally adding a class.
+     * @see {@link rmClass} for unconditionally removing a class.
+     * @see {@link toggleAttr} for the attribute equivalent.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/toggle | DOMTokenList.toggle}
      */
-    toggleClass(className: string): this {
+    toggleClass(className: string, force?: boolean): this {
         if (!isStr(className)) {
             throw typeErr('className', 'a string', className)
         }
-        this.ref.classList.toggle(className)
+        this.ref.classList.toggle(className, force)
         return this
     }
 
