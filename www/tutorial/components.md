@@ -144,7 +144,7 @@ class MyCounter extends HTMLElement {
     #valueElement = null
     #incButton = null
 
-    #onIncrement = () => {
+    #boundIncrement = () => {
         this.increment()
     }
 
@@ -196,11 +196,11 @@ class MyCounter extends HTMLElement {
             this.#incButton = this.#root.find('#inc', true)
         }
 
-        this.#incButton.on('click', this.#onIncrement)
+        this.#incButton.on('click', this.#boundIncrement)
     }
 
     disconnectedCallback() {
-        this.#incButton?.off('click', this.#onIncrement)
+        this.#incButton?.off('click', this.#boundIncrement)
     }
 }
 ```
