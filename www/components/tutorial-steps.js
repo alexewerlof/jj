@@ -93,16 +93,7 @@ export class TutorialSteps extends HTMLElement {
         const maxStep = Math.max(this.#steps.length - 1, 0)
         this.#host.find('progress#tutorial-step-progress', true).setAttrs({ max: maxStep, value: this.#step })
 
-        if (this.#step <= 0) {
-            this.#jjPrevBtn.setAttr('disabled', '')
-        } else {
-            this.#jjPrevBtn.rmAttr('disabled')
-        }
-
-        if (this.#step >= maxStep) {
-            this.#jjNextBtn.setAttr('disabled', '')
-        } else {
-            this.#jjNextBtn.rmAttr('disabled')
-        }
+        this.#jjPrevBtn.toggleAttr('disabled', this.#step <= 0)
+        this.#jjNextBtn.toggleAttr('disabled', this.#step >= maxStep)
     }
 }

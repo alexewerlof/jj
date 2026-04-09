@@ -196,7 +196,12 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * > is treated as **auto mode**, not as an explicit remove. If you need to
      * > unconditionally remove the attribute, use {@link rmAttr} instead.
      *
-     * For attributes that carry a meaningful string value (e.g. `aria-hidden="true"`,
+     * ARIA attributes are not HTML boolean attributes. Even boolean-like ARIA states
+     * such as `aria-hidden`, `aria-disabled`, and `aria-readonly` require explicit
+     * string values like `"true"` or `"false"`, so they should be managed with
+     * {@link setAriaAttr} / {@link rmAriaAttr}, not with `toggleAttr()`.
+     *
+     * For other attributes that carry a meaningful string value (e.g.
      * `dir="rtl"`, `hidden="until-found"`), use {@link setAttr} and {@link rmAttr} directly.
      *
      * @example
@@ -205,6 +210,10 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * btn.toggleAttr('disabled', !isReady)
      * panel.toggleAttr('hidden', !isExpanded)
      * input.toggleAttr('readonly', isReadonly)
+     *
+     * // Not for ARIA — these need explicit string values
+     * dialog.setAriaAttr('hidden', 'true')
+     * button.setAriaAttr('disabled', 'false')
      *
      * // Auto mode — flip current state (no condition required)
      * btn.on('click', () => btn.toggleAttr('disabled'))
@@ -217,7 +226,9 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @param force - If omitted or `undefined`: auto-toggle. Truthy: add. Falsy (not `undefined`): remove.
      * @returns This instance for chaining.
      * @throws {TypeError} If `name` is not a string.
-     * @see {@link setAttr} for setting an attribute with a specific string value.
+     * @see {@link setAttr} for setting a non-ARIA attribute with a specific string value.
+     * @see {@link setAriaAttr} for ARIA attributes that require explicit values.
+     * @see {@link rmAriaAttr} for unconditionally removing an ARIA attribute.
      * @see {@link rmAttr} for unconditionally removing an attribute.
      * @see {@link toggleClass} for the class-list equivalent.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/toggleAttribute | Element.toggleAttribute}

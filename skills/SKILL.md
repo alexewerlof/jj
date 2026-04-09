@@ -107,6 +107,10 @@ el.setAriaAttr('hidden', 'true')
 el.setAriaAttrs({ label: 'Dialog', modal: 'true' })
 el.rmAriaAttr('hidden')
 
+// ARIA is not presence-based like HTML boolean attributes
+// Use explicit string states instead of toggleAttr()
+el.setAriaAttr('disabled', 'true')
+
 // Inline styles
 el.setStyle('color', 'var(--color-brand)')
 el.setStyles({ color: 'red', padding: '8px', border: null })
