@@ -3,9 +3,9 @@
 ## Native event listeners
 
 ```js
-el.on('click', handler)     // addEventListener
-el.off('click', handler)    // removeEventListener (same function reference)
-el.trigger('click')         // dispatchEvent(new Event('click'))
+el.on('click', handler) // addEventListener
+el.off('click', handler) // removeEventListener (same function reference)
+el.trigger('click') // dispatchEvent(new Event('click'))
 ```
 
 The handler `this` inside `.on()` is bound to the JJ wrapper instance. Use `this.ref` to access the native element:
@@ -37,10 +37,10 @@ JJHE.from(this).triggerCustomEvent('todo-toggle', { id: 1, done: true })
 
 ## Shadow DOM event rules
 
-| Situation                               | propagates past shadow root? |
-|-----------------------------------------|------------------------------|
-| Native UI events (click, input, change) | Yes — already `composed: true` |
-| Native `CustomEvent` (no options)       | No — `composed` defaults to `false` |
+| Situation                               | propagates past shadow root?              |
+| --------------------------------------- | ----------------------------------------- |
+| Native UI events (click, input, change) | Yes — already `composed: true`            |
+| Native `CustomEvent` (no options)       | No — `composed` defaults to `false`       |
 | JJ `customEvent()`                      | Yes — JJ sets `composed: true` by default |
 
 Override defaults explicitly when the event is internal:
@@ -65,10 +65,11 @@ list.on('click', (e) => {
 const ctrl = new AbortController()
 el.ref.addEventListener('click', handler, { signal: ctrl.signal })
 // later:
-ctrl.abort()   // removes listener
+ctrl.abort() // removes listener
 ```
 
 ## Browser references
+
 - EventTarget.addEventListener: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
 - CustomEvent: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
 - Event.composed: https://developer.mozilla.org/en-US/docs/Web/API/Event/composed

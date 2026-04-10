@@ -7,7 +7,7 @@ JJ tests run in Node.js using jsdom for DOM emulation and the native `node:test`
 Every test file must import the jsdom attachment helper first:
 
 ```js
-import '../attach-jsdom.js'   // relative path from test/ folder
+import '../attach-jsdom.js' // relative path from test/ folder
 ```
 
 This sets up global `window`, `document`, `HTMLElement`, etc. via jsdom before any JJ imports resolve.
@@ -56,7 +56,7 @@ it('renders title in shadow', async () => {
     await MyCard.defined
 
     // Trigger connectedCallback by letting microtasks flush
-    await new Promise(r => setTimeout(r, 0))
+    await new Promise((r) => setTimeout(r, 0))
 
     const shadow = el.shadowRoot
     assert.ok(shadow)
@@ -70,7 +70,9 @@ it('renders title in shadow', async () => {
 it('dispatches todo-toggle with detail', () => {
     const el = JJHE.create('div')
     let captured = null
-    el.on('todo-toggle', (e) => { captured = e.detail })
+    el.on('todo-toggle', (e) => {
+        captured = e.detail
+    })
     el.triggerCustomEvent('todo-toggle', { id: 1, done: true })
     assert.deepStrictEqual(captured, { id: 1, done: true })
 })
@@ -79,11 +81,13 @@ it('dispatches todo-toggle with detail', () => {
 ## jsdom limitations
 
 Some browser APIs are not fully implemented in jsdom:
+
 - Web Animations API — stub or skip those tests
 - `ResizeObserver` — may need polyfill
 - `IntersectionObserver` — may need polyfill
 - `customElements.define` — available but lifecycle callbacks may differ
 
 ## Browser references
+
 - jsdom project: https://github.com/jsdom/jsdom
 - Node.js test runner: https://nodejs.org/api/test.html
