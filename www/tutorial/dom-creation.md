@@ -99,14 +99,14 @@ Passing `true` to `find()` means that we know that `#my-div` exists and it shoul
 We'll soon see how to create custom components but as a teaser, this is how you can create an instance of a custom component called `<my-card>`:
 
 ```js
-import { JJET } from 'jj'
+import { JJHE } from 'jj'
 
 // Make sure it's defined and registered before trying to instantiate it
 await MyCard.defined
 // Create an instance
-const card = JJET.create('my-card')
+const card = JJHE.create('my-card')
 // Set properties or call methods on the wrapper
-card.title = 'My Card Title'
+card.ref.title = 'My Card Title'
 ```
 
 ## Next up: DOM Manipulation

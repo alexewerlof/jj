@@ -108,6 +108,7 @@ JJ doesn't add much here because the native API is pretty straightforward.
 Here's how you typically use the History API:
 
 ```js
+import { JJET } from 'jj'
 // To change the URL without reloading the page (instead render the state in-place)
 history.pushState({ some: 'state' }, 'Title', '/new-url')
 // To handle the back/forward buttons without reloading the page
@@ -123,6 +124,7 @@ jjWin.on('popstate', (event) => {
 Again, this is not a JJ concept but it is worth mentioning that you can use the [BroadcastChannel API](https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel) to create a simple pub/sub system for your application. This is particularly useful when you have multiple tabs or windows that need to communicate with each other.
 
 ```js
+import { JJET } from 'jj'
 // Create a channel
 const channel = new BroadcastChannel('my-channel')
 const jjChannel = JJET.from(channel)
@@ -131,12 +133,13 @@ jjChannel.on('message', (event) => {
     console.log('Received message:', event.data)
 })
 // Send a message
-jjChannel.postMessage({ some: 'data' })
+jjChannel.ref.postMessage({ some: 'data' })
 ```
 
 Similarly, you can use messaging between iframes or workers with the `postMessage` API.
 
 ```js
+import { JJET } from 'jj'
 const worker = new Worker('static/scripts/worker.js')
 const jjWorker = JJET.from(worker)
 jjWorker.on('message', (event) => {

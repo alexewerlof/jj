@@ -56,16 +56,14 @@ class MyCard extends HTMLElement {
 
     constructor() {
         super()
-        JJHE.from(this).setShadow('open')
-        this.#root = JJHE.from(this).getShadow(true)
+        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
     }
 
     async connectedCallback() {
-        if (this.#isInitialized) {
-            return
+        if (!this.#isInitialized) {
+            this.#root.init(await templatePromise, await stylePromise)
+            this.#isInitialized = true
         }
-        JJHE.from(this).initShadow(await templatePromise, await stylePromise)
-        this.#isInitialized = true
     }
 }
 ```

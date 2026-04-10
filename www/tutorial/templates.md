@@ -19,7 +19,7 @@ JJ accepts multiple template sources, which lets you pick the right tool for eac
 Use one convention consistently in your custom elements:
 
 - Light DOM component: `this.#root = JJHE.from(this)`
-- Shadow DOM component: attach in the constructor and store it `this.#root = JJHE.from(this).setShadow(...)`.getShadow(true)`
+- Shadow DOM component: attach in the constructor and store it `this.#root = JJHE.from(this).setShadow(...).getShadow(true)`
     - Keep the initialization status in `#isInitialized` and guard `connectedCallback()` to run `this.#root.init()` only once.
 
 That gives you a predictable wrapper to query and update.

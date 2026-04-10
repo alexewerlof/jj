@@ -29,10 +29,10 @@ Regardless of the method, the browser provides the following lifecycle callbacks
 
 To keep lifecycle logic predictable, use these conventions:
 
-1. Do not add a separate `#initialized` flag.
-2. For shadow components, keep a host wrapper in the constructor and keep `#root = null` until content is initialized.
-3. In `connectedCallback()`, initialize only when `#root` is null.
-4. Register listeners in `connectedCallback()` and remove them in `disconnectedCallback()` using stable handler references.
+1. Use a `#isInitialized` flag to keep track of whether the component is initialized.
+2. Keep a host wrapper in the constructor in `#host`.
+3. In `connectedCallback()`, initialize only when `#isInitialized` is false.
+4. Register listeners in `connectedCallback()`
 
 That last one is interesting.
 
@@ -52,6 +52,8 @@ Putting it all together, here's a simple example of a custom element that change
 class MyCounter extends HTMLElement {
     static observedAttributes = ['value']
 
+    // A flag to keep track of whether the component shadow DOM is initialized
+    #isInitialized = false
     #value = 0
     #valueElement = null
 
@@ -102,11 +104,13 @@ class MyCounter extends HTMLElement {
     }
 
     connectedCallback() {
-        // Mode can be 'closed' too. 'open' allows you to access the
-        // shadow root via .shadowRoot property while 'closed' does not.
-        this.attachShadow({ mode: 'open' })
-        this.shadowRoot.innerHTML = `<p>Counter value: <span id="value">${this.value}</span></p>`
-        this.#valueElement = this.shadowRoot.querySelector('#value')
+        if (!this.#isInitialized) {
+            // Mode can be 'closed' too. 'open' allows you to access the
+            // shadow root via .shadowRoot property while 'closed' does not.
+            this.attachShadow({ mode: 'open' })
+            this.shadowRoot.innerHTML = `<p>Counter value: <span id="value">${this.value}</span></p>`
+            this.#valueElement = this.shadowRoot.querySelector('#value')
+        }
     }
 }
 
@@ -123,7 +127,7 @@ counter.addEventListener('value-changed', (event) => {
 document.body.appendChild(counter)
 // The counter's text updates to "Counter value: 5"
 counter.setAttribute('value', '5')
-// The counter's text updates to "Counter value: 5"
+// The counter's text updates to "Counter value: 6"
 counter.increment()
 ```
 
@@ -163,15 +167,7 @@ class MyCounter extends HTMLElement {
             this.#valueElement.setText(this.#value.toString())
         }
         if (oldValue !== this.#value) {
-            this.dispatchEvent(
-                new CustomEvent('value-changed', {
-                    detail: {
-                        value: this.#value,
-                    },
-                    composed: true,
-                    bubbles: true,
-                }),
-            )
+            this.#host.triggerCustomEvent('value-changed', { value: this.#value })
         }
     }
 

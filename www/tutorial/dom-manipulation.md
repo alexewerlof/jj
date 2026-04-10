@@ -15,7 +15,7 @@ These verbs exist for the most common DOM aspects:
 | Aspect     | Description                              | Example                         |
 | ---------- | ---------------------------------------- | ------------------------------- |
 | `Text`     | The text content of an element.          | `setText('hello')`              |
-| `HTML`     | The inner HTML of an element.            | `setHTML('<b>hello</b>')`       |
+| `HTML`     | The inner HTML of an element.            | `setHTML('<b>hello</b>', true)` |
 | `Attr`     | An attribute of an element.              | `setAttr('disabled', '')`       |
 | `DataAttr` | A data attribute of an element.          | `setDataAttr('id', '123')`      |
 | `AriaAttr` | An ARIA attribute of an element.         | `setAriaAttr('label', 'Close')` |
@@ -63,10 +63,10 @@ myDiv.run((wrappedDiv) => {
         wrappedDiv.rmClass('container')
     }
     switch (wrappedDiv.getDataAttr('certainty')) {
-        case 0:
+        case '0':
             wrappedDiv.setStyle('background', 'red')
             break
-        case 1:
+        case '1':
             wrappedDiv.setStyle('background', 'green')
             break
         default:

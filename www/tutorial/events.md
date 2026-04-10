@@ -2,12 +2,13 @@
 
 To add and remove events, we use the following functions and all wrappers:
 
-| Method               | Description                        | Example                                            |
-| -------------------- | ---------------------------------- | -------------------------------------------------- |
-| `on`                 | Add an event listener.             | `on('click', () => alert('clicked'))`              |
-| `off`                | Remove an event listener.          | `off('click', myClickHandler)`                     |
-| `trigger`            | Trigger an event programmatically. | `trigger('click')`                                 |
-| `triggerCustomEvent` | Trigger a custom event with data.  | `triggerCustomEvent('my-event', { some: 'data' })` |
+| Method               | Description                            | Example                                            |
+| -------------------- | -------------------------------------- | -------------------------------------------------- |
+| `on`                 | Add an event listener.                 | `on('click', () => alert('clicked'))`              |
+| `off`                | Remove an event listener.              | `off('click', myClickHandler)`                     |
+| `trigger`            | Trigger an event programmatically.     | `trigger(new Event('click'))`                      |
+| `triggerEvent`       | Creates an Event and triggers it.      | `triggerEvent('click')`                            |
+| `triggerCustomEvent` | Creates a CustomEvent and triggers it. | `triggerCustomEvent('my-event', { some: 'data' })` |
 
 For example, you can create a button that shows an alert when clicked like this:
 
@@ -21,7 +22,9 @@ const jjButton = JJHE.create('button')
 If you want to programmatically trigger the `click` event, you simply do:
 
 ```js
-jjButton.trigger('click')
+jjButton.triggerEvent('click')
+// Click also has a shortcut:
+jjButton.click()
 ```
 
 ## Custom Events
@@ -41,7 +44,7 @@ import { JJHE, customEvent } from 'jj'
 const jjButton = JJHE.create('button').setText('Click me')
 // Create a custom composed event
 const myEvent = customEvent('my-event', { some: 'data' })
-jjButton.triggerCustomEvent(myEvent)
+jjButton.trigger(myEvent)
 // Or even shorter:
 jjButton.triggerCustomEvent('my-event', { some: 'data' })
 ```
