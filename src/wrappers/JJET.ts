@@ -163,17 +163,36 @@ export class JJET<T extends EventTarget = EventTarget> {
     /**
      * Dispatches an Event at the specified EventTarget.
      *
-     * @param event - The Event object to dispatch.
+     * @param event - The Event object to dispatch. Since CustomEvent extends Event, you can also dispatch CustomEvent instances here.
      * @returns This instance for chaining.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent | EventTarget.dispatchEvent}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent | CustomEvent} for creating custom events with payloads.
+     * @see {@link triggerEvent} for a convenience wrapper that creates and dispatches an Event in one step.
+     * @see {@link triggerCustomEvent} for a convenience wrapper that creates and dispatches a CustomEvent with JJ's default settings in one step.
      */
     trigger(event: Event): this {
-        this.ref.dispatchEvent(event)
-        return this
+        try {
+            this.ref.dispatchEvent(event)
+            return this
+        } catch (cause) {
+            throw new Error(`Failed to trigger the event ${JSON.stringify(event)}`, { cause })
+        }
     }
 
     /**
-     * Creates and dispatches a `CustomEvent` on the wrapped target.
+     * Creates a new `Event` and dispatches on the wrapped target.
+     *
+     * @param type The name identifying the type of the event for example 'click'
+     * @param eventInitDict Optional event initialization dictionary.
+     * @returns This instance for chaining.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Event/Event | Event()} for details on the eventInitDict options.
+     */
+    triggerEvent(type: string, eventInitDict?: EventInit | undefined): this {
+        return this.trigger(new Event(type, eventInitDict))
+    }
+
+    /**
+     * Creates a new `CustomEvent` and dispatches on the wrapped target.
      *
      * @remarks
      * This is a convenience wrapper around {@link trigger} for the common case of
@@ -202,7 +221,7 @@ export class JJET<T extends EventTarget = EventTarget> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent | CustomEvent()}
      */
     triggerCustomEvent<T = unknown>(eventName: string, detail?: T, options?: Omit<CustomEventInit<T>, 'detail'>): this {
-        return this.trigger(customEvent(eventName, detail, options))
+        return this.trigger(new CustomEvent(eventName, { bubbles: true, composed: true, ...options, detail }))
     }
 
     /**

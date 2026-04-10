@@ -80,6 +80,25 @@ describe('JJET', () => {
         assert.strictEqual(event2.defaultPrevented, true)
     })
 
+    it('triggers an event from a name and EventInit options', () => {
+        const et = new EventTarget()
+        const jjet = new JJET(et)
+        let received: Event | undefined
+
+        jjet.on('ready', (event: Event) => {
+            received = event
+            received.preventDefault()
+        })
+
+        const result = jjet.triggerEvent('ready', { cancelable: true })
+
+        assert.strictEqual(result, jjet)
+        assert.ok(received instanceof Event)
+        assert.strictEqual(received.type, 'ready')
+        assert.strictEqual(received.cancelable, true)
+        assert.strictEqual(received.defaultPrevented, true)
+    })
+
     it('triggers a custom event from a name and detail payload', () => {
         const et = new EventTarget()
         const jjet = new JJET(et)
