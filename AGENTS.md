@@ -13,6 +13,15 @@ If you encounter contradicting instructions, pause and ask the user what to do.
 - **Public site**: `www/` is the landing page that consumes `lib/bundle.js`. It is served as static content via [Github Pages Action](.github/workflows/gh-pages.yml).
 - **Examples**: `www/examples` contains runnable examples/tutorials.
 
+## Local Development Server
+
+The project is served via the **Live Server** VS Code extension (`ritwickdey.liveserver`) on **port 5500**. Do **not** start a separate server process (e.g. `npx serve`, `http-server`, etc.) — Live Server is always running when the workspace is open.
+
+- `www/` root: `http://localhost:5500/www/index.html`
+- Examples: `http://localhost:5500/www/examples/<name>/index.html`
+
+Use these URLs when opening pages in the Chrome DevTools MCP or any browser tool.
+
 ## Build and Validation Commands
 
 - `npm run build` uses [tsup](https://www.npmjs.com/package/tsup) to produces bundle artifacts in `lib/` in cjs, global, and esm format minified and plain with sourcemaps.
