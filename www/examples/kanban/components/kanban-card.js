@@ -11,16 +11,20 @@ export class KanbanCard extends HTMLElement {
     async connectedCallback() {
         if (this.#root) return
 
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        this.#root = JJHE.from(this).setShadow('open')
+        this.#root.initShadow(await templatePromise, await stylePromise)
 
         // Render initial data
         this.#render()
 
         // Setup event listeners
-        this.#root.shadow.find('.delete-btn').on('click', (e) => {
-            e.stopPropagation()
-            this.#root.triggerCustomEvent('card-delete', { id: this.#data.id })
-        })
+        this.#root
+            .getShadow()
+            .find('.delete-btn')
+            .on('click', (e) => {
+                e.stopPropagation()
+                this.#root.triggerCustomEvent('card-delete', { id: this.#data.id })
+            })
     }
 
     /**
@@ -41,10 +45,11 @@ export class KanbanCard extends HTMLElement {
 
     #render() {
         const { id, text, priority } = this.#data
-        this.#root.shadow.find('.text').setText(text)
-        this.#root.shadow.find('.id-label').setText(id.slice(0, 4)) // Show short ID
+        const shadow = this.#root.getShadow()
+        shadow.find('.text').setText(text)
+        shadow.find('.id-label').setText(id.slice(0, 4)) // Show short ID
 
-        const tag = this.#root.shadow.find('.tag')
+        const tag = shadow.find('.tag')
         tag.setText(priority)
 
         // Reset classes and add the correct priority class
