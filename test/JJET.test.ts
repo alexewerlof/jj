@@ -1,41 +1,9 @@
 import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JJET, customEvent } from '../src/index.js'
+import { JJET } from '../src/index.js'
 
 describe('JJET', () => {
-    describe('customEvent()', () => {
-        it('creates a CustomEvent with detail', () => {
-            const event = customEvent('todo-toggle', { id: '123', done: true })
-
-            assert.ok(event instanceof CustomEvent)
-            assert.strictEqual(event.type, 'todo-toggle')
-            assert.deepStrictEqual(event.detail, { id: '123', done: true })
-            assert.strictEqual(event.bubbles, true)
-            assert.strictEqual(event.composed, true)
-        })
-
-        it('respects explicit option overrides', () => {
-            const event = customEvent('panel-ready', undefined, {
-                bubbles: false,
-                composed: false,
-                cancelable: true,
-            })
-
-            assert.strictEqual(event.bubbles, false)
-            assert.strictEqual(event.composed, false)
-            assert.strictEqual(event.cancelable, true)
-            assert.strictEqual(event.detail, null)
-        })
-
-        it('throws TypeError for non-string event names', () => {
-            assert.throws(() => customEvent(123 as any), {
-                name: 'TypeError',
-                message: /Pass an event name like/,
-            })
-        })
-    })
-
     it('wraps an EventTarget', () => {
         const et = new EventTarget()
         const jjet = new JJET(et)

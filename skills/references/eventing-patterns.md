@@ -20,13 +20,15 @@ btn.on('click', function () {
 
 ## Custom events with payloads
 
-`customEvent(name, detail?, options?)` — standalone factory:
+`trigger()` accepts a full event object. JJ also provides two convenience constructors that keep dispatch fluent:
+
+- `triggerEvent(name, options?)` is equivalent to `trigger(new Event(name, { bubbles: true, composed: true, ...options }))`
+- `triggerCustomEvent(name, detail?, options?)` is equivalent to `trigger(new CustomEvent(name, { bubbles: true, composed: true, ...options, detail }))`
+
+Use the native `CustomEvent` constructor when dispatching directly:
 
 ```js
-import { customEvent } from 'jj'
-
-// JJ defaults: bubbles: true, composed: true
-this.dispatchEvent(customEvent('todo-toggle', { id: 1, done: true }))
+this.dispatchEvent(new CustomEvent('todo-toggle', { detail: { id: 1, done: true }, bubbles: true, composed: true }))
 ```
 
 `triggerCustomEvent(name, detail?, options?)` — fluent wrapper dispatch:
@@ -41,12 +43,12 @@ JJHE.from(this).triggerCustomEvent('todo-toggle', { id: 1, done: true })
 | --------------------------------------- | ----------------------------------------- |
 | Native UI events (click, input, change) | Yes — already `composed: true`            |
 | Native `CustomEvent` (no options)       | No — `composed` defaults to `false`       |
-| JJ `customEvent()`                      | Yes — JJ sets `composed: true` by default |
+| `triggerCustomEvent()`                  | Yes — JJ sets `composed: true` by default |
 
 Override defaults explicitly when the event is internal:
 
 ```js
-customEvent('internal-ready', undefined, { bubbles: false, composed: false })
+new CustomEvent('internal-ready', { bubbles: false, composed: false })
 ```
 
 ## Event delegation

@@ -137,15 +137,20 @@ el.on('click', handler)
 el.off('click', handler)
 el.trigger('click')
 
+// Explicit event objects (equivalent to JJ helpers below)
+el.trigger(new Event('click', { bubbles: true, composed: true }))
+el.trigger(new CustomEvent('todo-toggle', { detail: { id: 1, done: true }, bubbles: true, composed: true }))
+
 // Custom events — JJ defaults: bubbles: true, composed: true
-import { customEvent } from 'jj'
-this.dispatchEvent(customEvent('todo-toggle', { id: 1, done: true }))
+this.dispatchEvent(new CustomEvent('todo-toggle', { detail: { id: 1, done: true }, bubbles: true, composed: true }))
 
 // Fluent dispatch (same defaults)
+el.triggerEvent('click') // equivalent to trigger(new Event('click', { bubbles: true, composed: true }))
 JJHE.from(this).triggerCustomEvent('todo-toggle', { id: 1, done: true })
+// equivalent to trigger(new CustomEvent('todo-toggle', { detail: { id: 1, done: true }, bubbles: true, composed: true }))
 
 // Override defaults for internal-only events
-customEvent('panel-ready', undefined, { bubbles: false, composed: false })
+new CustomEvent('panel-ready', { bubbles: false, composed: false })
 ```
 
 ## Custom Elements — Complete Pattern

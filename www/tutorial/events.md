@@ -37,13 +37,13 @@ const myButton = document.querySelector('button#my-button')
 myButton.dispatchEvent(myEvent)
 ```
 
-JJ has a helper function to create a custom event (`customEvent`) but you can directly trigger it on a wrapped element:
+You can directly trigger a custom event on a wrapped element:
 
 ```js
-import { JJHE, customEvent } from 'jj'
+import { JJHE } from 'jj'
 const jjButton = JJHE.create('button').setText('Click me')
 // Create a custom composed event
-const myEvent = customEvent('my-event', { some: 'data' })
+const myEvent = new CustomEvent('my-event', { detail: { some: 'data' }, bubbles: true, composed: true })
 jjButton.trigger(myEvent)
 // Or even shorter:
 jjButton.triggerCustomEvent('my-event', { some: 'data' })

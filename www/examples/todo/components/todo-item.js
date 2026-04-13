@@ -1,4 +1,4 @@
-import { attr2prop, customEvent, fetchStyle, fetchTemplate, JJHE, defineComponent } from '../../../../lib/bundle.js'
+import { attr2prop, fetchStyle, fetchTemplate, JJHE, defineComponent } from '../../../../lib/bundle.js'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./todo-item.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./todo-item.css'))
@@ -57,18 +57,13 @@ export class TodoItem extends HTMLElement {
         const check = this.jjRoot?.shadow.find('#check')
         const done = check ? check.ref.checked : false
         this.dispatchEvent(
-            customEvent('todo-toggle', {
-                id: this.itemId,
-                done,
-            }),
+            new CustomEvent('todo-toggle', { detail: { id: this.itemId, done }, bubbles: true, composed: true }),
         )
     }
 
     #onRemove() {
         this.dispatchEvent(
-            customEvent('todo-remove', {
-                id: this.itemId,
-            }),
+            new CustomEvent('todo-remove', { detail: { id: this.itemId }, bubbles: true, composed: true }),
         )
     }
 

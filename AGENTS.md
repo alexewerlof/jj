@@ -76,9 +76,9 @@ Use factory methods — `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR
 
 ### Events
 
-- Use `customEvent(name, detail?)` over `new CustomEvent(...)`.
-- Use `triggerCustomEvent(name, detail?)` on `JJET` descendants for fluent dispatch.
-- JJ event defaults: `bubbles: true`, `composed: true`. Override explicitly when the event should stay local.
+- Use `trigger()` for triggering an event object. Apart from using the `new Event()` and `new CustomEvent()` native constructors, there are two ways to create an event object with `bubbles` and `composed` set to `true`:
+    - `triggerEvent(name, options?)` is equivalent to `this.trigger(new Event(name, { bubbles: true, composed: true, ...options }))`.
+    - `triggerCustomEvent(name, detail?: T, options?)` is the equivalent to `this.trigger(new CustomEvent(name, { bubbles: true, composed: true, ...options, detail }))`.
 
 ### Dataset Helpers
 

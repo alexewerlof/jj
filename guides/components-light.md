@@ -88,7 +88,7 @@ Light DOM components have no shadow boundary, so event flow is ordinary DOM bubb
 Dispatch from `this` (the host element) so the event originates at the component boundary and is easy to listen for from outside:
 
 ```js
-import { customEvent, JJHE } from 'jj'
+import { JJHE } from 'jj'
 
 #onItemClick = (event) => {
     const id = event.target.closest('[data-id]')?.dataset.id
@@ -145,7 +145,7 @@ A `<news-feed>` component that renders a list of articles, dispatches a `article
 
 ```js
 // news-feed.js
-import { attr2prop, customEvent, defineComponent, fetchTemplate, JJHE, JJHE as H } from 'jj'
+import { attr2prop, defineComponent, fetchTemplate, JJHE, JJHE as H } from 'jj'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./news-feed.html'))
 
@@ -237,7 +237,7 @@ news-feed .news-feed h2 {
 
 ```js
 // page.js
-import { JJD, customEvent } from 'jj'
+import { JJD } from 'jj'
 import { NewsFeed } from './news-feed.js'
 
 await NewsFeed.defined
@@ -250,7 +250,13 @@ feed.on('article-opened', (event) => {
 })
 
 // Broadcast a refresh — the component receives it via document listener
-document.dispatchEvent(customEvent('feed-refresh', { articles: [{ id: '1', title: 'Hello' }] }))
+document.dispatchEvent(
+    new CustomEvent('feed-refresh', {
+        detail: { articles: [{ id: '1', title: 'Hello' }] },
+        bubbles: true,
+        composed: true,
+    }),
+)
 ```
 
 ---

@@ -10,7 +10,7 @@ Vue uses reactive data binding; JJ uses explicit imperative updates.
 | `v-model`               | Event listener + explicit wrapper update                   |
 | `ref` / `computed`      | Plain variables, getters/setters, explicit render calls    |
 | `watch`                 | Call render in property setter                             |
-| `defineEmits` / `$emit` | `customEvent()` or `triggerCustomEvent()`                  |
+| `defineEmits` / `$emit` | `new CustomEvent(...)` or `triggerCustomEvent()`           |
 | Scoped styles           | Shadow DOM with `fetchStyle` + `setShadow`                 |
 | `v-if` / `v-show`       | `el.hide()` / `el.show()` or add/remove classes            |
 | `v-for`                 | `el.addChildMap(items, fn)` or `el.setChildMap(items, fn)` |

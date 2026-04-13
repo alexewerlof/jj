@@ -1,52 +1,4 @@
-import { isInstance, isStr, typeErr } from '../internal.js'
-
-/**
- * Creates a `CustomEvent` with JJ's default bubbling and Shadow DOM settings.
- *
- * @remarks
- * Native `CustomEvent` defaults to `bubbles: false` and `composed: false`.
- * JJ defaults both to `true` because cross-component custom events commonly need
- * to bubble out of Shadow DOM boundaries.
- *
- * Pass `options` to override those defaults when you need a local-only event.
- *
- * @category Events
- * @param type - The event type name.
- * @param detail - Optional payload exposed as `event.detail`.
- * @param options - Additional `CustomEvent` options excluding `detail`.
- * @returns A configured `CustomEvent` instance.
- * @throws {TypeError} If `eventName` is not a string.
- * @example
- * ```ts
- * const event = customEvent('todo-toggle', { id: '123', done: true })
- * element.dispatchEvent(event)
- * ```
- *
- * @example
- * ```ts
- * const localOnly = customEvent('panel-ready', undefined, {
- *     bubbles: false,
- *     composed: false,
- * })
- * ```
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent | CustomEvent()}
- */
-export function customEvent<T = unknown>(
-    type: string,
-    detail?: T,
-    options?: Omit<CustomEventInit<T>, 'detail'>,
-): CustomEvent<T> {
-    if (!isStr(type)) {
-        throw typeErr('eventName', 'a string', type, 'Pass an event name like "todo-toggle".')
-    }
-
-    return new CustomEvent<T>(type, {
-        bubbles: true,
-        composed: true,
-        ...options,
-        detail,
-    })
-}
+import { isInstance, typeErr } from '../internal.js'
 
 /**
  * Wraps a DOM EventTarget.
@@ -109,15 +61,15 @@ export class JJET<T extends EventTarget = EventTarget> {
      * @example
      * ```ts
      * const target = {
-     *     count: 0,
+     * dispatching a plain Event object.
      *     increment() {
      *         this.count++
      *     },
      * }
      *
-     * JJET.from(window).on('click', target.increment.bind(target))
+     * @param options Optional event initialization dictionary.
      * ```
-     * @param eventName - The name of the event.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Event/Event | Event()} for details on event options.
      * @param handler - The event handler.
      * @param options - Optional event listener options.
      * @returns This instance for chaining.
@@ -182,13 +134,20 @@ export class JJET<T extends EventTarget = EventTarget> {
     /**
      * Creates a new `Event` and dispatches on the wrapped target.
      *
+     * @remarks
+     * This is a convenience wrapper around {@link trigger} for the common case of
+     * dispatching a plain Event object.
+     *
+     * The created event defaults to `bubbles: true` and `composed: true`.
+     * Pass `options` to override those defaults.
+     *
      * @param type The name identifying the type of the event for example 'click'
-     * @param eventInitDict Optional event initialization dictionary.
+     * @param options Optional event initialization dictionary.
      * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Event/Event | Event()} for details on the eventInitDict options.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Event/Event | Event()} for details on event options.
      */
-    triggerEvent(type: string, eventInitDict?: EventInit | undefined): this {
-        return this.trigger(new Event(type, eventInitDict))
+    triggerEvent(type: string, options?: EventInit | undefined): this {
+        return this.trigger(new Event(type, { bubbles: true, composed: true, ...options }))
     }
 
     /**
@@ -201,11 +160,10 @@ export class JJET<T extends EventTarget = EventTarget> {
      * The created event defaults to `bubbles: true` and `composed: true`.
      * Pass `options` to override those defaults.
      *
-     * @param eventName - The event type name.
+     * @param type - The event type name.
      * @param detail - Optional payload exposed as `event.detail`.
      * @param options - Additional `CustomEvent` options excluding `detail`.
      * @returns This instance for chaining.
-     * @throws {TypeError} If `eventName` is not a string.
      * @example
      * ```ts
      * JJET.from(window).triggerCustomEvent('panel-ready', { id: '123' })
@@ -220,8 +178,8 @@ export class JJET<T extends EventTarget = EventTarget> {
      * ```
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent | CustomEvent()}
      */
-    triggerCustomEvent<T = unknown>(eventName: string, detail?: T, options?: Omit<CustomEventInit<T>, 'detail'>): this {
-        return this.trigger(new CustomEvent(eventName, { bubbles: true, composed: true, ...options, detail }))
+    triggerCustomEvent<T = unknown>(type: string, detail?: T, options?: Omit<CustomEventInit<T>, 'detail'>): this {
+        return this.trigger(new CustomEvent(type, { bubbles: true, composed: true, ...options, detail }))
     }
 
     /**

@@ -261,11 +261,13 @@ Never query `document` for elements inside your shadow root — always query fro
 
 Native UI events (`click`, `input`, `change`) are **composed** — they bubble out of the shadow root and are retargeted to the host element when observed outside.
 
-Custom events **stop at the shadow boundary by default**. JJ's `customEvent()` helper sets `composed: true` by default, making it ready for cross-boundary communication:
+Custom events **stop at the shadow boundary by default**. Set `composed: true` when the event should cross the boundary:
 
 ```js
-// Rises above the shadow boundary (JJ default: composed: true)
-this.dispatchEvent(customEvent('counter-changed', { value: this.#count }))
+// Rises above the shadow boundary
+this.dispatchEvent(
+    new CustomEvent('counter-changed', { detail: { value: this.#count }, bubbles: true, composed: true }),
+)
 ```
 
 Override when the event should stay internal:
@@ -298,7 +300,9 @@ Then external code can target the host directly:
 
 ```js
 const card = document.querySelector('my-card')
-card?.dispatchEvent(customEvent('theme-changed', { accent: 'var(--accent)' }))
+card?.dispatchEvent(
+    new CustomEvent('theme-changed', { detail: { accent: 'var(--accent)' }, bubbles: true, composed: true }),
+)
 ```
 
 → See [events guide](./events.md) for a full breakdown of shadow DOM event boundaries.
@@ -337,7 +341,7 @@ A complete `<user-card>` component with attributes, shadow DOM, events, and life
 
 ```js
 // user-card.js
-import { attr2prop, customEvent, defineComponent, fetchStyle, fetchTemplate, JJHE } from 'jj'
+import { attr2prop, defineComponent, fetchStyle, fetchTemplate, JJHE } from 'jj'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./user-card.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./user-card.css'))
@@ -397,7 +401,9 @@ export class UserCard extends HTMLElement {
     }
 
     #onContactClick = () => {
-        this.dispatchEvent(customEvent('user-contact', { name: this.#name }))
+        this.dispatchEvent(
+            new CustomEvent('user-contact', { detail: { name: this.#name }, bubbles: true, composed: true }),
+        )
     }
 }
 ```

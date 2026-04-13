@@ -100,7 +100,7 @@ The standard pattern for components to notify their parent is a composed custom 
 
 ```js
 // Inside a component
-this.dispatchEvent(customEvent('item-selected', { id: this.#id }))
+this.dispatchEvent(new CustomEvent('item-selected', { detail: { id: this.#id }, bubbles: true, composed: true }))
 
 // In the parent
 doc.find('item-list', true).on('item-selected', (event) => {
@@ -108,7 +108,7 @@ doc.find('item-list', true).on('item-selected', (event) => {
 })
 ```
 
-JJ's `customEvent()` defaults to `bubbles: true, composed: true` — the event rises through shadow boundaries and bubbles to the document.
+Set `bubbles: true, composed: true` on `CustomEvent` when events should rise through shadow boundaries and bubble to the document.
 
 ### Parent → Child: direct method call or property set
 
@@ -164,7 +164,7 @@ class ComponentA extends HTMLElement {
 
 ```js
 // Emit from anywhere
-document.dispatchEvent(customEvent('filter-changed', { query: 'hello' }))
+document.dispatchEvent(new CustomEvent('filter-changed', { detail: { query: 'hello' }, bubbles: true, composed: true }))
 
 // Listen in any component
 connectedCallback() {

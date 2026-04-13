@@ -139,11 +139,11 @@ Always query from `this.#root`, never from `document`. Querying `document` would
 
 Native UI events (`click`, `input`, `change`, `keydown`, `pointermove`, etc.) are composed by default. They bubble out of the shadow root and are **retargeted** to the host element when observed from outside — the listener sees `event.target === myCard`, not the internal button.
 
-Custom events created with the bare `CustomEvent` constructor default to `composed: false` and stop at the shadow boundary. JJ's `customEvent()` factory sets `composed: true` by default, so events dispatched with it will cross the boundary:
+Custom events created with the bare `CustomEvent` constructor default to `composed: false` and stop at the shadow boundary. Set `composed: true` explicitly when the event should cross the boundary:
 
 ```js
 // Escapes the shadow root — listeners on the host or its ancestors will see it
-this.dispatchEvent(customEvent('card-action', { id: this.#id }))
+this.dispatchEvent(new CustomEvent('card-action', { detail: { id: this.#id }, bubbles: true, composed: true }))
 
 // Or fluently from the host wrapper:
 JJHE.from(this).triggerCustomEvent('card-action', { id: this.#id })
@@ -187,7 +187,9 @@ External code dispatches on the host directly:
 
 ```js
 const card = document.querySelector('my-card')
-card?.dispatchEvent(customEvent('theme-changed', { accent: 'var(--color-accent)' }))
+card?.dispatchEvent(
+    new CustomEvent('theme-changed', { detail: { accent: 'var(--color-accent)' }, bubbles: true, composed: true }),
+)
 ```
 
 For **global broadcasts** (not targeting a specific component instance), listen on `document` instead, and clean up in `disconnectedCallback` the same way.
@@ -294,7 +296,7 @@ A `<user-card>` component with attributes, shadow DOM, named slots, events, and 
 
 ```js
 // user-card.js
-import { attr2prop, customEvent, defineComponent, fetchStyle, fetchTemplate, JJHE } from 'jj'
+import { attr2prop, defineComponent, fetchStyle, fetchTemplate, JJHE } from 'jj'
 
 const templatePromise = fetchTemplate(import.meta.resolve('./user-card.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./user-card.css'))
@@ -353,8 +355,10 @@ export class UserCard extends HTMLElement {
     }
 
     #onActionClick = () => {
-        // composed: true (JJ default) — escapes shadow boundary to parent listeners
-        this.dispatchEvent(customEvent('user-contact', { name: this.#name }))
+        // composed: true — escapes shadow boundary to parent listeners
+        this.dispatchEvent(
+            new CustomEvent('user-contact', { detail: { name: this.#name }, bubbles: true, composed: true }),
+        )
     }
 }
 ```

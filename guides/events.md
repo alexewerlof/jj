@@ -219,7 +219,7 @@ These three standard methods work the same in shadow DOM as in any other DOM con
     - You generally do not need `composed: true` just because it is a custom element.
 - **Need to notify outside listeners?**
     - Native DOM: use `new CustomEvent(..., { bubbles: true, composed: true })`.
-    - JJ: use `customEvent(name, detail)` or `triggerCustomEvent(name, detail)`.
+    - JJ: use `triggerCustomEvent(name, detail)`.
 - **Need to listen inside shadow from outside?**
     - Listen on the host and forward, or expose a method.
 - **Why is `event.target` the host?**
@@ -227,37 +227,27 @@ These three standard methods work the same in shadow DOM as in any other DOM con
 
 ---
 
-## JJ helper defaults
+## JJ event defaults
 
-JJ provides a `customEvent()` helper that defaults to `bubbles: true` and `composed: true`.
+JJ wrappers provide `triggerCustomEvent()` with defaults `bubbles: true` and `composed: true`.
 
 That differs from the native `CustomEvent` constructor, which defaults both to `false`.
-JJ picks the more ergonomic default for component-to-parent communication because that is the most common case in this library's custom element examples.
 
-### Example: JJ helper with default cross-boundary behavior
+### Example: JJ wrapper with default cross-boundary behavior
 
 ```js
-import { customEvent } from 'jj'
+import { JJHE } from 'jj'
 
-element.dispatchEvent(
-    customEvent('todo-toggle', {
-        id: '123',
-        done: true,
-    }),
-)
+JJHE.from(element).triggerCustomEvent('todo-toggle', {
+    id: '123',
+    done: true,
+})
 ```
 
-### Example: JJ helper for a local-only event
+### Example: local-only event
 
 ```js
-import { customEvent } from 'jj'
-
-element.dispatchEvent(
-    customEvent('panel-ready', undefined, {
-        bubbles: false,
-        composed: false,
-    }),
-)
+element.dispatchEvent(new CustomEvent('panel-ready', { bubbles: false, composed: false }))
 ```
 
 ---
@@ -267,10 +257,10 @@ element.dispatchEvent(
 Even with jj, it’s still the same DOM rules.
 
 ```js
-import { customEvent } from 'jj'
-
 // Inside a custom element class
-this.dispatchEvent(customEvent('todo-toggle', { id: this.itemId, done: true }))
+this.dispatchEvent(
+    new CustomEvent('todo-toggle', { detail: { id: this.itemId, done: true }, bubbles: true, composed: true }),
+)
 ```
 
 If you prefer jj wrappers, you can trigger on the host wrapper instead:
