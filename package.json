@@ -1,6 +1,6 @@
 {
     "name": "jj",
-    "version": "3.0.0-rc.3",
+    "version": "3.0.0-rc.4",
     "description": "A minimal DOM manipulation library with web components",
     "keywords": [
         "javascript",
