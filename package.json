@@ -34,14 +34,14 @@
         "fmt": "prettier --write .",
         "lint": "eslint",
         "typecheck": "tsc --noEmit",
-        "test": "npm run typecheck && node --import tsx --test",
-        "test:watch": "npm run typecheck && node --import tsx --test --watch",
-        "test:coverage": "npm run typecheck && node --import tsx --test --experimental-test-coverage",
+        "test": "node --import tsx --test",
+        "test:watch": "node --import tsx --test --watch",
+        "test:coverage": "node --import tsx --test --experimental-test-coverage",
         "doc": "typedoc src/index.ts",
         "prebuild": "rm -rf lib doc",
         "build": "tsup --dts && npm run doc",
         "get-bundle-size": "gzip -9 -c lib/bundle.min.js | wc -c | numfmt --to=iec-i --suffix=B",
-        "preversion": "npm run fmt && npm t",
+        "preversion": "npm run typecheck && npm run fmt && npm test",
         "prepublishOnly": "npm run build"
     },
     "repository": {
