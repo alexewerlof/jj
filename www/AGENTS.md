@@ -6,7 +6,9 @@
 # Task Docs
 
 - For platform-oriented documentation strategy, reference `../guides/philosophy.md` and `../guides/architecture.md`.
-- For AI task-specific guidance, reference `../skills/SKILL.md`.
+- For AI task-specific guidance, reference `../skills/SKILL.md`. All code in this folder **must comply with that skill**, paying particular attention to:
+    - The **Naming Conventions** section: prefix every JJ wrapper variable with `jj` (e.g. `jjDoc`, `jjFruits`, `#jjHost`, `#jjShadow`); do not use the prefix for plain data, native DOM values, or promises.
+    - The **Translation Checklist**: use `JJHE.tree` / `h` for multi-node subtrees, wrapper-based queries, and targeted child APIs instead of native DOM escape hatches.
 
 # Serving
 

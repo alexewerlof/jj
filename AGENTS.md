@@ -60,7 +60,7 @@ For task-focused guidance, load `skills/SKILL.md` — it is the main JJ skill wi
 
 ### Element Creation
 
-Use factory methods — `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR.from()`, `JJDF.create()`, `JJHE.tree()`, `JJSE.tree()`, `JJME.tree()`. Never `new JJHE(...)` or bare `document.createElement`. Factory methods infer the correct element subtype.
+Use factory methods — `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR.from()`, `JJDF.create()`, `JJHE.tree()`, `JJSE.tree()`, `JJME.tree()`. Avoid using the constructors (`new JJHE(...)`) or bare `document.createElement`. Factory methods infer the correct element subtype.
 
 ### Security
 

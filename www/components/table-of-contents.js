@@ -47,7 +47,7 @@ export class TableOfContents extends HTMLElement {
 
     static observedAttributes = ['toc-tree']
 
-    #root
+    #jjHost
     #tocTree = []
 
     get tocTree() {
@@ -61,7 +61,7 @@ export class TableOfContents extends HTMLElement {
 
     constructor() {
         super()
-        this.#root = JJHE.from(this)
+        this.#jjHost = JJHE.from(this)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -74,9 +74,9 @@ export class TableOfContents extends HTMLElement {
 
     #renderToc() {
         try {
-            this.#root.setChild(createNav(this.#tocTree))
+            this.#jjHost.setChild(createNav(this.#tocTree))
         } catch (cause) {
-            this.#root.setChild(String(cause))
+            this.#jjHost.setChild(String(cause))
             throw new Error(`Failed to render table of contents`, { cause })
         }
     }

@@ -1,7 +1,7 @@
 import { JJD, JJHE } from '../../../lib/bundle.js'
 import { KanbanCard } from './components/kanban-card.js'
 
-const doc = JJD.from(document)
+const jjDoc = JJD.from(document)
 
 // Register Custom Element
 await KanbanCard.defined
@@ -17,19 +17,19 @@ let searchQuery = ''
 
 // DOM Elements
 const columns = {
-    todo: doc.find('#col-todo'),
-    progress: doc.find('#col-progress'),
-    done: doc.find('#col-done'),
+    todo: jjDoc.find('#col-todo'),
+    progress: jjDoc.find('#col-progress'),
+    done: jjDoc.find('#col-done'),
 }
 
 const counts = {
-    todo: doc.find('#count-todo'),
-    progress: doc.find('#count-progress'),
-    done: doc.find('#count-done'),
+    todo: jjDoc.find('#count-todo'),
+    progress: jjDoc.find('#count-progress'),
+    done: jjDoc.find('#count-done'),
 }
 
-const addTaskBtn = doc.find('#add-task-btn')
-const searchInput = doc.find('#search-input')
+const jjAddTaskBtn = jjDoc.find('#add-task-btn')
+const jjSearchInput = jjDoc.find('#search-input')
 
 // --- Rendering ---
 
@@ -41,16 +41,16 @@ function render() {
     const filteredTasks = tasks.filter((t) => t.text.toLowerCase().includes(searchQuery.toLowerCase()))
 
     filteredTasks.forEach((task) => {
-        const card = JJHE.create('kanban-card')
+        const jjCard = JJHE.create('kanban-card')
         // We can access the underlying component instance if we need to call methods directly
         // But here we rely on the component's API
-        card.ref.setData(task)
+        jjCard.ref.setData(task)
 
         // Setup Drag start on the wrapper
-        card.setAttr('draggable', 'true')
-        card.on('dragstart', (e) => handleDragStart(e, task.id))
+        jjCard.setAttr('draggable', 'true')
+        jjCard.on('dragstart', (e) => handleDragStart(e, task.id))
 
-        columns[task.status].addChild(card)
+        columns[task.status].addChild(jjCard)
     })
 
     // Update counts
@@ -81,23 +81,23 @@ function handleDragStart(e, id) {
 }
 
 // Setup Column Drop Zones
-Object.entries(columns).forEach(([status, col]) => {
+Object.entries(columns).forEach(([status, jjCol]) => {
     // Drag Over
-    col.on('dragover', (e) => {
+    jjCol.on('dragover', (e) => {
         e.preventDefault() // Allow drop
         e.dataTransfer.dropEffect = 'move'
-        col.addClass('drag-over')
+        jjCol.addClass('drag-over')
     })
 
     // Drag Leave
-    col.on('dragleave', () => {
-        col.rmClass('drag-over')
+    jjCol.on('dragleave', () => {
+        jjCol.rmClass('drag-over')
     })
 
     // Drop
-    col.on('drop', (e) => {
+    jjCol.on('drop', (e) => {
         e.preventDefault()
-        col.rmClass('drag-over')
+        jjCol.rmClass('drag-over')
 
         if (draggedTaskId) {
             updateTaskStatus(draggedTaskId, status)
@@ -105,7 +105,7 @@ Object.entries(columns).forEach(([status, col]) => {
         }
 
         // Remove dragging class from all cards
-        doc.findAll('kanban-card').forEach((c) => c.rmClass('dragging'))
+        jjDoc.findAll('kanban-card').forEach((jjC) => jjC.rmClass('dragging'))
     })
 })
 
@@ -141,15 +141,15 @@ function deleteTask(id) {
 
 // --- Event Listeners ---
 
-addTaskBtn.on('click', addTask)
+jjAddTaskBtn.on('click', addTask)
 
-searchInput.on('input', (e) => {
+jjSearchInput.on('input', (e) => {
     searchQuery = e.target.value
     render()
 })
 
 // Listen for custom delete event from cards (event delegation or global listener)
-doc.on('card-delete', (e) => {
+jjDoc.on('card-delete', (e) => {
     const { id } = e.detail
     if (confirm('Delete this task?')) {
         deleteTask(id)

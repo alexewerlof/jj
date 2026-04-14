@@ -1,26 +1,26 @@
 import { RSVPEngine } from './RSVPEngine.js'
 import { JJD } from '../../../lib/bundle.js'
 
-const doc = JJD.from(document)
+const jjDoc = JJD.from(document)
 
-const inputTextArea = doc.find('#input-text', true)
-const leftSpan = doc.find('#left-side', true)
-const pivotSpan = doc.find('#pivot-char', true)
-const rightSpan = doc.find('#right-side', true)
-const renderProgress = doc.find('#render-progress', true)
-const startButton = doc.find('#start-button', true).on('click', () => {
+const jjInputTextArea = jjDoc.find('#input-text', true)
+const jjLeftSpan = jjDoc.find('#left-side', true)
+const jjPivotSpan = jjDoc.find('#pivot-char', true)
+const jjRightSpan = jjDoc.find('#right-side', true)
+const jjRenderProgress = jjDoc.find('#render-progress', true)
+const jjStartButton = jjDoc.find('#start-button', true).on('click', () => {
     startRendering()
-    startButton.setAttr('hidden', '')
-    stopButton.rmAttr('hidden').ref.focus()
+    jjStartButton.setAttr('hidden', '')
+    jjStopButton.rmAttr('hidden').ref.focus()
 })
 
-const stopButton = doc.find('#stop-button', true).on('click', () => {
+const jjStopButton = jjDoc.find('#stop-button', true).on('click', () => {
     if (currentAbortController) {
         currentAbortController.abort()
         currentAbortController = null
     }
-    stopButton.setAttr('hidden', '')
-    startButton.rmAttr('hidden').ref.focus()
+    jjStopButton.setAttr('hidden', '')
+    jjStartButton.rmAttr('hidden').ref.focus()
 })
 
 let currentAbortController = null
@@ -38,13 +38,13 @@ async function fetchText(filePath) {
 }
 
 const defaultText = await fetchText('./default.txt')
-inputTextArea.setText(defaultText.replaceAll('\n', ' '))
+jjInputTextArea.setText(defaultText.replaceAll('\n', ' '))
 
-inputTextArea.on('keydown', (event) => {
+jjInputTextArea.on('keydown', (event) => {
     if (event.key === 'Enter') {
         event.preventDefault()
-        stopButton.click() // Stop any ongoing rendering
-        startButton.click() // Start new rendering
+        jjStopButton.click() // Stop any ongoing rendering
+        jjStartButton.click() // Start new rendering
     }
 })
 
@@ -58,8 +58,8 @@ async function startRendering() {
         const controller = new AbortController()
         currentAbortController = controller
         const engine = new RSVPEngine(300) // 300 WPM
-        const queue = engine.processText(inputTextArea.getValue())
-        renderProgress.setAttrs({
+        const queue = engine.processText(jjInputTextArea.getValue())
+        jjRenderProgress.setAttrs({
             min: 0,
             max: queue.length,
             value: 0,
@@ -70,12 +70,12 @@ async function startRendering() {
             if (controller.signal.aborted) {
                 break
             }
-            renderProgress.setValue(i + 1)
+            jjRenderProgress.setValue(i + 1)
             const item = queue[i]
             const { leftPart, pivotChar, rightPart, delay } = item
-            leftSpan.setText(leftPart)
-            pivotSpan.setText(pivotChar)
-            rightSpan.setText(rightPart)
+            jjLeftSpan.setText(leftPart)
+            jjPivotSpan.setText(pivotChar)
+            jjRightSpan.setText(rightPart)
             await sleep(delay)
         }
     } catch (error) {

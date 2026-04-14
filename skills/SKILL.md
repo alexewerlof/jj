@@ -7,6 +7,41 @@ description: Expert guide for the JJ DOM manipulation library. Load this skill w
 
 JJ is a minimal, zero-dependency TypeScript library that wraps browser DOM interfaces in fluent, type-safe classes. It complements native browser APIs rather than replacing them.
 
+## Translation Checklist
+
+When converting native DOM code, framework code, or vague UI requests into JJ, default to this order of thought:
+
+- Start from wrappers, not native nodes: `JJD.from(document)`, `JJHE.create()`, `JJHE.tree()`, `JJET.from(window)`, `getShadow(true)`.
+- Keep values wrapped and chain operations; use `.ref` only for native APIs JJ does not provide.
+- Use `JJHE.tree` with a local `h` alias for multi-node or nested UI.
+- Use `setChild()`/`setChildren()` to replace content and `addChildMap()`/`setChildMap()` for array rendering.
+- Query with `find()`/`findAll()`/`closest()` instead of native `querySelector*` when JJ already covers the case.
+- Use `setText()` for user content and treat `setHTML(..., true)` as a trusted-content escape hatch.
+- For repeated child interactions, prefer one delegated listener on a stable parent over one listener per child.
+- Choose shadow DOM for self-contained widgets and light DOM for page-level content that should inherit global styles.
+- For components, keep fetched templates/styles at module scope, attach shadow root in the constructor, initialize once, then update targeted nodes instead of rebuilding the whole tree.
+- Prefer `'open'` shadow roots unless the user explicitly needs `'closed'`; open mode is easier to test and debug.
+- Use plain JS state plus targeted wrapper updates by default; do not invent a virtual DOM style rerender loop unless the user explicitly wants one.
+
+## Naming Conventions
+
+In this repository, prefix variables that hold JJ wrapper instances with `jj`.
+
+```typescript
+const jjDoc = JJD.from(document)
+const jjFruits = jjDoc.find('#fruits', true)
+const jjSubmitBtn = jjDoc.find('button#submit', true)
+const jjDialog = JJHE.create('dialog')
+```
+
+Naming defaults:
+
+- Use `jj*` for JJ wrappers, including private fields: `#jjHost` for `JJHE.from(this)` (the wrapped host element) and `#jjShadow` for `this.#jjHost.getShadow()` (the wrapped shadow root).
+- Do not use `jj*` for plain data like `fruits`, `title`, `isOpen`, or `userName`.
+- Do not use `jj*` for native DOM values; prefer names like `formEl`, `shadowRoot`, `inputRef`, or `styleSheet`.
+- For promises, use normal names with `Promise`, like `templatePromise` or `stylePromise`.
+- `h` is the main intentional exception: use it as the local alias for `JJHE.tree`.
+
 ## Wrapper Hierarchy
 
 Each JJ wrapper exposes the native node via `.ref`.
@@ -54,6 +89,37 @@ const btn = JJHE.create('button')
     .on('click', handleSave)
 ```
 
+## Tutorial Defaults — Prefer JJ Idioms Over Native DOM Steps
+
+When translating browser DOM code into JJ, do not mechanically keep native patterns like repeated `appendChild`, `querySelector`, or unwrap/re-wrap flows. Prefer the JJ equivalent that keeps work inside wrappers.
+
+```typescript
+// ✅ preferred: build a subtree once
+const h = JJHE.tree
+
+latestChatResponse.addChild(
+    h('section', null, h('h2', null, 'User'), h('div', null, userPrompt), h('h2', null, 'Assistant'), assistantMessage),
+)
+
+// ✅ also fine for flat mapped children
+const list = JJHE.create('ul').addChildMap(fruits, (fruit) => h('li', null, fruit))
+
+// ❌ avoid native-style wrapper escape hatches when JJ already covers it
+latestChatResponse.ref.appendChild(JJHE.create('h2').setText('User').ref)
+latestChatResponse.ref.appendChild(JJHE.create('div').setText(userPrompt).ref)
+latestChatResponse.ref.appendChild(JJHE.create('h2').setText('Assistant').ref)
+latestChatResponse.ref.appendChild(assistantMessage.ref)
+```
+
+Default heuristics from the tutorial:
+
+- Use `JJHE.tree` with a local `h` alias when creating multiple siblings or any nested subtree.
+- Use `create()` for one-off elements; switch to `tree()` as soon as structure becomes non-trivial.
+- Prefer `setChild()` or `setChildren()` when replacing content, not `.empty().addChild()`.
+- Prefer `addChildMap()` or `setChildMap()` when rendering from arrays.
+- Keep values wrapped. Reach for `.ref` only for native APIs JJ does not expose.
+- Use JJ verb families consistently: `set*` replaces, `add*` appends, `pre*` prepends, `rm*` removes, `sw*` toggles.
+
 ## Document Queries
 
 Wrap `document` with `JJD.from(document)` before querying.
@@ -67,6 +133,16 @@ const items = doc.findAll('.item') // always an array
 // Inside a custom element's shadow root
 const btn = this.getShadow(true).find('#submit')
 ```
+
+Querying defaults from the tutorial:
+
+- Start from a wrapped container like `JJD.from(document)` or a `JJSR` shadow root.
+- Prefer `find(selector, true)` when absence is a bug; it fails earlier and more clearly than a later null access.
+- Prefer narrower selectors that encode expectations, like `button#submit`, instead of broad lookups plus manual type checks.
+- Use `findAll()` for arrays of wrappers and keep operating on wrappers instead of unwrapping to native elements.
+- Do not use `.ref.querySelector(...)` or `.ref.querySelectorAll(...)` when `find()` or `findAll()` already covers the case.
+- Use `.closest()` on wrappers for event delegation and ancestor lookup.
+- Use `JJHE.fromId('submit-btn')` for direct ID lookup when you already know the target is an HTML element.
 
 ## Attributes, Classes, Styles
 
@@ -153,9 +229,40 @@ JJHE.from(this).triggerCustomEvent('todo-toggle', { id: 1, done: true })
 new CustomEvent('panel-ready', { bubbles: false, composed: false })
 ```
 
+Event defaults from the tutorial:
+
+- Prefer `.on()` and `.off()` on wrappers over native `addEventListener`/`removeEventListener` when already working with JJ values.
+- Prefer `.triggerEvent()` and `.triggerCustomEvent()` for common JJ event dispatch; they default to `bubbles: true` and `composed: true`.
+- Use `triggerCustomEvent(name, detail)` for component-to-parent communication instead of ad hoc callback plumbing.
+- Use `bubbles: false` and `composed: false` only for intentionally internal events.
+- Keep event code close to the wrapper it affects so later DOM updates stay targeted and local.
+
+Guide defaults for event-heavy UI:
+
+- Prefer event delegation on a common parent for repeated child actions instead of binding one listener per item.
+- Use `.closest()` to recover the intended delegated target from `event.target`.
+- When you need JJ's wrapper-bound `this` inside a listener, use `function` syntax, not an arrow.
+- Native UI events like `click`, `input`, and `change` already cross shadow boundaries; custom events do not unless `composed: true`.
+
+```typescript
+list.on('click', function (event) {
+    const item = JJHE.from(event.target as Node).closest('[data-item-id]')
+    if (!item) return
+    this.addClass('handled')
+    item.addClass('active')
+})
+```
+
 ## Custom Elements — Complete Pattern
 
 Fetch template and style at **module scope** — loaded once, shared across all instances.
+
+Guide defaults for component shape:
+
+- Use shadow DOM for self-contained widgets and design-system components; use light DOM for sections that should inherit page styling and normal document flow.
+- Prefer `'open'` shadow mode unless stricter encapsulation is a hard requirement.
+- `attributeChangedCallback()` can run before `connectedCallback()` for parsed attributes, so setters and render paths must tolerate pre-mount state.
+- Use `disconnectedCallback()` only to clean up external side effects like document listeners, timers, observers, or subscriptions; do not tear down the shadow root just because the element was detached.
 
 ```typescript
 import { attr2prop, defineComponent, fetchStyle, fetchTemplate, JJHE } from 'jj'
@@ -219,6 +326,28 @@ await MyCard.defined
 await Promise.all([MyCard.defined, OtherCard.defined])
 ```
 
+Template defaults from the tutorial:
+
+- Prefer fetched `.html` templates for large static markup.
+- Prefer `<template>` elements for reusable DOM snippets already present in the page.
+- Prefer `JJHE.tree()` or `JJHE.create()` when you need live wrapper references for later updates.
+- Keep template promises at module scope; for lazy loading, initialize them inside `connectedCallback()` with an `if (!templatePromise)` guard.
+- Use one stable `#root` wrapper per component: `JJHE.from(this)` for light DOM or `JJHE.from(this).setShadow(...).getShadow(true)` for shadow DOM.
+- Initialize template content once, then update specific nodes with `find(...).setText(...)` or other targeted wrapper operations.
+
+Guide defaults for attributes and queries:
+
+- Always coerce attribute-backed values in setters because HTML attributes arrive as strings.
+- Query inside shadow DOM from the `JJSR` wrapper, never from `document`.
+- Use specific selectors like `button#submit` or `[data-role="title"]` so the selector carries intent.
+
+State defaults from the tutorial:
+
+- Prefer plain objects or classes for state and update the exact affected wrappers in event handlers or setters.
+- Prefer targeted updates like `value.setText(String(state.count))` over rebuilding an entire subtree for a small change.
+- Use getters/setters or small helper methods when they make state transitions clearer, not because JJ requires a framework-style abstraction.
+- Reach for external state libraries only when the application actually needs cross-cutting coordination beyond local JS state.
+
 `defineComponent()` returns `Promise<boolean>`:
 
 - `false` — newly defined by this call
@@ -260,6 +389,13 @@ el.addTemplate(await templatePromise) // clones before appending
 
 `addChild` / `preChild` / `setChild` and map variants ignore `null`/`undefined`; all other non-node values are coerced to Text nodes.
 
+Guide defaults for template and fragment usage:
+
+- `addTemplate()` and `setTemplate()` always clone the input before appending; reuse the same template value safely.
+- Prefer `setTemplate()` over `empty().addTemplate()` when replacing all content.
+- Prefer `addChildMap()` or `setChildMap()` over manually building a fragment when rendering arrays.
+- Use `JJDF.create()` when you need to assemble multiple sibling nodes before one insertion.
+
 ## Node Traversal
 
 ```typescript
@@ -298,6 +434,12 @@ document.adoptedStyleSheets = [sheet]
 // Load a DocumentFragment for addTemplate / setShadow
 const fragment = await fetchTemplate(import.meta.resolve('./dialog.html'))
 ```
+
+Guide defaults for browser-native loading hints:
+
+- Use native `<link>` hints built with `JJHE.tree` and appended to `head` for `preload`, `prefetch`, and `modulepreload`.
+- Keep the `as` value explicit for `preload` instead of inferring it from file extensions.
+- Use `preload` for current-page needs, `prefetch` for probable future navigation, and `modulepreload` for module graphs you want fetched early.
 
 ## String Casing
 

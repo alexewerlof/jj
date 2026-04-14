@@ -6,20 +6,20 @@ const templatePromise = fetchTemplate(import.meta.resolve('./service-availabilit
 export class ServiceAvailabilityIndicator extends HTMLElement {
     static defined = defineComponent('service-availability-indicator', ServiceAvailabilityIndicator)
 
-    #root
+    #jjHost
     #isMounted = false
     #service = null
     #days = 90
-    #serviceNameEl
-    #serviceStateEl
-    #summaryEl
-    #slotsEl
-    #axisStartEl
-    #axisValueEl
-    #axisEndEl
+    #jjServiceName
+    #jjServiceState
+    #jjSummary
+    #jjSlots
+    #jjAxisStart
+    #jjAxisValue
+    #jjAxisEnd
 
     async connectedCallback() {
-        this.#root = JJHE.from(this)
+        this.#jjHost = JJHE.from(this)
         await this.#mount()
         this.#updateDynamic()
     }
@@ -37,18 +37,18 @@ export class ServiceAvailabilityIndicator extends HTMLElement {
     }
 
     async #mount() {
-        if (this.#isMounted || !this.#root) {
+        if (this.#isMounted || !this.#jjHost) {
             return
         }
 
-        this.#root.setClass('status-row').setTemplate(await templatePromise)
-        this.#serviceNameEl = this.#root.find('.service-name', true)
-        this.#serviceStateEl = this.#root.find('.service-state', true)
-        this.#summaryEl = this.#root.find('.status-row__summary', true)
-        this.#slotsEl = this.#root.find('.status-row__slots', true)
-        this.#axisStartEl = this.#root.find('.status-row__axis-start', true)
-        this.#axisValueEl = this.#root.find('.status-row__axis-value', true)
-        this.#axisEndEl = this.#root.find('.status-row__axis-end', true)
+        this.#jjHost.setClass('status-row').setTemplate(await templatePromise)
+        this.#jjServiceName = this.#jjHost.find('.service-name', true)
+        this.#jjServiceState = this.#jjHost.find('.service-state', true)
+        this.#jjSummary = this.#jjHost.find('.status-row__summary', true)
+        this.#jjSlots = this.#jjHost.find('.status-row__slots', true)
+        this.#jjAxisStart = this.#jjHost.find('.status-row__axis-start', true)
+        this.#jjAxisValue = this.#jjHost.find('.status-row__axis-value', true)
+        this.#jjAxisEnd = this.#jjHost.find('.status-row__axis-end', true)
         this.#isMounted = true
     }
 
@@ -57,56 +57,56 @@ export class ServiceAvailabilityIndicator extends HTMLElement {
             return
         }
 
-        this.#serviceNameEl.setText(this.#service.name)
-        this.#serviceStateEl
+        this.#jjServiceName.setText(this.#service.name)
+        this.#jjServiceState
             .setClass('service-state')
             .addClass(this.#service.statusClass)
             .setText(this.#service.statusLabel)
-        this.#root.setStyles({
+        this.#jjHost.setStyles({
             '--daily-slot-count': String(this.#days),
             '--sls-period-count': String(this.#service.slsPeriods.length),
         })
-        this.#summaryEl.empty().addChildMap(this.#service.slsPeriods, (period) => this.#createSummarySlot(period))
-        this.#axisStartEl.setText(`${this.#days} days ago`)
-        this.#axisValueEl.setText(formatPeriodLabel(this.#service.periodAvg, this.#service.primarySli))
-        this.#axisEndEl.setText('Today')
-        this.#slotsEl.empty().addChildMap(this.#service.timeline, (day) => this.#createDaySlot(day))
+        this.#jjSummary.empty().addChildMap(this.#service.slsPeriods, (period) => this.#createSummarySlot(period))
+        this.#jjAxisStart.setText(`${this.#days} days ago`)
+        this.#jjAxisValue.setText(formatPeriodLabel(this.#service.periodAvg, this.#service.primarySli))
+        this.#jjAxisEnd.setText('Today')
+        this.#jjSlots.empty().addChildMap(this.#service.timeline, (day) => this.#createDaySlot(day))
     }
 
     #createDaySlot(day) {
         const slotClass = getSlotClass(day.hasData, day.primaryValue, this.#service.primarySli.slo)
-        const slot = JJHE.create('div').addClass('status-slot', `status-slot--${slotClass}`)
+        const jjSlot = JJHE.create('div').addClass('status-slot', `status-slot--${slotClass}`)
 
-        const tooltip = JJHE.create('div').addClass('status-slot__tooltip')
-        tooltip
+        const jjTooltip = JJHE.create('div').addClass('status-slot__tooltip')
+        jjTooltip
             .addChild(JJHE.create('div').addClass('tooltip-date').setText(formatDateShort(day.date)))
             .addChild(createTooltipBody(day))
 
-        slot.addChild(tooltip)
-        return slot
+        jjSlot.addChild(jjTooltip)
+        return jjSlot
     }
 
     #createSummarySlot(period) {
         const slotClass = getSlotClass(period.hasData, period.primaryValue, this.#service.primarySli.slo)
-        const slot = JJHE.create('div').addClass('status-slot', 'status-slot--summary', `status-slot--${slotClass}`)
+        const jjSlot = JJHE.create('div').addClass('status-slot', 'status-slot--summary', `status-slot--${slotClass}`)
 
-        slot.setAttr(
+        jjSlot.setAttr(
             'aria-label',
             `${formatPeriodRange(period.startDate, period.endDate)}: ${formatSummaryValue(period, this.#service.primarySli)}`,
         )
 
         if (period.primaryValue !== null) {
-            slot.addChild(
+            jjSlot.addChild(
                 JJHE.create('span')
                     .addClass('status-slot__label')
                     .setText(formatInlineValue(period, this.#service.primarySli)),
             )
         } else {
-            slot.addChild(JJHE.create('span').addClass('status-slot__label').setText('No data'))
+            jjSlot.addChild(JJHE.create('span').addClass('status-slot__label').setText('No data'))
         }
 
-        const tooltip = JJHE.create('div').addClass('status-slot__tooltip')
-        tooltip
+        const jjTooltip = JJHE.create('div').addClass('status-slot__tooltip')
+        jjTooltip
             .addChild(
                 JJHE.create('div')
                     .addClass('tooltip-date')
@@ -114,67 +114,69 @@ export class ServiceAvailabilityIndicator extends HTMLElement {
             )
             .addChild(createSummaryTooltipBody(period, this.#service.primarySli))
 
-        slot.addChild(tooltip)
-        return slot
+        jjSlot.addChild(jjTooltip)
+        return jjSlot
     }
 }
 
 function createTooltipBody(day) {
-    const container = JJHE.create('div').addClass('tooltip-copy')
+    const jjContainer = JJHE.create('div').addClass('tooltip-copy')
 
     if (!day.hasData) {
-        return container.addChild(JJHE.create('p').setText('No downtime recorded on this day.'))
+        return jjContainer.addChild(JJHE.create('p').setText('No downtime recorded on this day.'))
     }
 
     day.sliValues.forEach((sli) => {
         if (sli.value !== null) {
-            container.addChild(JJHE.create('p').setText(`${sli.metric}: ${formatSliValue(sli)}`))
+            jjContainer.addChild(JJHE.create('p').setText(`${sli.metric}: ${formatSliValue(sli)}`))
         }
     })
 
     day.events.forEach((event) => {
-        container.addChild(createTooltipEventLine(event.description, event.severity))
+        jjContainer.addChild(createTooltipEventLine(event.description, event.severity))
     })
 
-    return container
+    return jjContainer
 }
 
 function createSummaryTooltipBody(period, primarySli) {
-    const container = JJHE.create('div').addClass('tooltip-copy')
+    const jjContainer = JJHE.create('div').addClass('tooltip-copy')
 
     if (!period.hasData) {
-        return container.addChild(JJHE.create('p').setText('No service-level data recorded in this window.'))
+        return jjContainer.addChild(JJHE.create('p').setText('No service-level data recorded in this window.'))
     }
 
-    container.addChild(JJHE.create('p').setText(`${primarySli.metric} SLS: ${formatSummaryValue(period, primarySli)}`))
+    jjContainer.addChild(
+        JJHE.create('p').setText(`${primarySli.metric} SLS: ${formatSummaryValue(period, primarySli)}`),
+    )
 
     period.sliValues.forEach((sli) => {
         if (sli.metric !== primarySli.metric && sli.value !== null) {
-            container.addChild(JJHE.create('p').setText(`${sli.metric} avg: ${formatSliValue(sli)}`))
+            jjContainer.addChild(JJHE.create('p').setText(`${sli.metric} avg: ${formatSliValue(sli)}`))
         }
     })
 
-    container.addChild(
+    jjContainer.addChild(
         JJHE.create('p').setText(
             `${period.observedDays}/${period.totalDays} days reported · ${period.breachDays} breach days · ${period.incidents.length} incidents`,
         ),
     )
 
     period.incidents.slice(0, 2).forEach((incident) => {
-        container.addChild(
+        jjContainer.addChild(
             createTooltipEventLine(`${formatDateShort(incident.date)}: ${incident.description}`, incident.severity),
         )
     })
 
     if (period.incidents.length > 2) {
-        container.addChild(
+        jjContainer.addChild(
             JJHE.create('p')
                 .addClass('tooltip-event')
                 .setText(`+ ${period.incidents.length - 2} more incidents`),
         )
     }
 
-    return container
+    return jjContainer
 }
 
 function formatInlineValue(period, primarySli) {

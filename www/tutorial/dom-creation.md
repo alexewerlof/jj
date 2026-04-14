@@ -11,10 +11,10 @@ In JJ, it looks like:
 
 ```js
 import { JJHE } from 'jj'
-const myDivWrapper = JJHE.create('div').setText('hello world')
+const jjMyDiv = JJHE.create('div').setText('hello world')
 ```
 
-Why call it `myDivWrapper`? Because JJ wraps the native DOM element (accessible via `myDivWrapper.ref`).
+Why the `jj` prefix? It signals that `jjMyDiv` is a JJ wrapper — not a plain DOM element. Access the raw element anytime via `jjMyDiv.ref`.
 
 `JJHE` stands for `JJ`, `HTMLElement`. There are a couple more:
 
@@ -50,7 +50,7 @@ In JJ, you'd write that like this:
 
 ```js
 import { JJHE } from 'jj'
-const wrappedUl = JJHE.create('ul').addChildMap(fruits, (fruit) => JJHE.create('li').setText(fruit))
+const jjUl = JJHE.create('ul').addChildMap(fruits, (fruit) => JJHE.create('li').setText(fruit))
 ```
 
 A bit shorter!
@@ -60,7 +60,7 @@ An even shorter way is to use the hyperscript pattern which you may recognize fr
 ```js
 import { JJHE } from 'jj'
 const h = JJHE.tree
-const wrappedUl = h('ul', null, ...fruits.map((fruit) => h('li', null, fruit)))
+const jjUl = h('ul', null, ...fruits.map((fruit) => h('li', null, fruit)))
 ```
 
 The familiar signature of the hyperscript function is:
@@ -88,8 +88,8 @@ As mentioned JJ doesn't monkey patch or modify the native DOM API. You've alread
 
 ```js
 import { JJD } from 'jj'
-const doc = JJD.from(document)
-const myDivWrapper = doc.find('#my-div', true)
+const jjDoc = JJD.from(document)
+const jjMyDiv = jjDoc.find('#my-div', true)
 ```
 
 Passing `true` to `find()` means that we know that `#my-div` exists and it should throw if it's not found. That way we can catch programmatic errors and get a clear actionable error that accelerates debugging (whether manually or using AI agents).
@@ -104,9 +104,9 @@ import { JJHE } from 'jj'
 // Make sure it's defined and registered before trying to instantiate it
 await MyCard.defined
 // Create an instance
-const card = JJHE.create('my-card')
+const jjCard = JJHE.create('my-card')
 // Set properties or call methods on the wrapper
-card.ref.title = 'My Card Title'
+jjCard.ref.title = 'My Card Title'
 ```
 
 ## Next up: DOM Manipulation

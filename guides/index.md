@@ -5,6 +5,7 @@ These guides are for moderate to advanced developers and AI agents who want JJ f
 ## Core
 
 - [Philosophy](./philosophy.md)
+- [Naming Conventions](./naming-conventions.md)
 - [Fluent API](./fluent-api.md)
 - [DOM Manipulation](./dom-manipulation.md)
 - [Query](./query.md)

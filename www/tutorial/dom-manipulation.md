@@ -47,7 +47,7 @@ OK, that's a lot of verbs. Let's see an example where we use many of them togeth
 
 ```js
 import { JJHE } from 'jj'
-const myDiv = JJHE.create('div')
+const jjMyDiv = JJHE.create('div')
     .setText('Hello world')
     .setAttr('title', 'My div')
     .addClass('container')
@@ -58,19 +58,19 @@ const myDiv = JJHE.create('div')
 Notice the chaining. In the next page we will discuss event handling but for now, let's appreciate the power of the `run()` function which allows more sophisticated DOM manipulations:
 
 ```js
-myDiv.run((wrappedDiv) => {
-    if (wrappedDiv.getAttr('title')?.startsWith('My')) {
-        wrappedDiv.rmClass('container')
+jjMyDiv.run((jjDiv) => {
+    if (jjDiv.getAttr('title')?.startsWith('My')) {
+        jjDiv.rmClass('container')
     }
-    switch (wrappedDiv.getDataAttr('certainty')) {
+    switch (jjDiv.getDataAttr('certainty')) {
         case '0':
-            wrappedDiv.setStyle('background', 'red')
+            jjDiv.setStyle('background', 'red')
             break
         case '1':
-            wrappedDiv.setStyle('background', 'green')
+            jjDiv.setStyle('background', 'green')
             break
         default:
-            wrappedDiv.setStyle('background', 'yellow')
+            jjDiv.setStyle('background', 'yellow')
     }
 })
 ```

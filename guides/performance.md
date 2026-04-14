@@ -20,9 +20,10 @@ Use `JJHE.tree` (often aliased as `h`) to create link tags, then append to `docu
 import { JJHE } from 'jj'
 
 const h = JJHE.tree
+const doc = JJD.from(document)
 
 // Current-page critical stylesheet
-document.head.addChild(
+doc.find('head', true).addChild(
     h('link', {
         href: '/components/my-component.css',
         rel: 'preload',
@@ -31,7 +32,7 @@ document.head.addChild(
 )
 
 // Future-navigation stylesheet
-document.head.addChild(
+doc.find('head', true).addChild(
     h('link', {
         href: '/next-page.css',
         rel: 'prefetch',
@@ -40,7 +41,7 @@ document.head.addChild(
 )
 
 // Early module fetch
-document.head.addChild(
+doc.find('head', true).addChild(
     h('link', {
         href: '/app/entry.js',
         rel: 'modulepreload',
@@ -88,7 +89,7 @@ import { JJD, JJHE } from 'jj'
 
 const doc = JJD.from(document)
 const contents = ['New York', 'Stockholm', 'Tokyo']
-const parent = doc.find('#parent-ul')
+const parent = doc.find('#parent-ul', true)
 
 for (const city of contents) {
     parent.append(JJHE.from('li').setText(city))
@@ -102,14 +103,25 @@ import { JJD, JJDF, JJHE } from 'jj'
 
 const doc = JJD.from(document)
 const contents = ['New York', 'Stockholm', 'Tokyo']
-const parent = doc.find('#parent-ul')
+const parent = doc.find('#parent-ul', true)
 
 const docFrag = new JJDF()
 for (const city of contents) {
     docFrag.append(JJHE.from('li').setText(city))
 }
 
-parent.setChil(docFrag)
+parent.setChild(docFrag)
+```
+
+If we're creating the elements from an array, there's even a shorter syntax for it:
+
+```ts
+import { JJD, JJHE } from 'jj'
+
+const doc = JJD.from(document)
+const contents = ['New York', 'Stockholm', 'Tokyo']
+const parent = doc.find('#parent-ul', true)
+parent.setChildMap(contents, (city) => JJHE.from('li').setText(city))
 ```
 
 ## Attaching event listeners

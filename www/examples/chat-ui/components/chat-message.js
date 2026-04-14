@@ -9,7 +9,7 @@ export class ChatMessage extends HTMLElement {
     static observedAttributes = ['role', 'content']
     static defined = defineComponent('chat-message', ChatMessage)
 
-    #root
+    #jjHost
     #role = VALID_ROLES[0]
     #content = ''
 
@@ -30,7 +30,7 @@ export class ChatMessage extends HTMLElement {
     }
 
     #renderRole() {
-        this.#root?.shadow.find('#role').setText(this.role)
+        this.#jjHost?.shadow.find('#role').setText(this.role)
     }
 
     get content() {
@@ -43,11 +43,11 @@ export class ChatMessage extends HTMLElement {
     }
 
     #renderContent() {
-        this.#root?.shadow.find('#content').setText(this.content)
+        this.#jjHost?.shadow.find('#content').setText(this.content)
     }
 
     async connectedCallback() {
-        this.#root = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        this.#jjHost = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
         this.#render()
     }
 

@@ -5,12 +5,12 @@ import { TableOfContents } from '../components/table-of-contents.js'
 await TableOfContents.defined
 await RenderMarkdown.defined
 
-const doc = JJD.from(document)
-const win = JJET.from(window)
-const contentRenderer = doc.find('#content-renderer', true)
-const toc = doc.find('#toc', true)
+const jjDoc = JJD.from(document)
+const jjWin = JJET.from(window)
+const jjContentRenderer = jjDoc.find('#content-renderer', true)
+const jjToc = jjDoc.find('#toc', true)
 
-toc.ref.tocTree = [
+jjToc.ref.tocTree = [
     {
         Start: putFileInUrl('index.md'),
         Foundations: {
@@ -55,10 +55,10 @@ async function fetchFile(path) {
 }
 
 async function renderFileContent(file) {
-    contentRenderer.ref.content = await fetchFile(file)
+    jjContentRenderer.ref.content = await fetchFile(file)
 }
 
-toc.on('click', async (event) => {
+jjToc.on('click', async (event) => {
     const target = event.target
     try {
         if (!event.ctrlKey && target.matches('a')) {
@@ -82,7 +82,7 @@ if (initialFile) {
     await renderFileContent(initialFile)
 }
 
-win.on('popstate', async () => {
+jjWin.on('popstate', async () => {
     try {
         const file = getFileFromUrl(window.location.href)
         if (file) {

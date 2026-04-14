@@ -7,8 +7,8 @@ export class SimpleCounter extends HTMLElement {
     static defined = defineComponent('simple-counter', SimpleCounter)
     static observedAttributes = ['count']
 
-    #host
-    #root = null
+    #jjHost
+    #jjShadow = null
     #isInitialized = false
     // State
     #count = 0
@@ -29,7 +29,7 @@ export class SimpleCounter extends HTMLElement {
             this.#count = value
             console.log(`Count changed from ${oldCount} to ${value}`)
             this.render()
-            this.#host.triggerCustomEvent('count-changed', { detail: { oldCount, newCount: value } })
+            this.#jjHost.triggerCustomEvent('count-changed', { detail: { oldCount, newCount: value } })
         }
     }
 
@@ -43,16 +43,16 @@ export class SimpleCounter extends HTMLElement {
 
     constructor() {
         super()
-        this.#host = JJHE.from(this).setShadow('open')
-        this.#root = this.#host.getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     async connectedCallback() {
         if (!this.#isInitialized) {
-            this.#root.init(await templatePromise, await stylePromise)
+            this.#jjShadow.init(await templatePromise, await stylePromise)
             // Attach event listeners to buttons
-            this.#root.find('#inc', true).on('click', () => this.#update(1))
-            this.#root.find('#dec', true).on('click', () => this.#update(-1))
+            this.#jjShadow.find('#inc', true).on('click', () => this.#update(1))
+            this.#jjShadow.find('#dec', true).on('click', () => this.#update(-1))
             this.#isInitialized = true
         }
         this.render()
@@ -60,7 +60,7 @@ export class SimpleCounter extends HTMLElement {
 
     render() {
         if (!this.#isInitialized) return
-        // Access elements inside Shadow DOM via this.#root
-        this.#root.find('#count', true).setText(String(this.#count))
+        // Access elements inside Shadow DOM via this.#jjShadow
+        this.#jjShadow.find('#count', true).setText(String(this.#count))
     }
 }

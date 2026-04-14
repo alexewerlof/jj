@@ -2,18 +2,18 @@ import { JJD, JJHE } from '../../../lib/bundle.js'
 import { TodoItem } from './components/todo-item.js'
 import { TodoList } from './components/todo-list.js'
 
-const doc = JJD.from(document)
+const jjDoc = JJD.from(document)
 
 await Promise.all([TodoItem.defined, TodoList.defined])
 
-const form = doc.find('#todo-form', true)
-const input = doc.find('#todo-input', true)
-const filters = doc.find('#filters', true)
-const clearButton = doc.find('#clear-completed', true)
-const list = doc.find('#todo-list', true)
-const emptyState = doc.find('#empty-state', true)
-const countLabel = doc.find('#todo-count', true)
-const progress = doc.find('#todo-progress', true)
+const jjForm = jjDoc.find('#todo-form', true)
+const jjInput = jjDoc.find('#todo-input', true)
+const jjFilters = jjDoc.find('#filters', true)
+const jjClearButton = jjDoc.find('#clear-completed', true)
+const jjList = jjDoc.find('#todo-list', true)
+const jjEmptyState = jjDoc.find('#empty-state', true)
+const jjCountLabel = jjDoc.find('#todo-count', true)
+const jjProgress = jjDoc.find('#todo-progress', true)
 
 let todos = [
     createTodo('Sketch glow cards', true),
@@ -23,20 +23,20 @@ let todos = [
 
 let currentFilter = 'all'
 
-form.on('submit', (event) => {
+jjForm.on('submit', (event) => {
     event.preventDefault()
-    const text = input.getValue().trim()
+    const text = jjInput.getValue().trim()
     if (!text) {
         return
     }
 
     todos = [createTodo(text, false), ...todos]
-    input.setValue('')
-    input.focus()
+    jjInput.setValue('')
+    jjInput.focus()
     render()
 })
 
-filters.on('click', (event) => {
+jjFilters.on('click', (event) => {
     if (!(event?.target instanceof Element)) {
         return
     }
@@ -51,18 +51,18 @@ filters.on('click', (event) => {
     render()
 })
 
-clearButton.on('click', () => {
+jjClearButton.on('click', () => {
     todos = todos.filter((todo) => !todo.done)
     render()
 })
 
-list.on('todo-toggle', (event) => {
+jjList.on('todo-toggle', (event) => {
     const { id, done } = event.detail
     todos = todos.map((todo) => (todo.id === id ? { ...todo, done } : todo))
     render()
 })
 
-list.on('todo-remove', (event) => {
+jjList.on('todo-remove', (event) => {
     const { id } = event.detail
     todos = todos.filter((todo) => todo.id !== id)
     render()
@@ -72,13 +72,13 @@ render()
 
 function render() {
     const visible = getVisibleTodos()
-    list.empty()
+    jjList.empty()
 
     if (visible.length === 0) {
-        emptyState.setClasses({ 'is-hidden': false })
+        jjEmptyState.setClasses({ 'is-hidden': false })
     } else {
-        emptyState.setClasses({ 'is-hidden': true })
-        list.addChildMap(visible, (todo) => renderItem(todo))
+        jjEmptyState.setClasses({ 'is-hidden': true })
+        jjList.addChildMap(visible, (todo) => renderItem(todo))
     }
 
     updateStats()
@@ -104,7 +104,7 @@ function renderItem(todo) {
 }
 
 function updateFilterButtons() {
-    filters.findAll('button').forEach((button) => {
+    jjFilters.findAll('button').forEach((button) => {
         button.setClasses({
             'is-active': button.getAttr('data-filter') === currentFilter,
         })
@@ -114,8 +114,8 @@ function updateFilterButtons() {
 function updateStats() {
     const activeCount = todos.filter((todo) => !todo.done).length
     const doneCount = todos.length - activeCount
-    countLabel.setText(`${activeCount} active · ${doneCount} done`)
-    progress.setAttrs({
+    jjCountLabel.setText(`${activeCount} active · ${doneCount} done`)
+    jjProgress.setAttrs({
         max: Math.max(1, todos.length),
         value: doneCount,
     })

@@ -30,7 +30,7 @@ Regardless of the method, the browser provides the following lifecycle callbacks
 To keep lifecycle logic predictable, use these conventions:
 
 1. Use a `#isInitialized` flag to keep track of whether the component is initialized.
-2. Keep a host wrapper in the constructor in `#host`.
+2. Keep a host wrapper in the constructor in `#jjHost`.
 3. In `connectedCallback()`, initialize only when `#isInitialized` is false.
 4. Register listeners in `connectedCallback()`
 
@@ -141,12 +141,12 @@ const h = JJHE.tree
 class MyCounter extends HTMLElement {
     static observedAttributes = ['value']
 
-    #host
-    #root = null
+    #jjHost
+    #jjShadow = null
     #value = 0
     // Keeps a reference to the node that updates with the value
-    #valueElement = null
-    #incButton = null
+    #jjValueElement = null
+    #jjIncButton = null
 
     #boundIncrement = () => {
         this.increment()
@@ -164,10 +164,10 @@ class MyCounter extends HTMLElement {
             this.#value = typeof newValue === 'string' ? parseInt(newValue, 10) : newValue
         }
         if (this.#valueElement) {
-            this.#valueElement.setText(this.#value.toString())
+            this.#jjValueElement.setText(this.#value.toString())
         }
         if (oldValue !== this.#value) {
-            this.#host.triggerCustomEvent('value-changed', { value: this.#value })
+            this.#jjHost.triggerCustomEvent('value-changed', { value: this.#value })
         }
     }
 
@@ -181,22 +181,24 @@ class MyCounter extends HTMLElement {
 
     constructor() {
         super()
-        this.#host = JJHE.from(this).setShadow('open')
+        this.#jjHost = JJHE.from(this).setShadow('open')
     }
 
     connectedCallback() {
-        if (!this.#root) {
-            this.#valueElement = h('span', null, this.value.toString())
-            this.#host.initShadow(h('p', null, 'Counter value: ', this.#valueElement, h('button', { id: 'inc' }, '+')))
-            this.#root = this.#host.getShadow(true)
-            this.#incButton = this.#root.find('#inc', true)
+        if (!this.#jjShadow) {
+            this.#jjValueElement = h('span', null, this.value.toString())
+            this.#jjHost.initShadow(
+                h('p', null, 'Counter value: ', this.#jjValueElement, h('button', { id: 'inc' }, '+')),
+            )
+            this.#jjShadow = this.#jjHost.getShadow(true)
+            this.#jjIncButton = this.#jjShadow.find('#inc', true)
         }
 
-        this.#incButton.on('click', this.#boundIncrement)
+        this.#jjIncButton.on('click', this.#boundIncrement)
     }
 
     disconnectedCallback() {
-        this.#incButton?.off('click', this.#boundIncrement)
+        this.#jjIncButton?.off('click', this.#boundIncrement)
     }
 }
 ```

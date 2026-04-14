@@ -42,25 +42,25 @@ async function fetchFile(url) {
 async function main() {
     await Promise.all([RenderMarkdown.defined, TutorialSteps.defined])
 
-    const win = JJET.from(window)
-    const doc = JJD.from(document)
-    const content = doc.find('#content', true)
-    const tutorialSteps = doc.find('#tutorial-steps', true)
+    const jjWin = JJET.from(window)
+    const jjDoc = JJD.from(document)
+    const jjContent = jjDoc.find('#content', true)
+    const jjTutorialSteps = jjDoc.find('#tutorial-steps', true)
     let isSyncingFromUrl = false
 
     const loadStepContent = async (title) => {
         const fileName = title.toLowerCase().replace(/\s+/g, '-') + '.md'
-        content.ref.content = await fetchFile(fileName)
+        jjContent.ref.content = await fetchFile(fileName)
     }
 
-    tutorialSteps.ref.steps = steps
-    doc.find('#next-step', true).on('click', () => tutorialSteps.ref.next())
+    jjTutorialSteps.ref.steps = steps
+    jjDoc.find('#next-step', true).on('click', () => jjTutorialSteps.ref.next())
 
     const initialStep = getStepNumFromUrl(window.location.href)
-    tutorialSteps.ref.step = initialStep
-    await loadStepContent(tutorialSteps.ref.title)
+    jjTutorialSteps.ref.step = initialStep
+    await loadStepContent(jjTutorialSteps.ref.title)
 
-    tutorialSteps.on('change', async (event) => {
+    jjTutorialSteps.on('change', async (event) => {
         try {
             if (!isSyncingFromUrl) {
                 window.history.pushState(null, '', setStepNumInUrl(window.location.href, event.detail.step))
@@ -71,10 +71,10 @@ async function main() {
         }
     })
 
-    win.on('popstate', () => {
+    jjWin.on('popstate', () => {
         try {
             isSyncingFromUrl = true
-            tutorialSteps.ref.step = getStepNumFromUrl(window.location.href)
+            jjTutorialSteps.ref.step = getStepNumFromUrl(window.location.href)
         } catch (cause) {
             throw new Error(`Error loading step from URL`, { cause })
         } finally {
@@ -82,10 +82,10 @@ async function main() {
         }
     })
 
-    win.on('error', (event) => {
+    jjWin.on('error', (event) => {
         console.error('Error event:', event)
         const error = event.error || new Error(event.message)
-        content.ref.content = `Error: ${error.message}`
+        jjContent.ref.content = `Error: ${error.message}`
     })
 }
 

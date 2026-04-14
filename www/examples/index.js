@@ -1,6 +1,6 @@
 import { JJD, JJHE } from '../../lib/bundle.js'
 
-const doc = JJD.from(document)
+const jjDoc = JJD.from(document)
 
 const GITHUB_BASE = 'https://github.com/alexewerlof/jj/tree/master/www/examples'
 
@@ -12,7 +12,7 @@ async function loadExamples() {
         }
 
         const examples = await response.json()
-        const examplesContainer = doc.find('#examples', true)
+        const jjExamplesContainer = jjDoc.find('#examples', true)
 
         // Sort examples by key
         const sortedKeys = Object.keys(examples).sort()
@@ -21,55 +21,55 @@ async function loadExamples() {
             const description = examples[folderName]
 
             // Create card container
-            const card = JJHE.create('div').addClass('card')
+            const jjCard = JJHE.create('div').addClass('card')
 
             // Create header section
-            const header = JJHE.create('div').addClass('card-header')
+            const jjHeader = JJHE.create('div').addClass('card-header')
 
             // Create title
-            const title = JJHE.create('h2').setText(folderName)
+            const jjTitle = JJHE.create('h2').setText(folderName)
 
             // Create description
-            const desc = JJHE.create('p').setText(description)
+            const jjDesc = JJHE.create('p').setText(description)
 
             // Create actions container
-            const actions = JJHE.create('div').addClass('card-actions')
+            const jjActions = JJHE.create('div').addClass('card-actions')
 
             // Create view example link
-            const viewLink = JJHE.create('a').setAttr('href', `${folderName}/`).setText('View Example →')
+            const jjViewLink = JJHE.create('a').setAttr('href', `${folderName}/`).setText('View Example →')
 
             // Create GitHub link
-            const githubLink = JJHE.create('a')
+            const jjGithubLink = JJHE.create('a')
                 .setAttr('href', `${GITHUB_BASE}/${folderName}/`)
                 .setAttr('target', '_blank')
                 .addClass('secondary')
                 .setText('View on GitHub →')
 
             // Assemble the structure
-            actions.addChild(viewLink)
-            actions.addChild(githubLink)
+            jjActions.addChild(jjViewLink)
+            jjActions.addChild(jjGithubLink)
 
-            header.addChild(title)
-            header.addChild(desc)
+            jjHeader.addChild(jjTitle)
+            jjHeader.addChild(jjDesc)
 
-            card.addChild(header)
-            card.addChild(actions)
+            jjCard.addChild(jjHeader)
+            jjCard.addChild(jjActions)
 
             // Append card to examples container
-            examplesContainer.addChild(card)
+            jjExamplesContainer.addChild(jjCard)
         })
     } catch (error) {
-        const examplesContainer = doc.find('#examples', true)
+        const jjExamplesContainer = jjDoc.find('#examples', true)
 
         // Clear existing content
-        examplesContainer.ref.innerHTML = ''
+        jjExamplesContainer.ref.innerHTML = ''
 
         // Create error message
-        const errorDiv = JJHE.create('div').addClass('error')
-        const errorMsg = JJHE.create('p').setText(`Error loading examples: ${error.message}`)
+        const jjErrorDiv = JJHE.create('div').addClass('error')
+        const jjErrorMsg = JJHE.create('p').setText(`Error loading examples: ${error.message}`)
 
-        errorDiv.addChild(errorMsg)
-        examplesContainer.addChild(errorDiv)
+        jjErrorDiv.addChild(jjErrorMsg)
+        jjExamplesContainer.addChild(jjErrorDiv)
 
         console.error('Failed to load examples:', error)
     }

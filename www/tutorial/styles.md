@@ -13,14 +13,14 @@ In light DOM components, regular page CSS applies naturally.
 
 ```js
 class MyLightCard extends HTMLElement {
-    #root = null
+    #jjHost = null
 
     connectedCallback() {
-        if (this.#root) {
+        if (this.#jjHost) {
             return
         }
-        this.#root = JJHE.from(this)
-        this.#root.addClass('my-light-card')
+        this.#jjHost = JJHE.from(this)
+        this.#jjHost.addClass('my-light-card')
     }
 }
 ```
@@ -51,17 +51,17 @@ const stylePromise = fetchStyle(import.meta.resolve('./my-card.css'))
 class MyCard extends HTMLElement {
     static defined = defineComponent('my-card', MyCard)
 
-    #root = null
+    #jjShadow = null
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
     }
 
     async connectedCallback() {
         if (!this.#isInitialized) {
-            this.#root.init(await templatePromise, await stylePromise)
+            this.#jjShadow.init(await templatePromise, await stylePromise)
             this.#isInitialized = true
         }
     }
@@ -104,12 +104,12 @@ let stylePromise
 class LazyStyledCard extends HTMLElement {
     static defined = defineComponent('lazy-styled-card', LazyStyledCard)
 
-    #root = null
+    #jjShadow = null
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
     }
 
     async connectedCallback() {
@@ -123,7 +123,7 @@ class LazyStyledCard extends HTMLElement {
             stylePromise = fetchStyle(import.meta.resolve('./lazy-styled-card.css'))
         }
         const [template, style] = await Promise.all([templatePromise, stylePromise])
-        this.#root.init(template, style)
+        this.#jjShadow.init(template, style)
         this.#isInitialized = true
     }
 }
@@ -140,20 +140,20 @@ let stylePromise
 class LazyLightStyledCard extends HTMLElement {
     static defined = defineComponent('lazy-light-styled-card', LazyLightStyledCard)
 
-    #root = null
+    #jjHost = null
 
     async connectedCallback() {
-        if (this.#root) {
+        if (this.#jjHost) {
             return
         }
-        this.#root = JJHE.from(this)
+        this.#jjHost = JJHE.from(this)
         if (!templatePromise) {
             templatePromise = fetchTemplate(import.meta.resolve('./lazy-light-styled-card.html'))
         }
         if (!stylePromise) {
             stylePromise = fetchStyle(import.meta.resolve('./lazy-light-styled-card.css'))
         }
-        this.#root.setTemplate(await templatePromise)
+        this.#jjHost.setTemplate(await templatePromise)
         // Light DOM styles are usually applied globally.
         // We await stylePromise here to keep the loading pattern explicit and symmetric.
         await stylePromise

@@ -18,16 +18,16 @@ const state = {
     count: 0,
 }
 
-const value = JJHE.create('strong').setText(state.count)
+const jjValue = JJHE.create('strong').setText(state.count)
 
-const incBtn = JJHE.create('button')
+const jjIncBtn = JJHE.create('button')
     .setText('+1')
     .on('click', () => {
         state.count++
-        value.setText(state.count)
+        jjValue.setText(state.count)
     })
 
-JJHE.from(document.body).addChild(JJHE.tree('div', { class: 'counter' }, value, incBtn))
+JJHE.from(document.body).addChild(JJHE.tree('div', { class: 'counter' }, jjValue, jjIncBtn))
 ```
 
 Using getter/setters we can rewrite the same example like this:
@@ -43,10 +43,10 @@ class State {
         // but you can load the structure from a template, file, or even generate
         // it dynamically.
         this.jjCount = JJHE.create('strong').setText(this.#count)
-        const incBtn = JJHE.create('button')
+        const jjIncBtn = JJHE.create('button')
             .setText('+1')
             .on('click', () => this.add(1))
-        this.root = JJHE.tree('div', { class: 'counter' }, this.jjCount, incBtn)
+        this.jjShadow = JJHE.tree('div', { class: 'counter' }, this.jjCount, jjIncBtn)
     }
 
     get count() {
@@ -76,7 +76,7 @@ class State {
 }
 
 const state = new State()
-JJHE.from(document.body).addChild(state.root)
+JJHE.from(document.body).addChild(state.jjShadow)
 // Triggers a render and updates the UI.
 state.count = 43
 // Or using the helper method:

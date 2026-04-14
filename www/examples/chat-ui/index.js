@@ -2,7 +2,7 @@ import { ChatMessage } from './components/chat-message.js'
 import { fetchModels, runEchoTest, streamChatMessage } from './api.js'
 import { JJD, JJHE } from '../../../lib/bundle.js'
 
-const doc = JJD.from(document)
+const jjDoc = JJD.from(document)
 
 // Register components
 await ChatMessage.defined
@@ -25,28 +25,28 @@ let state = {
 }
 
 // DOM elements
-const connectionPanel = doc.find('#connection-panel')
-const modelPanel = doc.find('#model-panel')
-const statusEl = doc.find('#status')
-const apiUrlInput = doc.find('#api-url')
-const apiKeyInput = doc.find('#api-key')
-const connectBtn = doc.find('#connect-btn')
-const modelSelect = doc.find('#model-select')
-const testBtn = doc.find('#test-btn')
-const chatThread = doc.find('#chat-thread')
-const promptInput = doc.find('#prompt-input')
-const sendBtn = doc.find('#send-btn')
+const jjConnectionPanel = jjDoc.find('#connection-panel')
+const jjModelPanel = jjDoc.find('#model-panel')
+const jjStatus = jjDoc.find('#status')
+const jjApiUrlInput = jjDoc.find('#api-url')
+const jjApiKeyInput = jjDoc.find('#api-key')
+const jjConnectBtn = jjDoc.find('#connect-btn')
+const jjModelSelect = jjDoc.find('#model-select')
+const jjTestBtn = jjDoc.find('#test-btn')
+const jjChatThread = jjDoc.find('#chat-thread')
+const jjPromptInput = jjDoc.find('#prompt-input')
+const jjSendBtn = jjDoc.find('#send-btn')
 
 // Load saved API config
 function loadSavedConfig() {
     const savedUrl = localStorage.getItem(STORAGE_KEYS.API_URL)
     const savedKey = localStorage.getItem(STORAGE_KEYS.API_KEY)
     if (savedUrl) {
-        apiUrlInput.setValue(savedUrl)
+        jjApiUrlInput.setValue(savedUrl)
         state.apiUrl = savedUrl
     }
     if (savedKey) {
-        apiKeyInput.setValue(savedKey)
+        jjApiKeyInput.setValue(savedKey)
         state.apiKey = savedKey
     }
 }
@@ -59,34 +59,34 @@ function saveConfig() {
 
 // Show status message
 function showStatus(message, type = 'info') {
-    statusEl.setText(message)
-    statusEl.rmClass('hidden', 'error', 'success', 'info')
-    statusEl.addClass(type)
+    jjStatus.setText(message)
+    jjStatus.rmClass('hidden', 'error', 'success', 'info')
+    jjStatus.addClass(type)
 }
 
 function hideStatus() {
-    statusEl.addClass('hidden')
+    jjStatus.addClass('hidden')
 }
 
 // Render chat messages
 function renderMessages() {
-    chatThread.empty()
+    jjChatThread.empty()
     state.messages.forEach((msg) => {
-        const messageEl = JJHE.create('chat-message').setAttr('role', msg.role).setAttr('content', msg.content)
-        chatThread.addChild(messageEl)
+        const jjMessage = JJHE.create('chat-message').setAttr('role', msg.role).setAttr('content', msg.content)
+        jjChatThread.addChild(jjMessage)
     })
 
     // Scroll to bottom
     setTimeout(() => {
-        const threadRef = chatThread.ref
+        const threadRef = jjChatThread.ref
         threadRef.scrollTop = threadRef.scrollHeight
     }, 0)
 }
 
 // Handle connect button
-connectBtn.on('click', async () => {
-    const url = apiUrlInput.getValue().trim()
-    const key = apiKeyInput.getValue().trim()
+jjConnectBtn.on('click', async () => {
+    const url = jjApiUrlInput.getValue().trim()
+    const key = jjApiKeyInput.getValue().trim()
 
     if (!url || !key) {
         showStatus('Please enter both API URL and API Key', 'error')
@@ -97,9 +97,9 @@ connectBtn.on('click', async () => {
     state.apiKey = key
     state.status = 'connecting'
 
-    connectBtn.setAttr('disabled', '')
-    apiUrlInput.setAttr('disabled', '')
-    apiKeyInput.setAttr('disabled', '')
+    jjConnectBtn.setAttr('disabled', '')
+    jjApiUrlInput.setAttr('disabled', '')
+    jjApiKeyInput.setAttr('disabled', '')
     showStatus('Connecting to API...', 'info')
 
     try {
@@ -117,45 +117,45 @@ connectBtn.on('click', async () => {
         saveConfig()
 
         // Populate model dropdown
-        modelSelect.empty()
+        jjModelSelect.empty()
         models.forEach((model) => {
-            const option = JJHE.create('option').setAttr('value', model.id).setText(model.id)
-            modelSelect.addChild(option)
+            const jjOption = JJHE.create('option').setAttr('value', model.id).setText(model.id)
+            jjModelSelect.addChild(jjOption)
         })
 
         // Select first model by default
         if (models.length > 0) {
             state.model = models[0].id
-            modelSelect.setValue(models[0].id)
+            jjModelSelect.setValue(models[0].id)
         }
 
         // Show model panel
-        modelPanel.addClass('visible')
+        jjModelPanel.addClass('visible')
         showStatus(`Connected! Found ${models.length} model(s). Select a model and test connection.`, 'success')
     } catch (error) {
         state.status = 'disconnected'
         showStatus(`Connection failed: ${error.message}`, 'error')
-        connectBtn.rmAttr('disabled')
-        apiUrlInput.rmAttr('disabled')
-        apiKeyInput.rmAttr('disabled')
+        jjConnectBtn.rmAttr('disabled')
+        jjApiUrlInput.rmAttr('disabled')
+        jjApiKeyInput.rmAttr('disabled')
     }
 })
 
 // Handle model selection change
-modelSelect.on('change', () => {
-    state.model = modelSelect.getValue()
+jjModelSelect.on('change', () => {
+    state.model = jjModelSelect.getValue()
 })
 
 // Handle test connection button
-testBtn.on('click', async () => {
+jjTestBtn.on('click', async () => {
     if (!state.model) {
         showStatus('Please select a model first', 'error')
         return
     }
 
     state.status = 'testing'
-    testBtn.setAttr('disabled', '')
-    modelSelect.setAttr('disabled', '')
+    jjTestBtn.setAttr('disabled', '')
+    jjModelSelect.setAttr('disabled', '')
     showStatus('Running echo test...', 'info')
 
     try {
@@ -166,33 +166,33 @@ testBtn.on('click', async () => {
             showStatus(`Echo test passed! Model "${state.model}" is working correctly.`, 'success')
 
             // Enable chat interface
-            promptInput.rmAttr('disabled')
-            sendBtn.rmAttr('disabled')
-            promptInput.ref.focus()
+            jjPromptInput.rmAttr('disabled')
+            jjSendBtn.rmAttr('disabled')
+            jjPromptInput.ref.focus()
 
             // Hide connection and model panels after brief delay
             setTimeout(() => {
-                connectionPanel.setStyle('display', 'none')
-                modelPanel.setStyle('display', 'none')
+                jjConnectionPanel.setStyle('display', 'none')
+                jjModelPanel.setStyle('display', 'none')
                 hideStatus()
             }, 2000)
         } else {
             state.status = 'connected'
             showStatus(`Echo test failed: ${result.error}`, 'error')
-            testBtn.rmAttr('disabled')
-            modelSelect.rmAttr('disabled')
+            jjTestBtn.rmAttr('disabled')
+            jjModelSelect.rmAttr('disabled')
         }
     } catch (error) {
         state.status = 'connected'
         showStatus(`Test failed: ${error.message}`, 'error')
-        testBtn.rmAttr('disabled')
-        modelSelect.rmAttr('disabled')
+        jjTestBtn.rmAttr('disabled')
+        jjModelSelect.rmAttr('disabled')
     }
 })
 
 // Handle send message
 async function sendMessage() {
-    const content = promptInput.getValue().trim()
+    const content = jjPromptInput.getValue().trim()
     if (!content || state.status !== 'ready' || state.isGenerating) {
         return
     }
@@ -200,7 +200,7 @@ async function sendMessage() {
     // Add user message
     state.messages.push({ role: 'user', content })
     renderMessages()
-    promptInput.setValue('')
+    jjPromptInput.setValue('')
 
     // Create placeholder for assistant message
     const assistantMessageIndex = state.messages.length
@@ -210,8 +210,8 @@ async function sendMessage() {
     // Set up streaming state
     state.isGenerating = true
     state.abortController = new AbortController()
-    sendBtn.setText('Stop')
-    promptInput.setAttr('disabled', '')
+    jjSendBtn.setText('Stop')
+    jjPromptInput.setAttr('disabled', '')
 
     try {
         // Stream response from API
@@ -247,14 +247,14 @@ async function sendMessage() {
     } finally {
         state.isGenerating = false
         state.abortController = null
-        sendBtn.setText('Send')
-        promptInput.rmAttr('disabled')
-        promptInput.ref.focus()
+        jjSendBtn.setText('Send')
+        jjPromptInput.rmAttr('disabled')
+        jjPromptInput.ref.focus()
     }
 }
 
 // Handle send/stop button click
-sendBtn.on('click', () => {
+jjSendBtn.on('click', () => {
     if (state.isGenerating) {
         // Stop generation
         state.abortController?.abort()
@@ -265,7 +265,7 @@ sendBtn.on('click', () => {
 })
 
 // Handle Enter key (Shift+Enter for newline)
-promptInput.on('keydown', (event) => {
+jjPromptInput.on('keydown', (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault()
         sendMessage()

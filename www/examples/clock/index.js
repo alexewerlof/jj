@@ -1,25 +1,25 @@
 import { JJD, JJDF, JJSE } from '../../../lib/bundle.js'
 
-const doc = JJD.from(document)
+const jjDoc = JJD.from(document)
 
-const clock = doc.find('#clock')
-const secondHand = doc.find('#second-hand')
-const minuteHand = doc.find('#minute-hand')
-const hourHand = doc.find('#hour-hand')
+const jjClock = jjDoc.find('#clock')
+const jjSecondHand = jjDoc.find('#second-hand')
+const jjMinuteHand = jjDoc.find('#minute-hand')
+const jjHourHand = jjDoc.find('#hour-hand')
 
 function createMinuteIndicators() {
-    const frag = JJDF.create()
+    const jjFrag = JJDF.create()
 
     for (let i = 0; i < 60; i++) {
-        const line = JJSE.create('line')
-        line.addClass('minute-indicator')
+        const jjLine = JJSE.create('line')
+        jjLine.addClass('minute-indicator')
         const fifth = i % 5 === 0
 
         if (fifth) {
-            line.addClass('minute-indicator--major')
+            jjLine.addClass('minute-indicator--major')
         }
 
-        line.setAttrs({
+        jjLine.setAttrs({
             x1: 50,
             y1: 5,
             x2: 50,
@@ -27,10 +27,10 @@ function createMinuteIndicators() {
             transform: `rotate(${i * 6} 50 50)`,
         })
 
-        frag.addChild(line)
+        jjFrag.addChild(jjLine)
     }
 
-    return frag
+    return jjFrag
 }
 
 function updateClock() {
@@ -39,13 +39,13 @@ function updateClock() {
     const minutes = now.getMinutes()
     const hours = now.getHours()
 
-    secondHand.setAttr('transform', `rotate(${seconds * 6} 50 50)`)
-    minuteHand.setAttr('transform', `rotate(${minutes * 6 + seconds * 0.1} 50 50)`)
-    hourHand.setAttr('transform', `rotate(${hours * 30 + minutes * 0.5} 50 50)`)
+    jjSecondHand.setAttr('transform', `rotate(${seconds * 6} 50 50)`)
+    jjMinuteHand.setAttr('transform', `rotate(${minutes * 6 + seconds * 0.1} 50 50)`)
+    jjHourHand.setAttr('transform', `rotate(${hours * 30 + minutes * 0.5} 50 50)`)
 
     requestAnimationFrame(updateClock)
 }
 
-doc.find('#minute-indicators').addChild(createMinuteIndicators())
+jjDoc.find('#minute-indicators').addChild(createMinuteIndicators())
 updateClock()
-clock.show()
+jjClock.show()

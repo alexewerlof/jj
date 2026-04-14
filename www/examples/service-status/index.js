@@ -6,11 +6,11 @@ import { buildServiceRecords, formatDateShort } from './model.js'
 // Change this constant to adjust the reporting window.
 const DAYS_TO_RENDER = 90
 
-const doc = JJD.from(document)
-const serviceRows = doc.find('#service-rows')
-const incidentGroups = doc.find('#incident-groups')
-const activeIncidentHeader = doc.find('#active-incident-header')
-const activeIncidentBody = doc.find('#active-incident-body')
+const jjDoc = JJD.from(document)
+const jjServiceRows = jjDoc.find('#service-rows')
+const jjIncidentGroups = jjDoc.find('#incident-groups')
+const jjActiveIncidentHeader = jjDoc.find('#active-incident-header')
+const jjActiveIncidentBody = jjDoc.find('#active-incident-body')
 
 const severityLabels = { 0: 'Info', 1: 'Minor', 2: 'Major' }
 
@@ -18,7 +18,7 @@ async function initializePage() {
     await ServiceAvailabilityIndicator.defined
 
     const { services } = getData(DAYS_TO_RENDER)
-    doc.find('#days-shown').setText(String(DAYS_TO_RENDER))
+    jjDoc.find('#days-shown').setText(String(DAYS_TO_RENDER))
     const serviceRecords = buildServiceRecords(services, DAYS_TO_RENDER)
     renderActiveIncident(serviceRecords)
     renderServiceRows(serviceRecords)
@@ -29,7 +29,7 @@ async function initializePage() {
 // seeded PRNG, so no network request or async/await is needed here.
 initializePage().catch((error) => {
     console.error(error)
-    serviceRows
+    jjServiceRows
         .empty()
         .addChild(
             JJHE.create('p')
@@ -46,15 +46,15 @@ function renderActiveIncident(serviceRecords) {
     const latestIncident = allIncidents.sort((a, b) => b.date.localeCompare(a.date))[0]
 
     if (!latestIncident) {
-        activeIncidentHeader.setText(`No incidents in the last ${DAYS_TO_RENDER} days`)
-        activeIncidentBody
+        jjActiveIncidentHeader.setText(`No incidents in the last ${DAYS_TO_RENDER} days`)
+        jjActiveIncidentBody
             .empty()
             .addChild(JJHE.create('p').setText('All monitored services stayed stable in this reporting period.'))
         return
     }
 
-    activeIncidentHeader.setText(`${latestIncident.serviceName}: ${latestIncident.description}`)
-    activeIncidentBody
+    jjActiveIncidentHeader.setText(`${latestIncident.serviceName}: ${latestIncident.description}`)
+    jjActiveIncidentBody
         .empty()
         .addChild(
             JJHE.create('p').setText(
@@ -65,35 +65,35 @@ function renderActiveIncident(serviceRecords) {
 }
 
 function renderServiceRows(serviceRecords) {
-    serviceRows.empty()
+    jjServiceRows.empty()
 
     serviceRecords.forEach((service) => {
-        const indicator = JJHE.create('service-availability-indicator')
-        indicator.ref.setData(service, { days: DAYS_TO_RENDER })
-        serviceRows.addChild(indicator)
+        const jjIndicator = JJHE.create('service-availability-indicator')
+        jjIndicator.ref.setData(service, { days: DAYS_TO_RENDER })
+        jjServiceRows.addChild(jjIndicator)
     })
 }
 
 function renderIncidentHistory(serviceRecords) {
-    incidentGroups.empty()
+    jjIncidentGroups.empty()
 
     serviceRecords.forEach((service) => {
         const incidents = collectIncidents(service)
-        const group = JJHE.create('section').addClass('incident-group')
-        group.addChild(JJHE.create('h3').setText(service.name))
+        const jjGroup = JJHE.create('section').addClass('incident-group')
+        jjGroup.addChild(JJHE.create('h3').setText(service.name))
 
         if (incidents.length === 0) {
-            group.addChild(JJHE.create('p').addClass('empty-incidents').setText('No incidents in this period.'))
-            incidentGroups.addChild(group)
+            jjGroup.addChild(JJHE.create('p').addClass('empty-incidents').setText('No incidents in this period.'))
+            jjIncidentGroups.addChild(jjGroup)
             return
         }
 
-        const list = JJHE.create('ul').addClass('incident-list')
+        const jjList = JJHE.create('ul').addClass('incident-list')
         incidents.forEach((incident) => {
-            const item = JJHE.create('li').addClass('incident-item')
-            const title = JJHE.create('div').addClass('incident-title')
+            const jjItem = JJHE.create('li').addClass('incident-item')
+            const jjTitle = JJHE.create('div').addClass('incident-title')
 
-            title
+            jjTitle
                 .addChild(JJHE.create('span').addClass('incident-date').setText(formatDateShort(incident.date)))
                 .addChild(
                     JJHE.create('span')
@@ -101,15 +101,16 @@ function renderIncidentHistory(serviceRecords) {
                         .setText(severityLabels[incident.severity] ?? 'Info'),
                 )
 
-            item.addChild(title)
+            jjItem
+                .addChild(jjTitle)
                 .addChild(JJHE.create('p').setText(incident.description))
                 .addChild(JJHE.create('p').addClass('incident-context').setText(formatSliValues(incident.sliValues)))
 
-            list.addChild(item)
+            jjList.addChild(jjItem)
         })
 
-        group.addChild(list)
-        incidentGroups.addChild(group)
+        jjGroup.addChild(jjList)
+        jjIncidentGroups.addChild(jjGroup)
     })
 }
 

@@ -5,25 +5,25 @@ const stylePromise = fetchStyle(import.meta.resolve('./kanban-card.css'))
 
 export class KanbanCard extends HTMLElement {
     /** @type {JJHE} */
-    #root
+    #jjHost
     #data = { id: '', text: '', priority: 'low' }
 
     async connectedCallback() {
-        if (this.#root) return
+        if (this.#jjHost) return
 
-        this.#root = JJHE.from(this).setShadow('open')
-        this.#root.initShadow(await templatePromise, await stylePromise)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjHost.initShadow(await templatePromise, await stylePromise)
 
         // Render initial data
         this.#render()
 
         // Setup event listeners
-        this.#root
+        this.#jjHost
             .getShadow()
             .find('.delete-btn')
             .on('click', (e) => {
                 e.stopPropagation()
-                this.#root.triggerCustomEvent('card-delete', { id: this.#data.id })
+                this.#jjHost.triggerCustomEvent('card-delete', { id: this.#data.id })
             })
     }
 
@@ -33,7 +33,7 @@ export class KanbanCard extends HTMLElement {
     setData(data) {
         this.#data = { ...this.#data, ...data }
         this.setAttribute('id', data.id) // For DnD
-        if (this.#root) {
+        if (this.#jjHost) {
             this.#render()
         }
         return this
@@ -45,11 +45,11 @@ export class KanbanCard extends HTMLElement {
 
     #render() {
         const { id, text, priority } = this.#data
-        const shadow = this.#root.getShadow()
-        shadow.find('.text').setText(text)
-        shadow.find('.id-label').setText(id.slice(0, 4)) // Show short ID
+        const jjShadow = this.#jjHost.getShadow()
+        jjShadow.find('.text').setText(text)
+        jjShadow.find('.id-label').setText(id.slice(0, 4)) // Show short ID
 
-        const tag = shadow.find('.tag')
+        const tag = jjShadow.find('.tag')
         tag.setText(priority)
 
         // Reset classes and add the correct priority class

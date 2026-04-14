@@ -14,13 +14,13 @@ JJ accepts multiple template sources, which lets you pick the right tool for eac
 | Hard-coded HTML string          | `setTemplate('<p>tiny snippet</p>')`                                  | Very small static snippets when you do not need references to internals.                                                     |
 | `JJHE.tree()` / `JJHE.create()` | Build wrapped nodes in JS, then `setTemplate(node)`                   | Dynamic UI where you need references for later updates.                                                                      |
 
-## `this.#root` convention
+## `this.#jjHost` / `this.#jjShadow` convention
 
 Use one convention consistently in your custom elements:
 
-- Light DOM component: `this.#root = JJHE.from(this)`
-- Shadow DOM component: attach in the constructor and store it `this.#root = JJHE.from(this).setShadow(...).getShadow(true)`
-    - Keep the initialization status in `#isInitialized` and guard `connectedCallback()` to run `this.#root.init()` only once.
+- Light DOM component: `this.#jjHost = JJHE.from(this)`
+- Shadow DOM component: attach in the constructor and store it `this.#jjShadow = JJHE.from(this).setShadow(...).getShadow(true)`
+    - Keep the initialization status in `#isInitialized` and guard `connectedCallback()` to run `this.#jjShadow.init()` only once.
 
 That gives you a predictable wrapper to query and update.
 
@@ -34,19 +34,19 @@ const templatePromise = fetchTemplate(import.meta.resolve('./my-card.html'))
 export class MyCard extends HTMLElement {
     static defined = defineComponent('my-card', MyCard)
 
-    #root = null
+    #jjShadow = null
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
     }
 
     async connectedCallback() {
         if (this.#isInitialized) {
             return
         }
-        this.#root.init(await templatePromise)
+        this.#jjShadow.init(await templatePromise)
         this.#isInitialized = true
     }
 }
@@ -75,12 +75,12 @@ let templatePromise
 export class LazyShadowCard extends HTMLElement {
     static defined = defineComponent('lazy-shadow-card', LazyShadowCard)
 
-    #root = null
+    #jjShadow = null
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
     }
 
     async connectedCallback() {
@@ -90,7 +90,7 @@ export class LazyShadowCard extends HTMLElement {
         if (!templatePromise) {
             templatePromise = fetchTemplate(import.meta.resolve('./lazy-shadow-card.html'))
         }
-        this.#root.init(await templatePromise)
+        this.#jjShadow.init(await templatePromise)
         this.#isInitialized = true
     }
 }
@@ -106,14 +106,14 @@ const domTemplate = document.querySelector('#my-light-template')
 export class MyLightCard extends HTMLElement {
     static defined = defineComponent('my-light-card', MyLightCard)
 
-    #root = null
+    #jjHost = null
 
     connectedCallback() {
-        if (this.#root) {
+        if (this.#jjHost) {
             return
         }
-        this.#root = JJHE.from(this)
-        this.#root.setTemplate(domTemplate)
+        this.#jjHost = JJHE.from(this)
+        this.#jjHost.setTemplate(domTemplate)
     }
 }
 ```
@@ -128,17 +128,17 @@ let templatePromise
 export class LazyLightCard extends HTMLElement {
     static defined = defineComponent('lazy-light-card', LazyLightCard)
 
-    #root = null
+    #jjHost = null
 
     async connectedCallback() {
-        if (this.#root) {
+        if (this.#jjHost) {
             return
         }
-        this.#root = JJHE.from(this)
+        this.#jjHost = JJHE.from(this)
         if (!templatePromise) {
             templatePromise = fetchTemplate(import.meta.resolve('./lazy-light-card.html'))
         }
-        this.#root.setTemplate(await templatePromise)
+        this.#jjHost.setTemplate(await templatePromise)
     }
 }
 ```

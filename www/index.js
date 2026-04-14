@@ -5,19 +5,19 @@ import { CodeHighlight } from './components/code-highlight.js'
 
 await Promise.all([SimpleCounter.defined, RenderMarkdown.defined, CodeHighlight.defined])
 
-const doc = JJD.from(document)
+const jjDoc = JJD.from(document)
 
 // 1. Handle Copy Button Logic
-const copyBtn = doc.find('#copy-btn')
-copyBtn.on('click', async () => {
+const jjCopyBtn = jjDoc.find('#copy-btn')
+jjCopyBtn.on('click', async () => {
     try {
         await navigator.clipboard.writeText('npm i jj')
 
-        const originalHtml = copyBtn.getHTML()
-        copyBtn.setHTML('✓', true)
+        const originalHtml = jjCopyBtn.getHTML()
+        jjCopyBtn.setHTML('✓', true)
 
         setTimeout(() => {
-            copyBtn.setHTML(originalHtml, true)
+            jjCopyBtn.setHTML(originalHtml, true)
         }, 1000)
     } catch (err) {
         console.error('Failed to copy', err)

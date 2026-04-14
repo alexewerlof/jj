@@ -5,7 +5,7 @@ const templatePromise = fetchTemplate(import.meta.resolve('./tutorial-steps.html
 export class TutorialSteps extends HTMLElement {
     static defined = defineComponent('tutorial-steps', TutorialSteps)
 
-    #host
+    #jjHost
     #jjPrevBtn = null
     #jjNextBtn = null
     #steps = []
@@ -14,14 +14,14 @@ export class TutorialSteps extends HTMLElement {
 
     constructor() {
         super()
-        this.#host = JJHE.from(this).setStyle('display', 'block')
+        this.#jjHost = JJHE.from(this).setStyle('display', 'block')
     }
 
     async connectedCallback() {
         if (!this.#isInitialized) {
-            this.#host.setTemplate(await templatePromise)
-            this.#jjPrevBtn = this.#host.find('button#tutorial-step-prev', true).on('click', () => this.prev())
-            this.#jjNextBtn = this.#host.find('button#tutorial-step-next', true).on('click', () => this.next())
+            this.#jjHost.setTemplate(await templatePromise)
+            this.#jjPrevBtn = this.#jjHost.find('button#tutorial-step-prev', true).on('click', () => this.prev())
+            this.#jjNextBtn = this.#jjHost.find('button#tutorial-step-next', true).on('click', () => this.next())
             this.#isInitialized = true
         }
         this.#render()
@@ -68,7 +68,7 @@ export class TutorialSteps extends HTMLElement {
         this.#render()
 
         if (changed) {
-            this.#host.triggerCustomEvent('change', { step: this.#step, title: this.title })
+            this.#jjHost.triggerCustomEvent('change', { step: this.#step, title: this.title })
         }
     }
 
@@ -90,7 +90,7 @@ export class TutorialSteps extends HTMLElement {
         }
 
         const maxStep = Math.max(this.#steps.length - 1, 0)
-        this.#host.find('progress#tutorial-step-progress', true).setAttrs({ max: maxStep, value: this.#step })
+        this.#jjHost.find('progress#tutorial-step-progress', true).setAttrs({ max: maxStep, value: this.#step })
 
         this.#jjPrevBtn.swAttr('disabled', this.#step <= 0)
         this.#jjNextBtn.swAttr('disabled', this.#step >= maxStep)

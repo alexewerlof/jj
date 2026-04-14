@@ -7,6 +7,7 @@ export class TodoItem extends HTMLElement {
     static observedAttributes = ['item-id', 'text', 'done']
     static defined = defineComponent('todo-item', TodoItem)
 
+    #jjHost = null
     #itemId = ''
     #text = ''
     #done = false
@@ -43,19 +44,19 @@ export class TodoItem extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.jjRoot = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
-        const check = this.jjRoot.shadow.find('#check')
-        const remove = this.jjRoot.shadow.find('#remove')
+        this.#jjHost = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        const jjCheck = this.#jjHost.shadow.find('#check')
+        const jjRemove = this.#jjHost.shadow.find('#remove')
 
-        check.on('change', () => this.#onToggle())
-        remove.on('click', () => this.#onRemove())
+        jjCheck.on('change', () => this.#onToggle())
+        jjRemove.on('click', () => this.#onRemove())
 
         this.#render()
     }
 
     #onToggle() {
-        const check = this.jjRoot?.shadow.find('#check')
-        const done = check ? check.ref.checked : false
+        const jjCheck = this.#jjHost?.shadow.find('#check')
+        const done = jjCheck ? jjCheck.ref.checked : false
         this.dispatchEvent(
             new CustomEvent('todo-toggle', { detail: { id: this.itemId, done }, bubbles: true, composed: true }),
         )
@@ -74,17 +75,17 @@ export class TodoItem extends HTMLElement {
     }
 
     #renderText() {
-        this.jjRoot?.shadow.find('#text').setText(this.text)
+        this.#jjHost?.shadow.find('#text').setText(this.text)
     }
 
     #renderDone() {
-        const item = this.jjRoot?.shadow.find('#item')
-        const check = this.jjRoot?.shadow.find('#check')
-        if (item) {
-            item.setClasses({ 'is-done': this.done })
+        const jjItem = this.#jjHost?.shadow.find('#item')
+        const jjCheck = this.#jjHost?.shadow.find('#check')
+        if (jjItem) {
+            jjItem.setClasses({ 'is-done': this.done })
         }
-        if (check) {
-            check.ref.checked = this.done
+        if (jjCheck) {
+            jjCheck.ref.checked = this.done
         }
     }
 
@@ -92,6 +93,6 @@ export class TodoItem extends HTMLElement {
         if (!this.itemId) {
             return
         }
-        this.jjRoot?.shadow.find('#meta').setText(`Task · ${this.itemId.slice(0, 6)}`)
+        this.#jjHost?.shadow.find('#meta').setText(`Task · ${this.itemId.slice(0, 6)}`)
     }
 }

@@ -16,12 +16,12 @@ export class RenderMarkdown extends HTMLElement {
 
     static observedAttributes = ['content']
 
-    #root
+    #jjHost
     #htmlContent = ''
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setStyle('display', 'block')
+        this.#jjHost = JJHE.from(this).setStyle('display', 'block')
     }
 
     async connectedCallback() {
@@ -50,6 +50,6 @@ export class RenderMarkdown extends HTMLElement {
     }
 
     #render() {
-        this.#root.setHTML(this.#htmlContent, true)
+        this.#jjHost.setHTML(this.#htmlContent, true)
     }
 }

@@ -6,7 +6,7 @@ import highlightXml from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11
 import highlightTypescript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/typescript.min.js'
 
 const h = JJHE.tree
-const doc = JJD.from(document)
+const jjDoc = JJD.from(document)
 
 // https://highlightjs.readthedocs.io/en/latest/api.html#configure
 highlight.configure({
@@ -26,7 +26,7 @@ function highlightCode(code, language) {
     }).value
 }
 
-doc.find('head', true).addChild(
+jjDoc.find('head', true).addChild(
     h('link', {
         rel: 'stylesheet',
         href: import.meta.resolve('../code.css'),
@@ -38,11 +38,11 @@ export class CodeHighlight extends HTMLElement {
     static defined = defineComponent('code-highlight', CodeHighlight)
 
     #language
-    #root
+    #jjHost
 
     constructor() {
         super()
-        this.#root = JJHE.from(this)
+        this.#jjHost = JJHE.from(this)
             // This tiny bit of styling doesn't justify loading a CSS file
             .setStyles({
                 display: 'block',
@@ -68,7 +68,7 @@ export class CodeHighlight extends HTMLElement {
     async connectedCallback() {
         if (this.#language) {
             const highlighted = highlightCode(this.textContent, this.#language)
-            this.#root.setChild(h('pre', null, h('code').setHTML(highlighted, true)))
+            this.#jjHost.setChild(h('pre', null, h('code').setHTML(highlighted, true)))
         }
     }
 }
