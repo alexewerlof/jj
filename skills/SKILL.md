@@ -16,6 +16,7 @@ When converting native DOM code, framework code, or vague UI requests into JJ, d
 - Use `JJHE.tree` with a local `h` alias for multi-node or nested UI.
 - Use `setChild()`/`setChildren()` to replace content and `addChildMap()`/`setChildMap()` for array rendering.
 - Query with `find()`/`findAll()`/`closest()` instead of native `querySelector*` when JJ already covers the case.
+- For form-like value elements (`input`, `select`, `textarea`, `progress`, etc.), prefer `getValue()` / `setValue(...)` over `.ref.value`.
 - Use `setText()` for user content and treat `setHTML(..., true)` as a trusted-content escape hatch.
 - For repeated child interactions, prefer one delegated listener on a stable parent over one listener per child.
 - Choose shadow DOM for self-contained widgets and light DOM for page-level content that should inherit global styles.
@@ -64,12 +65,12 @@ Each JJ wrapper exposes the native node via `.ref`.
 
 ```typescript
 // ✅ CORRECT — factory methods infer the precise generic type
-const div = JJHE.create('div') // JJHE<HTMLDivElement>
-const input = JJHE.create('input') // JJHE<HTMLInputElement>
-const svg = JJSE.create('svg') // JJSE<SVGSVGElement>
-const math = JJME.create('math') // JJME<MathMLElement>
-const frag = JJDF.create() // JJDF
-const btn = JJHE.fromId('my-btn') // JJHE<HTMLButtonElement>
+const jjDiv = JJHE.create('div') // JJHE<HTMLDivElement>
+const jjInput = JJHE.create('input') // JJHE<HTMLInputElement>
+const jjSvg = JJSE.create('svg') // JJSE<SVGSVGElement>
+const jjMath = JJME.create('math') // JJME<MathMLElement>
+const jjFrag = JJDF.create() // JJDF
+const jjBtn = JJHE.fromId('my-btn') // JJHE<HTMLButtonElement>
 
 // ❌ WRONG
 JJHE.create('svg') // throws — use JJSE.create('svg')
@@ -81,7 +82,7 @@ new JJHE(element) // don't call constructors directly
 All mutating methods return `this`. Chain as much as possible; access `.ref` only when a wrapper method does not exist.
 
 ```typescript
-const btn = JJHE.create('button')
+const jjBtn = JJHE.create('button')
     .addClass('btn', 'primary')
     .setText('Save')
     .setAttr('type', 'submit')
@@ -102,7 +103,7 @@ latestChatResponse.addChild(
 )
 
 // ✅ also fine for flat mapped children
-const list = JJHE.create('ul').addChildMap(fruits, (fruit) => h('li', null, fruit))
+const jjList = JJHE.create('ul').addChildMap(fruits, (fruit) => h('li', null, fruit))
 
 // ❌ avoid native-style wrapper escape hatches when JJ already covers it
 latestChatResponse.ref.appendChild(JJHE.create('h2').setText('User').ref)
@@ -125,13 +126,13 @@ Default heuristics from the tutorial:
 Wrap `document` with `JJD.from(document)` before querying.
 
 ```typescript
-const doc = JJD.from(document)
-const app = doc.find('#app', true) // throws when absent
-const card = doc.find('.card') // null when absent
-const items = doc.findAll('.item') // always an array
+const jjDoc = JJD.from(document)
+const jjApp = jjDoc.find('#app', true) // throws when absent
+const jjCard = jjDoc.find('.card') // null when absent
+const jjItems = jjDoc.findAll('.item') // always an array
 
 // Inside a custom element's shadow root
-const btn = this.getShadow(true).find('#submit')
+const jjBtn = this.getShadow(true).find('#submit')
 ```
 
 Querying defaults from the tutorial:
@@ -148,80 +149,94 @@ Querying defaults from the tutorial:
 
 ```typescript
 // Attribute — singular
-el.setAttr('role', 'button')
-el.getAttr('role')
-el.rmAttr('hidden')
-el.swAttr('disabled', !isReady) // sets disabled="" or removes it
+jjEl.setAttr('role', 'button')
+jjEl.getAttr('role')
+jjEl.rmAttr('hidden')
+jjEl.swAttr('readonly') // auto: flips current state of the "readonly" attribute
+jjEl.swAttr('disabled', !isReady) // sets disabled="" or removes it
 
 // Attribute — batch (null/undefined skipped)
-el.setAttrs({ type: 'text', placeholder: 'Search…' })
+jjEl.setAttrs({ type: 'text', placeholder: 'Search…' })
 
 // Classes
-el.addClass('active')
-el.addClasses(['chip', 'selected'])
-el.rmClass('disabled')
-el.rmClasses(['pending', 'loading'])
-el.swClass('expanded', isExpanded) // explicit: adds when truthy, removes when falsy
-el.swClass('is-active') // auto: flips current state (adds if absent, removes if present)
-el.swAttr('disabled', !isReady) // explicit: sets disabled="" or removes it
-el.swAttr('readonly') // auto: flips current state
-el.setClasses({ active: isActive, disabled: !isReady })
-el.setClass('card card--featured') // replaces entire className
+jjEl.addClass('active')
+// Multiple classes via varargs
+jjEl.addClass('active', 'selected')
+jjEl.rmClass('active', 'loading')
+// Multiple classes via array
+jjEl.addClasses(['chip', 'selected'])
+jjEl.rmClasses(['pending', 'loading'])
+// Explicit mode: truthy adds, falsy removes
+jjEl.swClass('expanded', isExpanded)
+// Auto mode: flips current state
+jjEl.swClass('is-active')
+
+// Batch conditional class updates
+jjEl.setClasses({ active: isActive, disabled: !isReady })
+// Replace the entire className
+jjEl.setClass('card card--featured')
 
 // Dataset
-el.getDataAttr('userId')
-el.hasDataAttr('userId')
-el.setDataAttr('userId', '42')
-el.setDataAttrs({ role: 'admin', team: 'ui' })
-el.rmDataAttr('userId')
-el.rmDataAttrs(['role', 'team'])
+jjEl.getDataAttr('userId')
+jjEl.hasDataAttr('userId')
+jjEl.setDataAttr('userId', '42')
+jjEl.setDataAttrs({ role: 'admin', team: 'ui' }) // batch set
+jjEl.rmDataAttr('userId')
+jjEl.rmDataAttr('role', 'team') // batch remove, varargs syntax
+jjEl.rmDataAttrs(['role', 'team']) // batch remove, array syntax
 
 // ARIA
-el.getAriaAttr('hidden')
-el.hasAriaAttr('hidden')
-el.setAriaAttr('hidden', 'true')
-el.setAriaAttrs({ label: 'Dialog', modal: 'true' })
-el.rmAriaAttr('hidden')
+jjEl.getAriaAttr('hidden')
+jjEl.hasAriaAttr('hidden')
+jjEl.setAriaAttr('hidden', 'true')
+jjEl.setAriaAttrs({ label: 'Dialog', modal: 'true' })
+jjEl.rmAriaAttr('hidden')
 
 // ARIA is not presence-based like HTML boolean attributes
 // Use explicit string states instead of swAttr()
-el.setAriaAttr('disabled', 'true')
+jjEl.setAriaAttr('disabled', 'true')
 
 // Inline styles
-el.setStyle('color', 'var(--color-brand)')
-el.setStyles({ color: 'red', padding: '8px', border: null })
-el.rmStyle('color', 'padding')
+jjEl.setStyle('color', 'var(--color-brand)')
+jjEl.setStyles({ color: 'red', padding: '8px', border: null })
+jjEl.rmStyle('color', 'padding')
+
+// Value helpers (prefer over .ref.value)
+jjEl.getValue()
+jjEl.setValue('next')
 ```
+
+Use `.ref.value` only when a JJ value helper is unavailable for your exact use case.
 
 ## Security — HTML Writes
 
 Prefer `.setText()` for any user-supplied content. `.setHTML()` requires an explicit `true` flag when the string is non-empty.
 
 ```typescript
-el.setText(userInput) // ✅ always safe
-el.setHTML('<p>Trusted markup</p>', true) // ✅ explicit opt-in
-el.setHTML('') // ✅ clearing is allowed without flag
-el.setHTML('<p>content</p>') // ❌ THROWS — missing unsafe flag
-el.ref.innerHTML = '…' // ❌ bypasses guard — avoid
+jjEl.setText(userInput) // ✅ always safe
+jjEl.setHTML('<p>Trusted markup</p>', true) // ✅ explicit opt-in
+jjEl.setHTML('') // ✅ clearing is allowed without flag
+jjEl.setHTML('<p>content</p>') // ❌ THROWS — missing unsafe flag
+jjEl.ref.innerHTML = '…' // ❌ bypasses guard — avoid
 ```
 
 ## Events
 
 ```typescript
 // Native events
-el.on('click', handler)
-el.off('click', handler)
-el.trigger('click')
+jjEl.on('click', handler)
+jjEl.off('click', handler)
+jjEl.triggerEvent('click')
 
 // Explicit event objects (equivalent to JJ helpers below)
-el.trigger(new Event('click', { bubbles: true, composed: true }))
-el.trigger(new CustomEvent('todo-toggle', { detail: { id: 1, done: true }, bubbles: true, composed: true }))
+jjEl.trigger(new Event('click', { bubbles: true, composed: true }))
+jjEl.trigger(new CustomEvent('todo-toggle', { detail: { id: 1, done: true }, bubbles: true, composed: true }))
 
 // Custom events — JJ defaults: bubbles: true, composed: true
 this.dispatchEvent(new CustomEvent('todo-toggle', { detail: { id: 1, done: true }, bubbles: true, composed: true }))
 
 // Fluent dispatch (same defaults)
-el.triggerEvent('click') // equivalent to trigger(new Event('click', { bubbles: true, composed: true }))
+jjEl.triggerEvent('click') // equivalent to trigger(new Event('click', { bubbles: true, composed: true }))
 JJHE.from(this).triggerCustomEvent('todo-toggle', { id: 1, done: true })
 // equivalent to trigger(new CustomEvent('todo-toggle', { detail: { id: 1, done: true }, bubbles: true, composed: true }))
 
@@ -246,10 +261,10 @@ Guide defaults for event-heavy UI:
 
 ```typescript
 list.on('click', function (event) {
-    const item = JJHE.from(event.target as Node).closest('[data-item-id]')
-    if (!item) return
+    const jjItem = JJHE.from(event.target as Node).closest('[data-item-id]')
+    if (!jjItem) return
     this.addClass('handled')
-    item.addClass('active')
+    jjItem.addClass('active')
 })
 ```
 
@@ -276,12 +291,12 @@ export class MyCard extends HTMLElement {
 
     #userName = ''
     #count = 0
-    #root = null // JJSR wrapper; attached in constructor
+    #jjShadow = null // JJSR wrapper; attached in constructor
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -307,16 +322,16 @@ export class MyCard extends HTMLElement {
 
     async connectedCallback() {
         if (!this.#isInitialized) {
-            this.#root.init(await templatePromise, await stylePromise)
+            this.#jjShadow.init(await templatePromise, await stylePromise)
             this.#isInitialized = true
         }
         this.#render()
     }
 
     #render() {
-        if (!this.#root) return // guard for attribute changes before mount
-        this.#root.find('[data-role="name"]')?.setText(this.#userName)
-        this.#root.find('[data-role="count"]')?.setText(String(this.#count))
+        if (!this.#jjShadow) return // guard for attribute changes before mount
+        this.#jjShadow.find('[data-role="name"]')?.setText(this.#userName)
+        this.#jjShadow.find('[data-role="count"]')?.setText(String(this.#count))
     }
 }
 
@@ -332,7 +347,7 @@ Template defaults from the tutorial:
 - Prefer `<template>` elements for reusable DOM snippets already present in the page.
 - Prefer `JJHE.tree()` or `JJHE.create()` when you need live wrapper references for later updates.
 - Keep template promises at module scope; for lazy loading, initialize them inside `connectedCallback()` with an `if (!templatePromise)` guard.
-- Use one stable `#root` wrapper per component: `JJHE.from(this)` for light DOM or `JJHE.from(this).setShadow(...).getShadow(true)` for shadow DOM.
+- Use one stable wrapper per component: `#jjHost` with `JJHE.from(this)` for light DOM, or `#jjShadow` with `JJHE.from(this).setShadow(...).getShadow(true)` for shadow DOM.
 - Initialize template content once, then update specific nodes with `find(...).setText(...)` or other targeted wrapper operations.
 
 Guide defaults for attributes and queries:
@@ -373,18 +388,18 @@ const card = h(
 
 ```typescript
 // Clear children — internally uses replaceChildren()
-el.empty()
+jjEl.empty()
 
 // Replace all children in one call (prefer over .empty().addChild())
-el.setChild(newChild)
-el.setChildren([childA, childB])
-el.setChildMap(items, (item) => JJHE.tree('li', null, item.label))
-el.setTemplate(templateElement)
+jjEl.setChild(newChild)
+jjEl.setChildren([childA, childB])
+jjEl.setChildMap(items, (item) => JJHE.tree('li', null, item.label))
+jjEl.setTemplate(templateElement)
 
 // Append
-el.addChild(child)
-el.addChildMap(items, (item) => JJHE.tree('li', null, item.label))
-el.addTemplate(await templatePromise) // clones before appending
+jjEl.addChild(child)
+jjEl.addChildMap(items, (item) => JJHE.tree('li', null, item.label))
+jjEl.addTemplate(await templatePromise) // clones before appending
 ```
 
 `addChild` / `preChild` / `setChild` and map variants ignore `null`/`undefined`; all other non-node values are coerced to Text nodes.
@@ -399,10 +414,10 @@ Guide defaults for template and fragment usage:
 ## Node Traversal
 
 ```typescript
-const parent = el.getParent() // wrapped parent or null (detached)
-const children = el.getChildren() // wrapped child array (always an array)
-el.rm() // detach from parent (no-op if already detached)
-const ancestor = el.closest('[data-section]') // null if not found
+const parent = jjEl.getParent() // wrapped parent or null (detached)
+const children = jjEl.getChildren() // wrapped child array (always an array)
+jjEl.rm() // detach from parent (no-op if already detached)
+const ancestor = jjEl.closest('[data-section]') // null if not found
 ```
 
 ## Resource Loaders
@@ -450,10 +465,11 @@ Use higher-level public APIs like `attr2prop` and `defineComponent` instead of i
 
 1. **`.ts` extension in imports** — TypeScript source must use `.js` (`import { X } from './X.js'`).
 2. **`JJHE.create('svg')`** — throws; use `JJSE.create('svg')`.
-3. **`el.setHTML(html)` without `true`** — throws when html is non-empty.
+3. **`jjEl.setHTML(html)` without `true`** — throws when html is non-empty.
 4. **Fetching template/style inside `connectedCallback`** — fetch at module scope so the network request is shared.
 5. **Not awaiting `Element.defined`** — markup may be parsed before the element is defined, causing flaky upgrades.
 6. **Breaking the chain with `.ref` unnecessarily** — use wrapper methods first; reach for `.ref` only when no wrapper method exists.
+7. **Using `.ref.value` for common value updates** — prefer `getValue()` / `setValue(...)` for wrapper-level reads/writes.
 
 ## Pitfall Prevention Rules (Component Work)
 

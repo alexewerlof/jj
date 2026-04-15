@@ -37,10 +37,16 @@ use `defineComponent()` which also calls `customElements.whenDefined()`.
 const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
 const stylePromise    = fetchStyle(import.meta.resolve('./my-component.css'))
 
+constructor() {
+    super()
+    this.#jjHost = JJHE.from(this).setShadow('open')
+    this.#jjShadow = this.#jjHost.getShadow(true)
+}
+
 async connectedCallback() {
-    // setShadow(mode) in the constructor, then initShadow(template, ...styles) here
-    JJHE.from(this).initShadow(await templatePromise, await stylePromise)
-    this.#root.find('#btn').on('click', this.#handleClick)
+    // setShadow(mode) in the constructor, then initialize once here
+    this.#jjHost.initShadow(await templatePromise, await stylePromise)
+    this.#jjShadow.find('#btn', true).on('click', this.#handleClick)
     this.#render()
 }
 ```
@@ -63,8 +69,8 @@ attributeChangedCallback(name, oldValue, newValue) {
 // attr2prop fires attributeChangedCallback BEFORE connectedCallback on initial parse.
 // Guard renders until shadow is ready:
 #render() {
-    if (!this.#root) return
-    this.#root.find('[data-role="name"]')?.setText(this.#userName)
+    if (!this.#jjShadow) return
+    this.#jjShadow.find('[data-role="name"]')?.setText(this.#userName)
 }
 ```
 
@@ -74,8 +80,8 @@ Skip `setShadow` and update children directly when page-level styling should app
 
 ```js
 async connectedCallback() {
-    this.#root = JJHE.from(this)
-    this.#root.setTemplate(await templatePromise)
+    this.#jjHost = JJHE.from(this)
+    this.#jjHost.setTemplate(await templatePromise)
     this.#render()
 }
 ```

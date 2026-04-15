@@ -13,7 +13,7 @@ Lit adds reactive properties, template literals, and scoped CSS on top of native
 | `html\`<div>\``           | `JJHE.tree('div', …)` or `JJHE.create('div')`                              |
 | `@event="${handler}"`     | `.on('event', handler)` in `connectedCallback`                             |
 | `updated()` hook          | Call `#render()` from setters that change visible state                    |
-| `this.renderRoot.query…`  | `this.#root.find(selector)`                                                |
+| `this.renderRoot.query…`  | `this.#jjShadow.find(selector)`                                            |
 
 ## Component example
 
@@ -46,12 +46,12 @@ export class MyCounter extends HTMLElement {
     static defined = defineComponent('my-counter', MyCounter)
 
     #count = 0
-    #root = null
+    #jjShadow = null
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -67,7 +67,7 @@ export class MyCounter extends HTMLElement {
 
     async connectedCallback() {
         if (!this.#isInitialized) {
-            this.#root
+            this.#jjShadow
                 .init('<button id="btn">0</button>', await stylePromise)
                 .find('#btn', true)
                 .on('click', () => {
@@ -79,7 +79,7 @@ export class MyCounter extends HTMLElement {
     }
 
     #render() {
-        this.#root?.find('#btn')?.setText(String(this.#count))
+        this.#jjShadow?.find('#btn')?.setText(String(this.#count))
     }
 }
 ```

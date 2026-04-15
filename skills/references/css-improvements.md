@@ -62,15 +62,16 @@ button {
 }
 ```
 
-## Loading stylesheets
+## Loading css files
 
 ```js
-import { JJHE, fetchStyle } from 'jj'
+import { JJD, JJHE, fetchStyle } from 'jj'
 
 const h = JJHE.tree
+const jjDoc = JJD.from(document)
 
 // Hint browser to start loading early
-document.head.addChild(
+jjDoc.find('head', true).addChild(
     h('link', {
         href: import.meta.resolve('./theme.css'),
         rel: 'preload',

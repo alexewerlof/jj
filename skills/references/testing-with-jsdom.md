@@ -33,9 +33,9 @@ import { JJHE } from '../src/index.js'
 describe('JJHE', () => {
     describe('static create()', () => {
         it('creates element from tag name', () => {
-            const div = JJHE.create('div')
-            assert.ok(div instanceof JJHE)
-            assert.strictEqual(div.ref.tagName, 'DIV')
+            const jjDiv = JJHE.create('div')
+            assert.ok(jjDiv instanceof JJHE)
+            assert.strictEqual(jjDiv.ref.tagName, 'DIV')
         })
 
         it('throws TypeError for non-string tagName', () => {
@@ -68,12 +68,12 @@ it('renders title in shadow', async () => {
 
 ```js
 it('dispatches todo-toggle with detail', () => {
-    const el = JJHE.create('div')
+    const jjEl = JJHE.create('div')
     let captured = null
-    el.on('todo-toggle', (e) => {
+    jjEl.on('todo-toggle', (e) => {
         captured = e.detail
     })
-    el.triggerCustomEvent('todo-toggle', { id: 1, done: true })
+    jjEl.triggerCustomEvent('todo-toggle', { id: 1, done: true })
     assert.deepStrictEqual(captured, { id: 1, done: true })
 })
 ```

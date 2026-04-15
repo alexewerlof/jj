@@ -30,12 +30,12 @@ JJ:
 import { JJHE } from 'jj'
 
 let message = ''
-const p = JJHE.create('p').setText('')
-const input = JJHE.create('input')
+const jjMessage = JJHE.create('p').setText('')
+const jjInput = JJHE.create('input')
     .setAttr('type', 'text')
-    .on('input', (e) => {
-        message = e.target.value
-        p.setText(message)
+    .on('input', () => {
+        message = jjInput.getValue()
+        jjMessage.setText(message)
     })
 ```
 
@@ -62,7 +62,7 @@ set count(v) {
 ## v-for replacement
 
 ```js
-list.addChildMap(items, (item) => JJHE.tree('li', { class: 'item' }, item.label))
+jjList.addChildMap(items, (item) => JJHE.tree('li', { class: 'item' }, item.label))
 ```
 
 ## Browser references

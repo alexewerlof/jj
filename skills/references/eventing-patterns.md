@@ -3,15 +3,15 @@
 ## Native event listeners
 
 ```js
-el.on('click', handler) // addEventListener
-el.off('click', handler) // removeEventListener (same function reference)
-el.trigger('click') // dispatchEvent(new Event('click'))
+jjEl.on('click', handler) // addEventListener
+jjEl.off('click', handler) // removeEventListener (same function reference)
+jjEl.triggerEvent('click') // creates and dispatches Event('click')
 ```
 
 The handler `this` inside `.on()` is bound to the JJ wrapper instance. Use `this.ref` to access the native element:
 
 ```js
-btn.on('click', function () {
+jjBtn.on('click', function () {
     // this → the JJHE wrapper
     // this.ref → the HTMLButtonElement
     console.log(this.ref.textContent)
@@ -54,10 +54,16 @@ new CustomEvent('internal-ready', { bubbles: false, composed: false })
 ## Event delegation
 
 ```js
-const list = doc.find('#list', true)
-list.on('click', (e) => {
-    const item = e.target.closest('[data-id]')
-    if (item) handleClick(item.dataset.id)
+import { JJD } from 'jj'
+
+const jjDoc = JJD.from(document)
+const jjList = jjDoc.find('#list', true)
+jjList.on('click', (e) => {
+    if (!(e.target instanceof Element)) {
+        return
+    }
+    const itemEl = e.target.closest('[data-id]')
+    if (itemEl) handleClick(itemEl.dataset.id)
 })
 ```
 
@@ -65,7 +71,7 @@ list.on('click', (e) => {
 
 ```js
 const ctrl = new AbortController()
-el.ref.addEventListener('click', handler, { signal: ctrl.signal })
+jjEl.ref.addEventListener('click', handler, { signal: ctrl.signal })
 // later:
 ctrl.abort() // removes listener
 ```

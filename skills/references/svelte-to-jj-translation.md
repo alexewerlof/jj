@@ -32,9 +32,9 @@ JJ:
 import { JJHE } from 'jj'
 
 let count = 0
-const btn = JJHE.create('button').setText('0')
-btn.on('click', () => btn.setText(String(++count)))
-document.body.appendChild(btn.ref)
+const jjBtn = JJHE.create('button').setText('0')
+jjBtn.on('click', () => jjBtn.setText(String(++count)))
+document.body.appendChild(jjBtn.ref)
 ```
 
 ## Outbound events

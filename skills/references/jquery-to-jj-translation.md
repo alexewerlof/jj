@@ -7,8 +7,8 @@ jQuery provides chainable selection and DOM operations. JJ is similar in API fee
 | jQuery                         | JJ equivalent                                                                     |
 | ------------------------------ | --------------------------------------------------------------------------------- |
 | `$('#id')`                     | `JJD.from(document).find('#id')`                                                  |
-| `$('.cls')` (first match)      | `doc.find('.cls')`                                                                |
-| `$('.cls')` (all matches)      | `doc.findAll('.cls')`                                                             |
+| `$('.cls')` (first match)      | `jjDoc.find('.cls')`                                                              |
+| `$('.cls')` (all matches)      | `jjDoc.findAll('.cls')`                                                           |
 | `.addClass()` / `.removeClass` | `.addClass()` / `.rmClass()`                                                      |
 | `.swClass(cls, bool?)`         | `.swClass(cls, force?)` — explicit when force is provided, auto-flip when omitted |
 | `.attr(name, val)` (write)     | `.setAttr(name, val)`                                                             |
@@ -36,8 +36,8 @@ $('.card').addClass('active').css('color', 'red')
 JJ:
 
 ```js
-const doc = JJD.from(document)
-doc.findAll('.card').forEach((card) => card.addClass('active').setStyle('color', 'red'))
+const jjDoc = JJD.from(document)
+jjDoc.findAll('.card').forEach((jjCard) => jjCard.addClass('active').setStyle('color', 'red'))
 ```
 
 ## HTML write safety
@@ -51,8 +51,8 @@ $('#msg').html(userInput) // XSS risk
 JJ requires explicit acknowledgement:
 
 ```js
-doc.find('#msg').setHTML(trustedMarkup, true) // must pass true
-doc.find('#msg').setText(userInput) // safe for user content
+jjDoc.find('#msg').setHTML(trustedMarkup, true) // must pass true
+jjDoc.find('#msg').setText(userInput) // safe for user content
 ```
 
 ## Event delegation
@@ -66,7 +66,10 @@ $(document).on('click', '.item', handler)
 JJ — use native event delegation via `matches`:
 
 ```js
-doc.on('click', (e) => {
+jjDoc.on('click', (e) => {
+    if (!(e.target instanceof Element)) {
+        return
+    }
     if (e.target.matches('.item')) handler(e)
 })
 ```

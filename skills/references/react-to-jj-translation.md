@@ -31,12 +31,12 @@ JJ:
 import { JJHE } from 'jj'
 
 let count = 0
-const btn = JJHE.create('button').setText('0')
-btn.on('click', () => {
+const jjBtn = JJHE.create('button').setText('0')
+jjBtn.on('click', () => {
     count++
-    btn.setText(String(count))
+    jjBtn.setText(String(count))
 })
-document.body.appendChild(btn.ref)
+document.body.appendChild(jjBtn.ref)
 ```
 
 ## Component props → observed attributes
@@ -73,7 +73,7 @@ JJ — child dispatches, parent listens:
 JJHE.from(this).triggerCustomEvent('todo-toggle', { id: this.#id })
 
 // parent
-container.on('todo-toggle', (e) => handleToggle(e.detail.id))
+jjContainer.on('todo-toggle', (e) => handleToggle(e.detail.id))
 ```
 
 ## Browser references
