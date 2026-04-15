@@ -505,6 +505,7 @@ For framework migration or deep-dive patterns, load these on demand:
 - `references/angular-to-jj-translation.md`
 - `references/jquery-to-jj-translation.md`
 - `references/lit-to-jj-translation.md`
+- `references/dom-to-jj-translation.md`
 - `references/web-components-patterns.md`
 - `references/eventing-patterns.md`
 - `references/querying-patterns.md`

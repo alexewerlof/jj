@@ -41,6 +41,7 @@ For task-focused guidance, load `skills/SKILL.md` — it is the main JJ skill wi
 - `skills/references/angular-to-jj-translation.md`
 - `skills/references/jquery-to-jj-translation.md`
 - `skills/references/lit-to-jj-translation.md`
+- `skills/references/dom-to-jj-translation.md`
 - `skills/references/web-components-patterns.md`
 - `skills/references/eventing-patterns.md`
 - `skills/references/querying-patterns.md`
