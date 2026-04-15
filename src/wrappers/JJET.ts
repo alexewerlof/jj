@@ -188,9 +188,9 @@ export class JJET<T extends EventTarget = EventTarget> {
      * @example
      * ```ts
      * node
-     *   .run(function (context) {
+     *   .run(function (jjContext) {
      *     console.log(this.ref)
-     *     console.log(context.ref)
+     *     console.log(jjContext.ref)
      *   })
      *   .trigger(new Event('ready'))
      * ```
@@ -205,7 +205,7 @@ export class JJET<T extends EventTarget = EventTarget> {
      * @see {@link on} for event listener chaining.
      * @see {@link trigger} for dispatching events in-chain.
      */
-    run(fn: (this: this, context: this) => void): this {
+    run(fn: (this: this, jjContext: this) => void): this {
         try {
             fn.call(this, this)
         } catch (cause) {

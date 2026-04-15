@@ -74,6 +74,15 @@ const inputRef = jjDoc.find('input#email', true).ref
 
 Use `.ref` sparingly, but when you do, name the result as a native value, not as a wrapper.
 
+Similarly, since the argument to the `.run()` callback is the current wrapped context, name it `jjContext`:
+
+```js
+jjButton.run((jjContext) => {
+    // `jjContext` is the same as `jjButton` or this
+    jjContext.setAttr('aria-busy', 'true')
+})
+```
+
 ## Plain data: no `jj` prefix
 
 Do not prefix plain data with `jj`.
