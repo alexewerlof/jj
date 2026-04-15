@@ -1,5 +1,19 @@
 # Readablity
 
+## Text semantics
+
+`getText()` and `setText()` are defined on `JJE` and inherited by `JJHE`, `JJSE`, and `JJME`.
+They use `textContent` only.
+
+If you specifically need HTML rendering-aware behavior (`innerText`), use the native escape hatch:
+
+```js
+jjEl.ref.innerText = 'Hello\nworld!'
+```
+
+For whole-document text, remember that `Document.textContent` and `DocumentType.textContent` are `null`.
+Use `document.documentElement.textContent` or `jjDoc.ref.documentElement.textContent`.
+
 One of the main reasons to use JJ is to have the code more compact and easier to read, making it for the humans to verify and establish trust.
 
 ## Use sugar

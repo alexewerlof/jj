@@ -706,6 +706,52 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
+     * Gets the text content of the Element.
+     *
+     * @remarks
+     * This method operates on `textContent`. The method name is kept short for convenience.
+     *
+     * For HTML-only rendering-aware text behavior (layout-aware whitespace and line breaks),
+     * use `jjEl.ref.innerText` on `JJHE` wrappers.
+     *
+     * This method exists on element wrappers (`JJE`, `JJHE`, `JJSE`, `JJME`) and does not
+     * apply to `JJD` (Document wrapper). Per MDN, `Document.textContent` and
+     * `DocumentType.textContent` are `null`; for full document text, use one of the following:
+     * - `document.documentElement.textContent`
+     * - `jjDoc.ref.documentElement.textContent`
+     * - `JJE.from(document.documentElement).getText()`.
+     *
+     * @returns The text content, or an empty string when `textContent` is null.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
+     */
+    getText(): string {
+        return this.ref.textContent ?? ''
+    }
+
+    /**
+     * Sets the text content of the Element.
+     *
+     * @remarks
+     * This method operates on `textContent`. The method name is kept short for convenience.
+     * Pass an empty string, `null`, or `undefined` to clear the content.
+     * Numbers and booleans are automatically converted to strings by the DOM.
+     *
+     * For HTML-only rendering-aware text behavior (for example preserving line breaks via
+     * `innerText`), use `jjEl.ref.innerText = 'Hello\nworld!'` on a `JJHE` wrapper.
+     *
+     * @param text - The text to set, or null/undefined to clear.
+     * @returns This instance for chaining.
+     * @see {@link getText} for reading text content.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
+     */
+    setText(text?: unknown): this {
+        this.ref.textContent = text as string | null
+        return this
+    }
+
+    /**
      * Gets the inner HTML of the Element.
      *
      * @remarks

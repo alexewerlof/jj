@@ -16,6 +16,9 @@ const jjMyDiv = JJHE.create('div').setText('hello world')
 
 Why the `jj` prefix? It signals that `jjMyDiv` is a JJ wrapper — not a plain DOM element. Access the raw element anytime via `jjMyDiv.ref`.
 
+`setText()` / `getText()` come from `JJE` and use `textContent` for `JJHE`, `JJSE`, and `JJME`.
+If you specifically need HTML rendering-aware `innerText` behavior, use `jjMyDiv.ref.innerText` directly.
+
 `JJHE` stands for `JJ`, `HTMLElement`. There are a couple more:
 
 - `JJSE` for `SVGElement`
@@ -93,6 +96,9 @@ const jjMyDiv = jjDoc.find('#my-div', true)
 ```
 
 Passing `true` to `find()` means that we know that `#my-div` exists and it should throw if it's not found. That way we can catch programmatic errors and get a clear actionable error that accelerates debugging (whether manually or using AI agents).
+
+For whole-document text, note that `Document.textContent` and `DocumentType.textContent` are `null`.
+Use `document.documentElement.textContent` or `jjDoc.ref.documentElement.textContent`.
 
 ## Creating custom components
 

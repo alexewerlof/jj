@@ -328,28 +328,28 @@ describe('JJHE', () => {
 
     describe('text methods', () => {
         describe('getText()', () => {
-            it('gets innerText', () => {
+            it('gets textContent', () => {
                 const el = document.createElement('div')
-                el.innerText = 'test content'
+                el.textContent = 'test content'
                 const jjhe = new JJHE(el)
                 assert.strictEqual(jjhe.getText(), 'test content')
             })
         })
 
         describe('setText()', () => {
-            it('sets innerText', () => {
+            it('sets textContent', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
                 jjhe.setText('new text')
-                assert.strictEqual(el.innerText, 'new text')
+                assert.strictEqual(el.textContent, 'new text')
             })
 
             it('clears text with null', () => {
                 const el = document.createElement('div')
-                el.innerText = 'old text'
+                el.textContent = 'old text'
                 const jjhe = new JJHE(el)
                 jjhe.setText(null)
-                assert.strictEqual(jjhe.getText(), el.innerText)
+                assert.strictEqual(jjhe.getText(), el.textContent)
             })
 
             it('accepts numbers and converts to strings', () => {
@@ -357,7 +357,7 @@ describe('JJHE', () => {
                 const jjhe = new JJHE(el)
                 jjhe.setText(123)
                 // DOM API converts to string automatically
-                assert.strictEqual(el.innerText, 123)
+                assert.strictEqual(el.textContent, '123')
             })
 
             it('accepts booleans and converts to strings', () => {
@@ -365,7 +365,7 @@ describe('JJHE', () => {
                 const jjhe = new JJHE(el)
                 jjhe.setText(true)
                 // DOM API converts to string automatically
-                assert.strictEqual(el.innerText, true)
+                assert.strictEqual(el.textContent, 'true')
             })
         })
     })

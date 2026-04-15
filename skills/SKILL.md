@@ -11,7 +11,7 @@ JJ is a minimal, zero-dependency TypeScript library that wraps browser DOM inter
 
 When converting native DOM code, framework code, or vague UI requests into JJ, default to this order of thought:
 
-- Start from wrappers, not native nodes: `JJD.from(document)`, `JJHE.create()`, `JJHE.tree()`, `JJET.from(window)`, `getShadow(true)`.
+- Start from wrappers, not native nodes: `JJD.from(document)`, `JJE.from(document.documentElement)`, `JJHE.create()`, `JJHE.tree()`, `JJET.from(window)`, `getShadow(true)`.
 - Keep values wrapped and chain operations; use `.ref` only for native APIs JJ does not provide.
 - Use `JJHE.tree` with a local `h` alias for multi-node or nested UI.
 - Use `setChild()`/`setChildren()` to replace content and `addChildMap()`/`setChildMap()` for array rendering.
@@ -47,19 +47,30 @@ Naming defaults:
 
 Each JJ wrapper exposes the native node via `.ref`.
 
-| Class | Wraps            | Key additions                                          |
-| ----- | ---------------- | ------------------------------------------------------ |
-| JJET  | EventTarget      | `.on()`, `.off()`, `.trigger()`, `.run()`              |
-| JJN   | Node             | `.getParent()`, `.getChildren()`, `.rm()`, `.clone()`  |
-| JJD   | Document         | `.find()`, `.findAll()`                                |
-| JJDF  | DocumentFragment | `.addTemplate()`, `.setTemplate()`, batch child ops    |
-| JJE   | Element          | Attributes, classes, ARIA, visibility, HTML write      |
-| JJHE  | HTMLElement      | `.setText()`, `.setStyle()`, `.setShadow()`, `.tree()` |
-| JJSE  | SVGElement       | SVG namespace factory                                  |
-| JJME  | MathMLElement    | MathML namespace factory                               |
-| JJSR  | ShadowRoot       | `.find()`, `.findAll()`, `.addStyle()`, `.init()`      |
-| JJDF  | DocumentFragment | Fragment operations                                    |
-| JJT   | Text             | `.getText()`, `.setText()`                             |
+| Class | Wraps            | Key additions                                                                 |
+| ----- | ---------------- | ----------------------------------------------------------------------------- |
+| JJET  | EventTarget      | `.on()`, `.off()`, `.trigger()`, `.run()`                                     |
+| JJN   | Node             | `.getParent()`, `.getChildren()`, `.rm()`, `.clone()`                         |
+| JJD   | Document         | `.find()`, `.findAll()`                                                       |
+| JJDF  | DocumentFragment | `.addTemplate()`, `.setTemplate()`, batch child ops                           |
+| JJE   | Element          | Attributes, classes, ARIA, visibility, HTML write, `.getText()`, `.setText()` |
+| JJHE  | HTMLElement      | `.setStyle()`, `.setShadow()`, `.tree()`                                      |
+| JJSE  | SVGElement       | SVG namespace factory, `.tree()`                                              |
+| JJME  | MathMLElement    | MathML namespace factory, `.tree()`                                           |
+| JJSR  | ShadowRoot       | `.find()`, `.findAll()`, `.addStyle()`, `.init()`                             |
+| JJDF  | DocumentFragment | Fragment operations                                                           |
+| JJT   | Text             | `.getText()`, `.setText()`                                                    |
+
+Text semantics note:
+`JJE.getText()` and `JJE.setText()` use `textContent` only and are inherited by `JJHE`, `JJSE`, and `JJME`.
+For HTML-specific rendering-aware behavior (for example `innerText` line-break handling), use `jjEl.ref.innerText` on `JJHE` wrappers.
+Per MDN, `Document.textContent` and `DocumentType.textContent` are `null`; use `document.documentElement.textContent`
+or `jjDoc.ref.documentElement.textContent` for whole-document text.
+
+```typescript
+const jjRootEl = JJE.from(document.documentElement)
+const fullPageText = jjRootEl.getText()
+```
 
 ## Type-Safe Creation — Always Use Factory Methods
 

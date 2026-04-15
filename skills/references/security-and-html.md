@@ -10,6 +10,18 @@ el.setText(42) // numbers coerced to string
 el.setText(null) // clears text
 ```
 
+For element wrappers (`JJHE`, `JJSE`, `JJME`), `setText` and `getText` are inherited from `JJE`
+and use `textContent`.
+
+If you specifically need HTML rendering-aware behavior, use the native escape hatch on HTML wrappers:
+
+```js
+jjEl.ref.innerText = 'Hello\nworld!'
+```
+
+For whole-document text, `Document.textContent` and `DocumentType.textContent` are `null`.
+Use `document.documentElement.textContent` or `jjDoc.ref.documentElement.textContent`.
+
 ## Explicit opt-in for HTML writes
 
 `setHTML(html, unsafe?)` sets `innerHTML`. When `html` is non-empty, the second argument **must** be `true`:

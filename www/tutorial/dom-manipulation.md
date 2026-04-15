@@ -1,5 +1,15 @@
 # DOM Manipulation
 
+## Text semantics note
+
+`getText()` and `setText()` are inherited from `JJE` by `JJHE`, `JJSE`, and `JJME`, and they use `textContent`.
+
+If you need HTML rendering-aware behavior like `innerText` line-break handling, use:
+
+```js
+jjEl.ref.innerText = 'Hello\nworld!'
+```
+
 There are a few verbs for that are used consistently across JJ:
 
 | Verb  | Description                                                  | Example                            |

@@ -66,6 +66,12 @@ Use factory methods — `JJHE.create()`, `JJSE.create()`, `JJME.create()`, `JJSR
 
 `setHTML(html, true)` requires the explicit `true` flag or throws. Prefer `.setText()` for user-supplied content.
 
+Text helpers are defined on `JJE` and inherited by `JJHE`, `JJSE`, and `JJME`. They use `textContent` only.
+For HTML-specific rendering-aware behavior, use `jjEl.ref.innerText` on `JJHE` wrappers.
+
+Per MDN, `Document.textContent` and `DocumentType.textContent` are `null`. For whole-document text,
+use `document.documentElement.textContent` or `jjDoc.ref.documentElement.textContent`.
+
 → See `skills/references/security-and-html.md`.
 
 ### Shadow DOM and Components

@@ -31,6 +31,14 @@ This way, the upgraded `JJN.wrap()` static method is available inside all the JJ
 
 When checking wrapper inputs in this method, use `isInstance(template, JJN)` (not `JJDF`/`JJHE`) to avoid circular dependencies and keep support generic for any JJ wrapper.
 
+## Text APIs
+
+- `getText()` and `setText()` are implemented on `JJE` and inherited by `JJHE`, `JJSE`, and `JJME`.
+- These methods use `textContent` only.
+- For HTML-specific rendering-aware behavior, use `jjEl.ref.innerText` on `JJHE` wrappers.
+- `JJD` does not expose `getText()` or `setText()`. Per MDN, `Document.textContent` and `DocumentType.textContent` are `null`.
+  Use `document.documentElement.textContent` or `jjDoc.ref.documentElement.textContent` or `JJE.from(document.documentElement).getText()`.
+
 Tests live in the root `test/` folder. From there, import wrappers via `../src/index.ts`.
 
 ## Related Task Skills

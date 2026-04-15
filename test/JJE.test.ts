@@ -72,6 +72,63 @@ describe('JJE', () => {
         })
     })
 
+    describe('text methods', () => {
+        describe('getText()', () => {
+            it('gets textContent', () => {
+                const el = document.createElement('div')
+                el.textContent = 'test content'
+                const jje = new JJE(el)
+                assert.strictEqual(jje.getText(), 'test content')
+            })
+
+            it('returns empty string when textContent is null', () => {
+                const el = document.createElement('div')
+                el.textContent = null
+                const jje = new JJE(el)
+                assert.strictEqual(jje.getText(), '')
+            })
+        })
+
+        describe('setText()', () => {
+            it('sets textContent', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                jje.setText('new text')
+                assert.strictEqual(el.textContent, 'new text')
+            })
+
+            it('clears text with null', () => {
+                const el = document.createElement('div')
+                el.textContent = 'old text'
+                const jje = new JJE(el)
+                jje.setText(null)
+                assert.strictEqual(el.textContent, '')
+            })
+
+            it('clears text with undefined', () => {
+                const el = document.createElement('div')
+                el.textContent = 'old text'
+                const jje = new JJE(el)
+                jje.setText(undefined)
+                assert.strictEqual(el.textContent, '')
+            })
+
+            it('accepts numbers and converts to strings', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                jje.setText(123)
+                assert.strictEqual(el.textContent, '123')
+            })
+
+            it('accepts booleans and converts to strings', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                jje.setText(true)
+                assert.strictEqual(el.textContent, 'true')
+            })
+        })
+    })
+
     describe('attribute methods', () => {
         describe('getAttr()', () => {
             it('gets attribute value', () => {

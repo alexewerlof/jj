@@ -129,48 +129,6 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
     }
 
     /**
-     * Gets the text content of the SVGElement.
-     *
-     * @remarks
-     * This method operates on `textContent`. The method name is kept short for convenience.
-     *
-     * @example
-     * ```ts
-     * const text = svg.getText()
-     * ```
-     *
-     * @returns The text content.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
-     */
-    getText(): string {
-        return this.ref.textContent ?? ''
-    }
-
-    /**
-     * Sets the text content of the SVGElement.
-     *
-     * @remarks
-     * This method operates on `textContent`. The method name is kept short for convenience.
-     * Pass an empty string, `null`, or `undefined` to clear the content.
-     * Numbers and booleans are automatically converted to strings.
-     *
-     * @example
-     * ```ts
-     * svg.setText('Hello SVG')
-     * svg.setText(null)  // Clear content
-     * svg.setText(42)  // Numbers are converted
-     * ```
-     *
-     * @param text - The text to set, or null/undefined to clear.
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent | Node.textContent}
-     */
-    setText(text?: unknown): this {
-        this.ref.textContent = text as string | null
-        return this
-    }
-
-    /**
      * Sets the fill attribute.
      *
      * @param value - The fill color/value.

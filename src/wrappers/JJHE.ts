@@ -198,34 +198,4 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
         this.ref.click()
         return this
     }
-
-    /**
-     * Gets the inner text of the HTMLElement.
-     *
-     * @remarks
-     * This method operates on `innerText`. The method name is kept short for convenience.
-     *
-     * @returns The inner text.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
-     */
-    getText(): string {
-        return this.ref.innerText
-    }
-
-    /**
-     * Sets the inner text of the HTMLElement.
-     *
-     * @remarks
-     * This method operates on `innerText`. The method name is kept short for convenience.
-     * Pass an empty string, `null`, or `undefined` to clear the content.
-     * Numbers and booleans are automatically converted to strings.
-     *
-     * @param text - The text to set, or null/undefined to clear.
-     * @returns This instance for chaining.
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText | HTMLElement.innerText}
-     */
-    setText(text?: unknown): this {
-        this.ref.innerText = text as string
-        return this
-    }
 }
