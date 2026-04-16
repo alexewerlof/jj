@@ -22,6 +22,7 @@ Translation default:
 - Start each module with `const h = JJHE.tree` when rendering child structure.
 - Prefer `h(tag, attrs, ...children)` for concise, declarative structure instead of verbose `create(...).set*()` chains.
 - For single-expression callbacks, prefer concise arrows (`x => h(...)`) over block bodies with `return`.
+- Prefer batch object-dictionary helpers (for example `setAttrs`, `setAriaAttrs`, `setDataAttrs`, `setStyles`, `setClasses`) when setting multiple keys on the same wrapper.
 - Keep `create()` for one-off imperative cases where hyperscript would not improve readability.
 
 Lit:
@@ -132,6 +133,34 @@ Over:
 ```js
 JJHE.create('select').addChildMap(items, ({ value, title }) => JJHE.create('option').setValue(value).setText(title))
 ```
+
+## Compact multi-attribute updates
+
+Prefer:
+
+```js
+jjDoc
+    .find('#source-url', true)
+    .setAttrs({
+        href: sourceUrl,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+    })
+    .setText(sourceUrl)
+```
+
+Over:
+
+```js
+jjDoc
+    .find('#source-url', true)
+    .setAttr('href', sourceUrl)
+    .setAttr('target', '_blank')
+    .setAttr('rel', 'noopener noreferrer')
+    .setText(sourceUrl)
+```
+
+Same rule for other dictionary-style helpers: `setAriaAttrs`, `setDataAttrs`, `setStyles`, and `setClasses`.
 
 ## Browser references
 

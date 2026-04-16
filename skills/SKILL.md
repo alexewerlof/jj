@@ -15,6 +15,7 @@ When converting native DOM code, framework code, or vague UI requests into JJ, d
 - Keep values wrapped and chain operations; use `.ref` only for native APIs JJ does not provide.
 - Use `JJHE.tree` with a local `h` alias for concise element creation, especially mapped/list children and nested UI.
 - Use `setChild()`/`setChildren()` to replace content and `addChildMap()`/`setChildMap()` for array rendering.
+- Prefer batch object-dictionary helpers (`setAttrs`, `setAriaAttrs`, `setDataAttrs`, `setStyles`, `setClasses`) over repeated singular setter chains when updating multiple keys.
 - Query with `find()`/`findAll()`/`closest()` instead of native `querySelector*` when JJ already covers the case.
 - For form-like value elements (`input`, `select`, `textarea`, `progress`, etc.), prefer `getValue()` / `setValue(...)` over `.ref.value`.
 - Use `setText()` for user content and treat `setHTML(..., true)` as a trusted-content escape hatch.
@@ -190,6 +191,20 @@ jjEl.swAttr('disabled', !isReady) // sets disabled="" or removes it
 
 // Attribute — batch (null/undefined skipped)
 jjEl.setAttrs({ type: 'text', placeholder: 'Search…' })
+
+// Prefer batch updates for multiple keys on the same wrapper
+jjDoc
+    .find('#source-url', true)
+    .setAttrs({ href: sourceUrl, target: '_blank', rel: 'noopener noreferrer' })
+    .setText(sourceUrl)
+
+// Avoid repetitive singular setter chains for the same object-like update
+jjDoc
+    .find('#source-url', true)
+    .setAttr('href', sourceUrl)
+    .setAttr('target', '_blank')
+    .setAttr('rel', 'noopener noreferrer')
+    .setText(sourceUrl)
 
 // Classes
 jjEl.addClass('active')
