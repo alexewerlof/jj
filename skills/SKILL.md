@@ -13,7 +13,7 @@ When converting native DOM code, framework code, or vague UI requests into JJ, d
 
 - Start from wrappers, not native nodes: `JJD.from(document)`, `JJE.from(document.documentElement)`, `JJHE.create()`, `JJHE.tree()`, `JJET.from(window)`, `getShadow(true)`.
 - Keep values wrapped and chain operations; use `.ref` only for native APIs JJ does not provide.
-- Use `JJHE.tree` with a local `h` alias for multi-node or nested UI.
+- Use `JJHE.tree` with a local `h` alias for concise element creation, especially mapped/list children and nested UI.
 - Use `setChild()`/`setChildren()` to replace content and `addChildMap()`/`setChildMap()` for array rendering.
 - Query with `find()`/`findAll()`/`closest()` instead of native `querySelector*` when JJ already covers the case.
 - For form-like value elements (`input`, `select`, `textarea`, `progress`, etc.), prefer `getValue()` / `setValue(...)` over `.ref.value`.
@@ -126,11 +126,33 @@ latestChatResponse.ref.appendChild(assistantMessage.ref)
 Default heuristics from the tutorial:
 
 - Use `JJHE.tree` with a local `h` alias when creating multiple siblings or any nested subtree.
+- Prefer `h(tag, attrs, ...children)` over verbose `create(...).set*()` chains when the element can be expressed as structure (for example options, list items, rows, and cards).
+- For single-expression callbacks, prefer concise arrows: `x => h(...)` instead of `x => { return h(...) }`.
 - Use `create()` for one-off elements; switch to `tree()` as soon as structure becomes non-trivial.
 - Prefer `setChild()` or `setChildren()` when replacing content, not `.empty().addChild()`.
 - Prefer `addChildMap()` or `setChildMap()` when rendering from arrays.
 - Keep values wrapped. Reach for `.ref` only for native APIs JJ does not expose.
 - Use JJ verb families consistently: `set*` replaces, `add*` appends, `pre*` prepends, `rm*` removes, `sw*` toggles.
+
+```typescript
+const h = JJHE.tree
+
+// ✅ preferred for mapped options
+const jjSelect = JJHE.create('select').addChildMap(items, ({ value, title }) => h('option', { value }, title))
+
+// ✅ preferred for single-expression callbacks
+const jjList = JJHE.create('ul').addChildMap(items, (item) => h('li', null, item.title))
+
+// ⚠️ avoid unnecessary block + return for a single h(...) expression
+const jjListVerbose = JJHE.create('ul').addChildMap(items, (item) => {
+    return h('li', null, item.title)
+})
+
+// ⚠️ avoid verbose chain for simple structure
+const jjSelectVerbose = JJHE.create('select').addChildMap(items, ({ value, title }) =>
+    JJHE.create('option').setValue(value).setText(title),
+)
+```
 
 ## Document Queries
 

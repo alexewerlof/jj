@@ -10,12 +10,19 @@ Lit adds reactive properties, template literals, and scoped CSS on top of native
 | `@property()`             | `observedAttributes` + `attr2prop` + getter/setter                         |
 | `render()` returning html | Explicit `#render()` method calling wrapper update methods                 |
 | `LitElement.styles`       | `fetchStyle(url)` at module scope → applied via `initShadow` or `addStyle` |
-| `html\`<div>\``           | `JJHE.tree('div', …)` or `JJHE.create('div')`                              |
+| `html\`<div>\``           | `const h = JJHE.tree` then `h('div', attrs, ...children)` (prefer)         |
 | `@event="${handler}"`     | `.on('event', handler)` in `connectedCallback`                             |
 | `updated()` hook          | Call `#render()` from setters that change visible state                    |
 | `this.renderRoot.query…`  | `this.#jjShadow.find(selector)`                                            |
 
 ## Component example
+
+Translation default:
+
+- Start each module with `const h = JJHE.tree` when rendering child structure.
+- Prefer `h(tag, attrs, ...children)` for concise, declarative structure instead of verbose `create(...).set*()` chains.
+- For single-expression callbacks, prefer concise arrows (`x => h(...)`) over block bodies with `return`.
+- Keep `create()` for one-off imperative cases where hyperscript would not improve readability.
 
 Lit:
 
@@ -94,6 +101,36 @@ const stylePromise = fetchStyle(import.meta.resolve('./component.css'))
 JJHE.from(this)
     .setShadow('open')
     .initShadow(await templatePromise, await stylePromise)
+```
+
+## Compact child mapping example
+
+Prefer:
+
+```js
+const h = JJHE.tree
+
+JJHE.create('select').addChildMap(items, ({ value, title }) => h('option', { value }, title))
+```
+
+And prefer:
+
+```js
+jjOptAssistantLang.addChildMap(supportedAssistantLanguages, ({ value, title }) => h('option', { value }, title))
+```
+
+Over:
+
+```js
+jjOptAssistantLang.addChildMap(supportedAssistantLanguages, ({ value, title }) => {
+    return h('option', { value }, title)
+})
+```
+
+Over:
+
+```js
+JJHE.create('select').addChildMap(items, ({ value, title }) => JJHE.create('option').setValue(value).setText(title))
 ```
 
 ## Browser references
