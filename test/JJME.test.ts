@@ -21,15 +21,19 @@ describe('JJME', () => {
         it('creates JJME from MathMLElement', () => {
             const mi = document.createElementNS('http://www.w3.org/1998/Math/MathML', 'mi')
             const jjme = JJME.from(mi)
+            const inferred: JJME<MathMLElementTagNameMap['mi']> = jjme
             assert.ok(jjme instanceof JJME)
+            assert.strictEqual(inferred.ref, mi)
         })
     })
 
     describe('static create()', () => {
         it('creates MathML element from tag name', () => {
             const jjme = JJME.create('mfrac')
+            const inferred: JJME<MathMLElementTagNameMap['mfrac']> = jjme
             assert.strictEqual(jjme.ref.namespaceURI, 'http://www.w3.org/1998/Math/MathML')
             assert.strictEqual(jjme.ref.tagName, 'mfrac')
+            assert.strictEqual(inferred.ref, jjme.ref)
         })
 
         it('throws TypeError for non-string tagName', () => {
@@ -109,9 +113,11 @@ describe('JJME', () => {
     describe('static tree()', () => {
         it('creates MathML element from tag name', () => {
             const el = JJME.tree('math')
+            const inferred: JJME<MathMLElementTagNameMap['math']> = el
             assert.ok(el instanceof JJME)
             assert.strictEqual(el.ref.tagName, 'math')
             assert.strictEqual(el.ref.namespaceURI, 'http://www.w3.org/1998/Math/MathML')
+            assert.strictEqual(inferred.ref, el.ref)
         })
 
         it('sets attributes', () => {

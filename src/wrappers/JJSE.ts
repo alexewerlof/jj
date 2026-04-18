@@ -29,7 +29,7 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      * @returns A new JJSE instance.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement | SVGElement}
      */
-    static from(ref: SVGElement): JJSE {
+    static from<T extends SVGElement>(ref: T): JJSE<T> {
         return new JJSE(ref)
     }
 
@@ -102,6 +102,12 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      * @see {@link JJSE.create} for a type-narrowed single-element factory.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS | document.createElementNS}
      */
+    static tree<K extends keyof SVGElementTagNameMap>(
+        tagName: K,
+        attributes?: Record<string, string> | null,
+        ...children: Wrappable[]
+    ): JJSE<SVGElementTagNameMap[K]>
+    static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJSE
     static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJSE {
         return JJSE.create(tagName)
             .setAttrs(attributes)

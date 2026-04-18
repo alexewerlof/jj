@@ -30,7 +30,7 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
      * @returns A new JJME instance.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement | MathMLElement}
      */
-    static from(ref: MathMLElement): JJME {
+    static from<T extends MathMLElement>(ref: T): JJME<T> {
         return new JJME(ref)
     }
 
@@ -109,6 +109,12 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
      * @see {@link JJME.create} for a type-narrowed single-element factory.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS | document.createElementNS}
      */
+    static tree<K extends keyof MathMLElementTagNameMap>(
+        tagName: K,
+        attributes?: Record<string, string> | null,
+        ...children: Wrappable[]
+    ): JJME<MathMLElementTagNameMap[K]>
+    static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJME
     static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJME {
         return JJME.create(tagName)
             .setAttrs(attributes)

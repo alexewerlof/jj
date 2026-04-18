@@ -24,15 +24,19 @@ describe('JJSE', () => {
         it('creates JJSE from SVGElement', () => {
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
             const jjse = JJSE.from(svg)
+            const inferred: JJSE<SVGSVGElement> = jjse
             assert.ok(jjse instanceof JJSE)
+            assert.strictEqual(inferred.ref, svg)
         })
     })
 
     describe('static create()', () => {
         it('creates SVG element from tag name', () => {
             const jjse = JJSE.create('circle')
+            const inferred: JJSE<SVGCircleElement> = jjse
             assert.ok(jjse.ref instanceof SVGElement)
             assert.strictEqual(jjse.ref.tagName, 'circle')
+            assert.strictEqual(inferred.ref, jjse.ref)
         })
 
         it('throws TypeError for non-string tagName', () => {
@@ -95,9 +99,11 @@ describe('JJSE', () => {
     describe('static tree()', () => {
         it('creates SVG element from tag name', () => {
             const el = JJSE.tree('svg')
+            const inferred: JJSE<SVGSVGElement> = el
             assert.ok(el instanceof JJSE)
             assert.strictEqual(el.ref.tagName, 'svg')
             assert.strictEqual(el.ref.namespaceURI, 'http://www.w3.org/2000/svg')
+            assert.strictEqual(inferred.ref, el.ref)
         })
 
         it('sets attributes', () => {
