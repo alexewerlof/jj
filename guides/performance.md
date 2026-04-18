@@ -2,7 +2,7 @@
 
 This guide covers practical browser-native loading hints you can use with JJ.
 
-## Why this matters
+## Pre-load/fetch/parsing
 
 For many apps, performance wins come from telling the browser what is likely needed soon:
 
@@ -47,6 +47,76 @@ doc.find('head', true).addChild(
         rel: 'modulepreload',
     }),
 )
+```
+
+## Parallel fetch
+
+Many components need to fetch data and templates in parallel. Use `Promise.all` to wait for both before initializing:
+
+```js
+const templatePromise = fetchTemplate(import.meta.resolve('./my-card.html'))
+const stylePromise = fetchStyle(import.meta.resolve('./my-card.css'))
+
+class {
+    //...
+    #isInitialized = false
+    async connectedCallback() {
+        if (!this.#isInitialized) {
+            const [template, style] = await Promise.all([templatePromise, stylePromise])
+            this.#jjShadow.init(template, style)
+            this.#isInitialized = true
+        }
+        this.#render()
+    }
+}
+```
+
+## Inline template and styles
+
+Although we recommend separate files for maintainability, you can also inline templates and styles as strings:
+
+```js
+const template = `
+    <div class="card">
+        <h2>Title</h2>
+        <p>Content</p>
+    </div>
+`
+
+const css = `
+    .card {
+        border: 1px solid #ccc;
+        padding: 16px;
+        border-radius: 8px;
+    }
+`
+
+class MyCard extends HTMLElement {
+    //...
+    async connectedCallback() {
+        if (!this.#isInitialized) {
+            // Note that the css string is converted to CSSStyleSheet synchronously
+            this.#jjShadow.init(template, css)
+            this.#isInitialized = true
+        }
+        this.#render()
+    }
+}
+```
+
+A cleaner way to inline the template is to get it from a `<template>` tag in the document.
+
+```js
+class MyCard extends HTMLElement {
+    //...
+    async connectedCallback() {
+        if (!this.#isInitialized) {
+            this.#jjShadow.init(JJD.from(document).find('#my-card-template', true))
+            this.#isInitialized = true
+        }
+        this.#render()
+    }
+}
 ```
 
 ## Choosing the right hint

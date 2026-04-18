@@ -6,13 +6,21 @@ const stylePromise = fetchStyle(import.meta.resolve('./kanban-card.css'))
 export class KanbanCard extends HTMLElement {
     /** @type {JJHE} */
     #jjHost
+    #jjShadow
+    #isInitialized = false
     #data = { id: '', text: '', priority: 'low' }
 
-    async connectedCallback() {
-        if (this.#jjHost) return
-
+    constructor() {
+        super()
         this.#jjHost = JJHE.from(this).setShadow('open')
-        this.#jjHost.initShadow(await templatePromise, await stylePromise)
+        this.#jjShadow = this.#jjHost.getShadow(true)
+    }
+
+    async connectedCallback() {
+        if (this.#isInitialized) return
+
+        this.#jjShadow.init(await templatePromise, await stylePromise)
+        this.#isInitialized = true
 
         // Render initial data
         this.#render()
@@ -44,12 +52,12 @@ export class KanbanCard extends HTMLElement {
     }
 
     #render() {
+        if (!this.#isInitialized) return
         const { id, text, priority } = this.#data
-        const jjShadow = this.#jjHost.getShadow()
-        jjShadow.find('.text').setText(text)
-        jjShadow.find('.id-label').setText(id.slice(0, 4)) // Show short ID
+        this.#jjShadow.find('.text').setText(text)
+        this.#jjShadow.find('.id-label').setText(id.slice(0, 4)) // Show short ID
 
-        const tag = jjShadow.find('.tag')
+        const tag = this.#jjShadow.find('.tag')
         tag.setText(priority)
 
         // Reset classes and add the correct priority class

@@ -16,17 +16,19 @@ const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 
 class MyComponent extends HTMLElement {
     /** Keeps a reference to this component's root element */
-    #root
+    #jjHost
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     async connectedCallback() {
         if (!this.#isInitialized) {
-            this.#root.init(await templatePromise, await stylePromise)
+            this.#jjShadow.init(await templatePromise, await stylePromise)
             this.#isInitialized = true
         }
     }
@@ -44,10 +46,12 @@ const componentStylePromise = fetchStyle(import.meta.resolve('./my-component.css
 
 class MyComponent extends HTMLElement {
     #isInitialized = false
-    #root
+    #jjHost
+    #jjShadow
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     async connectedCallback() {
@@ -57,7 +61,7 @@ class MyComponent extends HTMLElement {
                 sharedStylePromise,
                 componentStylePromise,
             ])
-            this.#root.init(template, sharedStyle, componentStyle)
+            this.#jjShadow.init(template, sharedStyle, componentStyle)
             this.#isInitialized = true
         }
     }

@@ -142,7 +142,7 @@ class MyCounter extends HTMLElement {
     static observedAttributes = ['value']
 
     #jjHost
-    #jjShadow = null
+    #jjShadow
     #value = 0
     // Keeps a reference to the node that updates with the value
     #jjValueElement = null
@@ -187,9 +187,7 @@ class MyCounter extends HTMLElement {
     connectedCallback() {
         if (!this.#jjShadow) {
             this.#jjValueElement = h('span', null, this.value.toString())
-            this.#jjHost.initShadow(
-                h('p', null, 'Counter value: ', this.#jjValueElement, h('button', { id: 'inc' }, '+')),
-            )
+            this.#jjShadow.init(h('p', null, 'Counter value: ', this.#jjValueElement, h('button', { id: 'inc' }, '+')))
             this.#jjShadow = this.#jjHost.getShadow(true)
             this.#jjIncButton = this.#jjShadow.find('#inc', true)
         }

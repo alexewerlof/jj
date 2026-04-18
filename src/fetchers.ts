@@ -50,11 +50,13 @@ async function fetchText(url: URL | string, mime: string = 'text/*') {
  * const templatePromise = fetchTemplate(import.meta.resolve('./my-card.html'))
  *
  * class MyCard extends HTMLElement {
- *     #root
+ *     #jjHost
+ *     #jjShadow
  *
  *     async connectedCallback() {
- *         this.#root = JJHE.from(this).setShadow('open').getShadow(true)
- *         this.#root.init(await templatePromise)
+ *         this.#jjHost = JJHE.from(this).setShadow('open')
+ *         this.#jjShadow = this.#jjHost.getShadow(true)
+ *         this.#jjShadow.init(await templatePromise)
  *     }
  * }
  * ```
@@ -64,16 +66,18 @@ async function fetchText(url: URL | string, mime: string = 'text/*') {
  * // Lazy loading: initialize once on first connection
  * class MyLazyCard extends HTMLElement {
  *     static #templatePromise
- *     #root
+ *     #jjHost
+ *     #jjShadow
  *
  *     async connectedCallback() {
- *         this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+ *         this.#jjHost = JJHE.from(this).setShadow('open')
+ *         this.#jjShadow = this.#jjHost.getShadow(true)
  *
  *         if (!MyLazyCard.#templatePromise) {
  *             MyLazyCard.#templatePromise = fetchTemplate(import.meta.resolve('./my-lazy-card.html'))
  *         }
  *
- *         this.#root.init(await MyLazyCard.#templatePromise)
+ *         this.#jjShadow.init(await MyLazyCard.#templatePromise)
  *     }
  * }
  * ```

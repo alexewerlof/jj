@@ -8,7 +8,7 @@ export class SimpleCounter extends HTMLElement {
     static observedAttributes = ['count']
 
     #jjHost
-    #jjShadow = null
+    #jjShadow
     #isInitialized = false
     // State
     #count = 0

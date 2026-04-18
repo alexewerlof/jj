@@ -35,19 +35,33 @@ use `defineComponent()` which also calls `customElements.whenDefined()`.
 
 ```js
 const templatePromise = fetchTemplate(import.meta.resolve('./my-component.html'))
-const stylePromise    = fetchStyle(import.meta.resolve('./my-component.css'))
+const stylePromise = fetchStyle(import.meta.resolve('./my-component.css'))
 
-constructor() {
-    super()
-    this.#jjHost = JJHE.from(this).setShadow('open')
-    this.#jjShadow = this.#jjHost.getShadow(true)
-}
+class MyComponentWithShadow extends HTMLElement {
+    #jjHost
+    #jjShadow
+    #isInitialized = false
 
-async connectedCallback() {
-    // setShadow(mode) in the constructor, then initialize once here
-    this.#jjHost.initShadow(await templatePromise, await stylePromise)
-    this.#jjShadow.find('#btn', true).on('click', this.#handleClick)
-    this.#render()
+    constructor() {
+        super()
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
+    }
+
+    async connectedCallback() {
+        if (!this.#isInitialized) {
+            // Initialize shadow content and styles once per instance
+            this.#jjShadow.init(await templatePromise, await stylePromise)
+            this.#jjShadow.find('#btn', true).on('click', this.#handleClick)
+            this.#isInitialized = true
+        }
+        this.#render()
+    }
+
+    #render() {
+        if (!this.#isInitialized) return
+        this.#jjShadow.find('#output', true).setText(this.#value)
+    }
 }
 ```
 
@@ -67,10 +81,10 @@ attributeChangedCallback(name, oldValue, newValue) {
 }
 
 // attr2prop fires attributeChangedCallback BEFORE connectedCallback on initial parse.
-// Guard renders until shadow is ready:
+// Guard renders until shadow is initialized:
 #render() {
-    if (!this.#jjShadow) return
-    this.#jjShadow.find('[data-role="name"]')?.setText(this.#userName)
+    if (!this.#isInitialized) return
+    this.#jjShadow.find('[data-role="name"]', true).setText(this.#userName)
 }
 ```
 

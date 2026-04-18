@@ -130,26 +130,29 @@ After initializing a shadow root wrapper, query within it the same way you'd que
 
 ```js
 class MyCard extends HTMLElement {
-    #root = null
+    #jjHost
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     async connectedCallback() {
         if (!this.#isInitialized) {
-            this.#root.init(await templatePromise, await stylePromise)
+            this.#jjShadow.init(await templatePromise, await stylePromise)
             this.#isInitialized = true
         }
         this.#render()
     }
 
     #render() {
+        if (!this.#isInitialized) return
         // Query from the shadow root wrapper — not from document
-        this.#root?.find('[data-role="title"]')?.setText(this.#title)
-        this.#root?.findAll('[data-role="tag"]').forEach((tag) => tag.addClass('ready'))
+        this.#jjShadow.find('[data-role="title"]', true).setText(this.#title)
+        this.#jjShadow.findAll('[data-role="tag"]').forEach((tag) => tag.addClass('ready'))
     }
 }
 ```

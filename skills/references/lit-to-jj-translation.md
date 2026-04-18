@@ -54,12 +54,14 @@ export class MyCounter extends HTMLElement {
     static defined = defineComponent('my-counter', MyCounter)
 
     #count = 0
-    #jjShadow = null
+    #jjHost
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {

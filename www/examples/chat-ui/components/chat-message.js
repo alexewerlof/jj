@@ -10,8 +10,16 @@ export class ChatMessage extends HTMLElement {
     static defined = defineComponent('chat-message', ChatMessage)
 
     #jjHost
+    #jjShadow
+    #isInitialized = false
     #role = VALID_ROLES[0]
     #content = ''
+
+    constructor() {
+        super()
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
+    }
 
     attributeChangedCallback(name, oldValue, newValue) {
         attr2prop(this, name, oldValue, newValue)
@@ -30,7 +38,8 @@ export class ChatMessage extends HTMLElement {
     }
 
     #renderRole() {
-        this.#jjHost?.shadow.find('#role').setText(this.role)
+        if (!this.#isInitialized) return
+        this.#jjShadow.find('#role', true).setText(this.role)
     }
 
     get content() {
@@ -43,11 +52,15 @@ export class ChatMessage extends HTMLElement {
     }
 
     #renderContent() {
-        this.#jjHost?.shadow.find('#content').setText(this.content)
+        if (!this.#isInitialized) return
+        this.#jjShadow.find('#content', true).setText(this.content)
     }
 
     async connectedCallback() {
-        this.#jjHost = JJHE.from(this).setShadow('open', await templatePromise, await stylePromise)
+        if (!this.#isInitialized) {
+            this.#jjShadow.init(await templatePromise, await stylePromise)
+            this.#isInitialized = true
+        }
         this.#render()
     }
 

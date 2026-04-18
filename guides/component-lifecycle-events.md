@@ -77,7 +77,7 @@ The pattern used in the [architecture guide](./architecture.md) protects against
 ```js
 connectedCallback() {
     if (!this.#isInitialized) {
-        this.#root.init(
+        this.#jjShadow.init(
             JJHE.tree('div', null,
                 JJHE.tree('input', { id: 'checkbox', type: 'checkbox' }),
                 JJHE.tree('label', { for: 'checkbox' }, 'Task'),
@@ -92,17 +92,17 @@ connectedCallback() {
 
 Without the guard, a second call after the element is moved would:
 
-- Re-create the shadow root, destroying all live references held by `#root`
+- Re-create the shadow root, destroying all live references held by `#jjShadow`
 - Re-append the entire DOM tree to a brand new shadow root, discarding any live element state (focus, scroll position, input values)
 
-The async variant — where `connectedCallback` `await`s `fetchTemplate()` or `fetchStyle()` — has an even sharper edge: two concurrent invocations can race to overwrite `#root`, each repeating the network requests.
+The async variant — where `connectedCallback` `await`s `fetchTemplate()` or `fetchStyle()` — has an even sharper edge: two concurrent invocations can race to overwrite `#jjShadow`, each repeating the network requests.
 
-The `if (this.#root) return` makes initialisation a one-time operation regardless of how many times `connectedCallback` is called. The setter and `#render()` method remain fully usable after that because they check `this.#root` before acting:
+The `if (this.#jjShadow) return` makes initialisation a one-time operation regardless of how many times `connectedCallback` is called. The setter and `#render()` method remain fully usable after that because they check `this.#jjShadow` before acting:
 
 ```js
 set done(value) {
     this.#done = Boolean(value)
-    if (this.#root) this.#render()  // safe to call any time
+    if (this.#jjShadow) this.#render()  // safe to call any time
 }
 ```
 
@@ -113,17 +113,19 @@ If you need to react to moves without running init/cleanup code, define the call
 ```js
 class TodoItem extends HTMLElement {
     #done = false
-    #root = null
+    #jjHost
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     connectedCallback() {
         if (!this.#isInitialized) {
-            this.#root.init(
+            this.#jjShadow.init(
                 JJHE.tree(
                     'div',
                     null,
@@ -143,12 +145,13 @@ class TodoItem extends HTMLElement {
 
     connectedMoveCallback() {
         // called by moveBefore() instead of the pair above —
-        // #root is already initialised, so nothing needs to change
+        // #jjShadow is already initialised, so nothing needs to change
     }
 
     #render() {
-        this.#root?.find('#checkbox')?.setAttr('checked', this.#done ? '' : null)
-        this.#root?.find('#status')?.setText(this.#done ? 'Done' : 'Pending')
+        if (!this.#isInitialized) return
+        this.#jjShadow.find('#checkbox', true).setAttr('checked', this.#done ? '' : null)
+        this.#jjShadow.find('#status', true).setText(this.#done ? 'Done' : 'Pending')
     }
 }
 ```
@@ -181,7 +184,7 @@ parent.insertBefore(todoItem, nextSibling)
 ## Summary
 
 - `connectedCallback` fires on every insertion, not just the first one.
-- Use an initialisation guard (`if (this.#root) return`) to make setup code idempotent.
+- Use an initialisation guard (`if (this.#jjShadow) return`) to make setup code idempotent.
 - Define `connectedMoveCallback()` (even empty) to opt into state-preserving moves via `moveBefore()`.
 - `disconnectedCallback` is the right place for teardown; do not rely on `connectedCallback` skipping itself to avoid running teardown.
 

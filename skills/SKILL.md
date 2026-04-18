@@ -339,12 +339,14 @@ export class MyCard extends HTMLElement {
 
     #userName = ''
     #count = 0
-    #jjShadow = null // JJSR wrapper; attached in constructor
+    #jjHost // JJHE wrapper for the host element; attached in constructor
+    #jjShadow // JJSR wrapper; attached in constructor
     #isInitialized = false
 
     constructor() {
         super()
-        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {

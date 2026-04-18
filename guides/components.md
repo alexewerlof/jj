@@ -30,7 +30,7 @@ Most standalone UI components (buttons, cards, dialogs) benefit from shadow DOM.
 - `fetchTemplate(url)` — fetches an HTML file and returns a `DocumentFragment` promise.
 - `fetchStyle(url)` — fetches a CSS file and returns a `CSSStyleSheet` promise.
 - `JJHE.from(this).setShadow(mode)` — attaches the shadow root.
-- `JJHE.from(this).initShadow(template, ...styles)` — clones template content into an attached shadow root and adopts stylesheets.
+- `this.#jjShadow.init(template, ...styles)` — clones template content into an attached shadow root and adopts stylesheets.
 
 ## Recommended structure
 
@@ -54,17 +54,19 @@ Appropriate uses:
 
 - Declare private fields.
 - Set default property values.
-- Attach the shadow root and store `#root`.
+- Attach the shadow root and store `#jjShadow`.
 
 ```js
 class MyCounter extends HTMLElement {
     #count = 0 // private state
-    #root = null // root-of-contents wrapper, assigned in the constructor
+    #jjHost
+    #jjShadow // root-of-contents wrapper, assigned in the constructor
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 }
 ```
@@ -76,13 +78,13 @@ Runs when the element is inserted into the document. Initialize shadow contents,
 ```js
 async connectedCallback() {
     if (this.#isInitialized) return  // guard: prevent re-running on reconnect
-    JJHE.from(this).initShadow(await templatePromise, await stylePromise)
+    this.#jjShadow.init(await templatePromise, await stylePromise)
     this.#isInitialized = true
     this.#render()
 }
 ```
 
-**Guard pattern**: The `if (this.#isInitialized) return` check is important. When an element is disconnected and reconnected (e.g. via `document.body.append(el)`), `connectedCallback` fires again. Without the guard, the template and event wiring would be recreated on every reconnect even though `#root` already exists from the constructor.
+**Guard pattern**: The `if (this.#isInitialized) return` check is important. When an element is disconnected and reconnected (e.g. via `document.body.append(el)`), `connectedCallback` fires again. Without the guard, the template and event wiring would be recreated on every reconnect even though `#jjShadow` already exists from the constructor.
 
 ### 3. `disconnectedCallback()`
 
@@ -127,12 +129,14 @@ export class MyCard extends HTMLElement {
     static defined = defineComponent('my-card', MyCard)
 
     #title = 'Untitled'
-    #root = null
+    #jjHost
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -151,14 +155,14 @@ export class MyCard extends HTMLElement {
 
     async connectedCallback() {
         if (!this.#isInitialized) {
-            this.#root.init(await templatePromise, await stylePromise)
+            this.#jjShadow.init(await templatePromise, await stylePromise)
             this.#isInitialized = true
         }
         this.#render()
     }
 
     #render() {
-        this.#root?.find('[data-role="title"]')?.setText(this.#title)
+        this.#jjShadow?.find('[data-role="title"]')?.setText(this.#title)
     }
 }
 ```
@@ -180,7 +184,7 @@ const sharedVarsPromise = fetchStyle(import.meta.resolve('../../shared/variables
 const componentStylePromise = fetchStyle(import.meta.resolve('./my-card.css'))
 
 // In connectedCallback:
-JJHE.from(this).initShadow(await templatePromise, await sharedVarsPromise, await componentStylePromise)
+this.#jjShadow.init(await templatePromise, await sharedVarsPromise, await componentStylePromise)
 ```
 
 Constructable stylesheets produced by `fetchStyle` are _adopted_ by multiple shadow roots — the browser shares the same parsed `CSSStyleSheet` object without duplicating CSS text. This is more efficient than `<link rel="stylesheet">` per instance.
@@ -226,13 +230,13 @@ This calls `this.userName = newValue` and `this.isAdmin = newValue`. Implement m
 ```js
 set userName(value) {
     this.#userName = String(value ?? '')
-    if (this.#root) this.#render()
+    this.#render()
 }
 
 set isAdmin(value) {
     // HTML attributes are always strings — coerce to boolean
     this.#isAdmin = value !== null && value !== 'false'
-    if (this.#root) this.#render()
+    this.#render()
 }
 ```
 
@@ -240,20 +244,19 @@ set isAdmin(value) {
 
 ## Querying inside shadow DOM
 
-After setup, query elements from your `#root` wrapper:
+The setup code in `connectedCallback()` sets the `#isInitialized` flag after the shadow root is populated and ready. The `#render()` function has nothing to do until `#isInitialized` is `true`. If it's true, we can query elements from your `#jjShadow` wrapper:
 
 ```js
 #render() {
-    const root = this.#root
-    if (!root) return
+    if (!this.#isInitialized) return
 
-    root.find('[data-role="title"]')?.setText(this.#title)
-    root.find('[data-role="count"]')?.setText(String(this.#count))
-    root.find('[data-role="action"]')?.setClasses({ 'is-disabled': this.#count >= this.#max })
+    this.#jjShadow.find('[data-role="title"]', true).setText(this.#title)
+    this.#jjShadow.find('[data-role="count"]', true).setText(String(this.#count))
+    this.#jjShadow.find('[data-role="action"]', true).setClasses({ 'is-disabled': this.#count >= this.#max })
 }
 ```
 
-Never query `document` for elements inside your shadow root — always query from `this.#root`.
+Never query `document` for elements inside your shadow root — always query from `this.#jjShadow`.
 
 ## Events in components
 
@@ -274,7 +277,9 @@ Override when the event should stay internal:
 
 ```js
 // Internal-only event — does not escape the shadow root
-this.#root?.find('button')?.ref.dispatchEvent(new CustomEvent('_internal-toggle', { bubbles: true, composed: false }))
+this.#jjShadow
+    ?.find('button')
+    ?.ref.dispatchEvent(new CustomEvent('_internal-toggle', { bubbles: true, composed: false }))
 ```
 
 ### Reacting to outside triggers
@@ -283,7 +288,7 @@ Events dispatched on `document` do not automatically propagate into shadow trees
 
 ```js
 #onThemeChanged = (event) => {
-    this.#root?.find('.icon')?.setStyle('color', event.detail.accent)
+    this.#jjShadow?.find('.icon')?.setStyle('color', event.detail.accent)
 }
 
 connectedCallback() {
@@ -352,12 +357,14 @@ export class UserCard extends HTMLElement {
 
     #name = ''
     #role = ''
-    #root = null
+    #jjHost
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -369,7 +376,7 @@ export class UserCard extends HTMLElement {
     }
     set name(value) {
         this.#name = String(value ?? '')
-        if (this.#root) this.#render()
+        if (this.#jjShadow) this.#render()
     }
 
     get role() {
@@ -377,12 +384,12 @@ export class UserCard extends HTMLElement {
     }
     set role(value) {
         this.#role = String(value ?? '')
-        if (this.#root) this.#render()
+        if (this.#jjShadow) this.#render()
     }
 
     async connectedCallback() {
         if (!this.#isInitialized) {
-            this.#root
+            this.#jjShadow
                 .init(await templatePromise, await stylePromise)
                 .find('[data-action="contact"]')
                 ?.on('click', this.#onContactClick)
@@ -392,12 +399,12 @@ export class UserCard extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.#root.find('[data-action="contact"]')?.off('click', this.#onContactClick)
+        this.#jjShadow.find('[data-action="contact"]')?.off('click', this.#onContactClick)
     }
 
     #render() {
-        this.#root?.find('[data-role="name"]')?.setText(this.#name)
-        this.#root?.find('[data-role="role"]')?.setText(this.#role)
+        this.#jjShadow?.find('[data-role="name"]')?.setText(this.#name)
+        this.#jjShadow?.find('[data-role="role"]')?.setText(this.#role)
     }
 
     #onContactClick = () => {

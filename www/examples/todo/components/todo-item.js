@@ -7,7 +7,7 @@ export class TodoItem extends HTMLElement {
     static observedAttributes = ['item-id', 'text', 'done']
     static defined = defineComponent('todo-item', TodoItem)
 
-    #jjHost = null
+    #jjHost
     #itemId = ''
     #text = ''
     #done = false

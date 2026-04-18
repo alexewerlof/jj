@@ -111,11 +111,12 @@ const stylePromise = fetchStyle(import.meta.resolve('./my-card.css'))
 class MyCard extends HTMLElement {
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     async connectedCallback() {
-        JJHE.from(this).initShadow(await templatePromise, await stylePromise)
+        this.#jjShadow.init(await templatePromise, await stylePromise)
     }
 }
 ```

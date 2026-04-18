@@ -18,7 +18,7 @@ Use shadow DOM for self-contained UI widgets — buttons, cards, dialogs, date p
 
 ## Initialization
 
-Load templates and stylesheets at module scope so they are fetched once and shared across all instances. Attach the shadow root in the constructor, store `#root` immediately, and initialize its contents in `connectedCallback()`:
+Load templates and stylesheets at module scope so they are fetched once and shared across all instances. Attach the shadow root in the constructor, store `#jjShadow` immediately, and initialize its contents in `connectedCallback()`:
 
 ```js
 import { attr2prop, defineComponent, fetchStyle, fetchTemplate, JJHE } from 'jj'
@@ -32,12 +32,14 @@ export class MyCard extends HTMLElement {
     static defined = defineComponent('my-card', MyCard)
 
     #title = 'Untitled'
-    #root = null
+    #jjHost
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -54,14 +56,15 @@ export class MyCard extends HTMLElement {
 
     async connectedCallback() {
         if (!this.#isInitialized) {
-            JJHE.from(this).initShadow(await templatePromise, await stylePromise)
+            this.#jjShadow.init(await templatePromise, await stylePromise)
             this.#isInitialized = true
         }
         this.#render()
     }
 
     #render() {
-        this.#root?.find('[data-role="title"]')?.setText(this.#title)
+        if (!this.#isInitialized) return
+        this.#jjShadow.find('[data-role="title"]', true).setText(this.#title)
     }
 }
 ```
@@ -102,7 +105,7 @@ const sharedVarsPromise = fetchStyle(import.meta.resolve('../../shared/variables
 const componentStylePromise = fetchStyle(import.meta.resolve('./my-card.css'))
 
 // In connectedCallback:
-JJHE.from(this).initShadow(await templatePromise, await sharedVarsPromise, await componentStylePromise)
+this.#jjShadow.init(await templatePromise, await sharedVarsPromise, await componentStylePromise)
 ```
 
 Constructable stylesheets are shared objects — the browser parses the CSS once and all shadow roots that adopt it reference the same `CSSStyleSheet`. This is more efficient than a `<link>` tag per instance.
@@ -124,12 +127,13 @@ Because each shadow root is its own isolated subtree, IDs inside the shadow do n
 
 ```js
 #render() {
-    this.#root?.find('#title')?.setText(this.#title)
-    this.#root?.find('#body')?.setText(this.#body)
+    if (!this.#isInitialized) return
+    this.#jjShadow.find('#title', true).setText(this.#title)
+    this.#jjShadow.find('#body', true).setText(this.#body)
 }
 ```
 
-Always query from `this.#root`, never from `document`. Querying `document` would search the page tree, not the shadow tree.
+Always query from `this.#jjShadow`, never from `document`. Querying `document` would search the page tree, not the shadow tree.
 
 ---
 
@@ -157,7 +161,7 @@ Override `composed` to prevent an event from leaking outside:
 
 ```js
 // Won't cross the shadow boundary — internal coordination only
-this.#root?.find('#menu')?.ref.dispatchEvent(new CustomEvent('_menu-toggle', { bubbles: true, composed: false }))
+this.#jjShadow?.find('#menu')?.ref.dispatchEvent(new CustomEvent('_menu-toggle', { bubbles: true, composed: false }))
 ```
 
 Use a naming convention (e.g. a leading `_`) to distinguish internal events from the component's public API.
@@ -169,13 +173,15 @@ Events dispatched on `document`, `window`, or sibling elements **do not traverse
 ```js
 // Listen on the host — accessible from outside without crossing the shadow
 #onThemeChanged = (event) => {
-    this.#root?.find('#icon')?.setStyle('color', event.detail.accent)
+    this.#jjShadow?.find('#icon')?.setStyle('color', event.detail.accent)
 }
 
 async connectedCallback() {
-    if (this.#root) return
-    // ...setup...
-    this.addEventListener('theme-changed', this.#onThemeChanged)
+    if (!this.#isInitialized) {
+        // ...setup...
+        this.addEventListener('theme-changed', this.#onThemeChanged)
+        this.#isInitialized = true
+    }
 }
 
 disconnectedCallback() {
@@ -275,14 +281,14 @@ To style slotted content from inside the shadow stylesheet, use the `::slotted()
 To read or react to what the caller projected into a slot:
 
 ```js
-const slot = this.#root?.find('slot[name="header"]')?.ref
+const slot = this.#jjShadow?.find('slot[name="header"]')?.ref
 const assigned = slot?.assignedNodes({ flatten: true }) ?? []
 ```
 
 Use the `slotchange` event to react when the caller changes the projected content:
 
 ```js
-this.#root?.find('slot[name="header"]')?.on('slotchange', (event) => {
+this.#jjShadow?.find('slot[name="header"]')?.on('slotchange', (event) => {
     const nodes = event.target.assignedNodes({ flatten: true })
     console.log('header slot updated', nodes)
 })
@@ -307,12 +313,14 @@ export class UserCard extends HTMLElement {
 
     #name = ''
     #role = ''
-    #root = null
+    #jjHost
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#root = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -324,7 +332,7 @@ export class UserCard extends HTMLElement {
     }
     set name(value) {
         this.#name = String(value ?? '')
-        if (this.#root) this.#render()
+        this.#render()
     }
 
     get role() {
@@ -332,13 +340,13 @@ export class UserCard extends HTMLElement {
     }
     set role(value) {
         this.#role = String(value ?? '')
-        if (this.#root) this.#render()
+        this.#render()
     }
 
     async connectedCallback() {
         if (!this.#isInitialized) {
-            JJHE.from(this).initShadow(await templatePromise, await stylePromise)
-            this.#root.find('#action')?.on('click', this.#onActionClick)
+            this.#jjShadow.init(await templatePromise, await stylePromise)
+            this.#jjShadow.find('#action', true).on('click', this.#onActionClick)
             this.#isInitialized = true
         }
         this.#render()
@@ -346,12 +354,13 @@ export class UserCard extends HTMLElement {
 
     disconnectedCallback() {
         // Remove any document/window listeners registered in connectedCallback
-        this.#root.find('#action')?.off('click', this.#onActionClick)
+        this.#jjShadow.find('#action')?.off('click', this.#onActionClick)
     }
 
     #render() {
-        this.#root?.find('#name')?.setText(this.#name)
-        this.#root?.find('#role')?.setText(this.#role)
+        if (!this.#isInitialized) return
+        this.#jjShadow.find('#name', true).setText(this.#name)
+        this.#jjShadow.find('#role', true).setText(this.#role)
     }
 
     #onActionClick = () => {

@@ -13,7 +13,7 @@ In light DOM components, regular page CSS applies naturally.
 
 ```js
 class MyLightCard extends HTMLElement {
-    #jjHost = null
+    #jjHost
 
     connectedCallback() {
         if (this.#jjHost) {
@@ -51,12 +51,15 @@ const stylePromise = fetchStyle(import.meta.resolve('./my-card.css'))
 class MyCard extends HTMLElement {
     static defined = defineComponent('my-card', MyCard)
 
-    #jjShadow = null
+    #jjHost
+
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     async connectedCallback() {
@@ -104,12 +107,15 @@ let stylePromise
 class LazyStyledCard extends HTMLElement {
     static defined = defineComponent('lazy-styled-card', LazyStyledCard)
 
-    #jjShadow = null
+    #jjHost
+
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     async connectedCallback() {
@@ -140,7 +146,7 @@ let stylePromise
 class LazyLightStyledCard extends HTMLElement {
     static defined = defineComponent('lazy-light-styled-card', LazyLightStyledCard)
 
-    #jjHost = null
+    #jjHost
 
     async connectedCallback() {
         if (this.#jjHost) {

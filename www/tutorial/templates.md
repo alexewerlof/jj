@@ -19,8 +19,9 @@ JJ accepts multiple template sources, which lets you pick the right tool for eac
 Use one convention consistently in your custom elements:
 
 - Light DOM component: `this.#jjHost = JJHE.from(this)`
-- Shadow DOM component: attach in the constructor and store it `this.#jjShadow = JJHE.from(this).setShadow(...).getShadow(true)`
-    - Keep the initialization status in `#isInitialized` and guard `connectedCallback()` to run `this.#jjShadow.init()` only once.
+- Shadow DOM component: attach in the constructor and store both wrappers:
+  `this.#jjHost = JJHE.from(this).setShadow(...)` and `this.#jjShadow = this.#jjHost.getShadow(true)`
+- Keep the initialization status in `#isInitialized` and guard `connectedCallback()` to run `this.#jjShadow.init()` only once.
 
 That gives you a predictable wrapper to query and update.
 
@@ -34,12 +35,15 @@ const templatePromise = fetchTemplate(import.meta.resolve('./my-card.html'))
 export class MyCard extends HTMLElement {
     static defined = defineComponent('my-card', MyCard)
 
-    #jjShadow = null
+    #jjHost
+
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     async connectedCallback() {
@@ -75,12 +79,15 @@ let templatePromise
 export class LazyShadowCard extends HTMLElement {
     static defined = defineComponent('lazy-shadow-card', LazyShadowCard)
 
-    #jjShadow = null
+    #jjHost
+
+    #jjShadow
     #isInitialized = false
 
     constructor() {
         super()
-        this.#jjShadow = JJHE.from(this).setShadow('open').getShadow(true)
+        this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     async connectedCallback() {
@@ -106,7 +113,7 @@ const domTemplate = document.querySelector('#my-light-template')
 export class MyLightCard extends HTMLElement {
     static defined = defineComponent('my-light-card', MyLightCard)
 
-    #jjHost = null
+    #jjHost
 
     connectedCallback() {
         if (this.#jjHost) {
@@ -128,7 +135,7 @@ let templatePromise
 export class LazyLightCard extends HTMLElement {
     static defined = defineComponent('lazy-light-card', LazyLightCard)
 
-    #jjHost = null
+    #jjHost
 
     async connectedCallback() {
         if (this.#jjHost) {
