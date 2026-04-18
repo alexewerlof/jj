@@ -58,6 +58,30 @@ const jjItems = jjDoc.findAll('li.item') // always an array (may be empty)
 jjItems.forEach((jjItem) => jjItem.addClass('loaded'))
 ```
 
+For batch updates, prefer this direct query-and-iterate pattern:
+
+```js
+const status = 'synced'
+
+jjDoc.findAll('.status').forEach((jjEl) => {
+    jjEl.setText(status)
+})
+```
+
+The same pattern applies to any queryable wrapper scope, including shadow roots and element subtrees:
+
+```js
+jjRoot.findAll('.status').forEach((jjEl) => {
+    jjEl.setText(status)
+})
+
+jjMyTable.findAll('tr td:nth-child(3)').forEach((jjTd) => {
+    jjTd.setAttr('title', '3rd column')
+})
+```
+
+Use `tr td:nth-child(3)` to target the third data cell in each row.
+
 ## closest — ancestor lookup
 
 Use `.closest()` on element wrappers for event delegation or tree navigation:

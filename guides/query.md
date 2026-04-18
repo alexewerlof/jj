@@ -62,6 +62,34 @@ const items = doc.findAll('li')
 items.forEach((item) => item.addClass('highlight'))
 ```
 
+### Batch updates with `findAll(...).forEach(...)`
+
+This is the standard JJ pattern when you want to update many matched elements in one pass.
+
+```js
+const status = 'Ready'
+
+doc.findAll('.status').forEach((jjEl) => {
+    jjEl.setText(status)
+})
+```
+
+The same pattern works from any queryable JJ wrapper, not just `JJD`.
+
+```js
+// Scoped to a shadow root wrapper (JJSR)
+jjRoot.findAll('.status').forEach((jjEl) => {
+    jjEl.setText(status)
+})
+
+// Scoped to descendants of one element wrapper (JJE/JJHE/JJSE/JJME)
+jjMyTable.findAll('tr td:nth-child(3)').forEach((jjTd) => {
+    jjTd.setAttr('title', '3rd column')
+})
+```
+
+Use `tr td:nth-child(3)` for third-cell selection in table rows. `findAll` always returns an array, so this pattern is safe even when there are zero matches.
+
 ### Using `findAll` with `addChildMap`
 
 A common pattern: query, transform, and replace a list's children:
