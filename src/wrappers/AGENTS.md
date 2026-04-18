@@ -17,6 +17,8 @@ JJET: wraps DOM EventTarget
                 └── JJME: wraps DOM MathMLElement
 ```
 
+Each class is implemented in its own file and the `./index.ts` file re-exports it.
+
 ## JJN
 
 `JJN.wrap()` is a special function because it tries to return the most specific sub-type of `JJN` and that requires access to classes that extend `JJN`.
