@@ -640,7 +640,7 @@ describe('JJE', () => {
 
     describe('selector methods', () => {
         describe('closest()', () => {
-            it('returns closest matching ancestor wrapped in JJE', () => {
+            it('returns closest matching ancestor wrapped in JJHE', () => {
                 const root = document.createElement('div')
                 root.className = 'root'
                 const child = document.createElement('span')
@@ -650,7 +650,8 @@ describe('JJE', () => {
                 const jje = new JJE(child)
                 const match = jje.closest('.root')
 
-                assert.ok(match instanceof JJE)
+                assert.ok(match instanceof JJHE)
+                assert.strictEqual(match?.constructor, JJHE)
                 assert.strictEqual(match?.ref, root)
             })
 
@@ -664,6 +665,28 @@ describe('JJE', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
                 assert.throws(() => jje.closest({} as any), TypeError)
+            })
+        })
+
+        describe('getParent()', () => {
+            it('returns parent element wrapped in JJHE', () => {
+                const parent = document.createElement('div')
+                const child = document.createElement('span')
+                parent.appendChild(child)
+
+                const jje = new JJE(child)
+                const wrappedParent = jje.getParent()
+
+                assert.ok(wrappedParent instanceof JJHE)
+                assert.strictEqual(wrappedParent?.constructor, JJHE)
+                assert.strictEqual(wrappedParent?.ref, parent)
+            })
+
+            it('returns null when detached', () => {
+                const child = document.createElement('span')
+                const jje = new JJE(child)
+
+                assert.strictEqual(jje.getParent(), null)
             })
         })
     })

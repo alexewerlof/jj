@@ -96,6 +96,31 @@ describe('JJSE', () => {
         })
     })
 
+    describe('query wrapper specificity', () => {
+        it('find() returns JJSE for matching SVG descendants', () => {
+            const root = JJSE.create('svg').setAttr('id', 'root')
+            const child = JJSE.create('circle').setAttr('id', 'c1')
+            root.addChild(child)
+
+            const match = root.find('#c1')
+
+            assert.ok(match instanceof JJSE)
+            assert.strictEqual(match?.constructor, JJSE)
+            assert.strictEqual(match?.ref.tagName, 'circle')
+        })
+
+        it('findAll() returns JJSE instances for SVG matches', () => {
+            const root = JJSE.create('svg')
+            root.addChild(JJSE.create('circle').setAttr('class', 'dot'), JJSE.create('circle').setAttr('class', 'dot'))
+
+            const matches = root.findAll('.dot')
+
+            assert.strictEqual(matches.length, 2)
+            assert.ok(matches.every((node) => node instanceof JJSE))
+            assert.ok(matches.every((node) => node.constructor === JJSE))
+        })
+    })
+
     describe('static tree()', () => {
         it('creates SVG element from tag name', () => {
             const el = JJSE.tree('svg')

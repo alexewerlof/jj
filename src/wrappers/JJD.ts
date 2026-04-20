@@ -1,4 +1,5 @@
 import { isInstance, typeErr } from '../internal.js'
+import { nodeWrappers } from './WrapperChain.js'
 import { JJNx } from './JJNx.js'
 
 /**
@@ -24,6 +25,9 @@ import { JJNx } from './JJNx.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document | Document}
  */
 export class JJD<T extends Document = Document> extends JJNx<T> {
+    static {
+        nodeWrappers.register(Document, JJD)
+    }
     /**
      * Creates a JJD instance from a Document reference.
      *

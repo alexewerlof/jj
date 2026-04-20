@@ -21,10 +21,9 @@ JJET: wraps DOM EventTarget
 
 OK, that's a lot of `JJ`! In practice, you will mostly use `JJHE` to work with HTML elements, `JJD` to work with the `document` object and `JJSR` to handle shadow DOM (for components).
 
-All descendants of `JJN` (basically all the wrappers except `JJET`) have a few `static` functions:
-
-- `wrap()` to wrap an existing native object and return the appropriate wrapper (there's also an array variation called `wrapAll()`).
-- `unwrap()` to get the native object from a wrapper (and the array version is `unwrapAll()`).
+Most wrappers expose a `from(...)` factory for wrapping existing native objects with a specific wrapper class.
+For example, use `JJHE.from(el)` for HTML elements, `JJSE.from(el)` for SVG elements, and `JJME.from(el)` for MathML elements.
+When you already have a wrapper, use `.ref` to access the native object.
 
 ## How to use this in practice
 

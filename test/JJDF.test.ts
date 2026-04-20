@@ -42,6 +42,8 @@ describe('JJDF', () => {
             const jjdf = new JJDF(frag)
             const result = jjdf.find('#test-id')
             assert.ok(result)
+            assert.ok(result instanceof JJHE)
+            assert.strictEqual(result.constructor, JJHE)
             assert.strictEqual((result.ref as HTMLElement).id, 'test-id')
         })
 
@@ -72,6 +74,7 @@ describe('JJDF', () => {
             const result = host.findAll('.item')
 
             assert.strictEqual(result.length, 2)
+            assert.ok(result.every((item) => item instanceof JJHE))
             assert.deepStrictEqual(
                 result.map((item) => item.ref.textContent),
                 ['a', 'b'],

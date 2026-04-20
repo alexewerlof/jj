@@ -1,8 +1,54 @@
 import { isInstance, isStr, typeErr } from '../internal.js'
-import { Wrappable, Wrapped } from './types.js'
-import { JJN } from './JJN-raw.js'
+import { JJN } from './JJN.js'
 import type { JJHE } from './JJHE.js'
 import type { JJDF } from './JJDF.js'
+import { elementWrappers } from './WrapperChain.js'
+import { JJT } from './JJT.js'
+
+/**
+ * Represents any value that can be wrapped by the library.
+ * Native nodes and JJ wrappers are preserved as nodes.
+ * Non-object values are coercible to text.
+ * Plain objects are accepted for APIs that coerce via `JSON.stringify` / `String`.
+ * @category Wrappers
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node | Node}
+ */
+export type Wrappable = string | number | boolean | bigint | symbol | object | null | undefined | Node | JJN
+
+/**
+ * Extracts the underlying native DOM node from a wrapper.
+ *
+ * @internal
+ * @remarks
+ * If the input is already a native Node, it is returned as is.
+ * If the input is a JJ wrapper, its underlying node is returned.
+ * Otherwise, the input is coerced into a Text node.
+ * Plain objects are stringified with JSON when possible, and fall back to `String(...)`.
+ *
+ *
+ * @param x - The value to unwrap.
+ * @returns The underlying DOM node.
+ */
+function unwrap(x: Wrappable): Node {
+    if (isInstance(x, Node)) {
+        return x
+    }
+    if (isInstance(x, JJN)) {
+        return x.ref
+    }
+    return JJT.create(x).ref
+}
+
+/**
+ * Unwraps an iterable object (e.g. an array or HTMLCollection).
+ *
+ * @internal
+ * @param iterable - The iterable to unwrap.
+ * @returns An array of native DOM nodes.
+ */
+function unwrapAll(iterable: Iterable<Wrappable>): Node[] {
+    return Array.from(iterable, unwrap)
+}
 
 /**
  * A simple utility function that is used by addChild() and friends to filter out nullish children.
@@ -29,12 +75,12 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @throws {ReferenceError} If selector is not a string or element not found and required is true.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
      */
-    find(selector: string, required: true): Wrapped
-    find(selector: string, required?: false): Wrapped | null
-    find(selector: string, required = false): Wrapped | null {
+    find(selector: string, required: true): ReturnType<(typeof elementWrappers)['from']>
+    find(selector: string, required?: false): ReturnType<(typeof elementWrappers)['from']> | null
+    find(selector: string, required = false): ReturnType<(typeof elementWrappers)['from']> | null {
         const queryResult = this.ref.querySelector(selector)
         if (queryResult) {
-            return JJN.wrap(queryResult)
+            return elementWrappers.from(queryResult)
         }
         if (required) {
             throw new ReferenceError(`No element matched query "${selector}"`)
@@ -55,8 +101,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @throws {TypeError} If selector is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll | Element.querySelectorAll}
      */
-    findAll(selector: string): Wrapped[] {
-        return JJN.wrapAll(this.ref.querySelectorAll(selector))
+    findAll(selector: string) {
+        return elementWrappers.fromAll(this.ref.querySelectorAll(selector))
     }
 
     /**
@@ -78,7 +124,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/append | Element.append}
      */
     addChild(...children: Wrappable[]): this {
-        const nodes = JJN.unwrapAll(children.filter(notNullish))
+        const nodes = unwrapAll(children.filter(notNullish))
         this.ref.append(...nodes)
         return this
     }
@@ -129,7 +175,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend | Element.prepend}
      */
     preChild(...children: Wrappable[]): this {
-        const nodes = JJN.unwrapAll(children.filter(notNullish))
+        const nodes = unwrapAll(children.filter(notNullish))
         this.ref.prepend(...nodes)
         return this
     }
@@ -181,7 +227,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link addChild} for directly appending variadic children.
      * @see {@link addChildren} for appending a pre-built array of children.
      */
-    addChildMap<T>(array: T[], mapFn: (item: T) => Wrappable) {
+    addChildMap<T>(array: T[], mapFn: (value: T, index: number, array: T[]) => Wrappable) {
         if (!Array.isArray(array)) {
             throw typeErr('array', 'an array', array)
         }
@@ -213,7 +259,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link preChild} for directly prepending variadic children.
      * @see {@link preChildren} for prepending a pre-built array of children.
      */
-    preChildMap<T>(array: T[], mapFn: (item: T) => Wrappable) {
+    preChildMap<T>(array: T[], mapFn: (value: T, index: number, array: T[]) => Wrappable) {
         if (!Array.isArray(array)) {
             throw typeErr('array', 'an array', array)
         }
@@ -223,6 +269,37 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
         } catch (cause) {
             throw new Error('Failed to map array to children', { cause })
         }
+    }
+
+    /**
+     * Gets the parent node wrapped in the most specific JJ wrapper available.
+     *
+     * @remarks
+     * Returns `null` when this node is detached and therefore has no parent.
+     *
+     * @example
+     * ```ts
+     * const child = JJHE.create('span')
+     * JJHE.create('div').addChild(child)
+     * const parent = child.getParent() // JJHE
+     * ```
+     *
+     * @param required - Whether to throw if the node has no parent.
+     * @returns The wrapped parent node, or `null` if this node has no parent.
+     * @throws {ReferenceError} If `required` is true and the node has no parent.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/parentNode | Node.parentNode}
+     */
+    getParent(required: true): JJHE
+    getParent(required?: false): JJHE | null
+    getParent(required = false): JJHE | null {
+        const { parentElement } = this.ref
+        if (parentElement) {
+            return elementWrappers.from(parentElement) as JJHE
+        }
+        if (required) {
+            throw new ReferenceError('Node has no parent. Did you forget to attach it to the document?')
+        }
+        return null
     }
 
     /**
@@ -248,7 +325,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
         if (children.length === 0) {
             this.ref.replaceChildren()
         } else {
-            const nodes = JJN.unwrapAll(children.filter(notNullish))
+            const nodes = unwrapAll(children.filter(notNullish))
             this.ref.replaceChildren(...nodes)
         }
         return this
@@ -306,7 +383,7 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link setChild} for the variadic replacement form.
      * @see {@link empty} for clearing all children without replacements.
      */
-    setChildMap(array: Wrappable[], mapFn: (item: Wrappable) => Wrappable) {
+    setChildMap(array: Wrappable[], mapFn: (value: Wrappable, index: number, array: Wrappable[]) => Wrappable) {
         if (!Array.isArray(array)) {
             throw typeErr('array', 'an array of Wrappable', array)
         }

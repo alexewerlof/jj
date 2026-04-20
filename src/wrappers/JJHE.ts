@@ -1,6 +1,7 @@
 import { errMsg, hasProp, isInstance, isStr, typeErr } from '../internal.js'
-import { Wrappable } from './types.js'
+import { Wrappable } from './JJNx.js'
 import { JJEx } from './JJEx.js'
+import { elementWrappers, nodeWrappers } from './WrapperChain.js'
 
 const COMMON_SVG_TAGS = ['svg', 'rect', 'circle', 'line', 'path', 'text']
 const COMMON_MATHML_TAGS = ['math', 'mi', 'mn', 'mo', 'mtext']
@@ -16,6 +17,11 @@ const COMMON_MATHML_TAGS = ['math', 'mi', 'mn', 'mo', 'mtext']
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement | HTMLElement}
  */
 export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
+    static {
+        nodeWrappers.register(HTMLElement, JJHE)
+        elementWrappers.register(HTMLElement, JJHE)
+    }
+
     /**
      * Creates a JJHE instance from an HTMLElement reference.
      *

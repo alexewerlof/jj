@@ -152,7 +152,7 @@ class MySection extends HTMLElement {
 Examples:
 
 - `#jjHost` for the `JJHE` wrapper of the custom element host (`JJHE.from(this)`)
-- `#jjShadow` for the `JJSR` wrapper of the shadow root (`this.#jjHost.getShadow()`)
+- `#jjShadow` for the `JJSR` wrapper of the shadow root (`this.#jjHost.getShadow(true)`)
 - `#jjTitle` for a cached wrapped title element
 
 ## Parameters and callback variables
@@ -181,7 +181,7 @@ Use short, predictable names for common JJ wrapper entry points:
 
 - `jjDoc` for `JJD.from(document)`
 - `#jjHost` for `JJHE.from(this)` — the wrapped custom element host, used in both light and shadow DOM components
-- `#jjShadow` for `this.#jjHost.getShadow()` — the wrapped shadow root, only present in shadow DOM components
+- `#jjShadow` for `this.#jjHost.getShadow(true)` — the wrapped shadow root, only present in shadow DOM components
 - `h` for `JJHE.tree`
 
 Example:

@@ -1,4 +1,5 @@
 import { isInstance, isStr, typeErr } from '../internal.js'
+import { nodeWrappers } from './WrapperChain.js'
 import { JJDF } from './JJDF.js'
 import type { JJHE } from './JJHE.js'
 
@@ -17,6 +18,9 @@ import type { JJHE } from './JJHE.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot | ShadowRoot}
  */
 export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
+    static {
+        nodeWrappers.register(ShadowRoot, JJSR)
+    }
     /**
      * Creates a JJSR instance from a ShadowRoot reference.
      *

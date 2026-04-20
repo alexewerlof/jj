@@ -1,4 +1,5 @@
 import { isInstance, typeErr } from '../internal.js'
+import { nodeWrappers } from './WrapperChain.js'
 import { JJNx } from './JJNx.js'
 
 /**
@@ -25,6 +26,9 @@ import { JJNx } from './JJNx.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment | DocumentFragment}
  */
 export class JJDF<T extends DocumentFragment = DocumentFragment> extends JJNx<T> {
+    static {
+        nodeWrappers.register(DocumentFragment, JJDF)
+    }
     /**
      * Creates a JJDF instance from a DocumentFragment reference.
      *

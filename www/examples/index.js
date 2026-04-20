@@ -5,6 +5,8 @@ const jjDoc = JJD.from(document)
 const GITHUB_BASE = 'https://github.com/alexewerlof/jj/tree/master/www/examples'
 
 async function loadExamples() {
+    const jjExamplesContainer = jjDoc.find('#examples', true)
+
     try {
         const response = await fetch('./index.json')
         if (!response.ok) {
@@ -12,7 +14,6 @@ async function loadExamples() {
         }
 
         const examples = await response.json()
-        const jjExamplesContainer = jjDoc.find('#examples', true)
 
         // Sort examples by key
         const sortedKeys = Object.keys(examples).sort()
@@ -59,8 +60,6 @@ async function loadExamples() {
             jjExamplesContainer.addChild(jjCard)
         })
     } catch (error) {
-        const jjExamplesContainer = jjDoc.find('#examples', true)
-
         // Clear existing content
         jjExamplesContainer.ref.innerHTML = ''
 

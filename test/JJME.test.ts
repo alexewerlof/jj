@@ -110,6 +110,33 @@ describe('JJME', () => {
         })
     })
 
+    // jsdom's MathML query results are not consistently typed as MathMLElement instances,
+    // so wrapper dispatch may fall back to generic Element wrappers in this environment.
+    describe.skip('query wrapper specificity', () => {
+        it('find() returns JJME for matching MathML descendants', () => {
+            const root = JJME.create('math').setAttr('id', 'root')
+            const child = JJME.create('mi').setAttr('id', 'm1').setText('x')
+            root.addChild(child)
+
+            const match = root.find('#m1')
+
+            assert.ok(match instanceof JJME)
+            assert.strictEqual(match?.constructor, JJME)
+            assert.strictEqual(match?.ref.tagName, 'mi')
+        })
+
+        it('findAll() returns JJME instances for MathML matches', () => {
+            const root = JJME.create('math')
+            root.addChild(JJME.create('mi').setAttr('class', 'token'), JJME.create('mi').setAttr('class', 'token'))
+
+            const matches = root.findAll('.token')
+
+            assert.strictEqual(matches.length, 2)
+            assert.ok(matches.every((node) => node instanceof JJME))
+            assert.ok(matches.every((node) => node.constructor === JJME))
+        })
+    })
+
     describe('static tree()', () => {
         it('creates MathML element from tag name', () => {
             const el = JJME.tree('math')

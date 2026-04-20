@@ -55,23 +55,19 @@ Notes:
 
 ## Node -> JJN
 
-| Native equivalent                                | JJ API                    | Kind    |
-| ------------------------------------------------ | ------------------------- | ------- |
-| N/A (wrapper factory)                            | `JJN.from(node)`          | JJ-only |
-| N/A (type helper)                                | `JJN.isWrappable(x)`      | JJ-only |
-| N/A (smart wrapper factory)                      | `JJN.wrap(raw)`           | JJ-only |
-| N/A (wrapper to native helper)                   | `JJN.unwrap(obj)`         | JJ-only |
-| N/A (batch wrap helper)                          | `JJN.wrapAll(iterable)`   | JJ-only |
-| N/A (batch unwrap helper)                        | `JJN.unwrapAll(iterable)` | JJ-only |
-| `parentNode`                                     | `getParent(required?)`    | Partial |
-| `childNodes`                                     | `getChildren(required?)`  | Partial |
-| `cloneNode(deep)`                                | `clone(deep?)`            | Exact   |
-| `parentNode.removeChild(node)` / `node.remove()` | `rm()`                    | Exact   |
-| `append(...valuesAsTextNodes)`                   | `addText(...values)`      | Partial |
+| Native equivalent                                | JJ API                     | Kind    |
+| ------------------------------------------------ | -------------------------- | ------- |
+| N/A (wrapper factory)                            | `JJN.from(node)`           | JJ-only |
+| `parentNode`                                     | `getParentNode(required?)` | Partial |
+| `parentElement`                                  | `getParent(required?)`     | Partial |
+| `childNodes`                                     | `getChildren(required?)`   | Partial |
+| `cloneNode(deep)`                                | `clone(deep?)`             | Exact   |
+| `parentNode.removeChild(node)` / `node.remove()` | `rm()`                     | Exact   |
+| `append(...valuesAsTextNodes)`                   | `addText(...values)`       | Partial |
 
 Notes:
 
-- `getParent(true)` and `getChildren(true)` throw when missing, unlike native accessors.
+- `getParentNode(true)`, `getParent(true)`, and `getChildren(true)` throw when missing, unlike native accessors.
 
 ## ParentNode and NonElementParentNode -> JJNx
 
@@ -97,6 +93,7 @@ Defined on `JJNx` and inherited by `JJD`, `JJDF`, `JJSR`, and `JJE` descendants 
 Notes:
 
 - `find(selector, true)` throws when the selector misses.
+- `getParent(required?)` on `JJNx` wrappers returns the parent element wrapper (from `parentElement`).
 - Child methods accept JJ wrappers and auto-wrap/unwrap values.
 - `addChild*` ignores `null` and `undefined` entries.
 - `addTemplate()` always clones template content before append.
@@ -111,7 +108,7 @@ Inherited from `JJNx` and `JJN`:
 
 - Query: `find`, `findAll`
 - Child/template mutation: `addChild`, `preChild`, `setChild`, `empty`, `addTemplate`, `setTemplate`, and map/array variants
-- Node utilities: `getParent`, `getChildren`, `clone`, `rm`, `addText`
+- Node utilities: `getParentNode`, `getChildren`, `clone`, `rm`, `addText`
 - Event APIs from `JJET`: `on`, `off`, `trigger`, `triggerEvent`, `triggerCustomEvent`, `run`
 
 ## DocumentFragment -> JJDF

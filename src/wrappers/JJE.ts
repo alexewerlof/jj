@@ -1,5 +1,5 @@
-import { Wrapped } from './types.js'
 import { isInstance, isObj, isStr, typeErr } from '../internal.js'
+import { elementWrappers, nodeWrappers } from './WrapperChain.js'
 import { JJSR } from './JJSR.js'
 import { JJNx } from './JJNx.js'
 import type { JJDF } from './JJDF.js'
@@ -16,6 +16,12 @@ import type { JJHE } from './JJHE.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element | Element}
  */
 export class JJE<T extends Element = Element> extends JJNx<T> {
+    static {
+        // Register JJE as the wrapper for generic Elements
+        nodeWrappers.register(Element, JJE)
+        elementWrappers.register(Element, JJE)
+    }
+
     /**
      * Creates a JJE instance from an Element reference.
      *
@@ -25,7 +31,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * @example
      * ```ts
-     * const el = JJE.from(document.querySelector('.my-class'))
+     * const el = JJE.from(document.querySelector('#status-bar'))
      * ```
      *
      * @param ref - The Element instance.
@@ -652,12 +658,12 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @throws {TypeError} If `selector` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest | Element.closest}
      */
-    closest(selector: string): Wrapped | null {
+    closest(selector: string) {
         if (!isStr(selector)) {
             throw typeErr('selector', 'a string', selector)
         }
         const match = this.ref.closest(selector)
-        return match ? JJE.wrap(match) : null
+        return match ? elementWrappers.from(match) : null
     }
 
     /**

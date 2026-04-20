@@ -1,7 +1,7 @@
 import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JJHE, JJME, JJN } from '../src/index.js'
+import { JJHE, JJN } from '../src/index.js'
 import { isInstance } from '../src/internal.js'
 
 describe('JJN', () => {
@@ -28,98 +28,6 @@ describe('JJN', () => {
         })
     })
 
-    // Skipping wrap() tests for MathMLElement since jsdom doesn't support it natively as of 29.0.1
-    describe.skip('static wrap()', () => {
-        it('wraps MathMLElement as JJME', () => {
-            const raw = document.createElementNS('http://www.w3.org/1998/Math/MathML', 'math')
-            const wrapped = JJN.wrap(raw)
-            assert.ok(wrapped instanceof JJME)
-        })
-    })
-
-    describe('static isWrappable()', () => {
-        it('returns true for strings', () => {
-            assert.strictEqual(JJN.isWrappable('test'), true)
-        })
-
-        it('returns true for Nodes', () => {
-            const node = document.createTextNode('test')
-            assert.strictEqual(JJN.isWrappable(node), true)
-        })
-
-        it('returns true for JJN instances', () => {
-            const node = document.createTextNode('test')
-            const jjn = new JJN(node)
-            assert.strictEqual(JJN.isWrappable(jjn), true)
-        })
-
-        it('returns false for other types', () => {
-            assert.strictEqual(JJN.isWrappable(null), false)
-            assert.strictEqual(JJN.isWrappable(undefined), false)
-            assert.strictEqual(JJN.isWrappable(42), false)
-            assert.strictEqual(JJN.isWrappable({}), false)
-            assert.strictEqual(JJN.isWrappable([]), false)
-        })
-    })
-
-    describe('static unwrap()', () => {
-        it('unwraps JJN to Node', () => {
-            const node = document.createTextNode('test')
-            const jjn = new JJN(node)
-            const unwrapped = JJN.unwrap(jjn)
-            assert.strictEqual(unwrapped, node)
-        })
-
-        it('returns Node as is', () => {
-            const node = document.createTextNode('test')
-            const unwrapped = JJN.unwrap(node)
-            assert.strictEqual(unwrapped, node)
-        })
-
-        it('creates Text node from string', () => {
-            const unwrapped = JJN.unwrap('test')
-            assert.ok(unwrapped instanceof Text)
-            assert.strictEqual(unwrapped.textContent, 'test')
-        })
-
-        it('coerces primitives into Text nodes', () => {
-            assert.strictEqual(JJN.unwrap(42 as any).textContent, '42')
-            assert.strictEqual(JJN.unwrap(false as any).textContent, 'false')
-            assert.strictEqual(JJN.unwrap(5n as any).textContent, '5')
-            assert.strictEqual(JJN.unwrap(Symbol('x') as any).textContent, 'Symbol(x)')
-        })
-
-        it('coerces nullish values into Text nodes', () => {
-            assert.strictEqual(JJN.unwrap(null as any).textContent, 'null')
-            assert.strictEqual(JJN.unwrap(undefined as any).textContent, 'undefined')
-        })
-
-        it('stringifies plain objects and falls back safely', () => {
-            assert.strictEqual(JJN.unwrap({ a: 1 } as any).textContent, '{"a":1}')
-
-            const circular: { self?: unknown } = {}
-            circular.self = circular
-
-            assert.strictEqual(JJN.unwrap(circular as any).textContent, '[object Object]')
-        })
-    })
-
-    describe('static wrapAll()', () => {
-        it('wraps array of nodes', () => {
-            const nodes = [document.createTextNode('a'), document.createTextNode('b')]
-            const wrapped = JJN.wrapAll(nodes)
-            assert.strictEqual(wrapped.length, 2)
-            assert.ok(wrapped.every((w) => w instanceof JJN))
-        })
-
-        it('wraps NodeList', () => {
-            const parent = document.createElement('div')
-            parent.innerHTML = '<span></span><span></span>'
-            const wrapped = JJN.wrapAll(parent.childNodes)
-            assert.strictEqual(wrapped.length, 2)
-        })
-    })
-
     describe('addText()', () => {
         it('adds text to node', () => {
             const parent = document.createElement('div')
@@ -143,6 +51,18 @@ describe('JJN', () => {
             jjn.addText(undefined)
             jjn.addText('')
             assert.strictEqual(parent.childNodes.length, 3)
+        })
+
+        it('coerces primitives and objects via toStr()', () => {
+            const parent = document.createElement('div')
+            const jjn = new JJN(parent)
+
+            jjn.addText(false)
+            jjn.addText(0)
+            jjn.addText({ ok: true })
+            jjn.addText(Symbol('x'))
+
+            assert.strictEqual(parent.textContent, 'false0{"ok":true}Symbol(x)')
         })
 
         it('returns this for chaining', () => {
@@ -173,14 +93,14 @@ describe('JJN', () => {
         })
     })
 
-    describe('getParent()', () => {
+    describe('getParentNode()', () => {
         it('returns wrapped parent node', () => {
             const parent = document.createElement('div')
             const child = document.createElement('span')
             parent.appendChild(child)
 
             const jjn = JJN.from(child)
-            const wrappedParent = jjn.getParent()
+            const wrappedParent = jjn.getParentNode()
 
             assert.ok(wrappedParent)
             assert.strictEqual(wrappedParent?.ref, parent)
@@ -192,7 +112,7 @@ describe('JJN', () => {
             const child = document.createElement('span')
             const jjn = JJN.from(child)
 
-            assert.strictEqual(jjn.getParent(), null)
+            assert.strictEqual(jjn.getParentNode(), null)
         })
 
         it('returns the most specific wrapper for the parent', () => {
@@ -201,7 +121,7 @@ describe('JJN', () => {
             parent.appendChild(child)
 
             const jjn = JJN.from(child)
-            const wrappedParent = jjn.getParent()
+            const wrappedParent = jjn.getParentNode()
 
             assert.ok(wrappedParent)
             assert.ok(isInstance(wrappedParent, JJHE)) // Should be the most specific wrapper, which is JJHE for HTMLElement
@@ -212,7 +132,7 @@ describe('JJN', () => {
             const child = document.createElement('span')
             const jjn = JJN.from(child)
 
-            assert.throws(() => jjn.getParent(true), {
+            assert.throws(() => jjn.getParentNode(true), {
                 name: 'ReferenceError',
                 message: /Node has no parent/,
             })

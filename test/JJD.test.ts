@@ -1,7 +1,7 @@
 import './attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { JJD } from '../src/index.js'
+import { JJD, JJHE } from '../src/index.js'
 
 describe('JJD', () => {
     // Set up specific HTML content for these tests
@@ -33,6 +33,8 @@ describe('JJD', () => {
             const jjd = new JJD(document)
             const result = jjd.find('#test-id')
             assert.ok(result)
+            assert.ok(result instanceof JJHE)
+            assert.strictEqual(result.constructor, JJHE)
             assert.strictEqual((result.ref as HTMLElement).id, 'test-id')
         })
 
@@ -56,6 +58,7 @@ describe('JJD', () => {
             const jjd = new JJD(document)
             const head = jjd.find('head', true)
             assert.ok(head)
+            assert.ok(head instanceof JJHE)
             assert.strictEqual((head.ref as HTMLElement).tagName, 'HEAD')
         })
 
@@ -63,6 +66,7 @@ describe('JJD', () => {
             const jjd = new JJD(document)
             const body = jjd.find('body', true)
             assert.ok(body)
+            assert.ok(body instanceof JJHE)
             assert.strictEqual((body.ref as HTMLElement).tagName, 'BODY')
         })
     })

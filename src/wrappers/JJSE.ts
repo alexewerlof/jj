@@ -1,6 +1,7 @@
 import { isInstance, isNum, isStr, SVG_NS, typeErr } from '../internal.js'
-import { Wrappable } from './types.js'
+import { Wrappable } from './JJNx.js'
 import { JJEx } from './JJEx.js'
+import { elementWrappers, nodeWrappers } from './WrapperChain.js'
 
 /**
  * Wraps a DOM SVGElement like <svg>, <rect>, <circle>, <path>, etc.
@@ -13,6 +14,11 @@ import { JJEx } from './JJEx.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement | SVGElement}
  */
 export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
+    static {
+        nodeWrappers.register(SVGElement, JJSE)
+        elementWrappers.register(SVGElement, JJSE)
+    }
+
     /**
      * Creates a JJSE instance from an SVGElement reference.
      *

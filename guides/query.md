@@ -31,9 +31,9 @@ const doc = JJD.from(document)
 
 Finds the first matching descendant using a CSS selector.
 
-- Returns a wrapped element (`Wrapped`) when found.
+- Returns the most specific element wrapper available (`JJHE`, `JJSE`, `JJME`, or `JJE`) when found. Note that for custom elements, a `JJHE` wrapper is returned because that's the most specific wrapper available for custom elements.
 - Returns `null` when not found.
-- If `required` is `true`, throws a `TypeError` when no match exists.
+- If `required` is `true`, throws a `ReferenceError` when no match exists.
 
 ```js
 // Find the first card — may be null
@@ -51,7 +51,7 @@ Use `required: true` when the element is essential and its absence indicates a p
 
 Finds all matching descendants using a CSS selector.
 
-- Returns an array of wrapped elements (`Wrapped[]`).
+- Returns an array of the most specific element wrappers available (`JJHE[]`, `JJSE[]`, `JJME[]`, or `JJE[]`).
 - Returns an empty array when no matches exist.
 
 ```js
@@ -111,7 +111,7 @@ const ul = JJHE.create('ul').addChildMap(names, (name) => JJHE.tree('li', null, 
 
 Finds the nearest ancestor (or self) that matches a CSS selector. Only available on `JJE` and descendants (`JJHE`, `JJSE`).
 
-- Returns a wrapped element when found.
+- Returns the most specific element wrapper available when found.
 - Returns `null` when no ancestor matches.
 
 ```js

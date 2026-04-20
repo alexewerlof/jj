@@ -182,13 +182,13 @@ class MyCounter extends HTMLElement {
     constructor() {
         super()
         this.#jjHost = JJHE.from(this).setShadow('open')
+        this.#jjShadow = this.#jjHost.getShadow(true)
     }
 
     connectedCallback() {
-        if (!this.#jjShadow) {
+        if (!this.#jjIncButton) {
             this.#jjValueElement = h('span', null, this.value.toString())
             this.#jjShadow.init(h('p', null, 'Counter value: ', this.#jjValueElement, h('button', { id: 'inc' }, '+')))
-            this.#jjShadow = this.#jjHost.getShadow(true)
             this.#jjIncButton = this.#jjShadow.find('#inc', true)
         }
 

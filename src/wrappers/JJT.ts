@@ -1,5 +1,6 @@
 import { isInstance, toStr, typeErr } from '../internal.js'
-import { JJN } from './JJN-raw.js'
+import { JJN } from './JJN.js'
+import { nodeWrappers } from './WrapperChain.js'
 
 /**
  * Wraps a DOM Text Node.
@@ -13,6 +14,10 @@ import { JJN } from './JJN-raw.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Text | Text}
  */
 export class JJT<T extends Text = Text> extends JJN<Text> {
+    static {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        nodeWrappers.register(Text as any, JJT)
+    }
     /**
      * Creates a JJT instance from a Text node.
      *

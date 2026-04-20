@@ -38,7 +38,7 @@ const jjDialog = JJHE.create('dialog')
 
 Naming defaults:
 
-- Use `jj*` for JJ wrappers, including private fields: `#jjHost` for `JJHE.from(this)` (the wrapped host element) and `#jjShadow` for `this.#jjHost.getShadow()` (the wrapped shadow root).
+- Use `jj*` for JJ wrappers, including private fields: `#jjHost` for `JJHE.from(this)` (the wrapped host element) and `#jjShadow` for `this.#jjHost.getShadow(true)` (the wrapped shadow root).
 - Do not use `jj*` for plain data like `fruits`, `title`, `isOpen`, or `userName`.
 - Do not use `jj*` for native DOM values; prefer names like `formEl`, `shadowRoot`, `inputRef`, or `styleSheet`.
 - For promises, use normal names with `Promise`, like `templatePromise` or `stylePromise`.
@@ -51,7 +51,7 @@ Each JJ wrapper exposes the native node via `.ref`.
 | Class | Wraps            | Key additions                                                                 |
 | ----- | ---------------- | ----------------------------------------------------------------------------- |
 | JJET  | EventTarget      | `.on()`, `.off()`, `.trigger()`, `.run()`                                     |
-| JJN   | Node             | `.getParent()`, `.getChildren()`, `.rm()`, `.clone()`                         |
+| JJN   | Node             | `.getParentNode()`, `.getChildren()`, `.rm()`, `.clone()`                     |
 | JJD   | Document         | `.find()`, `.findAll()`                                                       |
 | JJDF  | DocumentFragment | `.addTemplate()`, `.setTemplate()`, batch child ops                           |
 | JJE   | Element          | Attributes, classes, ARIA, visibility, HTML write, `.getText()`, `.setText()` |
@@ -464,7 +464,8 @@ Guide defaults for template and fragment usage:
 ## Node Traversal
 
 ```typescript
-const parent = jjEl.getParent() // wrapped parent or null (detached)
+const parentNode = jjNode.getParentNode() // wrapped parent node or null (detached)
+const parentEl = jjEl.getParent() // wrapped parent element or null (detached)
 const children = jjEl.getChildren() // wrapped child array (always an array)
 jjEl.rm() // detach from parent (no-op if already detached)
 const ancestor = jjEl.closest('[data-section]') // null if not found

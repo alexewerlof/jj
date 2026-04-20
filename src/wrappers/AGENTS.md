@@ -19,19 +19,9 @@ JJET: wraps DOM EventTarget
 
 Each class is implemented in its own file and the `./index.ts` file re-exports it.
 
-## JJN
+## Wrappers
 
-`JJN.wrap()` is a special function because it tries to return the most specific sub-type of `JJN` and that requires access to classes that extend `JJN`.
-
-To achieve that while working around the circular dependency issue, the implementation is broken to two parts:
-
-1. `JJN.wrap()` contains a basic implementation in `JJN-raw.ts` which is not exported directly. All classes that inherit from `JJN` should get it from this file.
-2. Then `JJN.ts` overrides that implementation with a richer one and re-exports it.
-3. All files that need a reference to `JJN` should get it from `JJN.ts` file to avoid circular dependency.
-
-This way, the upgraded `JJN.wrap()` static method is available inside all the JJ\* classes that inherit from `JJN` via their `CONSTRUCTOR.wrap()`
-
-When checking wrapper inputs in this method, use `isInstance(template, JJN)` (not `JJDF`/`JJHE`) to avoid circular dependencies and keep support generic for any JJ wrapper.
+The `Wrappers` class is an internal database of wrapper classes. All the publicly exposed wrapper classes, register their constructor using the relevant instances of the Wrappers class which is exposed via `./Wrappers.js`. The reason this class exists is to work around circular dependencies.
 
 ## Text APIs
 

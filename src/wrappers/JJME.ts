@@ -1,6 +1,7 @@
 import { isInstance, isStr, MATHML_NS, typeErr } from '../internal.js'
-import { Wrappable } from './types.js'
+import { Wrappable } from './JJNx.js'
 import { JJEx } from './JJEx.js'
+import { elementWrappers, nodeWrappers } from './WrapperChain.js'
 
 /**
  * Wraps a DOM MathMLElement like <math>, <mrow>, <mi>, <mn>, <mo>, etc.
@@ -14,6 +15,11 @@ import { JJEx } from './JJEx.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/MathML/Reference/Element/math | <math>}
  */
 export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
+    static {
+        nodeWrappers.register(MathMLElement, JJME)
+        elementWrappers.register(MathMLElement, JJME)
+    }
+
     /**
      * Creates a JJME instance from a MathMLElement reference.
      *
