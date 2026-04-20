@@ -1,7 +1,41 @@
-import { describe, it } from 'node:test'
+import { after, before, describe, it } from 'node:test'
 import assert from 'node:assert'
 import './attach-jsdom.js'
 import { attr2prop, defineComponent } from '../src/index.js'
+
+type MockFetchReply = {
+    ok: boolean
+    text: string
+    status?: number
+    statusText?: string
+}
+
+const adoptedStyleSheetsStore = new WeakMap<ShadowRoot, CSSStyleSheet[]>()
+
+if (!Object.getOwnPropertyDescriptor(ShadowRoot.prototype, 'adoptedStyleSheets')) {
+    Object.defineProperty(ShadowRoot.prototype, 'adoptedStyleSheets', {
+        configurable: true,
+        get() {
+            return adoptedStyleSheetsStore.get(this) ?? []
+        },
+        set(value) {
+            adoptedStyleSheetsStore.set(this, [...value])
+        },
+    })
+}
+
+const installFetchMock = (resolver: (url: string) => MockFetchReply | Promise<MockFetchReply>) => {
+    globalThis.fetch = (async (input: URL | RequestInfo, init?: RequestInit) => {
+        const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
+        const reply = await resolver(url)
+        return {
+            ok: reply.ok,
+            status: reply.status ?? (reply.ok ? 200 : 500),
+            statusText: reply.statusText ?? (reply.ok ? 'OK' : 'Error'),
+            text: async () => reply.text,
+        } as Response
+    }) as typeof fetch
+}
 
 describe(attr2prop.name, () => {
     it('converts kebab-case attribute to camelCase property', () => {
@@ -114,5 +148,73 @@ describe(defineComponent.name, () => {
             name: 'TypeError',
             message: /Pass the custom element class itself, e\.g\. defineComponent/,
         })
+    })
+})
+
+describe('todo example components', () => {
+    const originalFetch = globalThis.fetch
+    let TodoItem: typeof import('../www/examples/todo/components/todo-item.js').TodoItem
+    let TodoList: typeof import('../www/examples/todo/components/todo-list.js').TodoList
+
+    before(async () => {
+        installFetchMock((url) => {
+            if (url.endsWith('/todo-item.html')) {
+                return {
+                    ok: true,
+                    text: '<article id="item"><input id="check" type="checkbox" /><span id="text"></span><div id="meta"></div><button id="remove" type="button"></button></article>',
+                }
+            }
+            if (url.endsWith('/todo-item.css') || url.endsWith('/todo-list.css')) {
+                return {
+                    ok: true,
+                    text: ':host { display: block; }',
+                }
+            }
+
+            throw new Error(`Unexpected fetch URL: ${url}`)
+        })
+        ;({ TodoItem } = await import('../www/examples/todo/components/todo-item.js'))
+        ;({ TodoList } = await import('../www/examples/todo/components/todo-list.js'))
+    })
+
+    after(() => {
+        globalThis.fetch = originalFetch
+    })
+
+    it('lets todo-item receive attributes before its shadow template is initialized', async () => {
+        await TodoItem.defined
+
+        const todoItem = document.createElement('todo-item') as InstanceType<typeof TodoItem>
+
+        assert.doesNotThrow(() => {
+            todoItem.setAttribute('item-id', 'abc123')
+            todoItem.setAttribute('text', 'Ship regression test')
+            todoItem.setAttribute('done', 'true')
+        })
+
+        await todoItem.connectedCallback()
+
+        assert.strictEqual(todoItem.shadowRoot?.querySelector('#text')?.textContent, 'Ship regression test')
+        assert.strictEqual((todoItem.shadowRoot?.querySelector('#check') as HTMLInputElement | null)?.checked, true)
+        assert.strictEqual(todoItem.shadowRoot?.querySelector('#meta')?.textContent, 'Task · abc123')
+    })
+
+    it('initializes todo-list shadow DOM once and tolerates reconnects', async () => {
+        await TodoList.defined
+
+        const todoList = document.createElement('todo-list') as InstanceType<typeof TodoList>
+
+        await assert.doesNotReject(async () => {
+            await todoList.connectedCallback()
+        })
+
+        const firstHTML = todoList.shadowRoot?.innerHTML
+        assert.ok(firstHTML)
+
+        await assert.doesNotReject(async () => {
+            await todoList.connectedCallback()
+        })
+
+        assert.strictEqual(todoList.shadowRoot?.innerHTML, firstHTML)
     })
 })

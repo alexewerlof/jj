@@ -86,10 +86,18 @@ export class TodoItem extends HTMLElement {
     }
 
     #renderText() {
-        this.#jjShadow.find('#text').setText(this.text)
+        if (!this.#isInitialized) {
+            return
+        }
+
+        this.#jjShadow.find('#text', true).setText(this.text)
     }
 
     #renderDone() {
+        if (!this.#isInitialized) {
+            return
+        }
+
         const jjItem = this.#jjShadow.find('#item')
         const jjCheck = this.#jjShadow.find('#check')
         if (jjItem) {
@@ -101,9 +109,10 @@ export class TodoItem extends HTMLElement {
     }
 
     #renderMeta() {
-        if (!this.itemId) {
+        if (!this.#isInitialized || !this.itemId) {
             return
         }
-        this.#jjShadow.find('#meta').setText(`Task · ${this.itemId.slice(0, 6)}`)
+
+        this.#jjShadow.find('#meta', true).setText(`Task · ${this.itemId.slice(0, 6)}`)
     }
 }
