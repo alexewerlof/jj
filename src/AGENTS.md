@@ -1,6 +1,9 @@
-This folder contains a few helper functions:
+# Source Code
 
-- `./components.ts` contains component-related helper functions.
-- `./fetchers.ts` contains functions for fetching templates and styles (mostly used for components).
-- `./internal.ts` contains internal helper functions that are not meant to be exported outside of the library.
-- `./wrappers/` contains the wrapper classes that wrap DOM constructs. These classes are the main way to interact with the DOM when using JJ.
+- `index.ts` defines the package's public exports.
+- `wrappers/` contains the primary DOM API; see `wrappers/AGENTS.md` for wrapper-specific guidance.
+- `components.ts` provides custom-element helpers such as `defineComponent()` and `attr2prop()`.
+- `fetchers.ts` provides template and stylesheet fetch helpers.
+- `internal.ts` contains implementation helpers that are not part of the public API.
+
+Use `.js` extensions for local imports in TypeScript so emitted ESM imports resolve correctly. The source-level internal test uses the JSDOM bootstrap at `../test/attach-jsdom.js`.

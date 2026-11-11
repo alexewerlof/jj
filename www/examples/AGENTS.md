@@ -1,8 +1,5 @@
-Each directory in this folder is a self-contained example that demonstrates how to use jj idiomatically on top of the native browser features.
-The list of examples is in `./index.json` which will in turn be read by `./index.js` to render [the examples landing page](./index.html).
+# Examples
 
-When adding or updating examples, keep the narrative aligned with:
+Each child directory is a self-contained example demonstrating JJ alongside native browser APIs. The examples landing page reads `index.json` from `index.js`.
 
-- `../tutorial/index.md`
-- `../../guides/philosophy.md`
-- `../../skills/SKILL.md`
+Keep example code idiomatic to JJ and align tutorial content with `../tutorial/index.md` and `../../skills/SKILL.md`.

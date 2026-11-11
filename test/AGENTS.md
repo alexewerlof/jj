@@ -1,14 +1,7 @@
-The library is primarily developed for the browsers but the tests are developed to run in Node.js.
-To compensate the gap between the two, we use the popular `jsdom` npm package to emulate DOM API.
-Therefore all tests need to import `./attach-jsdom.js` first to ensure the required global variables are using JSDOM instead of window.
+# Tests
 
-## Commands
+Tests run in Node with the built-in test runner, tsx, and JSDOM. Run them with `npm test`; run `npm run typecheck` separately.
 
-- `npm test` runs typecheck and all tests.
-- `node --import tsx --test` runs test suites directly.
+Test files in this directory must import `./attach-jsdom.js` before using DOM globals. `src/internal.test.ts` uses `../test/attach-jsdom.js`.
 
-## Related Task Skills
-
-- `../skills/SKILL.md` (main skill)
-- `../skills/references/testing-with-jsdom.md`
-- `../skills/references/error-handling-patterns.md`
+Put public API behavior tests here and import through `../src/index.js`. Keep tests for internal-only helpers beside their source when appropriate.
