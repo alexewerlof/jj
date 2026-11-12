@@ -106,6 +106,34 @@
     }
 }
 
+#new-task-dialog {
+    width: min(28rem, calc(100vw - var(--gap6)));
+    padding: var(--gap5);
+    color: var(--foreground-color);
+    background: var(--background-color);
+    border: var(--bthick) solid var(--ui-border);
+    border-radius: var(--bradius3);
+
+    &::backdrop {
+        background: color-mix(in srgb, var(--background-darker) 75%, transparent);
+    }
+
+    & form {
+        display: grid;
+        gap: var(--gap3);
+    }
+
+    & h2 {
+        margin: 0;
+    }
+
+    & .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--gap2);
+    }
+}
+
 /* Main Container Adjustments */
 .kanban-container {
     padding: var(--gap6);

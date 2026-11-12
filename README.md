@@ -11,14 +11,14 @@ It is designed for moderate to advanced web developers and AI agents that want f
 
 CDN:
 
-[Import map](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap): Add this to your HTML:
+[Import map](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap): Add this to your HTML. You can pin the URL to a specific published version if needed:
 
 ```html
 <script type="importmap">
     {
-        "jj": "https://cdn.jsdelivr.net/npm/jj/lib/bundle.min.js"
-        // Or a specific version
-        "jj": "https://cdn.jsdelivr.net/npm/jj@2/lib/bundle.min.js
+        "imports": {
+            "jj": "https://cdn.jsdelivr.net/npm/jj/lib/bundle.min.js"
+        }
     }
 </script>
 ```
@@ -90,7 +90,7 @@ Once installed, AI agents (GitHub Copilot, Cursor, Claude Code, Windsurf, etc.) 
 - Suggest correct framework translations (React/Vue/jQuery/Svelte → JJ)
 - Generate idiomatic, type-safe code
 
-The skill definition (`SKILL.md`) is also included in the npm package at `node_modules/jj/SKILL.md`.
+The skill definition (`SKILL.md`) is also included in the npm package at `node_modules/jj/skills/SKILL.md`.
 
 ## ✅ Testing
 
@@ -108,7 +108,3 @@ npm test
 MIT
 
 _Made in Sweden 🇸🇪 by [Alex Ewerlöf](https://alexewerlof.com/)_
-
-```
-
-```

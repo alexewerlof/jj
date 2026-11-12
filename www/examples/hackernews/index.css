@@ -23,6 +23,7 @@ a {
 }
 
 .hn {
+    box-sizing: border-box;
     width: 85%;
     margin: 0 auto;
     border: 1px solid var(--ui-border);
@@ -83,6 +84,23 @@ a {
                 text-decoration: underline;
             }
         }
+    }
+}
+
+.hn__title {
+    color: var(--hn-top-text);
+}
+
+.hn__hide {
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
     }
 }
 

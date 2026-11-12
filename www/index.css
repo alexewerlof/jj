@@ -18,6 +18,10 @@ body {
     margin: 0 auto;
 }
 
+.faq-content {
+    padding: var(--gap5) var(--gap4);
+}
+
 /* Nav */
 #main-nav {
     position: sticky;
@@ -96,6 +100,19 @@ h1 {
     .cta-group {
         flex-direction: row;
         justify-content: center;
+    }
+}
+
+@media (max-width: 599px) {
+    .hero-content {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: var(--gap4) var(--gap2);
+    }
+
+    h1 {
+        font-size: 3rem;
     }
 }
 

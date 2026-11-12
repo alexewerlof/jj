@@ -30,6 +30,10 @@ const counts = {
 
 const jjAddTaskBtn = jjDoc.find('#add-task-btn')
 const jjSearchInput = jjDoc.find('#search-input')
+const jjNewTaskDialog = jjDoc.find('#new-task-dialog', true)
+const jjNewTaskForm = jjDoc.find('#new-task-form', true)
+const jjNewTaskInput = jjDoc.find('#new-task-input', true)
+const jjCancelNewTaskBtn = jjDoc.find('#cancel-new-task', true)
 
 // --- Rendering ---
 
@@ -119,8 +123,7 @@ function updateTaskStatus(id, newStatus) {
     }
 }
 
-function addTask() {
-    const text = prompt('Enter task description:')
+function addTask(text) {
     if (!text) return
 
     const newTask = {
@@ -141,7 +144,22 @@ function deleteTask(id) {
 
 // --- Event Listeners ---
 
-jjAddTaskBtn.on('click', addTask)
+jjAddTaskBtn.on('click', () => {
+    jjNewTaskForm.ref.reset()
+    jjNewTaskDialog.ref.showModal()
+    jjNewTaskInput.ref.focus()
+})
+
+jjNewTaskForm.on('submit', (event) => {
+    event.preventDefault()
+    const text = jjNewTaskInput.getValue().trim()
+    if (!text) return
+
+    addTask(text)
+    jjNewTaskDialog.ref.close()
+})
+
+jjCancelNewTaskBtn.on('click', () => jjNewTaskDialog.ref.close())
 
 jjSearchInput.on('input', (e) => {
     searchQuery = e.target.value
@@ -151,9 +169,7 @@ jjSearchInput.on('input', (e) => {
 // Listen for custom delete event from cards (event delegation or global listener)
 jjDoc.on('card-delete', (e) => {
     const { id } = e.detail
-    if (confirm('Delete this task?')) {
-        deleteTask(id)
-    }
+    deleteTask(id)
 })
 
 // Initial Render

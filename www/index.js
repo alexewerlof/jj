@@ -1,25 +1,25 @@
 import { JJD } from '../lib/bundle.js'
-import { SimpleCounter } from './components/simple-counter.js'
-import { RenderMarkdown } from './components/render-markdown.js'
-import { CodeHighlight } from './components/code-highlight.js'
-
-await Promise.all([SimpleCounter.defined, RenderMarkdown.defined, CodeHighlight.defined])
+import './components/simple-counter.js'
 
 const jjDoc = JJD.from(document)
+const jjCopyBtn = jjDoc.find('#copy-btn', true)
+const jjCopyStatus = jjDoc.find('#copy-status', true)
+const installCommand = jjDoc.find('.cmd', true).getText()
+let copyFeedbackTimeout
 
-// 1. Handle Copy Button Logic
-const jjCopyBtn = jjDoc.find('#copy-btn')
 jjCopyBtn.on('click', async () => {
     try {
-        await navigator.clipboard.writeText('npm i jj')
-
-        const originalHtml = jjCopyBtn.getHTML()
-        jjCopyBtn.setHTML('✓', true)
-
-        setTimeout(() => {
-            jjCopyBtn.setHTML(originalHtml, true)
-        }, 1000)
+        await navigator.clipboard.writeText(installCommand)
+        jjCopyStatus.setText('Copied')
     } catch (err) {
-        console.error('Failed to copy', err)
+        console.error('Failed to copy install command', err)
+        jjCopyStatus.setText('Copy failed')
     }
+
+    clearTimeout(copyFeedbackTimeout)
+    copyFeedbackTimeout = setTimeout(() => jjCopyStatus.setText(''), 2000)
+})
+
+void import('./components/code-highlight.js').catch((err) => {
+    console.error('Failed to load code highlighting', err)
 })

@@ -1,4 +1,4 @@
-import { inRangeInt, isArr, isPOJO, isStr } from 'jty'
+import { inRangeInt, isArr, isPOJO, isStr } from '../vendor/site-vendors.js'
 import { attr2prop, defineComponent, JJHE } from '../../lib/bundle.js'
 
 const h = JJHE.tree

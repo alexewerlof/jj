@@ -14,13 +14,13 @@ Consumers can use the built browser bundles without a project build step. Mainta
 
 ## Commands
 
-- `npm run build`: generate bundle formats, declarations, and API docs.
+- `npm run build`: generate bundle formats, declarations, API docs, and local site vendor assets.
 - `npm run typecheck`: run TypeScript checks without emitting files.
 - `npm test`: run the Node test suite with tsx; it does not run typecheck.
 - `npm run lint`: run ESLint.
 - `npm run fmt`: format the repository with Prettier.
 
-Preview the static site with the VS Code Live Server extension, typically at `http://localhost:5500/www/index.html`; do not start a second server.
+Preview the static site with the VS Code Live Server extension, typically at `http://localhost:5500/www/index.html`; run `npm run build` first to generate ignored library, docs, and site vendor assets. Do not start a second server.
 
 ## Working Conventions
 

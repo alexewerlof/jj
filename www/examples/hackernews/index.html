@@ -1,42 +1,53 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="index.css" />
-        <title>JJ Hacker News</title>
-    </head>
-    <body>
-        <main id="app">
-            <section class="hn">
-                <header class="hn__top">
-                    <div class="hn__brand">
-                        <a href="..">
-                            <div class="hn__brand-icon">Y</div>
-                            <strong>Hacker News</strong>
-                        </a>
-                    </div>
-                    <nav class="hn__nav" aria-label="Primary">
-                        <a href="#">new</a> | <a href="#">past</a> | <a href="#">comments</a> | <a href="#">ask</a> |
-                        <a href="#">show</a> | <a href="#">jobs</a> |
-                        <a href="#">submit</a>
-                    </nav>
-                    <a href="#">login</a>
-                </header>
-                <ol id="stories" class="hn__list"></ol>
-                <footer>
-                    <p class="hn__nav" aria-label="Footer">
-                        <a href="../../">Home</a> | <a href="https://github.com/alexewerlof/jj">Github</a> |
-                        <a href="https://alexewerlof.com">Alex Ewerlöf</a> | <a href="../../../LICENSE">License</a> |
-                        <a href="../">Examples</a>
-                    </p>
-                    <div>
-                        <label for="search">Search:</label>
-                        <input type="search" id="search" />
-                    </div>
-                </footer>
-            </section>
-        </main>
-        <script type="module" src="index.js"></script>
-    </body>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
+    <title>JJ Hacker News</title>
+</head>
+
+<body>
+    <main id="app">
+        <section class="hn">
+            <header class="hn__top">
+                <div class="hn__brand">
+                    <a href="..">
+                        <div class="hn__brand-icon">Y</div>
+                        <strong>Hacker News</strong>
+                    </a>
+                </div>
+                <nav class="hn__nav" aria-label="Primary">
+                    <a href="https://news.ycombinator.com/newest" target="_blank" rel="noopener noreferrer">new</a>
+                    |
+                    <a href="https://news.ycombinator.com/front" target="_blank" rel="noopener noreferrer">past</a>
+                    |
+                    <a href="https://news.ycombinator.com/newcomments" target="_blank"
+                        rel="noopener noreferrer">comments</a>
+                    | <a href="https://news.ycombinator.com/ask" target="_blank" rel="noopener noreferrer">ask</a> |
+                    <a href="https://news.ycombinator.com/show" target="_blank" rel="noopener noreferrer">show</a> |
+                    <a href="https://news.ycombinator.com/jobs" target="_blank" rel="noopener noreferrer">jobs</a> |
+                    <a href="https://news.ycombinator.com/submit" target="_blank" rel="noopener noreferrer">submit</a>
+                </nav>
+                <a href="https://news.ycombinator.com/login" target="_blank" rel="noopener noreferrer">login</a>
+            </header>
+            <ol id="stories" class="hn__list"></ol>
+            <p id="empty-state" hidden>No stories match your search.</p>
+            <footer>
+                <p class="hn__nav" aria-label="Footer">
+                    <a href="../../">Home</a> | <a href="https://github.com/alexewerlof/jj">Github</a> |
+                    <a href="https://alexewerlof.com">Alex Ewerlöf</a> | <a href="../../../LICENSE">License</a> |
+                    <a href="../">Examples</a>
+                </p>
+                <div>
+                    <label for="search">Search:</label>
+                    <input type="search" id="search" aria-label="Search stories" />
+                </div>
+            </footer>
+        </section>
+    </main>
+    <script type="module" src="index.js"></script>
+</body>
+
 </html>

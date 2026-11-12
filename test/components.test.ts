@@ -25,7 +25,7 @@ if (!Object.getOwnPropertyDescriptor(ShadowRoot.prototype, 'adoptedStyleSheets')
 }
 
 const installFetchMock = (resolver: (url: string) => MockFetchReply | Promise<MockFetchReply>) => {
-    globalThis.fetch = (async (input: URL | RequestInfo, init?: RequestInit) => {
+    globalThis.fetch = (async (input: URL | RequestInfo) => {
         const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
         const reply = await resolver(url)
         return {

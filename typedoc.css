@@ -72,3 +72,23 @@ h6 {
         --dark-color-ts-parameter: #f86262;
     }
 }
+
+@media (max-width: 767px) {
+    html,
+    body {
+        overflow-x: hidden;
+    }
+
+    pre {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    code {
+        overflow-wrap: anywhere;
+    }
+
+    pre code {
+        overflow-wrap: normal;
+    }
+}

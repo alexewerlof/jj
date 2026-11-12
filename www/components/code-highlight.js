@@ -1,24 +1,8 @@
 import { attr2prop, JJHE, defineComponent, JJD } from '../../lib/bundle.js'
-import highlight from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/es/highlight.min.js'
-import highlightJavascript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/javascript.min.js'
-import highlightCss from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/css.min.js'
-import highlightXml from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/xml.min.js'
-import highlightTypescript from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/es/languages/typescript.min.js'
+import { highlight } from '../vendor/site-vendors.js'
 
 const h = JJHE.tree
 const jjDoc = JJD.from(document)
-
-// https://highlightjs.readthedocs.io/en/latest/api.html#configure
-highlight.configure({
-    languages: ['js', 'css', 'html'],
-})
-highlight.registerLanguage('javascript', highlightJavascript)
-highlight.registerAliases('js', { languageName: 'javascript' })
-highlight.registerLanguage('typescript', highlightTypescript)
-highlight.registerAliases('ts', { languageName: 'typescript' })
-highlight.registerLanguage('xml', highlightXml)
-highlight.registerAliases('html', { languageName: 'xml' })
-highlight.registerLanguage('css', highlightCss)
 
 function highlightCode(code, language) {
     return highlight.highlight(code, {
@@ -67,8 +51,13 @@ export class CodeHighlight extends HTMLElement {
 
     async connectedCallback() {
         if (this.#language) {
-            const highlighted = highlightCode(this.textContent, this.#language)
-            this.#jjHost.setChild(h('pre', null, h('code').setHTML(highlighted, true)))
+            const jjCode = h('code')
+            if (highlight.getLanguage(this.#language)) {
+                jjCode.setHTML(highlightCode(this.textContent, this.#language), true)
+            } else {
+                jjCode.setText(this.textContent)
+            }
+            this.#jjHost.setChild(h('pre', null, jjCode))
         }
     }
 }

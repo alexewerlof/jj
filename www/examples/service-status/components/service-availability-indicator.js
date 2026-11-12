@@ -75,7 +75,14 @@ export class ServiceAvailabilityIndicator extends HTMLElement {
 
     #createDaySlot(day) {
         const slotClass = getSlotClass(day.hasData, day.primaryValue, this.#service.primarySli.slo)
-        const jjSlot = JJHE.create('div').addClass('status-slot', `status-slot--${slotClass}`)
+        const dayValues = day.sliValues
+            .filter((sli) => sli.value !== null)
+            .map(formatSliValue)
+            .join(' · ')
+        const dayLabel = `${formatDateShort(day.date)}: ${dayValues || 'No data'}`
+        const jjSlot = JJHE.create('div')
+            .addClass('status-slot', `status-slot--${slotClass}`)
+            .setAttrs({ title: dayLabel, 'aria-label': dayLabel })
 
         const jjTooltip = JJHE.create('div').addClass('status-slot__tooltip')
         jjTooltip
@@ -90,10 +97,8 @@ export class ServiceAvailabilityIndicator extends HTMLElement {
         const slotClass = getSlotClass(period.hasData, period.primaryValue, this.#service.primarySli.slo)
         const jjSlot = JJHE.create('div').addClass('status-slot', 'status-slot--summary', `status-slot--${slotClass}`)
 
-        jjSlot.setAttr(
-            'aria-label',
-            `${formatPeriodRange(period.startDate, period.endDate)}: ${formatSummaryValue(period, this.#service.primarySli)}`,
-        )
+        const periodLabel = `${formatPeriodRange(period.startDate, period.endDate)}: ${formatSummaryValue(period, this.#service.primarySli)}`
+        jjSlot.setAttrs({ 'aria-label': periodLabel, title: periodLabel })
 
         if (period.primaryValue !== null) {
             jjSlot.addChild(

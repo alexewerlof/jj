@@ -1,127 +1,130 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta
-            name="description"
-            content="JJ: The lightweight, no-build, WYWIWIR JavaScript library for modern web development."
-        />
-        <link rel="stylesheet" href="ui.css" />
-        <link rel="stylesheet" href="index.css" />
-        <link rel="stylesheet" href="code.css" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <title>JJ - Just JavaScript</title>
-    </head>
-    <body>
-        <nav id="main-nav">
-            <div class="nav-content content">
-                <a href="#" class="brand">JJ</a>
-                <div class="links">
-                    <a href="../doc/">API</a>
-                    <a href="tutorial/">Tutorial</a>
-                    <a href="guides/">Guides</a>
-                    <a href="examples/">Examples</a>
-                    <a href="https://github.com/alexewerlof/jj" target="_blank">GitHub</a>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="JJ: The lightweight, no-build, WYWIWIR JavaScript library for modern web development." />
+    <link rel="stylesheet" href="ui.css" />
+    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="code.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>JJ - Just JavaScript</title>
+</head>
+
+<body>
+    <nav id="main-nav">
+        <div class="nav-content content">
+            <a href="#" class="brand">JJ</a>
+            <div class="links">
+                <a href="../doc/">API</a>
+                <a href="tutorial/">Tutorial</a>
+                <a href="guides/">Guides</a>
+                <a href="examples/">Examples</a>
+                <a href="faq.html">FAQ</a>
+                <a href="https://github.com/alexewerlof/jj" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <header class="hero">
+            <div class="hero-content">
+                <h1 class="glitch-text" data-text="Just JavaScript">Just JavaScript</h1>
+                <p class="tagline">
+                    Faster than VDOM. No Build Step. Use the Platform!<br />
+                    <span class="highlight">What You Write Is What Is Run.</span>
+                </p>
+                <div class="cta-group">
+                    <div class="install-box">
+                        <span class="cmd">npm i jj</span>
+                        <button id="copy-btn" type="button">Copy</button>
+                        <span id="copy-status" role="status" aria-live="polite" aria-atomic="true"></span>
+                    </div>
+                    <a href="tutorial/" class="btn primary">Get Started</a>
                 </div>
             </div>
-        </nav>
+        </header>
 
-        <main>
-            <header class="hero">
-                <div class="hero-content">
-                    <h1 class="glitch-text" data-text="Just JavaScript">Just JavaScript</h1>
-                    <p class="tagline">
-                        Faster than VDOM. No Build Step. Use the Platform!<br />
-                        <span class="highlight">What You Write Is What Is Run.</span>
-                    </p>
-                    <div class="cta-group">
-                        <div class="install-box">
-                            <span class="cmd">npm i jj</span>
-                            <button id="copy-btn" aria-label="Copy install command">Copy</button>
-                        </div>
-                        <a href="tutorial/" class="btn primary">Get Started</a>
-                    </div>
-                </div>
-            </header>
+        <section class="features content">
+            <div class="feature-card">
+                <div class="icon">⚡</div>
+                <h3>No Transpilation</h3>
+                <p>
+                    Runs directly in the browser. No Webpack, no Babel, no source map headaches. Debug the code you
+                    actually wrote.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🚀</div>
+                <h3>Native Performance</h3>
+                <p>
+                    Direct DOM manipulation. No Virtual DOM overhead or diffing algorithms. Just raw, optimized
+                    speed.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🧩</div>
+                <h3>Web Components</h3>
+                <p>
+                    First-class support for Custom Elements. Encapsulate styles and logic using standard browser
+                    APIs.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">💎</div>
+                <h3>Fluent API</h3>
+                <p>
+                    Chained methods for cleaner, readable code. <code>JJHE</code> wrappers make DOM manipulation a
+                    joy again.
+                </p>
+            </div>
+        </section>
 
-            <section class="features content">
-                <div class="feature-card">
-                    <div class="icon">⚡</div>
-                    <h3>No Transpilation</h3>
-                    <p>
-                        Runs directly in the browser. No Webpack, no Babel, no source map headaches. Debug the code you
-                        actually wrote.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="icon">🚀</div>
-                    <h3>Native Performance</h3>
-                    <p>
-                        Direct DOM manipulation. No Virtual DOM overhead or diffing algorithms. Just raw, optimized
-                        speed.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="icon">🧩</div>
-                    <h3>Web Components</h3>
-                    <p>
-                        First-class support for Custom Elements. Encapsulate styles and logic using standard browser
-                        APIs.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="icon">💎</div>
-                    <h3>Fluent API</h3>
-                    <p>
-                        Chained methods for cleaner, readable code. <code>JJHE</code> wrappers make DOM manipulation a
-                        joy again.
-                    </p>
-                </div>
-            </section>
+        <section class="showcase">
+            <div class="showcase-content content">
+                <h2>Less Boilerplate, More Logic</h2>
+                <p>See how JJ compares to standard DOM API.</p>
 
-            <section class="showcase">
-                <div class="showcase-content content">
-                    <h2>Less Boilerplate, More Logic</h2>
-                    <p>See how JJ compares to standard DOM API.</p>
-
-                    <div class="code-split">
-                        <div class="code-panel">
-                            <div class="panel-header">Standard DOM API</div>
-                            <pre><code-highlight language="javascript">const div = document.createElement('div');
+                <div class="code-split">
+                    <div class="code-panel">
+                        <div class="panel-header">Standard DOM API</div>
+                        <pre><code-highlight language="javascript">const div = document.createElement('div');
 div.className = 'card';
 div.textContent = 'Hello World';
 div.setAttribute('id', 'intro');
 div.onclick = () => console.log('Hi');</code-highlight></pre>
-                        </div>
-                        <div class="code-panel jj-panel">
-                            <div class="panel-header">JJ (Just JavaScript)</div>
-                            <pre><code-highlight language="javascript">JJHE.create('div')
+                    </div>
+                    <div class="code-panel jj-panel">
+                        <div class="panel-header">JJ (Just JavaScript)</div>
+                        <pre><code-highlight language="javascript">JJHE.create('div')
     .addClass('card')
     .setText('Hello World')
     .setAttr('id', 'intro')
     .on('click', () => console.log('Hi'))</code-highlight></pre>
-                        </div>
                     </div>
                 </div>
-            </section>
-
-            <section class="demo-section content">
-                <h2>Live Component Demo</h2>
-                <p>An interactive counter component built as a Custom Components.</p>
-                <div id="demo-container">
-                    <simple-counter></simple-counter>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <div class="footer-content">
-                <p>Released under MIT License.</p>
-                <p>Made in Sweden 🇸🇪 by <a href="https://alexewerlof.com/">Alex Ewerlöf</a></p>
             </div>
-        </footer>
-        <script type="module" src="index.js"></script>
-    </body>
+        </section>
+
+        <section class="demo-section content">
+            <h2>Live Component Demo</h2>
+            <p>An interactive counter component built as a Custom Components.</p>
+            <div id="demo-container">
+                <simple-counter></simple-counter>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>Released under MIT License.</p>
+            <p>Made in Sweden 🇸🇪 by <a href="https://alexewerlof.com/">Alex Ewerlöf</a></p>
+        </div>
+    </footer>
+    <script type="module" src="index.js"></script>
+</body>
+
 </html>

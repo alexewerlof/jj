@@ -54,6 +54,7 @@ body {
     padding: 2.8rem var(--space-5) 3.6rem;
     display: grid;
     gap: var(--space-6);
+    overflow-x: clip;
 }
 
 .status-row {
@@ -338,6 +339,18 @@ body {
     }
 }
 
+.status-row__summary .status-slot:last-child .status-slot__tooltip {
+    left: auto;
+    right: 0;
+}
+
+@media (min-width: 1025px) {
+    .status-row__slots .status-slot:nth-child(n + 70) .status-slot__tooltip {
+        left: auto;
+        right: 0;
+    }
+}
+
 .tooltip-event {
     display: flex;
     align-items: baseline;
@@ -452,7 +465,7 @@ body {
     font-style: italic;
 }
 
-@media (max-width: 920px) {
+@media (max-width: 1024px) {
     .status-page {
         padding: var(--space-5) var(--space-3) var(--space-6);
     }

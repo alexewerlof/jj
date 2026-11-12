@@ -1,6 +1,7 @@
 import { attr2prop, JJHE, defineComponent } from '../../lib/bundle.js'
-import markdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
+import { markdownIt } from '../vendor/site-vendors.js'
 import { CodeHighlight } from './code-highlight.js'
+import { resolveMarkdownLinks } from './resolve-markdown-links.js'
 
 const md = markdownIt()
 
@@ -18,6 +19,7 @@ export class RenderMarkdown extends HTMLElement {
 
     #jjHost
     #htmlContent = ''
+    #sourceUrl = window.location.href
 
     constructor() {
         super()
@@ -49,7 +51,12 @@ export class RenderMarkdown extends HTMLElement {
         return this.#htmlContent
     }
 
+    set sourceUrl(value) {
+        this.#sourceUrl = new URL(value, window.location.href).href
+    }
+
     #render() {
         this.#jjHost.setHTML(this.#htmlContent, true)
+        resolveMarkdownLinks(this.#jjHost, this.#sourceUrl)
     }
 }

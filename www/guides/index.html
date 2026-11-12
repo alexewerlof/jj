@@ -1,56 +1,51 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta
-            name="description"
-            content="JJ Tutorial: Learn how to build with JJ - the lightweight, no-build JavaScript library."
-        />
-        <link rel="stylesheet" href="../ui.css" />
-        <link rel="stylesheet" href="../index.css" />
-        <link rel="stylesheet" href="index.css" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <title>JJ Guides</title>
-    </head>
-    <body>
-        <nav id="main-nav">
-            <div class="nav-content content">
-                <a href="../" class="brand">JJ</a>
-                <div class="links">
-                    <a href="../../doc/">API</a>
-                    <a href="../tutorial/">Tutorial</a>
-                    <a href="./">Guides</a>
-                    <a href="../examples/">Examples</a>
-                    <a href="https://github.com/alexewerlof/jj" target="_blank">GitHub</a>
-                </div>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="JJ Tutorial: Learn how to build with JJ - the lightweight, no-build JavaScript library." />
+    <link rel="stylesheet" href="../ui.css" />
+    <link rel="stylesheet" href="../index.css" />
+    <link rel="stylesheet" href="index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>JJ Guides</title>
+</head>
+
+<body>
+    <nav id="main-nav">
+        <div class="nav-content content">
+            <a href="../" class="brand">JJ</a>
+            <div class="links">
+                <a href="../../doc/">API</a>
+                <a href="../tutorial/">Tutorial</a>
+                <a href="./">Guides</a>
+                <a href="../examples/">Examples</a>
+                <a href="../faq.html">FAQ</a>
+                <a href="https://github.com/alexewerlof/jj" target="_blank">GitHub</a>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <main>
-            <aside>
-                <table-of-contents id="toc"></table-of-contents>
-            </aside>
-            <article>
-                <render-markdown id="content-renderer"></render-markdown>
-            </article>
-        </main>
+    <main>
+        <aside>
+            <table-of-contents id="toc"></table-of-contents>
+        </aside>
+        <article>
+            <render-markdown id="content-renderer"></render-markdown>
+        </article>
+    </main>
 
-        <footer>
-            <div class="footer-content">
-                <p>Released under MIT License.</p>
-                <p>Made in Sweden 🇸🇪 by <a href="https://alexewerlof.com/">Alex Ewerlöf</a></p>
-            </div>
-        </footer>
+    <footer>
+        <div class="footer-content">
+            <p>Released under MIT License.</p>
+            <p>Made in Sweden 🇸🇪 by <a href="https://alexewerlof.com/">Alex Ewerlöf</a></p>
+        </div>
+    </footer>
 
-        <script type="importmap">
-            {
-                "imports": {
-                    "jty": "https://cdn.jsdelivr.net/npm/jty@6.1.6/lib/index.min.js"
-                }
-            }
-        </script>
-        <script type="module" src="index.js"></script>
-    </body>
+    <script type="module" src="index.js"></script>
+</body>
+
 </html>

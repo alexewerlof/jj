@@ -1,19 +1,7 @@
 import { JJD, JJET } from '../../lib/bundle.js'
 import { RenderMarkdown } from '../components/render-markdown.js'
 import { TutorialSteps } from '../components/tutorial-steps.js'
-
-const steps = [
-    'Intro',
-    'Wrappers',
-    'DOM Creation',
-    'DOM Manipulation',
-    'Events',
-    'State Management',
-    'Components',
-    'Templates',
-    'Styles',
-    'Next Steps',
-]
+import { tutorialSteps } from './steps.js'
 
 function getStepNumFromUrl(urlStr) {
     const url = new URL(urlStr)
@@ -50,11 +38,12 @@ async function main() {
 
     const loadStepContent = async (title) => {
         const fileName = title.toLowerCase().replace(/\s+/g, '-') + '.md'
-        jjContent.ref.content = await fetchFile(fileName)
+        const sourceUrl = new URL(fileName, window.location.href)
+        jjContent.ref.sourceUrl = sourceUrl.href
+        jjContent.ref.content = await fetchFile(sourceUrl)
     }
 
-    jjTutorialSteps.ref.steps = steps
-    jjDoc.find('#next-step', true).on('click', () => jjTutorialSteps.ref.next())
+    jjTutorialSteps.ref.steps = tutorialSteps
 
     const initialStep = getStepNumFromUrl(window.location.href)
     jjTutorialSteps.ref.step = initialStep

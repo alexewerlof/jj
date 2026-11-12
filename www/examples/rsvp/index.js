@@ -78,6 +78,12 @@ async function startRendering() {
             jjRightSpan.setText(rightPart)
             await sleep(delay)
         }
+
+        if (currentAbortController === controller) {
+            currentAbortController = null
+            jjStopButton.setAttr('hidden', '')
+            jjStartButton.rmAttr('hidden')
+        }
     } catch (error) {
         console.error('Error during rendering:', error)
     }

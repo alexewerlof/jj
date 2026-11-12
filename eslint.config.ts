@@ -17,7 +17,7 @@ export default defineConfig([
     },
     ...tseslint.configs.recommended,
     {
-        ignores: ['doc/**', 'lib/**'],
+        ignores: ['doc/**', 'lib/**', 'www/vendor/**'],
     },
     {
         files: ['**/*.test.ts'],

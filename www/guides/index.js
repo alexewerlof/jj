@@ -51,11 +51,22 @@ async function fetchFile(path) {
     if (!response.ok) {
         throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`)
     }
-    return response.text()
+    return { content: await response.text(), sourceUrl: response.url }
 }
 
 async function renderFileContent(file) {
-    jjContentRenderer.ref.content = await fetchFile(file)
+    const markdown = await fetchFile(file)
+    jjContentRenderer.ref.sourceUrl = markdown.sourceUrl
+    jjContentRenderer.ref.content = markdown.content
+}
+
+async function navigateToFile(file) {
+    if (!file || file === getFileFromUrl(window.location.href)) {
+        return
+    }
+
+    window.history.pushState({}, '', putFileInUrl(file))
+    await renderFileContent(file)
 }
 
 jjToc.on('click', async (event) => {
@@ -64,10 +75,9 @@ jjToc.on('click', async (event) => {
         if (!event.ctrlKey && target.matches('a')) {
             const href = target.getAttribute('href')
             const file = getFileFromUrl(href)
-            if (file && file !== getFileFromUrl(window.location.href)) {
+            if (file) {
                 event.preventDefault()
-                window.history.pushState({}, '', href)
-                await renderFileContent(file)
+                await navigateToFile(file)
             } else {
                 console.warn('No href found on clicked link:', target)
             }
@@ -77,6 +87,22 @@ jjToc.on('click', async (event) => {
     }
 })
 
+jjContentRenderer.on('click', async (event) => {
+    const target = event.target
+    if (!(target instanceof Element)) {
+        return
+    }
+
+    const link = target.closest('a')
+    const href = link?.getAttribute('href')
+    if (!href?.startsWith('./') || !href.endsWith('.md')) {
+        return
+    }
+
+    event.preventDefault()
+    await navigateToFile(href.slice(2))
+})
+
 const initialFile = getFileFromUrl(window.location.href) || 'index.md'
 if (initialFile) {
     await renderFileContent(initialFile)
@@ -84,10 +110,8 @@ if (initialFile) {
 
 jjWin.on('popstate', async () => {
     try {
-        const file = getFileFromUrl(window.location.href)
-        if (file) {
-            await renderFileContent(file)
-        }
+        const file = getFileFromUrl(window.location.href) || 'index.md'
+        await renderFileContent(file)
     } catch (error) {
         console.error('Error handling popstate event:', error)
     }
