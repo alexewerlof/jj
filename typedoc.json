@@ -4,12 +4,6 @@
     "cleanOutputDir": true,
     "excludePrivate": true,
     "entryPoints": ["src/index.ts"],
-    "customCss": "typedoc.css",
-    "titleLink": "..",
     "hostedBaseUrl": "https://alexewerlof.github.io/jj/",
-    "customFooterHtml": "Made with ❤️ by <a href='https://alexewerlof.com/'>Alex Ewerlöf</a>",
-    "out": "./doc",
-    "navigation": {
-        "includeCategories": true
-    }
+    "outputs": [{ "name": "json", "path": "./.typedoc/reflections.json" }]
 }

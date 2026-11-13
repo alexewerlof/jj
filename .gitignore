@@ -1,5 +1,6 @@
 node_modules/
 doc/
+.typedoc/
 lib/
 www/vendor/
 .TODO

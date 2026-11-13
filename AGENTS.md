@@ -6,6 +6,7 @@ JJ is a runtime-dependency-free TypeScript library for imperative DOM manipulati
 
 - `src/`: implementation; public exports are collected in `src/index.ts`.
 - `src/wrappers/`: typed wrappers for DOM interfaces; see its `AGENTS.md` for local conventions.
+- `scripts/`: build tooling, including the TypeDoc JSON-to-static-HTML API reference renderer.
 - `test/`: Node tests using JSDOM.
 - `www/`: static site and runnable examples consuming generated bundles.
 - `skills/SKILL.md`: main JJ development guide; detailed references are in `skills/references/`.
@@ -15,6 +16,7 @@ Consumers can use the built browser bundles without a project build step. Mainta
 ## Commands
 
 - `npm run build`: generate bundle formats, declarations, API docs, and local site vendor assets.
+- `npm run doc`: generate TypeDoc reflections and render the static API reference into ignored `doc/` output.
 - `npm run typecheck`: run TypeScript checks without emitting files.
 - `npm test`: run the Node test suite with tsx; it does not run typecheck.
 - `npm run lint`: run ESLint.
