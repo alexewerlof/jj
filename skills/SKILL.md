@@ -185,6 +185,23 @@ Querying defaults from the tutorial:
 
 ## Attributes, Classes, Styles
 
+**One nullish rule for every setter:** `null` and `undefined` mean _remove_.
+
+| Call                         | `null` / `undefined`  | `false`              | truthy       |
+| ---------------------------- | --------------------- | -------------------- | ------------ |
+| `setAttr` / `setAriaAttr`    | removes the attribute | writes `"false"`     | writes value |
+| `setDataAttr`                | removes the attribute | writes `"false"`     | writes value |
+| `setClasses`                 | removes the class     | removes the class    | adds class   |
+| `setStyles`                  | removes the property  | removes the property | sets value   |
+| `swAttr` / `swClass` omitted | —                     | —                    | auto-toggles |
+| `swAttr` / `swClass` passed  | removes               | removes              | adds         |
+
+So conditional attributes need no branch:
+
+```typescript
+jjEl.setAttrs({ 'aria-expanded': isOpen || undefined }) // removed when isOpen is falsy
+```
+
 ```typescript
 // Attribute — singular
 jjEl.setAttr('role', 'button')
@@ -193,7 +210,7 @@ jjEl.rmAttr('hidden')
 jjEl.swAttr('readonly') // auto: flips current state of the "readonly" attribute
 jjEl.swAttr('disabled', !isReady) // sets disabled="" or removes it
 
-// Attribute — batch (null/undefined skipped)
+// Attribute — batch
 jjEl.setAttrs({ type: 'text', placeholder: 'Search…' })
 
 // Prefer batch updates for multiple keys on the same wrapper
@@ -229,10 +246,11 @@ jjEl.setClasses({ active: isActive, disabled: !isReady })
 jjEl.setClass('card card--featured')
 
 // Dataset
-jjEl.getDataAttr('userId')
+jjEl.getDataAttr('userId') // camelCase, reads data-user-id
 jjEl.hasDataAttr('userId')
 jjEl.setDataAttr('userId', '42')
 jjEl.setDataAttrs({ role: 'admin', team: 'ui' }) // batch set
+jjEl.setDataAttr('role', null) // removes data-role
 jjEl.rmDataAttr('userId')
 jjEl.rmDataAttr('role', 'team') // batch remove, varargs syntax
 jjEl.rmDataAttrs(['role', 'team']) // batch remove, array syntax

@@ -78,7 +78,11 @@ element.setDataAttrs({ a: '1', b: '2' }) // Batch set
 // ✅ Conditional classes (swClass for explicit mode)
 swClass('active', true) // Add
 swClass('active', false) // Remove
-swClass('active') // Toggle
+swClass('active') // Toggle (only when omitting the condition is intended)
+
+// ✅ Nullish values remove, for attributes, ARIA, data, classes and styles
+element.setAttr('href', url || undefined) // removed when falsy
+element.setAriaAttr('expanded', isOpen ? 'true' : undefined)
 ```
 
 ## Preventive Patterns (Flag These)

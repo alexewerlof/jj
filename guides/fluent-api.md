@@ -64,6 +64,42 @@ email.setAttr('aria-hidden', true)
 email.ref.setAttribute('aria-hidden', true)
 ```
 
+## Nullish values remove
+
+Every setter treats `null` and `undefined` as "remove". This keeps conditional
+attributes, classes, and styles branch-free, and means a missing optional value
+can never be written into the DOM as the string `"undefined"`.
+
+```js
+// ✅ GOOD - one expression, no branch
+jjLink.setAttrs({ href: url || undefined, target: '_blank' })
+jjEl.setAriaAttr('expanded', isOpen ? 'true' : undefined)
+jjEl.setClasses({ 'is-active': isActive, 'is-disabled': isDisabled })
+jjEl.setStyles({ color: isPrimary ? 'red' : null })
+```
+
+```js
+// ❌ BAD - manual branch for a case the nullish rule already covers
+if (url) {
+    jjLink.setAttr('href', url)
+} else {
+    jjLink.rmAttr('href')
+}
+```
+
+For presence-based attributes, `swAttr`/`swClass` take the condition directly:
+
+```js
+btn.swAttr('disabled', !isReady) // true adds, false removes
+btn.swClass('is-active', isActive)
+```
+
+Omit the second argument only when you really mean "flip the current state":
+
+```js
+btn.on('click', () => btn.swClass('is-active')) // auto-toggle
+```
+
 ## Setting multiple attributes
 
 Use the explicit plural helpers for grouped updates:
@@ -117,7 +153,6 @@ const input = JJHE.create('input').setClasses({
 const card2 = JJHE.create('div')
 card2.swClass('is-dragging', isDragging) // fine alone, but prefer setClasses for multiple
 card2.swClass('is-done', status === 'done')
-
 // ❌ BAD - using add/remove imperatively for each condition
 const input2 = JJHE.create('input')
 if (isValid) {

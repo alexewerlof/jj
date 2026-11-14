@@ -96,16 +96,29 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
-     * Sets a single attribute on the Element.
+     * Sets a single attribute on the Element, or removes it when the value is nullish.
+     *
+     * @remarks
+     * `null` and `undefined` remove the attribute instead of writing the string
+     * `"undefined"`, so conditional attributes work without a branch:
+     *
+     * ```ts
+     * el.setAttr('aria-expanded', isOpen || undefined) // removed when isOpen is falsy
+     * ```
      *
      * @example
      * ```ts
      * el.setAttr('id', 'my-id')
-     * el.setAttr('x', 50)  // Numbers are automatically converted
+     * el.setAttr('x', 50) // Numbers are automatically converted
+     * el.setAttr('hidden', null) // Removes the attribute
      * ```
      *
-     * @throws {TypeError} If arguments are invalid types.
+     * @param name - The attribute name.
+     * @param value - The value to set, or null/undefined to remove the attribute.
+     * @returns This instance for chaining.
+     * @throws {TypeError} If `name` is not a string.
      * @see {@link setAttrs} for setting multiple attributes at once.
+     * @see {@link rmAttr} for removing attributes.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute | Element.setAttribute}
      */
     setAttr(name: string, value: unknown): this {
@@ -113,7 +126,11 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
             throw typeErr('name', 'a string', name)
         }
 
-        this.ref.setAttribute(name, value as string)
+        if (value == null) {
+            this.ref.removeAttribute(name)
+        } else {
+            this.ref.setAttribute(name, value as string)
+        }
         return this
     }
 
@@ -123,7 +140,8 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @remarks
      * This helper is useful for optional attribute bags in builder APIs.
      * - `null` or `undefined`: does nothing and returns `this`
-     * - plain object: sets each attribute on the element
+     * - plain object: sets each attribute on the element; a `null`/`undefined` value
+     *   removes that attribute (see {@link setAttr})
      * - anything else: throws `TypeError`
      *
      * @example
@@ -189,18 +207,22 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * This method has two modes:
      *
-     * **Explicit mode** — pass any `force` value other than `undefined`:
+     * **Explicit mode** — pass a `force` value:
      * - Truthy `force` → sets the attribute to `""` (presence = active).
-     * - Falsy `force` (e.g. `false`, `null`, `0`, `""`) → removes the attribute. For `undefined`, see auto mode.
+     * - `false` → removes the attribute.
+     * - `undefined` → removes the attribute, matching {@link setAttr}.
      *
-     * **Auto mode** — omit `force` entirely (i.e. call with one argument) or pass `undefined` explicitly:
+     * **Auto mode** — omit `force` entirely (call with one argument):
      * - Delegates to the native `Element.toggleAttribute()`: removes the attribute if
-     *   present, adds it (as `""`) if absent. Useful for click handlers and event
-     *   callbacks where you just want to flip the current state.
+     *   present, adds it (as `""`) if absent. Useful in click handlers where you just
+     *   want to flip the current state.
      *
-     * > **Warning:** Passing `undefined` explicitly — `swAttr('disabled', undefined)` —
-     * > is treated as **auto mode**, not as an explicit remove. If you need to
-     * > unconditionally remove the attribute, use {@link rmAttr} instead.
+     * Passing `undefined` explicitly removes the attribute, so an optional value never
+     * toggles by accident:
+     *
+     * ```ts
+     * el.swAttr('disabled', options?.disabled) // undefined → removed, never toggled
+     * ```
      *
      * ARIA attributes are not HTML boolean attributes. Even boolean-like ARIA states
      * such as `aria-hidden`, `aria-disabled`, and `aria-readonly` require explicit
@@ -223,13 +245,10 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * // Auto mode — flip current state (no condition required)
      * btn.on('click', () => btn.swAttr('disabled'))
-     *
-     * // ⚠️ Watch out: passing undefined is NOT an explicit remove
-     * swAttr('disabled', undefined) // → auto mode, NOT rmAttr!
      * ```
      *
      * @param name - The attribute name.
-     * @param force - If omitted or `undefined`: auto-toggle. Truthy: add. Falsy (not `undefined`): remove.
+     * @param force - Omitted: auto-toggle. Truthy: add. `false`/`undefined`: remove.
      * @returns This instance for chaining.
      * @throws {TypeError} If `name` is not a string.
      * @see {@link setAttr} for setting a non-ARIA attribute with a specific string value.
@@ -239,11 +258,18 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link swClass} for the class-list equivalent.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/toggleAttribute | Element.toggleAttribute}
      */
-    swAttr(name: string, force?: boolean): this {
+    swAttr(name: string, ...force: [boolean?]): this {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
-        this.ref.toggleAttribute(name, force)
+
+        if (force.length === 0) {
+            this.ref.toggleAttribute(name)
+        } else if (force[0] === undefined) {
+            this.ref.removeAttribute(name)
+        } else {
+            this.ref.toggleAttribute(name, force[0])
+        }
         return this
     }
 
@@ -267,7 +293,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
-        return this.ref.getAttribute(`aria-${name}`)
+        return this.getAttr(`aria-${name}`)
     }
 
     /**
@@ -284,22 +310,27 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
-        return this.ref.hasAttribute(`aria-${name}`)
+        return this.hasAttr(`aria-${name}`)
     }
 
     /**
-     * Sets a single ARIA attribute on the Element.
+     * Sets a single ARIA attribute on the Element, or removes it when the value is nullish.
+     *
+     * @remarks
+     * Automatically prepends `aria-` to the name, then delegates to {@link setAttr}.
      *
      * @example
      * ```ts
      * el.setAriaAttr('hidden', 'true')
      * el.setAriaAttr('level', 2)
+     * el.setAriaAttr('expanded', isOpen ? 'true' : undefined) // removed when undefined
      * ```
      *
      * @param name - The ARIA attribute suffix.
-     * @param value - The value to assign.
+     * @param value - The value to assign, or null/undefined to remove the attribute.
      * @returns This instance for chaining.
      * @throws {TypeError} If `name` is not a string.
+     * @see {@link setAttr} for the underlying nullish and coercion rules.
      * @see {@link setAriaAttrs} for setting multiple ARIA attributes at once.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes | ARIA Attributes}
      */
@@ -307,9 +338,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
-
-        this.ref.setAttribute(`aria-${name}`, value as string)
-        return this
+        return this.setAttr(`aria-${name}`, value)
     }
 
     /**
@@ -318,7 +347,8 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @remarks
      * This helper is useful for optional ARIA attribute bags in builder APIs.
      * - `null` or `undefined`: does nothing and returns `this`
-     * - plain object: sets each ARIA attribute on the element
+     * - plain object: sets each ARIA attribute on the element; a `null`/`undefined`
+     *   value removes that attribute (see {@link setAriaAttr})
      * - anything else: throws `TypeError`
      *
      * @example
@@ -373,17 +403,12 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute | Element.removeAttribute}
      */
     rmAriaAttr(...names: string[]): this {
-        try {
-            for (const name of names) {
-                if (!isStr(name)) {
-                    throw typeErr('name', 'a string', name)
-                }
-                this.ref.removeAttribute(`aria-${name}`)
+        for (const name of names) {
+            if (!isStr(name)) {
+                throw typeErr('name', 'a string', name)
             }
-        } catch (cause) {
-            throw new Error(`Failed to remove some ARIA attributes: ${JSON.stringify(names)}.`, { cause })
         }
-        return this
+        return this.rmAttr(...names.map((name) => `aria-${name}`))
     }
 
     /**
@@ -591,18 +616,15 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @remarks
      * This method has two modes, mirroring the behavior of {@link swAttr}:
      *
-     * **Explicit mode** — pass any `force` value other than `undefined`:
+     * **Explicit mode** — pass a `force` value:
      * - Truthy `force` → adds the class.
-     * - Falsy `force` (e.g. `false`, `null`, `0`, `""`) → removes the class.
+     * - `false` → removes the class.
+     * - `undefined` → removes the class, so an optional condition never toggles.
      *
-     * **Auto mode** — omit `force` entirely (i.e. call with one argument):
+     * **Auto mode** — omit `force` entirely (call with one argument):
      * - Delegates to the native `DOMTokenList.toggle()`: removes the class if present,
-     *   adds it if absent. Useful for click handlers and event callbacks where you just
-     *   want to flip the current state.
-     *
-     * > **Warning:** Passing `undefined` explicitly — `swClass('foo', undefined)` —
-     * > is treated as **auto mode**, not as an explicit remove. If you need to
-     * > unconditionally remove a class, use {@link rmClass} instead.
+     *   adds it if absent. Useful in click handlers where you just want to flip the
+     *   current state.
      *
      * To toggle multiple classes from a condition map in a single call, use {@link setClasses}.
      *
@@ -614,13 +636,10 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      *
      * // Auto mode — flip current state (no condition required)
      * btn.on('click', () => btn.swClass('is-active'))
-     *
-     * // ⚠️ Watch out: passing undefined is NOT an explicit remove
-     * swClass('foo', undefined) // → auto mode, NOT rmClass!
      * ```
      *
      * @param className - The class to add or remove.
-     * @param force - If omitted or `undefined`: auto-toggle. Truthy: add. Falsy (not `undefined`): remove.
+     * @param force - Omitted: auto-toggle. Truthy: add. `false`/`undefined`: remove.
      * @returns This instance for chaining.
      * @throws {TypeError} If `className` is not a string.
      * @see {@link setClasses} for toggling multiple classes at once via a condition map.
@@ -630,11 +649,18 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/classList | Element.classList}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/toggle | DOMTokenList.toggle}
      */
-    swClass(className: string, force?: boolean): this {
+    swClass(className: string, ...force: [boolean?]): this {
         if (!isStr(className)) {
             throw typeErr('className', 'a string', className)
         }
-        this.ref.classList.toggle(className, force)
+
+        if (force.length === 0) {
+            this.ref.classList.toggle(className)
+        } else if (force[0] === undefined) {
+            this.ref.classList.remove(className)
+        } else {
+            this.ref.classList.toggle(className, force[0])
+        }
         return this
     }
 

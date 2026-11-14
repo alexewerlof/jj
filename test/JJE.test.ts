@@ -215,6 +215,29 @@ describe('JJE', () => {
                 const jje = new JJE(el)
                 assert.throws(() => jje.setAttr({ id: 'my-id' } as any, 2), TypeError)
             })
+
+            it('removes the attribute when the value is null', () => {
+                const el = document.createElement('div')
+                el.setAttribute('hidden', 'until-found')
+                const jje = new JJE(el)
+                jje.setAttr('hidden', null)
+                assert.ok(!el.hasAttribute('hidden'))
+            })
+
+            it('removes the attribute when the value is undefined', () => {
+                const el = document.createElement('div')
+                el.setAttribute('aria-expanded', 'true')
+                const jje = new JJE(el)
+                jje.setAttr('aria-expanded', undefined)
+                assert.ok(!el.hasAttribute('aria-expanded'))
+            })
+
+            it('never writes the string "undefined"', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+                jje.setAttr('data-x', undefined)
+                assert.strictEqual(el.getAttribute('data-x'), null)
+            })
         })
 
         describe('setAttrs()', () => {
@@ -244,6 +267,16 @@ describe('JJE', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
                 assert.throws(() => jje.setAttrs('not-an-object' as any), TypeError)
+            })
+
+            it('removes attributes whose value is nullish', () => {
+                const el = document.createElement('div')
+                el.setAttribute('aria-expanded', 'true')
+                el.setAttribute('title', 'keep')
+                const jje = new JJE(el)
+                jje.setAttrs({ 'aria-expanded': undefined, title: 'kept' })
+                assert.ok(!el.hasAttribute('aria-expanded'))
+                assert.strictEqual(el.getAttribute('title'), 'kept')
             })
         })
 
@@ -305,11 +338,12 @@ describe('JJE', () => {
                 assert.ok(!el.hasAttribute('hidden'))
             })
 
-            it('auto-toggles when value is explicitly undefined (same as omitted)', () => {
+            it('removes the attribute when value is explicitly undefined', () => {
                 const el = document.createElement('div')
+                el.setAttribute('hidden', '')
                 const jje = new JJE(el)
                 jje.swAttr('hidden', undefined)
-                assert.ok(el.hasAttribute('hidden'), 'undefined triggers auto mode, not explicit remove')
+                assert.ok(!el.hasAttribute('hidden'), 'undefined removes, matching setAttr')
             })
 
             it('returns this for chaining', () => {
@@ -408,6 +442,16 @@ describe('JJE', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
                 assert.throws(() => jje.setAriaAttrs('label' as any), TypeError)
+            })
+
+            it('removes aria attributes whose value is nullish', () => {
+                const el = document.createElement('div')
+                el.setAttribute('aria-expanded', 'true')
+                el.setAttribute('aria-label', 'Keep')
+                const jje = new JJE(el)
+                jje.setAriaAttrs({ expanded: null, label: 'Kept' })
+                assert.ok(!el.hasAttribute('aria-expanded'))
+                assert.strictEqual(el.getAttribute('aria-label'), 'Kept')
             })
         })
 
@@ -617,11 +661,12 @@ describe('JJE', () => {
                 assert.ok(!el.classList.contains('foo'))
             })
 
-            it('auto-toggles when value is explicitly undefined (same as omitted)', () => {
+            it('removes the class when value is explicitly undefined', () => {
                 const el = document.createElement('div')
+                el.className = 'foo'
                 const jje = new JJE(el)
                 jje.swClass('foo', undefined)
-                assert.ok(el.classList.contains('foo'), 'undefined triggers auto mode, not explicit remove')
+                assert.ok(!el.classList.contains('foo'), 'undefined removes, matching setAttr')
             })
 
             it('returns this for chaining', () => {

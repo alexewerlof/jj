@@ -180,29 +180,38 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
     }
 
     /**
-     * Sets a single data attribute on the element.
+     * Sets a single data attribute on the element, or removes it when the value is nullish.
+     *
+     * @remarks
+     * The name is the camelCase form: `setDataAttr('userId', …)` writes `data-user-id`.
      *
      * @example
      * ```ts
      * el.setDataAttr('myKey', 'myValue')
-     * el.setDataAttr('count', 42 as unknown as string)
+     * el.setDataAttr('count', 42) // Coerced to "42"
+     * el.setDataAttr('selected', null) // Removes data-selected
      * ```
      *
      * @param name - The data attribute name (in camelCase).
-     * @param value - The value to assign.
+     * @param value - The value to assign, or null/undefined to remove the attribute.
      * @returns This instance for chaining.
      * @throws {TypeError} If `name` is not a string.
      * @see {@link setDataAttrs} for setting multiple data attributes at once.
+     * @see {@link getDataAttr} for reading a data attribute by its camelCase name.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset | HTMLElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
-    setDataAttr(name: string, value?: string): this {
+    setDataAttr(name: string, value?: unknown): this {
         if (!isStr(name)) {
             throw typeErr('name', 'a string', name)
         }
 
-        this.ref.dataset[name] = value
+        if (value == null) {
+            delete this.ref.dataset[name]
+        } else {
+            this.ref.dataset[name] = String(value)
+        }
         return this
     }
 
@@ -212,7 +221,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * @remarks
      * This helper is useful for optional dataset bags in builder APIs.
      * - `null` or `undefined`: does nothing and returns `this`
-     * - plain object: sets each data attribute on the element
+     * - plain object: sets each data attribute; a `null`/`undefined` value removes it
      * - anything else: throws `TypeError`
      *
      * @example
@@ -229,7 +238,7 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/SVGElement/dataset | SVGElement.dataset}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MathMLElement/dataset | MathMLElement.dataset}
      */
-    setDataAttrs(attributes?: Record<string, string | undefined> | null): this {
+    setDataAttrs(attributes?: Record<string, unknown> | null): this {
         if (attributes == null) {
             return this
         }

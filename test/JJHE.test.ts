@@ -93,8 +93,31 @@ describe('JJHE', () => {
             it('accepts numbers and converts to strings in single mode', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setDataAttr('key', 123 as unknown as string)
+                jjhe.setDataAttr('key', 123)
                 assert.strictEqual(el.dataset.key, '123')
+            })
+
+            it('removes the data attribute when the value is null', () => {
+                const el = document.createElement('div')
+                el.dataset.key = 'value'
+                const jjhe = new JJHE(el)
+                jjhe.setDataAttr('key', null)
+                assert.strictEqual(el.hasAttribute('data-key'), false)
+            })
+
+            it('removes the data attribute when the value is undefined', () => {
+                const el = document.createElement('div')
+                el.dataset.key = 'value'
+                const jjhe = new JJHE(el)
+                jjhe.setDataAttr('key', undefined)
+                assert.strictEqual(el.hasAttribute('data-key'), false)
+            })
+
+            it('never writes the string "undefined"', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setDataAttr('key', undefined)
+                assert.strictEqual(el.getAttribute('data-key'), null)
             })
 
             it('throws TypeError for invalid name type', () => {
@@ -116,8 +139,18 @@ describe('JJHE', () => {
             it('accepts numbers and converts to strings in object mode', () => {
                 const el = document.createElement('div')
                 const jjhe = new JJHE(el)
-                jjhe.setDataAttrs({ key: 123 as unknown as string })
+                jjhe.setDataAttrs({ key: 123 })
                 assert.strictEqual(el.dataset.key, '123')
+            })
+
+            it('removes data attributes whose value is nullish', () => {
+                const el = document.createElement('div')
+                el.dataset.gone = 'x'
+                el.dataset.kept = 'y'
+                const jjhe = new JJHE(el)
+                jjhe.setDataAttrs({ gone: undefined, kept: 'z' })
+                assert.strictEqual(el.hasAttribute('data-gone'), false)
+                assert.strictEqual(el.dataset.kept, 'z')
             })
 
             it('no-ops for nullish input', () => {
