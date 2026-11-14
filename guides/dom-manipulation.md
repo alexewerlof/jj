@@ -47,10 +47,10 @@ Even so, fewer DOM writes typically reduce style and layout invalidation risk, e
 If you want this as a local utility without changing JJ API surface:
 
 ```ts
-import type { JJNx } from 'jj'
+import type { JJN } from 'jj'
 
 export function removeChildrenBy(
-    node: JJNx<Element | Document | DocumentFragment>,
+    node: JJN<Element | Document | DocumentFragment>,
     shouldRemove: (child: ChildNode, index: number, all: ChildNode[]) => boolean,
 ): void {
     const all = Array.from(node.ref.childNodes)

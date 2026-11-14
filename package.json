@@ -39,6 +39,7 @@
         "test:watch": "node --import tsx --test --watch",
         "test:coverage": "node --import tsx --test --experimental-test-coverage",
         "doc": "typedoc src/index.ts && node --import tsx scripts/render-api-docs.js",
+        "docs:check": "node scripts/check-docs.js",
         "build:site": "mkdir -p www/vendor && esbuild www/components/site-vendors.js --bundle --format=esm --minify --outfile=www/vendor/site-vendors.js",
         "prebuild": "mkdir -p lib doc && find lib doc -mindepth 1 -delete",
         "build": "tsup --dts && npm run doc && npm run build:site",

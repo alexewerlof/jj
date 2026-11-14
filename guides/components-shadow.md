@@ -401,7 +401,7 @@ export class UserCard extends HTMLElement {
 </user-card>
 ```
 
-```js
+```ts
 // page.js
 import { JJD } from 'jj'
 import { UserCard } from './user-card.js'
@@ -410,7 +410,7 @@ await UserCard.defined
 
 const doc = JJD.from(document)
 doc.find('user-card')?.on('user-contact', (event) => {
-    console.log('Contact requested for', event.detail.name)
+    console.log('Contact requested for', (event as CustomEvent).detail.name)
 })
 ```
 

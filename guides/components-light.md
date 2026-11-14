@@ -101,7 +101,7 @@ import { JJHE } from 'jj'
 `triggerCustomEvent` dispatches with `bubbles: true, composed: true` by default. For light DOM components, `composed` has no effect — there is no shadow boundary. You can leave it as-is or override with `{ composed: false }` to be explicit:
 
 ```js
-JJHE.from(this).triggerCustomEvent('item-selected', { id }, { composed: false })
+JJHE.from(this).triggerCustomEvent('item-selected', { id: 'item-1' }, { composed: false })
 ```
 
 ### Listening for events from outside
@@ -235,7 +235,7 @@ news-feed .news-feed h2 {
 <news-feed heading="Top Stories"></news-feed>
 ```
 
-```js
+```ts
 // page.js
 import { JJD } from 'jj'
 import { NewsFeed } from './news-feed.js'
@@ -246,7 +246,7 @@ const doc = JJD.from(document)
 const feed = doc.find('news-feed', true)
 
 feed.on('article-opened', (event) => {
-    console.log('Opened article', event.detail.id)
+    console.log('Opened article', (event as CustomEvent).detail.id)
 })
 
 // Broadcast a refresh — the component receives it via document listener

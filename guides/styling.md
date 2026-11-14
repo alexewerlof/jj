@@ -151,21 +151,22 @@ Use native `<link>` elements to hint resource loading:
 import { JJHE } from 'jj'
 
 const h = JJHE.tree
+const jjHead = JJHE.from(document.head)
 
-document.head.addChild(
+jjHead.addChild(
     h('link', {
         href: '/components/my-component.css',
         rel: 'preload',
         as: 'style',
-    }).ref,
+    }),
 )
 
-document.head.addChild(
+jjHead.addChild(
     h('link', {
         href: '/next-page.css',
         rel: 'prefetch',
         as: 'style',
-    }).ref,
+    }),
 )
 ```
 
@@ -183,5 +184,5 @@ For behavior guidelines and when to use each hint, see the performance guide.
 
 For full component styling patterns (shadow and light DOM, eager/lazy loading, template/style separation), continue with:
 
-- [www/tutorial/custom-components.md](../www/tutorial/custom-components.md)
+- [www/tutorial/components.md](../www/tutorial/components.md)
 - [performance guide](./performance.md)

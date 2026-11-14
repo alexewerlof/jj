@@ -86,13 +86,15 @@ Use `tr td:nth-child(3)` to target the third data cell in each row.
 
 Use `.closest()` on element wrappers for event delegation or tree navigation:
 
+[//]: # 'docs-check: ignore — closest returns JJE until query return types are narrowed'
+
 ```js
 jjDoc.on('click', (e) => {
     if (!(e.target instanceof Element)) {
         return
     }
     const jjItem = JJE.from(e.target).closest('[data-item-id]')
-    if (jjItem) handleItemClick(jjItem.getAttr('data-item-id'))
+    if (jjItem) handleItemClick(jjItem.getDataAttr('itemId'))
 })
 ```
 

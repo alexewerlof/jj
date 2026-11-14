@@ -147,6 +147,10 @@ const items = ['Apple', 'Orange', 'Pear']
 
 // Preferred: addChildMap
 const ul = JJHE.create('ul').addChildMap(items, (item) => JJHE.create('li').setText(item))
+```
+
+```js
+const items = ['Apple', 'Orange', 'Pear']
 
 // Also fine for inline builds: JJHE.tree() spread
 const ul = JJHE.tree('ul', null, ...items.map((item) => JJHE.tree('li', null, item)))
@@ -176,4 +180,4 @@ This is more maintainable than building the entire structure in JavaScript, sinc
 - [structure guide](./structure.md) — file-per-concern conventions.
 - [components guide](./components.md) — using templates in custom elements.
 - [performance guide](./performance.md) — native preload and prefetch hints.
-- [tutorial DOM fundamentals](../www/tutorial/dom-fundamentals.md)
+- [tutorial DOM fundamentals](../www/tutorial/dom-creation.md)

@@ -119,10 +119,10 @@ class MyCounter extends HTMLElement {
 customElements.define('my-counter', MyCounter)
 
 // Usage
-const counter = document.createElement('my-counter')
+const counter = document.createElement('my-counter') as MyCounter
 // Add an event listener (optional)
 counter.addEventListener('value-changed', (event) => {
-    console.log('Counter value changed to:', event.detail.value)
+    console.log('Counter value changed to:', (event as CustomEvent).detail.value)
 })
 document.body.appendChild(counter)
 // The counter's text updates to "Counter value: 5"

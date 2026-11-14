@@ -57,7 +57,7 @@ Many components need to fetch data and templates in parallel. Use `Promise.all` 
 const templatePromise = fetchTemplate(import.meta.resolve('./my-card.html'))
 const stylePromise = fetchStyle(import.meta.resolve('./my-card.css'))
 
-class {
+class MyCard extends HTMLElement {
     //...
     #isInitialized = false
     async connectedCallback() {

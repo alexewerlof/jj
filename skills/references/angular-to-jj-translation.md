@@ -20,6 +20,8 @@ Angular uses a DI-driven component architecture with templates and decorators. J
 
 Angular:
 
+[//]: # 'docs-check: ignore — Angular decorator syntax'
+
 ```typescript
 @Input() userName: string = ''
 ```
@@ -39,6 +41,8 @@ set userName(v) { this.#userName = String(v ?? ''); this.#render() }
 
 Angular:
 
+[//]: # 'docs-check: ignore — Angular decorator syntax'
+
 ```typescript
 @Output() selected = new EventEmitter<string>()
 this.selected.emit(itemId)
@@ -54,6 +58,8 @@ JJHE.from(this).triggerCustomEvent('selected', itemId)
 ## No DI — use ES modules instead
 
 Angular service:
+
+[//]: # 'docs-check: ignore'
 
 ```typescript
 @Injectable({ providedIn: 'root' })

@@ -58,6 +58,8 @@ JJ avoids these costs. The trade-off: you decide which nodes to update and when.
 Every JJ wrapper exposes `.ref`, the underlying native DOM node. When no JJ method covers what you need, drop down to `.ref` directly.
 
 ```js
+const myUrl = 'https://example.com/video.mp4'
+
 const video = JJHE.create('video')
 video.setAttr('src', myUrl).setAttr('autoplay', '')
 
@@ -119,6 +121,6 @@ JJ is designed for:
 
 ## Related
 
-- [tutorial getting started](../www/tutorial/getting-started.md)
-- [tutorial design philosophy](../www/tutorial/design-philosophy.md)
+- [tutorial getting started](../www/tutorial/intro.md)
+- [design philosophy](./design-philosophy.md)
 - [README](../README.md)

@@ -119,10 +119,10 @@ For light DOM components that do not use a shadow root, only `#jjHost` is needed
 
 ```js
 class MySection extends HTMLElement {
-    #jjHost  // JJHE wrapping the custom element itself
+    #jjHost // JJHE wrapping the custom element itself
     #isInitialized = false
 
-    connectedCallback() {
+    async connectedCallback() {
         if (!this.#isInitialized) {
             this.#jjHost = JJHE.from(this)
             this.#jjHost.setTemplate(await templatePromise)

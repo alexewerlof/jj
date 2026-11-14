@@ -3,6 +3,7 @@
     "name": "jj",
     "cleanOutputDir": true,
     "excludePrivate": true,
+    "treatWarningsAsErrors": true,
     "entryPoints": ["src/index.ts"],
     "hostedBaseUrl": "https://alexewerlof.github.io/jj/",
     "outputs": [{ "name": "json", "path": "./.typedoc/reflections.json" }]

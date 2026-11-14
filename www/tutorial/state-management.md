@@ -37,6 +37,9 @@ import { JJHE } from 'jj'
 
 class State {
     #count = 0
+    jjCount
+    jjShadow
+
     constructor(init = 0) {
         this.#count = init
         // We have hard-coded the HTML structure to keep this example self-contained
@@ -107,7 +110,7 @@ JJ doesn't add much here because the native API is pretty straightforward.
 
 Here's how you typically use the History API:
 
-```js
+```ts
 import { JJET } from 'jj'
 // To change the URL without reloading the page (instead render the state in-place)
 history.pushState({ some: 'state' }, 'Title', '/new-url')
@@ -115,7 +118,7 @@ history.pushState({ some: 'state' }, 'Title', '/new-url')
 const jjWin = JJET.from(window)
 jjWin.on('popstate', (event) => {
     console.log('Location changed:', document.location)
-    console.log('State object:', event.state)
+    console.log('State object:', (event as PopStateEvent).state)
 })
 ```
 
@@ -123,27 +126,27 @@ jjWin.on('popstate', (event) => {
 
 Again, this is not a JJ concept but it is worth mentioning that you can use the [BroadcastChannel API](https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel) to create a simple pub/sub system for your application. This is particularly useful when you have multiple tabs or windows that need to communicate with each other.
 
-```js
+```ts
 import { JJET } from 'jj'
 // Create a channel
 const channel = new BroadcastChannel('my-channel')
 const jjChannel = JJET.from(channel)
 // Listen for messages
 jjChannel.on('message', (event) => {
-    console.log('Received message:', event.data)
+    console.log('Received message:', (event as MessageEvent).data)
 })
 // Send a message
-jjChannel.ref.postMessage({ some: 'data' })
+channel.postMessage({ some: 'data' })
 ```
 
 Similarly, you can use messaging between iframes or workers with the `postMessage` API.
 
-```js
+```ts
 import { JJET } from 'jj'
 const worker = new Worker('static/scripts/worker.js')
 const jjWorker = JJET.from(worker)
 jjWorker.on('message', (event) => {
-    console.log(`Received message from worker: ${event.data}`)
+    console.log(`Received message from worker: ${(event as MessageEvent).data}`)
 })
 ```
 

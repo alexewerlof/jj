@@ -161,11 +161,13 @@ An **empty** `connectedMoveCallback()` is enough to suppress the pair. The eleme
 Callers must use `Element.moveBefore()` for this to take effect — other move APIs bypass the optimisation:
 
 ```js
+const list = todoItem.parentElement
+
 // state-preserving move (fires connectedMoveCallback)
-parent.moveBefore(todoItem, nextSibling)
+list.moveBefore(todoItem, nextSibling)
 
 // classic move (fires disconnected then connected)
-parent.insertBefore(todoItem, nextSibling)
+list.insertBefore(todoItem, nextSibling)
 ```
 
 > **Browser support**: `moveBefore()` and `connectedMoveCallback()` are available in Chrome 133+ and Firefox 135+. Safari has not shipped support as of early 2026. Feature-detect before relying on it in production.

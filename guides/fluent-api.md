@@ -92,8 +92,7 @@ progress.setAttr('max', 100)
 progress.ref.setAttribute('min', 0)
 progress.ref.setAttribute('max', 100)
 
-// ❌ BAD - incorrect type for nameOrObj
-JJHE.create('div').setAttr(['role', 'status'])
+// ❌ BAD - there is no "name or object" overload: use setAttrs() for several attributes
 ```
 
 ## Toggling multiple classes
@@ -141,9 +140,15 @@ Instead of using the `new` operator to create wrappers, use the `.from()` or `.c
 ```js
 // ✅ GOOD -
 const li = JJHE.create('li').setText('Hello')
+```
+
+```js
 // ❌ BAD - not chainable
 const li = new JJHE(document.createElement('li'))
 li.setText('Hello')
+```
+
+```js
 // ❌ BAD - unnecessary call to document.createElement()
 const li = JJHE.from(document.createElement('li')).setText('Hello')
 ```
@@ -240,8 +245,16 @@ However, when working with JJ, you may not need them at all.
 const fruits = ['Apple', 'Orange', 'Pear']
 // ✅ GOOD - use addChildMap()
 const ul = JJHE.create('ul').addChildMap(fruits, (fruit) => JJHE.create('li').setText(fruit))
+```
+
+```js
+const fruits = ['Apple', 'Orange', 'Pear']
 // ✅ GOOD - another way with tree()
 const ul = JJHE.tree('ul', null, ...fruits.map((fruit) => JJHE.tree('li', null, fruit)))
+```
+
+```js
+const fruits = ['Apple', 'Orange', 'Pear']
 // ❌ BAD - unnecessary use of DocumentFragment
 const ul = JJHE.create('ul')
 const frag = JJDF.create()

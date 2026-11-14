@@ -42,6 +42,9 @@ jobs:
             - name: Build
               run: npm run build
 
+            - name: Check documentation
+              run: npm run docs:check
+
     deploy:
         if: github.event_name != 'pull_request'
         needs: validate

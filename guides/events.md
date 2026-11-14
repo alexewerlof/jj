@@ -112,7 +112,7 @@ Events originating **outside** the shadow tree do **not** traverse into it. The 
 
 ### Method 1: direct function call on the custom element
 
-```js
+```ts
 class XPanel extends HTMLElement {
     connectedCallback() {
         this.attachShadow({ mode: 'open' }).innerHTML = `<button id="inner">Inner</button>`
@@ -125,7 +125,7 @@ class XPanel extends HTMLElement {
 
 customElements.define('x-panel', XPanel)
 
-const panel = document.querySelector('x-panel')
+const panel = document.querySelector<XPanel>('x-panel')
 panel?.highlight()
 ```
 

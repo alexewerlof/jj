@@ -116,7 +116,7 @@ const jjTabs = jjDoc.findAll('.tab')
 // Find all elements with the class "tab" inside the above main tag
 const jjTabsInMain = jjMain.findAll('.tab')
 // Another way of doing the same using standard CSS selector syntax
-const jjTabs = jjDoc.findAll('main .tab')
+const jjTabsInMainAlt = jjDoc.findAll('main .tab')
 // Find the active tab and throw if it's not found
 const jjActiveTab = jjDoc.find('.tab.active', true)
 ```

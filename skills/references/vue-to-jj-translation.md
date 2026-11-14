@@ -34,7 +34,7 @@ const jjMessage = JJHE.create('p').setText('')
 const jjInput = JJHE.create('input')
     .setAttr('type', 'text')
     .on('input', () => {
-        message = jjInput.getValue()
+        message = String(jjInput.getValue())
         jjMessage.setText(message)
     })
 ```

@@ -108,6 +108,7 @@ When translating browser DOM code into JJ, do not mechanically keep native patte
 ```typescript
 // ✅ preferred: build a subtree once
 const h = JJHE.tree
+const fruits = ['Apple', 'Orange', 'Pear']
 
 latestChatResponse.addChild(
     h('section', null, h('h2', null, 'User'), h('div', null, userPrompt), h('h2', null, 'Assistant'), assistantMessage),
@@ -136,6 +137,10 @@ Default heuristics from the tutorial:
 
 ```typescript
 const h = JJHE.tree
+const items = [
+    { value: 'a', title: 'Option A' },
+    { value: 'b', title: 'Option B' },
+]
 
 // ✅ preferred for mapped options
 const jjSelect = JJHE.create('select').addChildMap(items, ({ value, title }) => h('option', { value }, title))

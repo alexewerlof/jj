@@ -39,7 +39,7 @@ describe('JJHE', () => {
         })
 
         it('throws TypeError for non-string tagName', () => {
-            assert.throws(() => JJHE.create(42), TypeError)
+            assert.throws(() => JJHE.create(42 as any), TypeError)
         })
     })
 })
@@ -71,7 +71,7 @@ it('dispatches todo-toggle with detail', () => {
     const jjEl = JJHE.create('div')
     let captured = null
     jjEl.on('todo-toggle', (e) => {
-        captured = e.detail
+        captured = (e as CustomEvent).detail
     })
     jjEl.triggerCustomEvent('todo-toggle', { id: 1, done: true })
     assert.deepStrictEqual(captured, { id: 1, done: true })

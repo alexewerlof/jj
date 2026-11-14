@@ -134,12 +134,12 @@ For sibling components that need to share state, use either a shared module or d
 
 **Shared module:**
 
-```js
+```ts
 // store.js
-export const store = { selectedId: null }
-export const listeners = new Set()
+export const store: { selectedId: string | null } = { selectedId: null }
+export const listeners = new Set<(state: typeof store) => void>()
 
-export function select(id) {
+export function select(id: string) {
     store.selectedId = id
     listeners.forEach((fn) => fn(store))
 }
@@ -168,7 +168,9 @@ class ComponentA extends HTMLElement {
 ```js
 // Emit from anywhere
 document.dispatchEvent(new CustomEvent('filter-changed', { detail: { query: 'hello' }, bubbles: true, composed: true }))
+```
 
+```js
 // Listen in any component
 connectedCallback() {
     document.addEventListener('filter-changed', this.#onFilterChanged)
@@ -189,6 +191,8 @@ JJ does not implement routing. Use browser APIs directly.
 
 A minimal SPA routing setup with JJ:
 
+[//]: # 'docs-check: ignore — findAll returns JJE until query return types are narrowed'
+
 ```js
 import { JJD, JJHE } from 'jj'
 
@@ -207,10 +211,10 @@ async function navigate(path) {
 window.addEventListener('popstate', () => navigate(location.pathname))
 
 // Wire navigation links
-doc.findAll('[data-href]').forEach((link) => {
-    link.on('click', (e) => {
+doc.findAll('[data-href]').forEach((jjLink) => {
+    jjLink.on('click', (e) => {
         e.preventDefault()
-        navigate(link.getDataAttr('href'))
+        navigate(jjLink.getDataAttr('href'))
     })
 })
 ```
@@ -279,4 +283,4 @@ JJ can be used in extension UIs (popup pages, options pages, extension-hosted vi
 - [styling guide](./styling.md)
 - [events guide](./events.md)
 - [component lifecycle events](./component-lifecycle-events.md)
-- [tutorial state and events](../www/tutorial/state-and-events.md)
+- [tutorial state and events](../www/tutorial/state-management.md)

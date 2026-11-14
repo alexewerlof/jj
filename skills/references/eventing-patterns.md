@@ -52,6 +52,8 @@ new CustomEvent('internal-ready', { bubbles: false, composed: false })
 
 ## Event delegation
 
+[//]: # 'docs-check: ignore — closest returns JJE until query return types are narrowed'
+
 ```js
 import { JJD } from 'jj'
 
@@ -61,8 +63,8 @@ jjList.on('click', (e) => {
     if (!(e.target instanceof Element)) {
         return
     }
-    const itemEl = e.target.closest('[data-id]')
-    if (itemEl) handleClick(itemEl.dataset.id)
+    const jjItem = JJE.from(e.target).closest('[data-id]')
+    if (jjItem) handleClick(jjItem.getDataAttr('id'))
 })
 ```
 

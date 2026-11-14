@@ -104,6 +104,7 @@ list.setChildMap(names, (name) => JJHE.create('li').setText(name))
 Or, if you're building from data rather than querying:
 
 ```js
+const names = ['Ada', 'Grace', 'Linus']
 const ul = JJHE.create('ul').addChildMap(names, (name) => JJHE.tree('li', null, name))
 ```
 
@@ -127,11 +128,13 @@ if (card) {
 
 `closest()` is the standard tool for event delegation — listening on a container and acting on the clicked descendant:
 
+[//]: # 'docs-check: ignore — closest returns JJE until query return types are narrowed'
+
 ```js
 doc.find('#list', true).on('click', (event) => {
     if (!(event.target instanceof Element)) return
     const jjItem = JJE.from(event.target).closest('[data-item-id]')
-    if (jjItem) handleItemClick(jjItem.getAttr('data-item-id'))
+    if (jjItem) handleItemClick(jjItem.getDataAttr('itemId'))
 })
 ```
 
