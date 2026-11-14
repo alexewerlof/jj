@@ -15,7 +15,7 @@ This sets up global `window`, `document`, `HTMLElement`, etc. via jsdom before a
 ## Running tests
 
 ```bash
-npm test                          # typecheck + all tests
+npm test                          # runs the Node test suite (typecheck is a separate script)
 node --import tsx --test          # run tests directly (tsx for TypeScript)
 node --import tsx --test test/JJHE.test.ts  # single file
 ```

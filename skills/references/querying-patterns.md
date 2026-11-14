@@ -88,18 +88,12 @@ Use `.closest()` on element wrappers for event delegation or tree navigation:
 
 ```js
 jjDoc.on('click', (e) => {
-    if (!(e.target instanceof Node)) {
+    if (!(e.target instanceof Element)) {
         return
     }
-    const jjItem = JJHE.from(e.target).closest('[data-item-id]')
+    const jjItem = JJE.from(e.target).closest('[data-item-id]')
     if (jjItem) handleItemClick(jjItem.getAttr('data-item-id'))
 })
-```
-
-## fromId — direct ID lookup
-
-```js
-const jjBtn = JJHE.fromId('submit-btn') // typed as JJHE<HTMLButtonElement>
 ```
 
 ## When to use .ref for queries

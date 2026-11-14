@@ -34,10 +34,6 @@ This makes wrapper values visually distinct from native DOM nodes and plain data
 
 Do not use the `jj` prefix for native browser values.
 
-Prefer suffixes like `El`, `Node`, `Root`, `Sheet`, or `Ref` when that helps cla## Native DOM values: use native-oriented names
-
-Do not use the `jj` prefix for native browser values.
-
 Prefer suffixes like `El`, `Node`, `Root`, `Sheet`, or `Ref` when that helps clarify the type.
 
 ```js
@@ -82,19 +78,6 @@ jjButton.run((jjContext) => {
     jjContext.setAttr('aria-busy', 'true')
 })
 ```
-
-## Plain data: no `jj` prefix
-
-Do not prefix plain data with `jj`.
-
-```js
-const fruits = ['apple', 'orange', 'banana']
-const userName = 'Ada'
-const isOpen = false
-const title = 'My Card'
-```
-
-The `jj` prefix is only for wrapper instances.
 
 ## Promises: name the future value, then add `Promise`
 

@@ -57,11 +57,11 @@ export class JJT<T extends Text = Text> extends JJN<Text> {
      *
      * @example
      * ```ts
-     * const text = new JJT('Hello World')
+     * const text = JJT.create('Hello World')
      * ```
      *
-     * @param ref - The Text node or a string to create a Text node from.
-     * @throws {TypeError} If `ref` is not a Text node or string.
+     * @param ref - The Text node to wrap.
+     * @throws {TypeError} If `ref` is not a Text node.
      * @see {@link JJT.from} for wrapping an existing Text node.
      * @see {@link JJT.create} for creating from a plain string.
      */

@@ -82,7 +82,6 @@ const jjInput = JJHE.create('input') // JJHE<HTMLInputElement>
 const jjSvg = JJSE.create('svg') // JJSE<SVGSVGElement>
 const jjMath = JJME.create('math') // JJME<MathMLElement>
 const jjFrag = JJDF.create() // JJDF
-const jjBtn = JJHE.fromId('my-btn') // JJHE<HTMLButtonElement>
 
 // ❌ WRONG
 JJHE.create('svg') // throws — use JJSE.create('svg')
@@ -177,7 +176,7 @@ Querying defaults from the tutorial:
 - Use `findAll()` for arrays of wrappers and keep operating on wrappers instead of unwrapping to native elements.
 - Do not use `.ref.querySelector(...)` or `.ref.querySelectorAll(...)` when `find()` or `findAll()` already covers the case.
 - Use `.closest()` on wrappers for event delegation and ancestor lookup.
-- Use `JJHE.fromId('submit-btn')` for direct ID lookup when you already know the target is an HTML element.
+- Put the expected tag in the selector (`button#submit`) instead of doing a bare ID lookup plus a manual type check.
 
 ## Attributes, Classes, Styles
 
@@ -304,14 +303,15 @@ Guide defaults for event-heavy UI:
 
 - Prefer event delegation on a common parent for repeated child actions instead of binding one listener per item.
 - Use `.closest()` to recover the intended delegated target from `event.target`.
-- When you need JJ's wrapper-bound `this` inside a listener, use `function` syntax, not an arrow.
+- `this` inside a listener is the native element, not the wrapper (native `EventTarget` behavior). Use an arrow function and capture the `jj*` wrapper you need.
 - Native UI events like `click`, `input`, and `change` already cross shadow boundaries; custom events do not unless `composed: true`.
 
 ```typescript
-list.on('click', function (event) {
-    const jjItem = JJHE.from(event.target as Node).closest('[data-item-id]')
+list.on('click', (event) => {
+    if (!(event.target instanceof Element)) return
+    const jjItem = JJE.from(event.target).closest('[data-item-id]')
     if (!jjItem) return
-    this.addClass('handled')
+    list.addClass('handled')
     jjItem.addClass('active')
 })
 ```

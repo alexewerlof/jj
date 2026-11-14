@@ -8,13 +8,12 @@ jjEl.off('click', handler) // removeEventListener (same function reference)
 jjEl.triggerEvent('click') // creates and dispatches Event('click')
 ```
 
-The handler `this` inside `.on()` is bound to the JJ wrapper instance. Use `this.ref` to access the native element:
+`.on()` passes the handler straight to `addEventListener`, so `this` inside the handler is the **native element**, not the wrapper. Use an arrow function and capture the wrapper you need:
 
 ```js
-jjBtn.on('click', function () {
-    // this → the JJHE wrapper
-    // this.ref → the HTMLButtonElement
-    console.log(this.ref.textContent)
+jjBtn.on('click', () => {
+    // `jjBtn` is the wrapper; `this` would be the native HTMLButtonElement
+    console.log(jjBtn.getText())
 })
 ```
 

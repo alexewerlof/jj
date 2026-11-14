@@ -58,17 +58,6 @@ export class JJET<T extends EventTarget = EventTarget> {
      * JJET.from(window).on('resize', onResize)
      * ```
      *
-     * @example
-     * ```ts
-     * const target = {
-     * dispatching a plain Event object.
-     *     increment() {
-     *         this.count++
-     *     },
-     * }
-     *
-     * @param options Optional event initialization dictionary.
-     * ```
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Event/Event | Event()} for details on event options.
      * @param handler - The event handler.
      * @param options - Optional event listener options.

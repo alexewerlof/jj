@@ -162,7 +162,7 @@ const contents = ['New York', 'Stockholm', 'Tokyo']
 const parent = doc.find('#parent-ul', true)
 
 for (const city of contents) {
-    parent.append(JJHE.from('li').setText(city))
+    parent.addChild(JJHE.create('li').setText(city))
 }
 ```
 
@@ -175,12 +175,12 @@ const doc = JJD.from(document)
 const contents = ['New York', 'Stockholm', 'Tokyo']
 const parent = doc.find('#parent-ul', true)
 
-const docFrag = new JJDF()
+const jjFrag = JJDF.create()
 for (const city of contents) {
-    docFrag.append(JJHE.from('li').setText(city))
+    jjFrag.addChild(JJHE.create('li').setText(city))
 }
 
-parent.setChild(docFrag)
+parent.setChild(jjFrag)
 ```
 
 If we're creating the elements from an array, there's even a shorter syntax for it:
@@ -191,7 +191,7 @@ import { JJD, JJHE } from 'jj'
 const doc = JJD.from(document)
 const contents = ['New York', 'Stockholm', 'Tokyo']
 const parent = doc.find('#parent-ul', true)
-parent.setChildMap(contents, (city) => JJHE.from('li').setText(city))
+parent.setChildMap(contents, (city) => JJHE.create('li').setText(city))
 ```
 
 ## Attaching event listeners
@@ -206,12 +206,10 @@ Example, instead of:
 import { JJD } from 'jj'
 
 const doc = JJD.from(document)
-const parent = doc.find('#parent-ul')
-for (const child of parent.getChildren()) {
-    child.on('click', function () {
-        alert('Hello world')
-    })
-}
+const parent = doc.find('#parent-ul', true)
+parent.findAll('li').forEach((child) => {
+    child.on('click', () => alert('Hello world'))
+})
 ```
 
 Use event delegation:
@@ -220,14 +218,11 @@ Use event delegation:
 import { JJD } from 'jj'
 
 const doc = JJD.from(document)
-const parent = doc.find('#parent-ul')
-parent.on('click', function (evt) {
-    // 'this' is the JJ* wrapper, access native element with this.ref
-    if (evt.target?.tagName !== 'LI') return
+const parent = doc.find('#parent-ul', true)
+parent.on('click', (evt) => {
+    if (!(evt.target instanceof Element) || evt.target.tagName !== 'LI') return
     alert('Hello world')
 })
 ```
 
-Note: Event handlers are automatically bound to the JJET instance, so `this` inside the handler refers to the wrapper, not the DOM element.
-For this to work, you need to use `function` instead of arrow functions (`=>`).
-Use `this.ref` to access the underlying element.
+Note: `.on()` delegates directly to `addEventListener`, so `this` inside the handler is the **native element**, not the wrapper (this is native `EventTarget` behavior). Use an arrow function and capture the `jj*` wrapper you need.

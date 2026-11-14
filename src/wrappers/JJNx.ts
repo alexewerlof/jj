@@ -72,7 +72,8 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @param selector - The CSS selector.
      * @param required - Whether to throw an error if not found. Defaults to false.
      * @returns The wrapped element, or null if not found and required is false.
-     * @throws {ReferenceError} If selector is not a string or element not found and required is true.
+     * @throws {ReferenceError} If no element matches and `required` is true.
+     * @throws {TypeError} If `selector` is not a valid CSS selector string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
      */
     find(selector: string, required: true): ReturnType<(typeof elementWrappers)['from']>

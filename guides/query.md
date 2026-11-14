@@ -129,28 +129,13 @@ if (card) {
 
 ```js
 doc.find('#list', true).on('click', (event) => {
-    const item = JJHE.from(event.target).closest('[data-item-id]')
-    if (item) {
-        const id = item.getDataAttr('item-id')
-        handleItemClick(id)
-    }
+    if (!(event.target instanceof Element)) return
+    const jjItem = JJE.from(event.target).closest('[data-item-id]')
+    if (jjItem) handleItemClick(jjItem.getAttr('data-item-id'))
 })
 ```
 
 This is more efficient than attaching a listener to every list item individually.
-
-## `.fromId()` factory — fast ID-based lookup
-
-`JJHE.fromId(id)` and `JJSE.fromId(id)` provide a typed shortcut for `document.getElementById`:
-
-```js
-import { JJHE } from 'jj'
-
-// Looks up #my-input and wraps it as JJHE<HTMLInputElement>
-const input = JJHE.fromId('my-input')
-```
-
-This is faster than `doc.find('#my-input')` because `getElementById` does not require a CSS selector parse. Use it when you have a known, stable element ID.
 
 ## Querying inside shadow DOM
 

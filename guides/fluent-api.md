@@ -1,4 +1,4 @@
-# Readablity
+# Readability
 
 ## Text semantics
 
@@ -29,12 +29,12 @@ tableBody.ref.innerHTML = ''
 // ✅ GOOD - Use the event listener
 userInput.on('change', (e) => {
     e.preventDefault()
-    console.log(e.)
+    console.log(e.target)
 })
 // ❌ BAD - unnecessary and long
 userInput.ref.addEventListener('change', (e) => {
     e.preventDefault()
-    console.log(e.)
+    console.log(e.target)
 })
 
 // ✅ GOOD - use the provided methods for the common tasks
