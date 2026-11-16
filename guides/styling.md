@@ -83,6 +83,23 @@ card.setStyles({
 })
 ```
 
+### Property names: kebab-case or camelCase
+
+Both spellings are accepted, so a name copied from JavaScript or from CSS works:
+
+```js
+card.setStyle('background-color', 'red')
+card.setStyle('backgroundColor', 'red') // same property
+card.getStyle('backgroundColor') // 'red'
+card.rmStyle('backgroundColor')
+```
+
+Custom properties keep their case: `setStyle('--brandColor', 'red')` writes `--brandColor`.
+
+A name the engine does not recognize throws a `RangeError` instead of silently doing
+nothing, which is how a typo (`'colr'`) or a framework-style name would otherwise fail.
+For a non-standard property, use the native escape hatch: `card.ref.style.setProperty(...)`.
+
 `setStyles` behavior:
 
 - `null` or `undefined` map input: no-op
@@ -90,6 +107,7 @@ card.setStyles({
 - value is `null`, `undefined`, or `false`: remove property
 - any other value: set property
 
+`setStyle` follows the same rule: `setStyle('color', null)` removes the property.
 This preserves useful values like `0`.
 
 ## Inline Styles vs Class Helpers

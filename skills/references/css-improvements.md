@@ -9,6 +9,10 @@ Use JJ for DOM wiring and rely on CSS standards for the styling system.
 el.setStyle('color', 'var(--color-brand)')
 el.setStyle('padding', '8px 16px')
 
+// Property names may be kebab-case or camelCase
+el.setStyle('background-color', 'red')
+el.setStyle('backgroundColor', 'red') // same property
+
 // Batch — null/false removes the property
 el.setStyles({
     color: 'red',
@@ -23,6 +27,10 @@ el.rmStyle('color', 'padding')
 // Read a property
 const val = el.getStyle('color') // '' when not set
 ```
+
+An unrecognized property name throws a `RangeError`; use `el.ref.style.setProperty(...)`
+for non-standard properties. Custom properties (`--brand-color`) are always allowed and
+keep their case.
 
 ## Class-driven styling (preferred)
 

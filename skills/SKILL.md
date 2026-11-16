@@ -192,7 +192,7 @@ Querying defaults from the tutorial:
 | `setAttr` / `setAriaAttr`    | removes the attribute | writes `"false"`     | writes value |
 | `setDataAttr`                | removes the attribute | writes `"false"`     | writes value |
 | `setClasses`                 | removes the class     | removes the class    | adds class   |
-| `setStyles`                  | removes the property  | removes the property | sets value   |
+| `setStyle` / `setStyles`     | removes the property  | removes the property | sets value   |
 | `swAttr` / `swClass` omitted | —                     | —                    | auto-toggles |
 | `swAttr` / `swClass` passed  | removes               | removes              | adds         |
 
@@ -266,10 +266,14 @@ jjEl.rmAriaAttr('hidden')
 // Use explicit string states instead of swAttr()
 jjEl.setAriaAttr('disabled', 'true')
 
-// Inline styles
+// Inline styles — kebab-case or camelCase, both accepted
 jjEl.setStyle('color', 'var(--color-brand)')
+jjEl.setStyle('backgroundColor', 'red') // same as 'background-color'
 jjEl.setStyles({ color: 'red', padding: '8px', border: null })
 jjEl.rmStyle('color', 'padding')
+
+// An unknown property name throws RangeError; use el.ref.style.setProperty() for
+// non-standard properties. Custom properties (--brand-color) keep their case.
 
 // Value helpers (prefer over .ref.value)
 jjEl.getValue()

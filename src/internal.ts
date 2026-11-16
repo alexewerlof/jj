@@ -127,6 +127,31 @@ export function keb2cam(str: string): string {
 }
 
 /**
+ * Converts a camelCase CSS property name to kebab-case.
+ *
+ * @remarks
+ * Already-kebab names pass through unchanged. Custom properties (`--brand-color`)
+ * are returned as-is because their case is significant.
+ *
+ * Vendor-prefixed properties are exposed by the CSSOM without their leading hyphen
+ * (`style.webkitMask` maps to `-webkit-mask`), so the hyphen is restored. Without
+ * that step the result is not a valid CSS property and `setProperty()` would ignore
+ * it silently.
+ *
+ * @internal
+ */
+export function cam2keb(str: string): string {
+    if (!isStr(str)) {
+        throw typeErr('str', 'a string', str)
+    }
+    if (str.startsWith('--')) {
+        return str
+    }
+    const kebab = str.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)
+    return /^(webkit|moz|ms|o)-/.test(kebab) ? `-${kebab}` : kebab
+}
+
+/**
  * Converts a value to its string representation.
  * It is primarily used for creating Text nodes from non-string inputs.
  * @param x a value to be converted

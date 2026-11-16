@@ -1,7 +1,7 @@
 import '../test/attach-jsdom.js'
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { hasProp, isInstance, isNum, isObj, isStr, keb2cam, toStr } from './internal.js'
+import { hasProp, isInstance, isNum, isObj, isStr, cam2keb, keb2cam, toStr } from './internal.js'
 
 describe(isStr.name, () => {
     it('returns true for strings', () => {
@@ -116,6 +116,51 @@ describe(keb2cam.name, () => {
     it('does not convert other cases', () => {
         assert.strictEqual(keb2cam('camelCase'), 'camelCase', 'Should not change camelCase')
         assert.strictEqual(keb2cam('snake_case'), 'snake_case', 'Should not convert snake_case')
+    })
+})
+
+describe(cam2keb.name, () => {
+    it('throws for non-string input', () => {
+        assert.throws(() => cam2keb(123 as any), TypeError, 'Should throw for a number')
+        assert.throws(() => cam2keb(true as any), TypeError, 'Should throw for a boolean')
+        assert.throws(() => cam2keb(null as any), TypeError, 'Should throw for null')
+        assert.throws(() => cam2keb(undefined as any), TypeError, 'Should throw for undefined')
+    })
+
+    it('converts camelCase to kebab-case', () => {
+        assert.strictEqual(cam2keb('backgroundColor'), 'background-color')
+        assert.strictEqual(cam2keb('aBC'), 'a-b-c')
+        assert.strictEqual(cam2keb('borderRadiusTopLeft'), 'border-radius-top-left')
+        assert.strictEqual(cam2keb('transitionDuration'), 'transition-duration')
+    })
+
+    it('leaves kebab-case and single words unchanged', () => {
+        assert.strictEqual(cam2keb('background-color'), 'background-color')
+        assert.strictEqual(cam2keb('border-top-left-radius'), 'border-top-left-radius')
+        assert.strictEqual(cam2keb('float'), 'float')
+        assert.strictEqual(cam2keb(''), '')
+    })
+
+    it('preserves custom properties, including their case', () => {
+        assert.strictEqual(cam2keb('--brandColor'), '--brandColor')
+        assert.strictEqual(cam2keb('--brand-color'), '--brand-color')
+    })
+
+    it('restores the leading hyphen for vendor prefixes', () => {
+        // The CSSOM exposes these without the hyphen (`style.webkitMask`),
+        // but `setProperty()` only accepts the hyphenated form.
+        assert.strictEqual(cam2keb('webkitMask'), '-webkit-mask')
+        assert.strictEqual(cam2keb('WebkitMask'), '-webkit-mask')
+        assert.strictEqual(cam2keb('mozAppearance'), '-moz-appearance')
+        assert.strictEqual(cam2keb('msTransform'), '-ms-transform')
+        assert.strictEqual(cam2keb('oTransition'), '-o-transition')
+        assert.strictEqual(cam2keb('webkit-mask'), '-webkit-mask')
+    })
+
+    it('round-trips with keb2cam for standard properties', () => {
+        for (const camel of ['backgroundColor', 'borderRadiusTopLeft', 'transitionDuration', 'opacity']) {
+            assert.strictEqual(keb2cam(cam2keb(camel)), camel)
+        }
     })
 })
 

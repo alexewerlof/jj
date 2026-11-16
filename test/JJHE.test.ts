@@ -231,6 +231,21 @@ describe('JJHE', () => {
                 const jjhe = new JJHE(el)
                 assert.throws(() => jjhe.getStyle(123 as any), TypeError)
             })
+
+            it('accepts camelCase property names', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('background-color', 'red')
+                assert.strictEqual(jjhe.getStyle('backgroundColor'), 'red')
+                assert.strictEqual(jjhe.getStyle('background-color'), 'red')
+            })
+
+            it('reads custom properties', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('--brand-color', 'tomato')
+                assert.strictEqual(jjhe.getStyle('--brand-color'), 'tomato')
+            })
         })
 
         describe('setStyle()', () => {
@@ -253,6 +268,56 @@ describe('JJHE', () => {
                 const jjhe = new JJHE(el)
                 assert.throws(() => jjhe.setStyle({ display: 'grid' } as any, 'grid'), TypeError)
             })
+
+            it('accepts camelCase property names', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('backgroundColor', 'red')
+                assert.strictEqual(el.style.getPropertyValue('background-color'), 'red')
+            })
+
+            it('accepts kebab-case property names', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('background-color', 'red')
+                assert.strictEqual(el.style.getPropertyValue('background-color'), 'red')
+            })
+
+            it('accepts custom properties, including their case', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('--brandColor', 'tomato')
+                assert.strictEqual(el.style.getPropertyValue('--brandColor'), 'tomato')
+            })
+
+            it('removes the property when the value is nullish', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('color', 'red')
+                jjhe.setStyle('color', null)
+                assert.strictEqual(el.style.getPropertyValue('color'), '')
+            })
+
+            it('never writes the string "null" or "undefined"', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('color', undefined)
+                assert.strictEqual(el.style.cssText, '')
+            })
+
+            it('throws RangeError for an unknown CSS property', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                assert.throws(() => jjhe.setStyle('colr', 'red'), RangeError)
+            })
+
+            it('resolves the cssFloat alias to the real float property', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('cssFloat', 'left')
+                assert.strictEqual(el.style.getPropertyValue('float'), 'left')
+                assert.strictEqual(el.style.cssFloat, 'left')
+            })
         })
 
         describe('rmStyle()', () => {
@@ -270,6 +335,14 @@ describe('JJHE', () => {
                 const jjhe = new JJHE(el)
                 assert.throws(() => jjhe.rmStyle(null as any), TypeError)
             })
+
+            it('accepts camelCase property names', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyle('background-color', 'red')
+                jjhe.rmStyle('backgroundColor')
+                assert.strictEqual(el.style.getPropertyValue('background-color'), '')
+            })
         })
 
         describe('setStyles()', () => {
@@ -279,6 +352,14 @@ describe('JJHE', () => {
                 jjhe.setStyles({ display: 'grid', gap: '1rem' })
                 assert.strictEqual(el.style.getPropertyValue('display'), 'grid')
                 assert.strictEqual(el.style.getPropertyValue('gap'), '1rem')
+            })
+
+            it('accepts camelCase property names', () => {
+                const el = document.createElement('div')
+                const jjhe = new JJHE(el)
+                jjhe.setStyles({ backgroundColor: 'red', borderRadius: '4px' })
+                assert.strictEqual(el.style.getPropertyValue('background-color'), 'red')
+                assert.strictEqual(el.style.getPropertyValue('border-radius'), '4px')
             })
 
             it('removes properties for nullish and false values', () => {

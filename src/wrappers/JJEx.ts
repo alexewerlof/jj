@@ -1,5 +1,47 @@
-import { hasProp, isObj, isStr, typeErr } from '../internal.js'
+import { cam2keb, errMsg, hasProp, isObj, isStr, keb2cam, typeErr } from '../internal.js'
 import { JJE } from './JJE.js'
+
+/**
+ * CSSOM properties that exist under a JavaScript-safe alias but are not settable
+ * by that name.
+ *
+ * @remarks
+ * `style.cssFloat` is the JS-safe spelling of `float`, because `float` is a reserved
+ * word. The CSSOM exposes the alias, so the property table check accepts it, but
+ * `setProperty('css-float', …)` is ignored: only `float` is a real CSS property.
+ * Resolving the alias keeps the documented "camelCase or kebab-case" promise true.
+ *
+ * @internal
+ */
+const STYLE_ALIASES: Record<string, string> = { cssFloat: 'float' }
+
+/**
+ * Converts a style property name to the kebab-case form the CSSOM expects.
+ *
+ * @internal
+ */
+function styleName(name: string): string {
+    if (!isStr(name)) {
+        throw typeErr('name', 'a string', name)
+    }
+    const kebab = cam2keb(name)
+    return STYLE_ALIASES[keb2cam(kebab)] ?? kebab
+}
+
+/**
+ * Reports whether the engine knows this CSS property.
+ *
+ * @remarks
+ * The check reads the engine's own `CSSStyleDeclaration` property table instead of
+ * a hardcoded list, so it cannot drift from the platform. `CSS.supports()` is not
+ * used because it is absent in some DOM implementations (for example jsdom).
+ * Custom properties are always allowed.
+ *
+ * @internal
+ */
+function isKnownStyleProperty(style: CSSStyleDeclaration, name: string): boolean {
+    return name.startsWith('--') || keb2cam(name) in style
+}
 
 /**
  * Base wrapper for elements that support `dataset` and inline `style`.
@@ -14,9 +56,10 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * @example
      * ```ts
      * const display = el.getStyle('display')
+     * const color = el.getStyle('backgroundColor') // same as 'background-color'
      * ```
      *
-     * @param name - The CSS property name (kebab-case recommended).
+     * @param name - The CSS property name, in kebab-case or camelCase.
      * @returns The property value, or an empty string when it is not set.
      * @throws {TypeError} If `name` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style | HTMLElement.style}
@@ -24,37 +67,54 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/style | SVG style attribute}
      */
     getStyle(name: string): string {
-        if (!isStr(name)) {
-            throw typeErr('name', 'a string', name)
-        }
-
-        return this.ref.style.getPropertyValue(name)
+        return this.ref.style.getPropertyValue(styleName(name))
     }
 
     /**
-     * Sets a single inline style property.
+     * Sets a single inline style property, or removes it when the value is nullish.
+     *
+     * @remarks
+     * The name may be written in kebab-case or camelCase; `setStyle('backgroundColor', …)`
+     * and `setStyle('background-color', …)` are equivalent. Names the engine does not
+     * recognize throw instead of silently doing nothing, which is how a typo or a
+     * React-style property name would otherwise fail.
      *
      * @example
      * ```ts
      * el.setStyle('display', 'grid')
+     * el.setStyle('backgroundColor', 'red') // camelCase is accepted
      * el.setStyle('opacity', 0.8)
+     * el.setStyle('color', null) // removes the property
      * ```
      *
-     * @param name - The CSS property name (kebab-case recommended).
-     * @param value - The CSS property value.
+     * @param name - The CSS property name, in kebab-case or camelCase.
+     * @param value - The CSS property value, or null/undefined/false to remove the property.
      * @returns This instance for chaining.
      * @throws {TypeError} If `name` is not a string.
+     * @throws {RangeError} If `name` is not a CSS property known to this engine.
      * @see {@link setStyles} for setting/removing specific style properties.
      * @see {@link rmStyle} for removing style properties.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style | HTMLElement.style}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/setProperty | CSSStyleDeclaration.setProperty}
      */
     setStyle(name: string, value: unknown): this {
-        if (!isStr(name)) {
-            throw typeErr('name', 'a string', name)
+        const prop = styleName(name)
+
+        if (value == null || value === false) {
+            return this.rmStyle(prop)
+        }
+        if (!isKnownStyleProperty(this.ref.style, prop)) {
+            throw new RangeError(
+                errMsg(
+                    'name',
+                    'a CSS property name',
+                    name,
+                    'Use kebab-case or camelCase, for example "background-color" or "backgroundColor". For a non-standard property, use el.ref.style.setProperty().',
+                ),
+            )
         }
 
-        this.ref.style.setProperty(name, value as string)
+        this.ref.style.setProperty(prop, value as string)
         return this
     }
 
@@ -64,20 +124,17 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * @example
      * ```ts
      * el.rmStyle('display')
-     * el.rmStyle('display', 'gap')
+     * el.rmStyle('display', 'backgroundColor')
      * ```
      *
-     * @param names - The CSS property names to remove.
+     * @param names - The CSS property names to remove, in kebab-case or camelCase.
      * @returns This instance for chaining.
      * @throws {TypeError} If any property name is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/removeProperty | CSSStyleDeclaration.removeProperty}
      */
     rmStyle(...names: string[]): this {
         for (const name of names) {
-            if (!isStr(name)) {
-                throw typeErr('name', 'a string', name)
-            }
-            this.ref.style.removeProperty(name)
+            this.ref.style.removeProperty(styleName(name))
         }
         return this
     }
@@ -86,17 +143,21 @@ export abstract class JJEx<T extends HTMLElement | SVGElement | MathMLElement> e
      * Sets or removes multiple inline style properties from an object map, or no-ops for nullish input.
      *
      * @remarks
+     * This helper is useful for setting several properties at once.
      * - `null` or `undefined`: does nothing and returns `this`
      * - plain object: non-nullish values set properties, `null`/`undefined`/`false` remove properties
      * - anything else: throws `TypeError`
+     *
+     * Property names may be kebab-case or camelCase, matching {@link setStyle}.
      *
      * @example
      * ```ts
      * el.setStyles({
      *   display: 'grid',
+     *   backgroundColor: 'red', // camelCase is accepted
      *   gap: '1rem',
      *   opacity: 0,
-     *   color: null,
+     *   color: null, // removes the property
      * })
      * el.setStyles(null) // no-op
      * ```
