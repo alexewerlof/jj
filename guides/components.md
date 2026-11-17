@@ -113,6 +113,11 @@ attributeChangedCallback(name, oldValue, newValue) {
 
 Only attributes listed in `static observedAttributes` trigger this callback — others are silently ignored.
 
+Every observed attribute must have a matching camelCase property, otherwise `attr2prop()`
+throws with a message naming both the property it expected and the two ways to fix it. An
+observed attribute with no setter is always a mistake: a typo, a renamed field, or a stale
+entry — and the failure mode without the error is a UI that silently stops updating.
+
 ## Setting up shadow DOM
 
 ### Basic pattern
@@ -318,6 +323,9 @@ card?.dispatchEvent(
 
 - `false` when newly registered by that call.
 - `true` when already registered with the same constructor.
+
+Awaiting the promise is the readiness signal; the boolean only reports _what happened_, so
+most code should ignore it. A different constructor for the same name throws.
 
 ```js
 export class MyCard extends HTMLElement {

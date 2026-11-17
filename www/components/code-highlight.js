@@ -18,7 +18,7 @@ jjDoc.find('head', true).addChild(
 )
 
 export class CodeHighlight extends HTMLElement {
-    static observedAttributes = ['file', 'language']
+    static observedAttributes = ['language']
     static defined = defineComponent('code-highlight', CodeHighlight)
 
     #language

@@ -63,10 +63,31 @@ describe(attr2prop.name, () => {
         assert.strictEqual(el.userName, 'Original')
     })
 
-    it('returns false if property does not exist', () => {
+    it('throws when the observed attribute has no matching property', () => {
         const el = document.createElement('div')
-        const result = attr2prop(el, 'non-existent', null, 'value')
-        assert.strictEqual(result, false)
+
+        assert.throws(() => attr2prop(el, 'non-existent', null, 'value'), {
+            name: 'ReferenceError',
+            message: /nonExistent/, // the message names the property it expected
+        })
+    })
+
+    it('names the component class and both fixes in the error message', async () => {
+        class MyWidget extends HTMLElement {}
+        // jsdom cannot `new` an unregistered HTMLElement subclass, so register first.
+        await defineComponent('my-widget-attr2prop', MyWidget)
+        const el = document.createElement('my-widget-attr2prop')
+
+        assert.throws(
+            () => attr2prop(el, 'user-name', null, 'John'),
+            (error: unknown) => {
+                assert(error instanceof ReferenceError)
+                assert.match(error.message, /userName/)
+                assert.match(error.message, /MyWidget/)
+                assert.match(error.message, /observedAttributes/)
+                return true
+            },
+        )
     })
 
     it('throws TypeError for non-HTMLElement instance', () => {

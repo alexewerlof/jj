@@ -9,15 +9,21 @@ import { errMsg, hasProp, isInstance, isStr, keb2cam, typeErr } from './internal
  * Your custom component class MUST define `static observedAttributes[]` otherwise `attributeChangedCallback` won't trigger.
  * `observedAttributes` should contain kebab-based attribute names.
  *
+ * An observed attribute with no matching property is always a bug — a typo in
+ * `observedAttributes`, a missing setter, or a renamed field — and silently doing nothing
+ * would leave the UI un-updated with no signal. So this throws instead of returning
+ * `false`. When the attribute is merely *unchanged* it is a no-op.
+ *
  * @category Components
  *
  * @param instance - A reference to the common component instance
  * @param name - kebab-case and in lower case exactly as it appears in `observedAttributes`.
  * @param oldValue - The previous value of the attribute.
  * @param newValue - The new value of the attribute.
- * @returns `true` if it tried to set the attribute; otherwise `false`.
- * @throws {TypeError} if the instance is not an HTMLElement or if the property corresponding to the attribute does not exist on the instance.
- * @throws {Error} if setting the property throws an error for any reason.
+ * @returns `true` when the property was assigned; `false` when the value did not change.
+ * @throws {TypeError} If the instance is not an HTMLElement.
+ * @throws {ReferenceError} If no property matches the attribute name (see the message for the expected property name).
+ * @throws {Error} If setting the property throws.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes | Responding to attribute changes}
  */
 export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown, newValue: unknown) {
@@ -31,12 +37,20 @@ export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown
     }
     // Called when observed attributes change.
     if (oldValue !== newValue) {
+        const propName = keb2cam(name)
+        if (!hasProp(instance, propName)) {
+            throw new ReferenceError(
+                errMsg(
+                    'name',
+                    `an attribute whose property "${propName}" exists on ${instance.constructor.name}`,
+                    name,
+                    `Add a "${propName}" getter/setter to ${instance.constructor.name}, or remove "${name}" from observedAttributes.`,
+                ),
+            )
+        }
         try {
-            const propName = keb2cam(name)
-            if (hasProp(instance, propName)) {
-                instance[propName] = newValue
-                return true
-            }
+            instance[propName] = newValue
+            return true
         } catch (err) {
             throw new Error(
                 `Failed to set property using attribute change event ${name}. Old value: ${oldValue}, New value: ${newValue}.`,
@@ -51,14 +65,23 @@ export function attr2prop(instance: HTMLElement, name: string, oldValue: unknown
  * Registers the custom element with the browser and waits till it is defined.
  *
  * @remarks
- * Note that the component name should contain a hyphen to be valid.
- * Define the component before usage to avoid FOUC (Flash of Unstyled Content).
+ * Note that the component name should contain a hyphen to be valid. Define the component
+ * before usage to avoid FOUC (Flash of Unstyled Content).
+ *
+ * The returned boolean reports what happened, **not** readiness — awaiting the promise is
+ * the readiness signal. Read it only if you need to distinguish the two cases:
+ *
+ * - `false` — this call defined the element.
+ * - `true` — the element was already defined with the same constructor (a no-op).
+ *
+ * A different constructor for an already-registered name throws rather than silently
+ * keeping the old one.
  *
  * @category Components
- * @param name - The custom element name. Supports kebab-case or PascalCase and normalizes to kebab-case.
+ * @param name - The custom element name. Must be kebab-case with a hyphen (`my-component`); PascalCase is rejected.
  * @param constructor - The custom element constructor/class.
  * @param options - Optional native `customElements.define` options.
- * @returns A promise resolving to `true` if already defined, `false` if defined by this call.
+ * @returns `false` if this call defined the element, `true` if it was already defined.
  * @example
  * ```ts
  * class MyComponent extends HTMLElement {}

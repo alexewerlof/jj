@@ -473,6 +473,10 @@ State defaults from the tutorial:
 - `false` — newly defined by this call
 - `true` — already defined with the same constructor
 
+Awaiting is the readiness signal; the boolean only reports what happened, so ignore it
+unless you need to distinguish the two cases. A different constructor for the same name
+throws.
+
 ## Tree Builder
 
 `JJHE.tree` is a factory for declarative element trees. Alias as `h` for brevity.
