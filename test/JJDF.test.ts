@@ -203,6 +203,47 @@ describe('JJDF', () => {
         })
     })
 
+    describe(JJDF.prototype.swChild.name, () => {
+        it('replaces a single child while keeping the siblings in place', () => {
+            const host = JJDF.create()
+            const first = JJHE.create('li').setAttr('id', 'first')
+            const middle = JJHE.create('li').setAttr('id', 'middle')
+            const last = JJHE.create('li').setAttr('id', 'last')
+            host.addChild(first, middle, last)
+
+            const result = host.swChild(JJHE.create('li').setAttr('id', 'swapped'), middle)
+
+            assert.strictEqual(result, host)
+            assert.deepStrictEqual(
+                host.getChildren().map((child) => child.getAttr('id')),
+                ['first', 'swapped', 'last'],
+            )
+            // Sibling nodes keep their identity (state and listeners survive).
+            const refs = host.getChildren().map((child) => child.ref)
+            assert.strictEqual(refs[0], first.ref)
+            assert.strictEqual(refs[2], last.ref)
+            assert.strictEqual(host.find('#middle'), null)
+        })
+
+        it('accepts native nodes and text-coercible values', () => {
+            const host = JJDF.create()
+            const old = document.createElement('span')
+            old.textContent = 'old'
+            host.addChild(old)
+
+            host.swChild('new text', old)
+
+            assert.strictEqual(host.ref.textContent, 'new text')
+        })
+
+        it('throws when the old child is not a child of this node', () => {
+            const host = JJDF.create()
+            const stranger = document.createElement('span')
+
+            assert.throws(() => host.swChild('x', stranger), { name: 'NotFoundError' })
+        })
+    })
+
     describe(JJDF.prototype.setChildMap.name, () => {
         it('replaces existing children with mapped output', () => {
             const host = JJDF.create().addChild('old')

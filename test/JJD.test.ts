@@ -70,4 +70,36 @@ describe('JJD', () => {
             assert.strictEqual((body.ref as HTMLElement).tagName, 'BODY')
         })
     })
+
+    describe('getText()', () => {
+        it('returns the text content of the document element', () => {
+            const jjd = new JJD(document)
+
+            const text = jjd.getText()
+
+            assert.strictEqual(typeof text, 'string')
+            assert.ok(text.includes('JJD fixtures') || text.length > 0)
+        })
+
+        it('matches wrapping the document element manually', () => {
+            const jjd = new JJD(document)
+
+            assert.strictEqual(jjd.getText(), document.documentElement.textContent)
+        })
+    })
+
+    describe('getTitle() and setTitle()', () => {
+        it('reads and writes the document title', () => {
+            const jjd = new JJD(document)
+            const original = jjd.getTitle()
+
+            try {
+                assert.strictEqual(jjd.setTitle('Test Title'), jjd, 'setTitle returns this')
+                assert.strictEqual(jjd.getTitle(), 'Test Title')
+                assert.strictEqual(document.title, 'Test Title')
+            } finally {
+                jjd.setTitle(original)
+            }
+        })
+    })
 })

@@ -20,7 +20,7 @@ jjEl.ref.innerText = 'Hello\nworld!'
 ```
 
 For whole-document text, `Document.textContent` and `DocumentType.textContent` are `null`.
-Use `document.documentElement.textContent` or `jjDoc.ref.documentElement.textContent`.
+Use `JJD.getText()`, or `document.documentElement.textContent` directly.
 
 ## Explicit opt-in for HTML writes
 

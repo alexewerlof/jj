@@ -109,8 +109,8 @@ class MyCard extends HTMLElement {
 
     constructor() {
         super()
-        this.#jjHost = JJHE.from(this).setShadow('open')
-        this.#jjShadow = this.#jjHost.getShadow(true)
+        this.#jjHost = JJHE.from(this)
+        this.#jjShadow = this.#jjHost.shadow() // attaches the root if needed and wraps it
     }
 }
 ```
@@ -135,7 +135,7 @@ class MySection extends HTMLElement {
 Examples:
 
 - `#jjHost` for the `JJHE` wrapper of the custom element host (`JJHE.from(this)`)
-- `#jjShadow` for the `JJSR` wrapper of the shadow root (`this.#jjHost.getShadow(true)`)
+- `#jjShadow` for the `JJSR` wrapper of the shadow root (`this.#jjHost.shadow()`)
 - `#jjTitle` for a cached wrapped title element
 
 ## Parameters and callback variables

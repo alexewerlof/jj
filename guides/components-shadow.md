@@ -71,12 +71,21 @@ export class MyCard extends HTMLElement {
 
 `setShadow(mode)` attaches the shadow root. `initShadow(template, ...styles)` clones the template fragment into that attached root and adopts the constructable stylesheets.
 
+`shadow()` is the one-call form of `setShadow()` + `getShadow(true)` when you only need the wrapped root:
+
+```js
+const jjShadow = JJHE.from(this).shadow() // attaches if needed, returns JJSR
+```
+
 ### Shadow mode: `open` vs `closed`
 
 - `'open'` — `element.shadowRoot` is accessible externally. Required for dev tools, accessibility tooling, and most testing setups.
 - `'closed'` — `element.shadowRoot` returns `null` to external code. Stronger encapsulation but breaks many developer experience tools.
 
 Prefer `'open'` unless you have a specific security reason for `'closed'`.
+
+`shadow()` supports `'open'` only: `element.shadowRoot` is `null` for a closed root, so there
+is nothing to wrap. For closed mode use `setShadow('closed')` and `initShadow(...)`.
 
 ---
 

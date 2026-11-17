@@ -807,6 +807,48 @@ describe('JJE', () => {
             })
         })
 
+        describe('shadow()', () => {
+            it('attaches a shadow root and returns a JJSR in one call', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+
+                const shadow = jje.shadow()
+
+                assert.ok(shadow instanceof JJSR)
+                assert.strictEqual(shadow.ref, el.shadowRoot)
+            })
+
+            it('defaults to open mode', () => {
+                const el = document.createElement('div')
+                const shadow = new JJE(el).shadow()
+
+                assert.strictEqual(shadow.ref.mode, 'open')
+            })
+
+            it('returns the existing shadow root on a second call', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+
+                const first = jje.shadow()
+                const second = jje.shadow()
+
+                assert.strictEqual(first.ref, second.ref)
+            })
+
+            it('rejects closed mode instead of attaching an unreachable root', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el)
+
+                assert.throws(() => jje.shadow('closed'), /cannot return a closed shadow root/)
+                assert.strictEqual(el.shadowRoot, null, 'must not attach anything before throwing')
+                assert.strictEqual(
+                    (el as Element & { shadowRoot: null }).shadowRoot,
+                    null,
+                    'no hidden shadow tree was created',
+                )
+            })
+        })
+
         describe('getShadow()', () => {
             it('returns null when no shadow root exists', () => {
                 const el = document.createElement('div')

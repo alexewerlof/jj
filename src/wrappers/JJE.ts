@@ -845,6 +845,46 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     }
 
     /**
+     * Attaches a Shadow DOM if needed and returns the wrapped shadow root.
+     *
+     * @remarks
+     * This is the one-call form of {@link setShadow} followed by {@link getShadow}, which is
+     * what most component constructors do:
+     *
+     * ```ts
+     * // instead of two calls plus a required-flag overload
+     * this.#jjHost = JJHE.from(this).setShadow('open')
+     * this.#jjShadow = this.#jjHost.getShadow(true)
+     *
+     * // one call, no cast
+     * this.#jjShadow = JJHE.from(this).shadow()
+     * ```
+     *
+     * Only `'open'` roots are supported. `Element.shadowRoot` is `null` for a closed
+     * root, so there would be nothing to return; for closed mode use
+     * {@link setShadow} and {@link initShadow} instead.
+     *
+     * @param mode - The encapsulation mode. Only `'open'` is supported; see the note above.
+     * @returns A {@link JJSR} wrapping the element's shadow root.
+     * @throws {DOMException} If the element cannot have a shadow root.
+     * @throws {Error} If `mode` is `'closed'`, or the element already has a shadow root with another mode.
+     * @see {@link setShadow} when you only need the host wrapper.
+     * @see {@link getShadow} to read an existing shadow root.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow | Element.attachShadow}
+     */
+    shadow(mode: ShadowRootMode = 'open'): JJSR {
+        if (mode === 'closed') {
+            // `element.shadowRoot` is null for a closed root, so there is nothing to wrap.
+            // Failing here is deliberate: attaching first and throwing after would leave the
+            // element with a shadow root the caller cannot reach.
+            throw new Error(
+                `shadow() cannot return a closed shadow root: Element.shadowRoot is null in that mode. Use setShadow('closed') with initShadow(...) instead.`,
+            )
+        }
+        return this.setShadow(mode).getShadow(true)
+    }
+
+    /**
      * Initializes an already-attached Shadow DOM with template content and optional styles.
      *
      * @remarks

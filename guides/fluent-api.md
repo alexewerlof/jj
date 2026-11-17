@@ -11,8 +11,14 @@ If you specifically need HTML rendering-aware behavior (`innerText`), use the na
 jjEl.ref.innerText = 'Hello\nworld!'
 ```
 
-For whole-document text, remember that `Document.textContent` and `DocumentType.textContent` are `null`.
-Use `document.documentElement.textContent` or `jjDoc.ref.documentElement.textContent`.
+For whole-document text, use `JJD.getText()`:
+
+```js
+const fullPageText = jjDoc.getText()
+```
+
+`Document.textContent` and `DocumentType.textContent` are `null` per MDN, so `JJD.getText()`
+reads `documentElement.textContent` for you.
 
 One of the main reasons to use JJ is to have the code more compact and easier to read, making it for the humans to verify and establish trust.
 
@@ -269,6 +275,14 @@ container.setChild(JJHE.create('p').setText('only')) // div now has one <p>
 ```
 
 Use `setChild` for a "replace content" update. Use `addChild` for incremental construction.
+
+To swap a single child and leave its siblings untouched, use `swChild(newChild, oldChild)`:
+
+```js
+const jjList = JJHE.create('ul').addChild(...rows)
+const jjFirst = jjList.getChildren()[0]
+jjList.swChild(JJHE.create('li').setText('updated'), jjFirst) // siblings keep identity and listeners
+```
 
 ## Document Fragments
 

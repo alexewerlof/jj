@@ -73,22 +73,23 @@ Notes:
 
 Defined on `JJNx` and inherited by `JJD`, `JJDF`, `JJSR`, and `JJE` descendants (`JJHE`, `JJSE`, `JJME`).
 
-| Native equivalent                      | JJ API                      | Kind    |
-| -------------------------------------- | --------------------------- | ------- |
-| `querySelector(selector)`              | `find(selector, required?)` | Partial |
-| `querySelectorAll(selector)`           | `findAll(selector)`         | Exact   |
-| `append(...children)`                  | `addChild(...children)`     | Partial |
-| `append(...children)`                  | `addChildren(children[])`   | Partial |
-| `append(...array.map(mapFn))`          | `addChildMap(array, mapFn)` | JJ-only |
-| `prepend(...children)`                 | `preChild(...children)`     | Partial |
-| `prepend(...children)`                 | `preChildren(children[])`   | Partial |
-| `prepend(...array.map(mapFn))`         | `preChildMap(array, mapFn)` | JJ-only |
-| `replaceChildren(...children)`         | `setChild(...children)`     | Partial |
-| `replaceChildren(...children)`         | `setChildren(children[])`   | Partial |
-| `replaceChildren(...array.map(mapFn))` | `setChildMap(array, mapFn)` | JJ-only |
-| `replaceChildren()`                    | `empty()`                   | Exact   |
-| Template clone + append patterns       | `addTemplate(template)`     | Partial |
-| `replaceChildren(clonedTemplate)`      | `setTemplate(template)`     | Partial |
+| Native equivalent                      | JJ API                        | Kind    |
+| -------------------------------------- | ----------------------------- | ------- |
+| `querySelector(selector)`              | `find(selector, required?)`   | Partial |
+| `querySelectorAll(selector)`           | `findAll(selector)`           | Exact   |
+| `append(...children)`                  | `addChild(...children)`       | Partial |
+| `append(...children)`                  | `addChildren(children[])`     | Partial |
+| `append(...array.map(mapFn))`          | `addChildMap(array, mapFn)`   | JJ-only |
+| `prepend(...children)`                 | `preChild(...children)`       | Partial |
+| `prepend(...children)`                 | `preChildren(children[])`     | Partial |
+| `prepend(...array.map(mapFn))`         | `preChildMap(array, mapFn)`   | JJ-only |
+| `replaceChildren(...children)`         | `setChild(...children)`       | Partial |
+| `replaceChild(newChild, oldChild)`     | `swChild(newChild, oldChild)` | Exact   |
+| `replaceChildren(...children)`         | `setChildren(children[])`     | Partial |
+| `replaceChildren(...array.map(mapFn))` | `setChildMap(array, mapFn)`   | JJ-only |
+| `replaceChildren()`                    | `empty()`                     | Exact   |
+| Template clone + append patterns       | `addTemplate(template)`       | Partial |
+| `replaceChildren(clonedTemplate)`      | `setTemplate(template)`       | Partial |
 
 Notes:
 

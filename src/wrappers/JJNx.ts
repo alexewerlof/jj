@@ -375,6 +375,32 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
     }
 
     /**
+     * Replaces one existing child with a new one.
+     *
+     * @remarks
+     * Wraps the native `Node.replaceChild()`, which is the targeted form of
+     * {@link setChild}: the rest of the children keep their identity, state, and
+     * event listeners. Accepts wrappers, native nodes, and text-coercible values.
+     *
+     * @example
+     * ```ts
+     * const jjList = JJHE.create('ul').addChild(...items.map((i) => h('li', null, i.title)))
+     * jjList.swChild(h('li', null, 'Updated'), jjList.getChildren()[0])
+     * ```
+     *
+     * @param newChild - The replacement child.
+     * @param oldChild - The existing child to replace.
+     * @returns This instance for chaining.
+     * @throws {DOMException} If `oldChild` is not a child of this node.
+     * @see {@link setChild} for replacing all children at once.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/replaceChild | Node.replaceChild}
+     */
+    swChild(newChild: Wrappable, oldChild: Wrappable): this {
+        this.ref.replaceChild(unwrap(newChild), unwrap(oldChild))
+        return this
+    }
+
+    /**
      * Replaces the existing children of an Element with an array of children.
      *
      * @remarks

@@ -65,12 +65,14 @@ Each JJ wrapper exposes the native node via `.ref`.
 Text semantics note:
 `JJE.getText()` and `JJE.setText()` use `textContent` only and are inherited by `JJHE`, `JJSE`, and `JJME`.
 For HTML-specific rendering-aware behavior (for example `innerText` line-break handling), use `jjEl.ref.innerText` on `JJHE` wrappers.
-Per MDN, `Document.textContent` and `DocumentType.textContent` are `null`; use `document.documentElement.textContent`
-or `jjDoc.ref.documentElement.textContent` for whole-document text.
+
+For whole-document text and title, use the `JJD` helpers — `Document.textContent` is `null` per MDN:
 
 ```typescript
-const jjRootEl = JJE.from(document.documentElement)
-const fullPageText = jjRootEl.getText()
+const jjDoc = JJD.from(document)
+const fullPageText = jjDoc.getText()
+const title = jjDoc.getTitle()
+jjDoc.setTitle('Checkout — My Shop')
 ```
 
 ## Type-Safe Creation — Always Use Factory Methods
@@ -381,8 +383,8 @@ export class MyCard extends HTMLElement {
 
     constructor() {
         super()
-        this.#jjHost = JJHE.from(this).setShadow('open')
-        this.#jjShadow = this.#jjHost.getShadow(true)
+        this.#jjHost = JJHE.from(this)
+        this.#jjShadow = this.#jjHost.shadow() // attach if needed + wrap, in one call
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -433,7 +435,7 @@ Template defaults from the tutorial:
 - Prefer `<template>` elements for reusable DOM snippets already present in the page.
 - Prefer `JJHE.tree()` or `JJHE.create()` when you need live wrapper references for later updates.
 - Keep template promises at module scope; for lazy loading, initialize them inside `connectedCallback()` with an `if (!templatePromise)` guard.
-- Use one stable wrapper per component: `#jjHost` with `JJHE.from(this)` for light DOM, or `#jjShadow` with `JJHE.from(this).setShadow(...).getShadow(true)` for shadow DOM.
+- Use one stable wrapper per component: `#jjHost` with `JJHE.from(this)` for light DOM, or `#jjShadow` with `JJHE.from(this).shadow()` for shadow DOM.
 - Initialize template content once, then update specific nodes with `find(...).setText(...)` or other targeted wrapper operations.
 
 Guide defaults for attributes and queries:
@@ -480,6 +482,7 @@ jjEl.empty()
 jjEl.setChild(newChild)
 jjEl.setChildren([childA, childB])
 jjEl.setChildMap(items, (item) => JJHE.tree('li', null, item.label))
+jjEl.swChild(newChild, oldChild) // swap one child, siblings keep identity
 jjEl.setTemplate(templateElement)
 
 // Append
