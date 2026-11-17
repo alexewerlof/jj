@@ -1,5 +1,6 @@
 import { isInstance, isStr, typeErr } from '../internal.js'
 import { JJN } from './JJN.js'
+import type { JJE } from './JJE.js'
 import type { JJHE } from './JJHE.js'
 import type { JJDF } from './JJDF.js'
 import { elementWrappers } from './WrapperChain.js'
@@ -14,6 +15,15 @@ import { JJT } from './JJT.js'
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node | Node}
  */
 export type Wrappable = string | number | boolean | bigint | symbol | object | null | undefined | Node | JJN
+
+/**
+ * Attribute bag accepted by the `tree()` factories.
+ *
+ * @remarks
+ * Numbers and booleans are stringified by the DOM; `null` and `undefined` remove
+ * the attribute, matching {@link JJE.setAttr}.
+ */
+export type TreeAttributes = Record<string, string | number | boolean | null | undefined>
 
 /**
  * Extracts the underlying native DOM node from a wrapper.
@@ -63,10 +73,20 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
     /**
      * Finds the first element matching a selector within this Element.
      *
+     * @remarks
+     * A selector is a runtime string, so the element type cannot be inferred from it.
+     * The wrapper defaults to `JJHE` (the common case) and can be overridden when you
+     * know the result is SVG or MathML:
+     *
+     * ```ts
+     * const jjInput = doc.find('input', true) // JJHE, so setValue() is available
+     * const jjCircle = doc.find<JJSE>('circle', true) // JJSE
+     * ```
+     *
      * @example
      * ```ts
-     * const span = el.find('span')  // Returns null if not found
-     * const span = el.find('span', true)  // Throws if not found
+     * const jjSpan = el.find('span') // Returns null if not found
+     * const jjSpan = el.find('span', true) // Throws if not found
      * ```
      *
      * @param selector - The CSS selector.
@@ -74,14 +94,15 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @returns The wrapped element, or null if not found and required is false.
      * @throws {ReferenceError} If no element matches and `required` is true.
      * @throws {TypeError} If `selector` is not a valid CSS selector string.
+     * @see {@link findAll} for all matches.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector | Element.querySelector}
      */
-    find(selector: string, required: true): ReturnType<(typeof elementWrappers)['from']>
-    find(selector: string, required?: false): ReturnType<(typeof elementWrappers)['from']> | null
-    find(selector: string, required = false): ReturnType<(typeof elementWrappers)['from']> | null {
+    find<W extends JJE = JJHE>(selector: string, required: true): W
+    find<W extends JJE = JJHE>(selector: string, required?: false): W | null
+    find<W extends JJE = JJHE>(selector: string, required = false): W | null {
         const queryResult = this.ref.querySelector(selector)
         if (queryResult) {
-            return elementWrappers.from(queryResult)
+            return elementWrappers.from(queryResult) as W
         }
         if (required) {
             throw new ReferenceError(`No element matched query "${selector}"`)
@@ -92,18 +113,23 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
     /**
      * Finds all elements matching a selector within this Element.
      *
+     * @remarks
+     * Defaults to `JJHE[]`; override the type parameter for SVG or MathML results,
+     * the same way as {@link find}.
+     *
      * @example
      * ```ts
-     * const items = el.findAll('li')
+     * const jjItems = el.findAll('li')
      * ```
      *
      * @param selector - The CSS selector.
      * @returns An array of wrapped elements.
      * @throws {TypeError} If selector is not a string.
+     * @see {@link find} for the first match.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll | Element.querySelectorAll}
      */
-    findAll(selector: string) {
-        return elementWrappers.fromAll(this.ref.querySelectorAll(selector))
+    findAll<W extends JJE = JJHE>(selector: string): W[] {
+        return elementWrappers.fromAll(this.ref.querySelectorAll(selector)) as W[]
     }
 
     /**
@@ -384,9 +410,9 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link setChild} for the variadic replacement form.
      * @see {@link empty} for clearing all children without replacements.
      */
-    setChildMap(array: Wrappable[], mapFn: (value: Wrappable, index: number, array: Wrappable[]) => Wrappable) {
+    setChildMap<T>(array: T[], mapFn: (value: T, index: number, array: T[]) => Wrappable): this {
         if (!Array.isArray(array)) {
-            throw typeErr('array', 'an array of Wrappable', array)
+            throw typeErr('array', 'an array', array)
         }
 
         try {

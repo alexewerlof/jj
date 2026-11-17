@@ -99,8 +99,8 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/childNodes | Node.childNodes}
      */
     getChildren(required: true): ReturnType<(typeof nodeWrappers)['fromAll']>
-    getChildren(required?: false): ReturnType<(typeof nodeWrappers)['fromAll']> | null
-    getChildren(required = false): ReturnType<(typeof nodeWrappers)['fromAll']> | null {
+    getChildren(required?: false): ReturnType<(typeof nodeWrappers)['fromAll']>
+    getChildren(required = false): ReturnType<(typeof nodeWrappers)['fromAll']> {
         const children = nodeWrappers.fromAll(this.ref.childNodes)
         if (required && children.length === 0) {
             throw new ReferenceError('Node has no children. Did you forget to initialize or append them?')
@@ -111,12 +111,16 @@ export class JJN<T extends Node = Node> extends JJET<T> {
     /**
      * Clones the Node.
      *
+     * @remarks
+     * The clone is wrapped with the same wrapper class as this instance, so further
+     * JJ calls keep working on it.
+     *
      * @param deep - If true, clones the subtree.
      * @returns A new wrapped instance of the clone.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode | Node.cloneNode}
      */
-    clone(deep?: boolean) {
-        return JJN.from(this.ref.cloneNode(deep))
+    clone(deep?: boolean): this {
+        return nodeWrappers.from(this.ref.cloneNode(deep)) as this
     }
 
     /**

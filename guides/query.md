@@ -43,6 +43,31 @@ const card = doc.find('.card')
 const app = doc.find('#app', true)
 ```
 
+### Typed results
+
+A selector is a runtime string, so the element type cannot be inferred from it. The
+result is typed as `JJHE` (the common case), which is what you get at runtime for HTML
+and custom elements — so `setValue()`, `getDataAttr()`, `setStyle()` and the rest are
+available without a cast.
+
+For SVG or MathML, override the type parameter:
+
+```js
+import { JJD, JJME, JJSE } from 'jj'
+
+const doc = JJD.from(document)
+
+const jjCircle = doc.find<JJSE>('circle', true) // JJSE
+const jjMath = doc.find<JJME>('math', true) // JJME
+
+// Narrow further when you know the exact element type
+const jjEmail = doc.find<JJHE<HTMLInputElement>>('input#email', true)
+const email: string = jjEmail.getValue()
+```
+
+The same default and override apply to `findAll` (`doc.findAll<JJSE>('circle')`) and
+`closest` (`jjItem.closest<JJSE>('g')`).
+
 ### When to use `required: true`
 
 Use `required: true` when the element is essential and its absence indicates a programming error (e.g. a hardcoded `id` that should always exist). This gives you a clear error with a stack trace rather than a silent `null` leading to confusing downstream failures.
@@ -112,7 +137,7 @@ const ul = JJHE.create('ul').addChildMap(names, (name) => JJHE.tree('li', null, 
 
 Finds the nearest ancestor (or self) that matches a CSS selector. Only available on `JJE` and descendants (`JJHE`, `JJSE`).
 
-- Returns the most specific element wrapper available when found.
+- Returns the most specific element wrapper available when found, typed as `JJHE` unless you pass a type parameter (for example `closest<JJSE>('g')`).
 - Returns `null` when no ancestor matches.
 
 ```js
@@ -127,8 +152,6 @@ if (card) {
 ### Event delegation with `.closest()`
 
 `closest()` is the standard tool for event delegation — listening on a container and acting on the clicked descendant:
-
-[//]: # 'docs-check: ignore — closest returns JJE until query return types are narrowed'
 
 ```js
 doc.find('#list', true).on('click', (event) => {

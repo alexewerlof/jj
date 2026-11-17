@@ -670,26 +670,30 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @remarks
      * Returns `null` when no matching ancestor is found.
      *
+     * A selector is a runtime string, so the wrapper defaults to `JJHE` (the common
+     * case) and can be overridden for SVG or MathML ancestors:
+     * `el.closest<JJSE>('g')`.
+     *
      * @example
      * ```ts
-     * const button = JJE.from(document.querySelector('button'))
-     * const card = button.closest('.card')
-     * if (card) {
-     *     card.addClass('has-action')
+     * const jjButton = JJE.from(document.querySelector('button'))
+     * const jjCard = jjButton.closest('.card')
+     * if (jjCard) {
+     *     jjCard.addClass('has-action')
      * }
      * ```
      *
      * @param selector - The CSS selector to search for.
-     * @returns A JJE wrapping the closest match, or null when none exists.
+     * @returns A wrapper around the closest match, or null when none exists.
      * @throws {TypeError} If `selector` is not a string.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest | Element.closest}
      */
-    closest(selector: string) {
+    closest<W extends JJE = JJHE>(selector: string): W | null {
         if (!isStr(selector)) {
             throw typeErr('selector', 'a string', selector)
         }
         const match = this.ref.closest(selector)
-        return match ? elementWrappers.from(match) : null
+        return match ? (elementWrappers.from(match) as W) : null
     }
 
     /**

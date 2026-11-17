@@ -171,7 +171,16 @@ const jjItems = jjDoc.findAll('.item') // always an array
 
 // Inside a custom element's shadow root
 const jjBtn = this.getShadow(true).find('#submit')
+
+// SVG/MathML results: override the type parameter
+const jjCircle = jjDoc.find<JJSE>('circle', true)
+const jjCircles = jjDoc.findAll<JJSE>('circle')
 ```
+
+Query results are typed as `JJHE` by default (the runtime result for HTML and custom
+elements), so `setValue()`, `getDataAttr()`, and `setStyle()` work without a cast.
+Override with `find<JJSE>(...)` / `find<JJME>(...)` for other namespaces, or
+`find<JJHE<HTMLInputElement>>(...)` to narrow the exact element type.
 
 Querying defaults from the tutorial:
 

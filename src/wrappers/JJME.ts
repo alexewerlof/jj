@@ -1,5 +1,5 @@
 import { isInstance, isStr, MATHML_NS, typeErr } from '../internal.js'
-import { Wrappable } from './JJNx.js'
+import { type TreeAttributes, Wrappable } from './JJNx.js'
 import { JJEx } from './JJEx.js'
 import { elementWrappers, nodeWrappers } from './WrapperChain.js'
 
@@ -117,11 +117,11 @@ export class JJME<T extends MathMLElement = MathMLElement> extends JJEx<T> {
      */
     static tree<K extends keyof MathMLElementTagNameMap>(
         tagName: K,
-        attributes?: Record<string, string> | null,
+        attributes?: TreeAttributes | null,
         ...children: Wrappable[]
     ): JJME<MathMLElementTagNameMap[K]>
-    static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJME
-    static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJME {
+    static tree(tagName: string, attributes?: TreeAttributes | null, ...children: Wrappable[]): JJME
+    static tree(tagName: string, attributes?: TreeAttributes | null, ...children: Wrappable[]): JJME {
         return JJME.create(tagName)
             .setAttrs(attributes)
             .addChild(...children)

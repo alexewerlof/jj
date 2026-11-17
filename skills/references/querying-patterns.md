@@ -82,11 +82,31 @@ jjMyTable.findAll('tr td:nth-child(3)').forEach((jjTd) => {
 
 Use `tr td:nth-child(3)` to target the third data cell in each row.
 
+## Result types
+
+`find`, `findAll`, and `closest` take a runtime selector, so the element type cannot be
+inferred. They return `JJHE` (or `JJHE[]`) by default, matching the runtime result for
+HTML and custom elements, so HTML-only methods work without a cast:
+
+```js
+const jjInput = jjDoc.find('input', true) // JJHE
+jjInput.setValue('hi')
+
+jjDoc.findAll('.card').forEach((jjCard) => jjCard.setStyle('color', 'red'))
+```
+
+Override the type parameter for other namespaces, or to narrow the exact element:
+
+```jsimport { JJD, JJSE } from 'jj'
+
+const jjDoc = JJD.from(document)
+const jjCircle = jjDoc.find < JJSE > ('circle', true)
+const jjEmail = jjDoc.find < JJHE < HTMLInputElement >> ('input#email', true) // getValue(): string
+```
+
 ## closest — ancestor lookup
 
 Use `.closest()` on element wrappers for event delegation or tree navigation:
-
-[//]: # 'docs-check: ignore — closest returns JJE until query return types are narrowed'
 
 ```js
 jjDoc.on('click', (e) => {

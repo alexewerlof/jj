@@ -191,8 +191,6 @@ JJ does not implement routing. Use browser APIs directly.
 
 A minimal SPA routing setup with JJ:
 
-[//]: # 'docs-check: ignore — findAll returns JJE until query return types are narrowed'
-
 ```js
 import { JJD, JJHE } from 'jj'
 

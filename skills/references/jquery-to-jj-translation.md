@@ -35,8 +35,6 @@ $('.card').addClass('active').css('color', 'red')
 
 JJ:
 
-[//]: # 'docs-check: ignore — findAll yields JJE<Element>; setStyle needs an element wrapper'
-
 ```js
 const jjDoc = JJD.from(document)
 jjDoc.findAll('.card').forEach((jjCard) => jjCard.addClass('active').setStyle('color', 'red'))

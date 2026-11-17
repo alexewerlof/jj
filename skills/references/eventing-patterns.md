@@ -52,8 +52,6 @@ new CustomEvent('internal-ready', { bubbles: false, composed: false })
 
 ## Event delegation
 
-[//]: # 'docs-check: ignore — closest returns JJE until query return types are narrowed'
-
 ```js
 import { JJD } from 'jj'
 

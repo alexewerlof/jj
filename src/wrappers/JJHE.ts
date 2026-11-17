@@ -1,5 +1,5 @@
 import { errMsg, hasProp, isInstance, isStr, typeErr } from '../internal.js'
-import { Wrappable } from './JJNx.js'
+import { type TreeAttributes, Wrappable } from './JJNx.js'
 import { JJEx } from './JJEx.js'
 import { elementWrappers, nodeWrappers } from './WrapperChain.js'
 
@@ -126,7 +126,13 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
      * @see {@link JJHE.create} for a type-narrowed single-element factory.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement | document.createElement}
      */
-    static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJHE {
+    static tree<K extends keyof HTMLElementTagNameMap>(
+        tagName: K,
+        attributes?: TreeAttributes | null,
+        ...children: Wrappable[]
+    ): JJHE<HTMLElementTagNameMap[K]>
+    static tree(tagName: string, attributes?: TreeAttributes | null, ...children: Wrappable[]): JJHE
+    static tree(tagName: string, attributes?: TreeAttributes | null, ...children: Wrappable[]): JJHE {
         return JJHE.create(tagName)
             .setAttrs(attributes)
             .addChild(...children)
@@ -150,15 +156,26 @@ export class JJHE<T extends HTMLElement = HTMLElement> extends JJEx<T> {
     /**
      * Gets the value property of the HTMLElement (e.g. for inputs).
      *
+     * @remarks
+     * Form controls always expose a string value, so those wrappers are typed as
+     * `string` — the same type as `.ref.value`. Other elements are typed `unknown`
+     * because their `value` (if any) has no common type.
+     *
+     * @example
+     * ```ts
+     * const jjName = JJHE.create('input').getValue() // string
+     * ```
+     *
      * @returns The value.
-     * @throws {Error} If the HTMLElement does not have a value property.
+     * @throws {ReferenceError} If the HTMLElement does not have a value property.
+     * @see {@link setValue} for writing the value.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/value | HTMLInputElement.value}
      */
-    getValue() {
+    getValue(): T extends HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement ? string : unknown {
         if (!hasProp(this.ref, 'value')) {
             throw new ReferenceError(`${this.ref.tagName} has no value property.`)
         }
-        return this.ref.value
+        return this.ref.value as T extends HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement ? string : unknown
     }
 
     /**

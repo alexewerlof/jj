@@ -1,5 +1,5 @@
 import { isInstance, isNum, isStr, SVG_NS, typeErr } from '../internal.js'
-import { Wrappable } from './JJNx.js'
+import { type TreeAttributes, Wrappable } from './JJNx.js'
 import { JJEx } from './JJEx.js'
 import { elementWrappers, nodeWrappers } from './WrapperChain.js'
 
@@ -110,11 +110,11 @@ export class JJSE<T extends SVGElement = SVGElement> extends JJEx<T> {
      */
     static tree<K extends keyof SVGElementTagNameMap>(
         tagName: K,
-        attributes?: Record<string, string> | null,
+        attributes?: TreeAttributes | null,
         ...children: Wrappable[]
     ): JJSE<SVGElementTagNameMap[K]>
-    static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJSE
-    static tree(tagName: string, attributes?: Record<string, string> | null, ...children: Wrappable[]): JJSE {
+    static tree(tagName: string, attributes?: TreeAttributes | null, ...children: Wrappable[]): JJSE
+    static tree(tagName: string, attributes?: TreeAttributes | null, ...children: Wrappable[]): JJSE {
         return JJSE.create(tagName)
             .setAttrs(attributes)
             .addChild(...children)
