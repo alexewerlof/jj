@@ -524,6 +524,10 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
     /**
      * Adds multiple classes from an array of class names.
      *
+     * @remarks
+     * Prefer {@link addClass} — it already accepts several class names, so the array form
+     * only adds a choice. Kept for callers that already hold an array.
+     *
      * @example
      * ```ts
      * el.addClasses(['btn', 'btn-primary'])
@@ -571,6 +575,10 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
 
     /**
      * Removes multiple classes from an array of class names.
+     *
+     * @remarks
+     * Prefer {@link rmClass} — it already accepts several class names, so the array form
+     * only adds a choice. Kept for callers that already hold an array.
      *
      * @example
      * ```ts

@@ -22,6 +22,10 @@ These guides are for moderate to advanced developers and AI agents who want JJ f
 - [Component lifecycle events](./component-lifecycle-events.md)
 - [Extensions](./extensions.md)
 
+## Reference
+
+- [`.ref` gap reference](../skills/references/ref-gap.md) — the native APIs you are expected to reach through `.ref`, and the ones JJ already wraps
+
 ## Browser references
 
 - Web platform overview: https://developer.mozilla.org/en-US/docs/Web

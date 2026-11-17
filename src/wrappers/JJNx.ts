@@ -177,6 +177,10 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @remarks
      * This is the array-based companion to {@link addChild}.
+     * Prefer {@link addChild} — it already accepts several children — or
+     * {@link addChildMap} when rendering from an array. Kept for callers that already
+     * hold an array.
+     *
      * To make template codes easier, this function ignores nullish children (`null` and `undefined`).
      * Other non-node values are coerced into Text nodes.
      *
@@ -228,6 +232,9 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @remarks
      * This is the array-based companion to {@link preChild}.
+     * Prefer {@link preChild} — it already accepts several children. Kept for callers
+     * that already hold an array.
+     *
      * To make template codes easier, this function ignores nullish children (`null` and `undefined`).
      * Other non-node values are coerced into Text nodes.
      *
@@ -405,6 +412,10 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      *
      * @remarks
      * This is the array-based companion to {@link setChild}.
+     * Prefer {@link setChild} — it already accepts several children — or
+     * {@link setChildMap} when rendering from an array. Kept for callers that already
+     * hold an array.
+     *
      * Passing an empty array empties the Element.
      * To make template codes easier, this function ignores nullish children (`null` and `undefined`).
      * Other non-node values are coerced into Text nodes.

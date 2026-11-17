@@ -56,6 +56,10 @@ export class JJN<T extends Node = Node> extends JJET<T> {
      * @remarks
      * Returns `null` when this node is detached and therefore has no parent.
      *
+     * Prefer `getParent()` on element/document wrappers: it returns the parent *element*
+     * wrapper (typed `JJHE`), which is what tree navigation usually wants. This node-level
+     * version can return `JJD` or `JJDF` too.
+     *
      * @example
      * ```ts
      * const text = JJT.create('hello')

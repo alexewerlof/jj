@@ -132,10 +132,27 @@ Default heuristics from the tutorial:
 - Prefer `h(tag, attrs, ...children)` over verbose `create(...).set*()` chains when the element can be expressed as structure (for example options, list items, rows, and cards).
 - For single-expression callbacks, prefer concise arrows: `x => h(...)` instead of `x => { return h(...) }`.
 - Use `create()` for one-off elements; switch to `tree()` as soon as structure becomes non-trivial.
-- Prefer `setChild()` or `setChildren()` when replacing content, not `.empty().addChild()`.
+- Prefer `setChild()` when replacing content, not `.empty().addChild()`.
 - Prefer `addChildMap()` or `setChildMap()` when rendering from arrays.
-- Keep values wrapped. Reach for `.ref` only for native APIs JJ does not expose.
-- Use JJ verb families consistently: `set*` replaces, `add*` appends, `pre*` prepends, `rm*` removes, `sw*` toggles.
+- Keep values wrapped. Reach for `.ref` only for native APIs JJ does not expose — see `references/ref-gap.md` for the approved list.
+- Use JJ verb families consistently: `set*` replaces, `add*` appends, `pre*` prepends, `rm*` removes, `sw*` swaps/toggles.
+
+### One canonical name per operation
+
+Some methods accept both a variadic list and an array. Use the variadic form; the array
+form exists only for callers that already hold an array.
+
+| Prefer               | Over                              |
+| -------------------- | --------------------------------- |
+| `addClass(...names)` | `addClasses(names[])`             |
+| `rmClass(...names)`  | `rmClasses(names[])`              |
+| `addChild(...items)` | `addChildren(items[])`            |
+| `preChild(...items)` | `preChildren(items[])`            |
+| `setChild(...items)` | `setChildren(items[])`            |
+| `getParent()`        | `getParentNode()`                 |
+| `shadow()`           | `setShadow()` + `getShadow(true)` |
+| `swChild()`          | `.ref.replaceChild()`             |
+| `find()`/`findAll()` | `.ref.querySelector*()`           |
 
 ```typescript
 const h = JJHE.tree
@@ -590,6 +607,7 @@ For framework migration or deep-dive patterns, load these on demand:
 - `references/web-components-patterns.md`
 - `references/eventing-patterns.md`
 - `references/querying-patterns.md`
+- `references/ref-gap.md`
 - `references/css-improvements.md`
 - `references/testing-with-jsdom.md`
 - `references/security-and-html.md`

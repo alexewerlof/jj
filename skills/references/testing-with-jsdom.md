@@ -86,6 +86,14 @@ Some browser APIs are not fully implemented in jsdom:
 - `ResizeObserver` — may need polyfill
 - `IntersectionObserver` — may need polyfill
 - `customElements.define` — available but lifecycle callbacks may differ
+- `HTMLElement.innerText` — `undefined`; use `textContent` (which is what `getText()` uses)
+- `HTMLDialogElement.showModal()` / `close()` — missing; stub them
+- `Element.scrollIntoView()` and `getBoundingClientRect()` — no layout, so they return zeros or nothing
+- `window.CSS` — absent, so `CSS.supports()` cannot be used (JJ validates style names another way)
+
+These matter when a test asserts on `.ref` behavior. Prefer asserting on JJ helpers where
+possible, and see `references/ref-gap.md` for which native APIs are expected to be reached
+through `.ref`.
 
 ## Browser references
 
