@@ -37,11 +37,6 @@ function createTemplateInputs() {
             expected: 'element',
         },
         {
-            label: 'HTML string',
-            template: '<p>string</p>',
-            expected: 'string',
-        },
-        {
             label: 'JJHE wrapper',
             template: JJHE.tree('p', null, 'wrapper'),
             expected: 'wrapper',
@@ -127,10 +122,20 @@ describe('JJSR', () => {
             ensureAdoptedStyleSheets(shadowRoot)
             await sheet.replace(':host { display: block; }')
 
-            JJSR.from(shadowRoot).init('<p>styled</p>', ':host { color: red; }', sheet)
+            const template = document.createElement('template')
+            template.innerHTML = '<p>styled</p>'
+
+            JJSR.from(shadowRoot).init(template, ':host { color: red; }', sheet)
 
             assert.strictEqual(shadowRoot.querySelector('p')?.textContent, 'styled')
             assert.strictEqual(shadowRoot.adoptedStyleSheets.length, 2)
+        })
+
+        it('rejects an HTML string, which must go through addTemplate(html, true)', () => {
+            const host = document.createElement('div')
+            const shadowRoot = host.attachShadow({ mode: 'open' })
+
+            assert.throws(() => JJSR.from(shadowRoot).init('<p>raw</p>' as any), /Setting HTML from a string is unsafe/)
         })
     })
 })

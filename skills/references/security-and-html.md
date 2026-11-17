@@ -34,6 +34,25 @@ el.setHTML('<p>content</p>') // ❌ throws — missing unsafe flag
 
 Passing `true` is a deliberate signal that the caller has verified the content is safe. Use it only for markup from trusted sources (your own templates, sanitized strings).
 
+## The same rule applies to HTML strings in templates
+
+`addTemplate` and `setTemplate` parse a string with `Range.createContextualFragment`, which
+is the same injection surface as `innerHTML`. A non-empty string therefore needs the same
+opt-in:
+
+```js
+list.addTemplate('<li>Trusted literal</li>', true) // ✅ explicit opt-in
+list.addTemplate('<li>Trusted literal</li>') // ❌ throws
+list.addTemplate(await templatePromise) // ✅ already parsed, no flag
+```
+
+Pre-parsed sources — `DocumentFragment`, `<template>`, elements, JJ wrappers — are already
+parsed and need no flag. `JJSR.init()` and `JJE.initShadow()` accept only those sources, so
+shadow-root setup cannot bypass the guard.
+
+**Rule of thumb:** any API that turns a string into DOM nodes requires `true`; any API that
+receives nodes that already exist does not.
+
 ## Never use .ref.innerHTML for user content
 
 ```js

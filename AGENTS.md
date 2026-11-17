@@ -28,7 +28,7 @@ Preview the static site with the VS Code Live Server extension, typically at `ht
 ## Working Conventions
 
 - Load `skills/SKILL.md` before JJ-specific implementation; use its references for detailed API patterns.
-- Prefer JJ factories and wrappers; access `.ref` only for native APIs without a JJ equivalent. Use `setText()` for untrusted text; non-empty `setHTML()` requires explicit trusted-content opt-in.
+- Prefer JJ factories and wrappers; access `.ref` only for native APIs without a JJ equivalent. Use `setText()` for untrusted text; any API that parses an HTML string (`setHTML`, `addTemplate`, `setTemplate`) requires an explicit trusted-content opt-in. Shadow helpers (`JJSR.init`, `JJE.initShadow`) accept only pre-parsed sources.
 - Add tests for behavior changes. See `test/AGENTS.md` for test setup.
 - Keep documentation code blocks compilable. `npm run docs:check` typechecks every snippet against the published declarations; a block that is deliberately illustrative (pseudo-code, another framework's syntax) must be preceded by `[//]: # (docs-check: ignore — reason)`. That syntax renders as nothing; an HTML comment would show as visible text. Do not put parentheses in the reason.
 - Do not change the package export surface without explicit instruction.

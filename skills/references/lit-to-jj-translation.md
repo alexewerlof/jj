@@ -78,7 +78,7 @@ export class MyCounter extends HTMLElement {
     async connectedCallback() {
         if (!this.#isInitialized) {
             this.#jjShadow
-                .init('<button id="btn">0</button>', await stylePromise)
+                .init(JJHE.tree('button', { id: 'btn' }, '0'), await stylePromise)
                 .find('#btn', true)
                 .on('click', () => {
                     this.count++

@@ -152,6 +152,28 @@ export function cam2keb(str: string): string {
 }
 
 /**
+ * Guards APIs that parse an HTML string.
+ *
+ * @remarks
+ * Parsing HTML is the classic injection vector, so a string is only accepted with an
+ * explicit opt-in. The flag is a review signal: it forces the caller to confirm the
+ * content is trusted rather than user input. Native nodes and fragments are already
+ * parsed, so they need no flag.
+ *
+ * @internal
+ * @param html - The value being passed to an HTML-parsing API.
+ * @param unsafe - The caller's explicit opt-in.
+ * @throws {Error} If `html` is a non-empty string and `unsafe` is not `true`.
+ */
+export function assertTrustedHtml(html: unknown, unsafe: boolean | undefined): void {
+    if (isStr(html) && html !== '' && unsafe !== true) {
+        throw new Error(
+            'Setting HTML from a string is unsafe. Pass true as the second argument to confirm you know what you are doing.',
+        )
+    }
+}
+
+/**
  * Converts a value to its string representation.
  * It is primarily used for creating Text nodes from non-string inputs.
  * @param x a value to be converted

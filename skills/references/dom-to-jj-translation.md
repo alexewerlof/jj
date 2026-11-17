@@ -97,6 +97,7 @@ Notes:
 - Child methods accept JJ wrappers and auto-wrap/unwrap values.
 - `addChild*` ignores `null` and `undefined` entries.
 - `addTemplate()` always clones template content before append.
+- A non-empty HTML **string** passed to `addTemplate()`/`setTemplate()` requires `true` as the second argument (same rule as `setHTML`); pre-parsed sources do not.
 
 ## Document -> JJD
 

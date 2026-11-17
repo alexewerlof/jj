@@ -11,23 +11,40 @@ JJ supports multiple template input forms while still relying on browser primiti
 
 ## JJ template helpers
 
-| Method                  | Description                                                     |
-| ----------------------- | --------------------------------------------------------------- |
-| `addTemplate(template)` | Clones the template and **appends** it to existing children.    |
-| `setTemplate(template)` | Clears existing children, then clones and appends the template. |
-| `fetchTemplate(url)`    | Fetches an HTML file and returns a `Promise<DocumentFragment>`. |
+| Method                           | Description                                                     |
+| -------------------------------- | --------------------------------------------------------------- |
+| `addTemplate(template, unsafe?)` | Clones the template and **appends** it to existing children.    |
+| `setTemplate(template, unsafe?)` | Clears existing children, then clones and appends the template. |
+| `fetchTemplate(url)`             | Fetches an HTML file and returns a `Promise<DocumentFragment>`. |
 
 ## Supported template inputs
 
-All three methods accept the same set of inputs:
+All three methods accept the same pre-parsed inputs:
 
 | Input type            | How it is cloned                                                        |
 | --------------------- | ----------------------------------------------------------------------- |
-| `string`              | Parsed as HTML via `Range.createContextualFragment`.                    |
 | `HTMLTemplateElement` | Its `.content` (a `DocumentFragment`) is cloned with `cloneNode(true)`. |
 | `DocumentFragment`    | Cloned with `cloneNode(true)`.                                          |
 | `HTMLElement`         | Cloned with `cloneNode(true)`.                                          |
 | Any `JJN` wrapper     | The wrapped native node is cloned with `cloneNode(true)`.               |
+
+### HTML strings need an explicit opt-in
+
+`addTemplate` and `setTemplate` also accept a string, but parsing a string is the same
+injection risk as `innerHTML`. A non-empty string therefore requires `true` as the second
+argument, exactly like `setHTML`:
+
+```js
+list.addTemplate('<li>Trusted literal</li>', true) // ✅ explicit opt-in
+list.addTemplate('<li>Trusted literal</li>') // ❌ throws
+```
+
+The flag is a review signal, not a formality: it marks the markup as a trusted literal
+rather than user input. For untrusted text use `setText()`.
+
+Shadow-root helpers (`JJSR.init`, `JJE.initShadow`) accept only pre-parsed sources, so
+there is no string path to bypass the opt-in. Use `fetchTemplate()` for markup that
+lives in a file.
 
 ## Why cloning matters
 
@@ -61,11 +78,19 @@ JJ avoids this footgun: `addTemplate(frag)` clones the fragment, so the original
 ```js
 // Build up a list
 const list = JJHE.create('ul')
-list.addTemplate('<li>First</li>')
-list.addTemplate('<li>Second</li>') // both items present
+list.addTemplate('<li>First</li>', true)
+list.addTemplate('<li>Second</li>', true) // both items present
 
 // Replace all content
-list.setTemplate('<li>Only item</li>') // list now has exactly one item
+list.setTemplate('<li>Only item</li>', true) // list now has exactly one item
+```
+
+Prefer a pre-parsed source when the markup is more than a one-liner — it keeps the
+opt-in out of the call site entirely:
+
+```js
+const itemTemplate = await fetchTemplate(import.meta.resolve('./item.html'))
+list.addTemplate(itemTemplate)
 ```
 
 `setTemplate()` is equivalent to `empty().addTemplate()` — but in a single call.

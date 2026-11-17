@@ -1,4 +1,4 @@
-import { isInstance, isStr, typeErr } from '../internal.js'
+import { assertTrustedHtml, isInstance, isStr, typeErr } from '../internal.js'
 import { JJN } from './JJN.js'
 import type { JJE } from './JJE.js'
 import type { JJHE } from './JJHE.js'
@@ -24,6 +24,22 @@ export type Wrappable = string | number | boolean | bigint | symbol | object | n
  * the attribute, matching {@link JJE.setAttr}.
  */
 export type TreeAttributes = Record<string, string | number | boolean | null | undefined>
+
+/**
+ * Pre-parsed template sources accepted by the template and shadow-initialization helpers.
+ *
+ * @remarks
+ * An HTML *string* is deliberately absent: parsing markup is an injection vector, so
+ * string input goes through {@link JJNx.addTemplate} with an explicit opt-in flag.
+ * Use `fetchTemplate()` to load markup from a file.
+ */
+export type TemplateSource =
+    | HTMLTemplateElement
+    | DocumentFragment
+    | HTMLElement
+    | JJDF
+    | JJHE<HTMLTemplateElement>
+    | JJHE
 
 /**
  * Extracts the underlying native DOM node from a wrapper.
@@ -447,9 +463,22 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * Supports HTML strings, native template sources, native Nodes, and any JJ wrapper via {@link JJN}.
      * Wrapper inputs are unwrapped and cloned before append.
      *
+     * An HTML **string** is parsed as markup, so it requires an explicit `unsafe` opt-in —
+     * the same rule as {@link JJE.setHTML}. Pre-parsed sources (a `DocumentFragment`, a
+     * `<template>`, or `await fetchTemplate(...)`) need no flag. Use {@link JJE.setText}
+     * for untrusted text.
+     *
+     * @example
+     * ```ts
+     * list.addTemplate('<li>Static markup</li>', true) // trusted literal
+     * list.addTemplate(await templatePromise) // already parsed
+     * ```
+     *
      * @param template - The template source to clone and append.
+     * @param unsafe - Explicit opt-in required when `template` is an HTML string.
      * @returns This instance for chaining.
      * @throws {TypeError} If the template type is unsupported or a Promise was passed.
+     * @throws {Error} If `template` is a non-empty string and `unsafe` is not `true`.
      * @see {@link setTemplate} for replacing existing children with a cloned template.
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Document/createRange | Document.createRange}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLTemplateElement | HTMLTemplateElement}
@@ -457,16 +486,9 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement | HTMLElement}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode | Node.cloneNode}
      */
-    addTemplate(
-        template:
-            | string
-            | HTMLTemplateElement
-            | DocumentFragment
-            | HTMLElement
-            | JJDF
-            | JJHE<HTMLTemplateElement>
-            | JJHE,
-    ): this {
+    addTemplate(template: string | TemplateSource, unsafe?: boolean): this {
+        assertTrustedHtml(template, unsafe)
+
         if (isStr(template)) {
             // Using Range for faster parsing than innerHTML
             return this.addChild(document.createRange().createContextualFragment(template))
@@ -507,25 +529,22 @@ export abstract class JJNx<T extends Element | Document | DocumentFragment> exte
      * Supports HTML strings, native template sources, native Nodes, and any JJ wrapper via {@link JJN}.
      * Wrapper inputs are unwrapped and cloned before set.
      *
+     * An HTML string needs the same explicit `unsafe` opt-in as {@link addTemplate}.
+     *
      * @example
      * ```ts
-     * el.setTemplate('<p>New Content</p>')
+     * el.setTemplate('<p>Static markup</p>', true) // trusted literal
+     * el.setTemplate(await templatePromise) // already parsed
      * ```
+     *
      * @param template - The template source to clone and set.
+     * @param unsafe - Explicit opt-in required when `template` is an HTML string.
      * @returns This instance for chaining.
+     * @throws {Error} If `template` is a non-empty string and `unsafe` is not `true`.
      * @see {@link addTemplate}
      * @see {@link empty} for clearing children without adding a replacement template.
      */
-    setTemplate(
-        template:
-            | string
-            | HTMLTemplateElement
-            | DocumentFragment
-            | HTMLElement
-            | JJDF
-            | JJHE<HTMLTemplateElement>
-            | JJHE,
-    ): this {
-        return this.empty().addTemplate(template)
+    setTemplate(template: string | TemplateSource, unsafe?: boolean): this {
+        return this.empty().addTemplate(template, unsafe)
     }
 }

@@ -63,13 +63,16 @@ describe('JJDF', () => {
 
     describe(JJDF.prototype.findAll.name, () => {
         it('finds all matching elements in a fragment', () => {
-            const host = JJDF.create().addTemplate(`
+            const host = JJDF.create().addTemplate(
+                `
                 <ul>
                     <li class="item">a</li>
                     <li class="item">b</li>
                     <li>c</li>
                 </ul>
-            `)
+            `,
+                true,
+            )
 
             const result = host.findAll('.item')
 
@@ -82,7 +85,7 @@ describe('JJDF', () => {
         })
 
         it('returns an empty array when there are no matches', () => {
-            const host = JJDF.create().addTemplate('<div id="only"></div>')
+            const host = JJDF.create().addTemplate('<div id="only"></div>', true)
 
             const result = host.findAll('.missing')
 
@@ -239,9 +242,34 @@ describe('JJDF', () => {
         it('appends parsed nodes from an HTML string', () => {
             const host = JJDF.create()
 
-            host.addTemplate('<span id="hello">hello</span>')
+            host.addTemplate('<span id="hello">hello</span>', true)
 
             assert.strictEqual(host.find('#hello')?.ref.textContent, 'hello')
+        })
+
+        it('throws for a non-empty HTML string without the opt-in flag', () => {
+            const host = JJDF.create()
+
+            assert.throws(() => host.addTemplate('<span>x</span>'), /Setting HTML from a string is unsafe/)
+            assert.throws(() => host.addTemplate('<span>x</span>', false), /Setting HTML from a string is unsafe/)
+            assert.strictEqual(host.getChildren().length, 0)
+        })
+
+        it('allows an empty string without the opt-in flag', () => {
+            const host = JJDF.create()
+
+            assert.strictEqual(host.addTemplate(''), host)
+            assert.strictEqual(host.getChildren().length, 0)
+        })
+
+        it('does not require the flag for pre-parsed sources', () => {
+            const host = JJDF.create()
+            const template = document.createElement('template')
+            template.innerHTML = '<i id="parsed">parsed</i>'
+
+            host.addTemplate(template)
+
+            assert.strictEqual(host.find('#parsed')?.ref.textContent, 'parsed')
         })
 
         it('clones HTMLTemplateElement content', () => {
@@ -267,7 +295,7 @@ describe('JJDF', () => {
 
         it('accepts JJDF wrappers via JJN recursion', () => {
             const host = JJDF.create()
-            const source = JJDF.create().addTemplate('<strong id="wrapped-fragment">wrapped-fragment</strong>')
+            const source = JJDF.create().addTemplate('<strong id="wrapped-fragment">wrapped-fragment</strong>', true)
 
             host.addTemplate(source)
 

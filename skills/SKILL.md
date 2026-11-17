@@ -486,12 +486,14 @@ jjEl.setTemplate(templateElement)
 jjEl.addChild(child)
 jjEl.addChildMap(items, (item) => JJHE.tree('li', null, item.label))
 jjEl.addTemplate(await templatePromise) // clones before appending
+jjEl.addTemplate('<li>Trusted literal</li>', true) // HTML string needs the opt-in
 ```
 
 `addChild` / `preChild` / `setChild` and map variants ignore `null`/`undefined`; all other non-node values are coerced to Text nodes.
 
 Guide defaults for template and fragment usage:
 
+- An HTML **string** passed to `addTemplate`/`setTemplate` requires `true`, like `setHTML`; pre-parsed sources do not. `JJSR.init()`/`JJE.initShadow()` accept only pre-parsed sources.
 - `addTemplate()` and `setTemplate()` always clone the input before appending; reuse the same template value safely.
 - Prefer `setTemplate()` over `empty().addTemplate()` when replacing all content.
 - Prefer `addChildMap()` or `setChildMap()` over manually building a fragment when rendering arrays.

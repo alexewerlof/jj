@@ -1,7 +1,7 @@
-import { isInstance, isStr, typeErr } from '../internal.js'
+import { assertTrustedHtml, isInstance, isStr, typeErr } from '../internal.js'
 import { nodeWrappers } from './WrapperChain.js'
 import { JJDF } from './JJDF.js'
-import type { JJHE } from './JJHE.js'
+import type { TemplateSource } from './JJNx.js'
 
 /**
  * Wraps a DOM ShadowRoot (which is a descendant of DocumentFragment).
@@ -64,9 +64,17 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
     /**
      * Initializes the ShadowRoot with template content and optional styles.
      *
+     * @remarks
+     * The template must be a pre-parsed source: a `<template>`, a `DocumentFragment`
+     * (for example `await fetchTemplate(...)`), an element, or a JJ wrapper. An HTML
+     * *string* is rejected by the type system because parsing markup needs an explicit
+     * opt-in — use `addTemplate(html, true)` for a trusted literal.
+     *
      * @example
      * ```ts
-     * shadow.init('<p>Hello</p>', 'p { color: red; }')
+     * const template = await fetchTemplate(import.meta.resolve('./card.html'))
+     * const style = await fetchStyle(import.meta.resolve('./card.css'))
+     * shadow.init(template, style)
      * ```
      *
      * @param template - The template content to clone into the shadow root.
@@ -76,17 +84,7 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      * @see {@link JJDF.addTemplate} for supported template inputs.
      * @see {@link addStyle} for stylesheet handling.
      */
-    init(
-        template:
-            | string
-            | DocumentFragment
-            | HTMLTemplateElement
-            | HTMLElement
-            | JJDF
-            | JJHE<HTMLTemplateElement>
-            | JJHE,
-        ...styles: (string | CSSStyleSheet)[]
-    ): this {
+    init(template: TemplateSource, ...styles: (string | CSSStyleSheet)[]): this {
         this.addTemplate(template).addStyle(...styles)
         return this
     }
@@ -115,11 +113,7 @@ export class JJSR<T extends ShadowRoot = ShadowRoot> extends JJDF<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
      */
     setHTML(html: string | null | undefined, unsafe?: boolean): this {
-        if (html && unsafe !== true) {
-            throw new Error(
-                `Setting innerHTML is unsafe. Pass true as the second argument to confirm you know what you are doing.`,
-            )
-        }
+        assertTrustedHtml(html, unsafe)
         this.ref.innerHTML = html ?? ''
         return this
     }

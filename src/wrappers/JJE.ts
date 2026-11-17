@@ -1,8 +1,7 @@
-import { isInstance, isObj, isStr, typeErr } from '../internal.js'
+import { assertTrustedHtml, isInstance, isObj, isStr, typeErr } from '../internal.js'
 import { elementWrappers, nodeWrappers } from './WrapperChain.js'
 import { JJSR } from './JJSR.js'
-import { JJNx } from './JJNx.js'
-import type { JJDF } from './JJDF.js'
+import { JJNx, type TemplateSource } from './JJNx.js'
 import type { JJHE } from './JJHE.js'
 
 /**
@@ -813,11 +812,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML | Element.innerHTML}
      */
     setHTML(html: string | null | undefined, unsafe?: boolean): this {
-        if (html && unsafe !== true) {
-            throw new Error(
-                `Setting innerHTML is unsafe. Pass true as the second argument to confirm you know what you are doing.`,
-            )
-        }
+        assertTrustedHtml(html, unsafe)
         this.ref.innerHTML = html ?? ''
         return this
     }
@@ -871,17 +866,7 @@ export class JJE<T extends Element = Element> extends JJNx<T> {
      * @see {@link setShadow} for attaching the shadow root first.
      * @see {@link JJSR.init} for the underlying shadow-root initialization helper.
      */
-    initShadow(
-        template:
-            | string
-            | DocumentFragment
-            | HTMLTemplateElement
-            | HTMLElement
-            | JJDF
-            | JJHE<HTMLTemplateElement>
-            | JJHE,
-        ...styles: (string | CSSStyleSheet)[]
-    ): this {
+    initShadow(template: TemplateSource, ...styles: (string | CSSStyleSheet)[]): this {
         try {
             this.getShadow(true).init(template, ...styles)
         } catch (cause) {

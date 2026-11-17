@@ -4,7 +4,7 @@
     "cleanOutputDir": true,
     "excludePrivate": true,
     "treatWarningsAsErrors": true,
-    "intentionallyNotExported": ["TreeAttributes"],
+    "intentionallyNotExported": ["TreeAttributes", "TemplateSource"],
     "entryPoints": ["src/index.ts"],
     "hostedBaseUrl": "https://alexewerlof.github.io/jj/",
     "outputs": [{ "name": "json", "path": "./.typedoc/reflections.json" }]

@@ -11,7 +11,7 @@ JJ accepts multiple template sources, which lets you pick the right tool for eac
 | Fetch `.html` file              | `fetchTemplate(import.meta.resolve('./x.html'))`                      | Large, content-heavy markup that should live outside JS. We can see the pattern for lazy/eager loading of the template file. |
 | `<template>` tag                | `setTemplate(templateEl)` where `templateEl` is `HTMLTemplateElement` | Markup is already present in the page and should be cloned on demand.                                                        |
 | Another Element node            | `setTemplate(someElement)`                                            | Rare cases where an existing element subtree is your source. Usually inferior to `<template>`.                               |
-| Hard-coded HTML string          | `setTemplate('<p>tiny snippet</p>')`                                  | Very small static snippets when you do not need references to internals.                                                     |
+| Hard-coded HTML string          | `setTemplate('<p>tiny snippet</p>', true)`                            | Very small static snippets when you do not need references to internals.                                                     |
 | `JJHE.tree()` / `JJHE.create()` | Build wrapped nodes in JS, then `setTemplate(node)`                   | Dynamic UI where you need references for later updates.                                                                      |
 
 ## `this.#jjHost` / `this.#jjShadow` convention

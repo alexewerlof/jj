@@ -37,11 +37,6 @@ function createTemplateInputs() {
             expected: 'element',
         },
         {
-            label: 'HTML string',
-            template: '<p>string</p>',
-            expected: 'string',
-        },
-        {
             label: 'JJHE wrapper',
             template: JJHE.tree('p', null, 'wrapper'),
             expected: 'wrapper',
@@ -767,8 +762,8 @@ describe('JJE', () => {
         it('throws when HTML provided but unsafe is not true', () => {
             const el = document.createElement('div')
             const jje = new JJE(el)
-            assert.throws(() => jje.setHTML('<span>test</span>'), /Setting innerHTML is unsafe/)
-            assert.throws(() => jje.setHTML('<span>test</span>', false), /Setting innerHTML is unsafe/)
+            assert.throws(() => jje.setHTML('<span>test</span>'), /Setting HTML from a string is unsafe/)
+            assert.throws(() => jje.setHTML('<span>test</span>', false), /Setting HTML from a string is unsafe/)
         })
 
         it('allows clearing HTML without unsafe flag', () => {
@@ -859,7 +854,10 @@ describe('JJE', () => {
                 ensureAdoptedStyleSheets(shadow.ref)
                 await sheet.replace(':host { display: block; }')
 
-                jje.initShadow('<p>styled</p>', ':host { color: red; }', sheet)
+                const template = document.createElement('template')
+                template.innerHTML = '<p>styled</p>'
+
+                jje.initShadow(template, ':host { color: red; }', sheet)
 
                 assert.strictEqual(shadow.find('p', true).ref.textContent, 'styled')
                 assert.strictEqual(shadow.ref.adoptedStyleSheets.length, 2)
@@ -868,10 +866,27 @@ describe('JJE', () => {
             it('throws when the shadow root has not been attached yet', () => {
                 const el = document.createElement('div')
                 const jje = new JJE(el)
+                const template = document.createElement('template')
+                template.innerHTML = '<p>missing</p>'
 
-                assert.throws(() => jje.initShadow('<p>missing</p>'), {
+                assert.throws(() => jje.initShadow(template), {
                     message: /Failed to initialize shadow DOM/,
                 })
+            })
+
+            it('rejects an HTML string, which must go through addTemplate(html, true)', () => {
+                const el = document.createElement('div')
+                const jje = new JJE(el).setShadow('open')
+
+                assert.throws(
+                    () => jje.initShadow('<p>raw</p>' as any),
+                    (error: unknown) => {
+                        assert(error instanceof Error)
+                        assert.match(error.message, /Failed to initialize shadow DOM/)
+                        assert.match(String((error.cause as Error).message), /Setting HTML from a string is unsafe/)
+                        return true
+                    },
+                )
             })
         })
     })
