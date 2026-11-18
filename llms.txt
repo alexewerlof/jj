@@ -12,6 +12,10 @@
   exact signature, generated from the published type declarations.
 - [`.ref` gap reference](./skills/references/ref-gap.md): the native APIs you are expected
   to reach through `.ref`, and the ones JJ already wraps.
+- [Idioms and defaults](./skills/references/idioms.md): detailed guidance for translation,
+  querying, events, templates, and state.
+- [Component pattern](./skills/references/component-pattern.md): the full custom-element
+  shape, light-DOM variant, and lifecycle rules.
 
 ## Guides
 
