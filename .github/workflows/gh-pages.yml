@@ -75,7 +75,7 @@ jobs:
             - name: Prepare Pages artifact
               run: |
                   mkdir -p site
-                  cp index.html LICENSE README.md www doc guides skills site/
+                  cp index.html LICENSE README.md llms.txt www doc guides skills site/
 
             - name: Setup Pages
               uses: actions/configure-pages@v5

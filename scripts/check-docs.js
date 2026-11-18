@@ -44,7 +44,7 @@ const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dtsPath = path.join(rootDir, 'lib/bundle.d.ts')
 
 /** Docs that are checked for compilable snippets and resolvable links. */
-const DOC_ENTRIES = ['README.md', 'guides', 'skills', 'www/tutorial']
+const DOC_ENTRIES = ['README.md', 'llms.txt', 'guides', 'skills', 'www/tutorial']
 
 /** Fence languages treated as TypeScript/JavaScript. */
 const CODE_LANGS = new Set(['ts', 'typescript', 'js', 'javascript'])
@@ -118,7 +118,7 @@ function listMarkdownFiles(entry) {
     return fs
         .readdirSync(absolute, { recursive: true })
         .map((name) => path.join(absolute, name))
-        .filter((name) => name.endsWith('.md') && fs.statSync(name).isFile())
+        .filter((name) => (name.endsWith('.md') || path.basename(name) === 'llms.txt') && fs.statSync(name).isFile())
         .sort()
 }
 

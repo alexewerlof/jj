@@ -1,0 +1,47 @@
+# JJ
+
+> JJ is a zero-dependency TypeScript library for imperative DOM manipulation. It wraps
+> native DOM objects in fluent, typed classes and complements browser APIs instead of
+> replacing them with a framework. No build step is required to consume the bundles.
+
+## Start here
+
+- [Skill guide (rules for writing JJ code)](./skills/SKILL.md): the canonical patterns,
+  naming conventions, and pitfalls. Read this first.
+- [API cheatsheet](./skills/references/api-cheatsheet.md): every public member with its
+  exact signature, generated from the published type declarations.
+- [`.ref` gap reference](./skills/references/ref-gap.md): the native APIs you are expected
+  to reach through `.ref`, and the ones JJ already wraps.
+
+## Guides
+
+- [Guides index](./guides/index.md)
+- [Tutorial](./www/tutorial/index.html)
+- [FAQ](./www/faq.md)
+- [API reference (rendered)](https://alexewerlof.github.io/jj/doc/)
+
+## Reference
+
+- [Architecture](./guides/architecture.md)
+- [Components](./guides/components.md)
+- [Templates](./guides/templates.md)
+- [Events](./guides/events.md)
+- [Styling](./guides/styling.md)
+- [Query](./guides/query.md)
+- [DOM manipulation](./guides/dom-manipulation.md)
+
+## Translations from other frameworks
+
+- [React](./skills/references/react-to-jj-translation.md)
+- [Vue](./skills/references/vue-to-jj-translation.md)
+- [Svelte](./skills/references/svelte-to-jj-translation.md)
+- [Angular](./skills/references/angular-to-jj-translation.md)
+- [Lit](./skills/references/lit-to-jj-translation.md)
+- [jQuery](./skills/references/jquery-to-jj-translation.md)
+- [Plain DOM](./skills/references/dom-to-jj-translation.md)
+
+## Optional
+
+- [Testing with jsdom](./skills/references/testing-with-jsdom.md)
+- [Security and HTML](./skills/references/security-and-html.md)
+- [Error handling patterns](./skills/references/error-handling-patterns.md)

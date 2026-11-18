@@ -576,6 +576,8 @@ Use higher-level public APIs like `attr2prop` and `defineComponent` instead of i
 
 ## Common mistakes
 
+Before writing a method name from memory, check `references/api-cheatsheet.md` — it is generated from the published declarations, so it lists exactly what exists.
+
 1. **`.ts` extension in imports** — TypeScript source must use `.js` (`import { X } from './X.js'`).
 2. **`JJHE.create('svg')`** — throws; use `JJSE.create('svg')`.
 3. **`jjEl.setHTML(html)` without `true`** — throws when html is non-empty.
@@ -601,6 +603,8 @@ Apply these rules whenever building or refactoring JJ-based custom elements:
 
 For framework migration or deep-dive patterns, load these on demand:
 
+- `references/api-cheatsheet.md` — every public member with its exact signature (generated)
+- `references/ref-gap.md` — approved `.ref` escapes
 - `references/react-to-jj-translation.md`
 - `references/vue-to-jj-translation.md`
 - `references/svelte-to-jj-translation.md`
